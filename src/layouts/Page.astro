@@ -1,0 +1,38 @@
+---
+// Layout for subpages: header (with the small animated R centred in it), content, footer.
+// footer={false} for pages that end in their own full-screen section (project detail: scroll to next project).
+import Base from './Base.astro';
+import Nav from '../components/layout/Nav.astro';
+import Footer from '../components/sections/Footer.astro';
+import GridOverlay from '../components/layout/GridOverlay.astro';
+interface Props { title: string; description?: string; footer?: boolean }
+const { title, description, footer = true } = Astro.props;
+---
+<Base title={`${title} · Robbe Van Aken`} description={description}>
+  <canvas id="r-canvas" aria-hidden="true"></canvas>
+  <Nav withR />
+  <main id="top" class:list={["page", { "page--end": !footer }]}>
+    <slot />
+  </main>
+  {footer && <Footer rStage={false} />}
+  {import.meta.env.DEV && <GridOverlay />}
+</Base>
+
+<script>
+  import '../scripts/eases.js';
+  import { initSmoothScroll } from '../scripts/smooth-scroll.js';
+  import { initReveal } from '../scripts/reveal.js';
+  import { initHighlight } from '../scripts/highlight.js';
+  import { initREngine } from '../scripts/r-journey/engine.js';
+  import { initScrollNext } from '../scripts/scroll-next.js';
+  initSmoothScroll();
+  initREngine();
+  initScrollNext();
+  initReveal();
+  document.fonts.ready.then(initHighlight);
+</script>
+
+<style>
+  .page{min-height:70svh;padding-bottom:var(--space-section)}
+  .page--end{padding-bottom:0}
+</style>

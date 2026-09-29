@@ -22,8 +22,11 @@ export function initREngine() {
     r.addEventListener('focus',()=>hoverQ=q);r.addEventListener('blur',()=>hoverQ=-1)});
 
   const stages=[...document.querySelectorAll('[data-stage]')],SV=stages.map(e=>+e.dataset.stage);
-  const aHero=document.getElementById('a-hero'),aPitch=document.getElementById('a-pitch'),aCraft=document.getElementById('a-craft'),aFoot=document.getElementById('a-foot');
-  const svcSlots=[...document.querySelectorAll('.svc-slot')];
+  // Subpages only have #a-craft (the small R in the header): every missing anchor falls back to it.
+  const aCraft=document.getElementById('a-craft');if(!aCraft)return;
+  const byId=(id)=>document.getElementById(id)||aCraft;
+  const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aFoot=byId('a-foot');
+  const slots=[...document.querySelectorAll('.svc-slot')],svcSlots=slots.length===4?slots:[aCraft,aCraft,aCraft,aCraft];
   const NAMES=['Pixel','Fragment','Craft','Parts','Play'];
   const hudName=document.getElementById('hud-name'),hudBar=document.getElementById('hud-bar');
   function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -170,7 +173,7 @@ export function initREngine() {
     time=ts/1000;const tm=time*motion;
     smx+=(mx-smx)*.06*motion;smy+=(my-smy)*.06*motion;
     rect(aHero,A[0]);A[0].S=Math.min(A[0].h,A[0].w*1.05)*.92;
-    rect(aPitch,A[1]);A[1].S=A[1].h*.8;A[1].cx-=A[1].w*.1;
+    rect(aPitch,A[1]);A[1].S=Math.min(A[1].h*.8,A[1].w*1.15);A[1].cx-=A[1].w*.1;
     rect(aCraft,A[2]);A[2].S=A[2].h*.78;
     for(let q=0;q<4;q++)rect(svcSlots[q],Q[q]);
     rect(aFoot,A[4]);A[4].S=Math.min(A[4].h,A[4].w*1.05)*.9;

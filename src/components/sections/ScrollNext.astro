@@ -1,0 +1,48 @@
+---
+// "Scroll to next project" (Osmo Supply resource in the site's style), driven by src/scripts/scroll-next.js.
+// Keep the data- attributes: the script targets them.
+import Corners from '../ui/Corners.astro';
+import type { Project } from '../../data/projects';
+interface Props { project: Project; label: string }
+const { project, label } = Astro.props;
+---
+<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="scroll-next">
+  <a data-scroll-next-link href={`/work/${project.slug}`} class="scroll-next__inner">
+    <div class="scroll-next__bg">
+      {project.image
+        ? <img src={project.image} alt="" data-scroll-next-bg class="scroll-next__bg-img" />
+        : <div data-scroll-next-bg class="scroll-next__bg-img placeholder" style={`--a:${project.colors.a};--b:${project.colors.b}`}></div>}
+      <div data-scroll-next-overlay class="scroll-next__bg-overlay"></div>
+    </div>
+    <div class="scroll-next__center grid">
+      <div class="scroll-next__title" data-scroll-next-frame>
+        <Corners />
+        <span class="scroll-next__sub t-label">{label}</span>
+        <h2 class="scroll-next__h t-display">{project.title}</h2>
+      </div>
+      <!-- progress: a line across 6 columns; the second line is drawn by the script -->
+      <div class="scroll-next__progres">
+        <svg class="scroll-next__progres-svg" viewBox="0 0 1000 2" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="1" x2="1000" y2="1" stroke="currentColor" stroke-opacity=".3" vector-effect="non-scaling-stroke" />
+          <line x1="0" y1="1" x2="1000" y2="1" stroke="currentColor" vector-effect="non-scaling-stroke" data-scroll-next-path />
+        </svg>
+      </div>
+    </div>
+  </a>
+</section>
+
+<style>
+  .scroll-next{min-height:200vh;position:relative;margin-top:var(--space-section)}
+  .scroll-next__inner{position:sticky;top:0;display:flex;align-items:center;width:100%;height:100vh;height:100dvh;color:inherit;text-decoration:none;overflow:hidden}
+  .scroll-next__bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+  .scroll-next__bg-img{width:100%;height:100%;object-fit:cover}
+  .placeholder{background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
+  .scroll-next__bg-overlay{position:absolute;inset:0;z-index:2;background:var(--bg);opacity:.25}
+  .scroll-next__center{position:relative;z-index:3;width:100%;row-gap:var(--space-l)}
+  /* title block and progress line both span the middle 6 columns */
+  .scroll-next__title{grid-column:4 / span 6;position:relative;display:flex;flex-direction:column;align-items:center;gap:var(--space-s);padding:var(--space-l) var(--space-m);text-align:center;--corner-color:var(--fg);--corner-size:18px;--corner-dur:0s}
+  .scroll-next__sub{color:var(--fg);opacity:.7}
+  .scroll-next__progres{grid-column:4 / span 6;color:var(--fg)}
+  .scroll-next__progres-svg{display:block;width:100%;height:2px;overflow:visible}
+  @media (max-width:1023px){ .scroll-next__title,.scroll-next__progres{grid-column:1 / -1} }
+</style>

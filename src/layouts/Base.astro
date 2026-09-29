@@ -18,5 +18,9 @@ const { title = meta.title, description = meta.description } = Astro.props;
   </head>
   <body>
     <slot />
+    <script>
+      import { initCookieConsent } from '../scripts/cookie-consent.js';
+      initCookieConsent();
+    </script>
   </body>
 </html>

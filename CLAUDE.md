@@ -9,9 +9,19 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - `src/data/` all copy. `site.ts` (per section, in page order), `clients.ts`, `projects.ts`, `services.ts`. Change text here, not in components.
 - `src/components/sections/` one file per page section (Hero, TrustedBy, Pitch, Projects, Services, Footer), each with its own scoped `<style>`.
 - `src/components/ui/` small reusable pieces: Button, Icon (brand arrow, globe), Corners (bracket frame, animatable via `--pull-x/--pull-y/--corner-opacity`), Marquee.
-- `src/components/layout/` Nav (fixed, hides on scroll down / shows on scroll up, full-screen menu below 640px), and dev-only DevHud + GridOverlay.
+- The dev HUD (Glyph/Grid, bottom right) and the grid overlay only render in `npm run dev`, never in the build.
+- `src/components/layout/` Nav (fixed, hides on scroll down / shows on scroll up, full-screen menu below 640px behind a "Menu" toggle with two lines that turn into a cross), and dev-only DevHud + GridOverlay.
 - `src/scripts/` `eases.js`, `smooth-scroll.js` (Lenis on the GSAP ticker; use `scrollToY()` for programmatic scrolls), `reveal.js` (`data-reveal` → `.is-in` once in view), `highlight.js` (Osmo highlight text), `projects-scope.js`, `r-journey/`.
 - `public/clients/` client logos (white SVG, one file per logo).
+
+## Pages
+- `/` home (`src/pages/index.astro`, the only page with the R canvas).
+- `/work`, `/work/<slug>` (one per project, slug in `projects.ts`), `/about`, `/contact`, `/privacy`: empty templates on `src/layouts/Page.astro` (Nav + content + Footer). On subpages the R has one stage: small and calm, centred in the header (`<Nav withR>` renders `#a-craft` there; the engine falls back to `#a-craft` for every anchor a page doesn't have). The footer there has no R stage (`<Footer rStage={false}>`).
+- Project detail pages end in "scroll to next project" (`sections/ScrollNext.astro` + `scripts/scroll-next.js`, Osmo resource in our style: next project's visual full-screen, corners closing in, a 6-column progress line; at 100% it opens the next project). These pages have no footer (`<Page footer={false}>`). Copy in `src/data/pages.ts`; `PageIntro.astro` renders label/title/intro, `ui/Placeholder.astro` marks unwritten content.
+- In the featured projects, clicking the active project (or the caption label) opens its detail page; clicking a side project scrolls it in.
+
+## Cookie consent
+`vanilla-cookieconsent` v3, started from `Base.astro` (all pages) via `src/scripts/cookie-consent.js`; theme in `src/styles/cookieconsent.css`. Categories: necessary + analytics (no analytics script exists yet; load one with `type="text/plain" data-category="analytics"`). Footer "Cookie settings" reopens the preferences (`data-cc="show-preferencesModal"`). The banner is hidden from bots (`hideFromBots`, default), so headless test browsers won't show it unless `navigator.webdriver` is spoofed.
 
 ## Motion
 - Text scramble: only on the project caption label (`01 — TITLE`), when the active project changes (GSAP ScrambleText in `projects-scope.js`). Removed everywhere else on purpose.
@@ -27,7 +37,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 
 ## Layout grid (Figma frame 1440 wide)
 12 columns, 60px margin, 20px gutter at 1440, fluid in vw (tokens `--cols`, `--margin`, `--gutter`). 6 columns below 1024px, 4 below 640px. Every section is a `.grid` and places children with `grid-column`; nested rows use `subgrid`. Press `L` in dev (or the HUD "Grid" button) for the column overlay.
-Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 · projects title 1–5 (lead size), frame 2–11, stepping down to 3–10 / 4–9 on short screens (corners always on column edges, image one gutter inside), next project parked on col 12.
+Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 · projects title 1–5 (lead size), image exactly 6 columns (cols 4–9), 4 columns on short screens, corner brackets one gutter outside; caption always on the 6-column span, next project parked on col 12.
 
 ## Type scale (`tokens.css`, sizes @1440, measured from Figma)
 display 58 · h2 48 · lead 32 · body-l 20 · body 16 · ui 15 · label 12 (uppercase, medium, tracked). Use the `.t-display/.t-h2/.t-lead/.t-body-l/.t-ui/.t-label` classes instead of one-off sizes.
@@ -59,13 +69,15 @@ Tunables worth knowing:
 - `PAL` colour ramp for pixel mode.
 
 ## Projects (`src/scripts/projects-scope.js`)
-Pinned section, continuous (no stepped timeline): one smoothed value `cur` (project index, fractional in between) drives card position/scale/opacity, a small image parallax, the frame "breathing" in between projects, and the caption (label scrambles, description cross-fades). When scrolling stops in between it glides to the nearest project in the scroll direction; clicking a side project brings it in. Sizes come from the grid: hidden rulers `.rcol1/.rcol2` (column + gutter width) and `.pnext` (resting column of the next project) in `Projects.astro`; the frame takes the widest centred span that fits the height with breathing room. `RATIO`/`MAX_RATIO` set the image aspect. Data lives in `src/data/projects.ts`; set `image` to use a real visual.
+Pinned section, continuous (no stepped timeline): one smoothed value `cur` (project index, fractional in between) drives card position/scale/opacity, a small image parallax, the frame "breathing" in between projects, and the caption (label scrambles, description cross-fades). When scrolling stops in between it glides to the nearest project in the scroll direction; clicking a side project brings it in. Sizes come from the grid: hidden rulers `.rcol1/.rcol2` (column + gutter width) and `.pnext` (resting column of the next project) in `Projects.astro`; the image takes the widest centred span (6, else 4 columns) that fits the height with breathing room; on very short screens it shrinks further with a minimum size. `RATIO`/`MAX_RATIO` set the image aspect. Data lives in `src/data/projects.ts`; set `image` to use a real visual.
 
 ## Design rules
+- `::selection` is orange with dark text.
 - Palette tokens in `src/styles/tokens.css` `:root` (dark warm brown `#170e0b`, orange `#ff4a00` accent used sparingly). Text is only ever white `#FFFFFF` (`--fg`) or grey `#B2B2B2` (`--muted`, `.t-muted`), as in Figma.
 - Inter Tight for all type. The R is the one bold element; keep everything around it quiet.
 - Copy: English, sentence case, plain and honest, "not salesy, not slimy". Key line: "Solid code, thoughtful design, genuine care for the craft, and AI where it actually helps. I want to build something we're both proud of. That's the whole pitch."
 - Respect `prefers-reduced-motion` (engine and GSAP already do).
+- Extreme heights: R anchors use `clamp(min, Nvh, max)` heights, the pitch R is also capped by its box width, the projects section tightens its spacing below 700px height.
 
 ## Open work / ideas
 - Replace placeholder projects with real work and imagery; project detail pages + page transitions.

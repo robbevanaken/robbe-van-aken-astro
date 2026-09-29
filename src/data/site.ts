@@ -11,10 +11,10 @@ export const nav = {
   name: 'Robbe Van Aken',
   role: 'Freelance Developer',
   links: [
-    { label: 'Home', href: '#top' },
-    { label: 'Work', href: '#work' },
-    { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Home', href: '/' },
+    { label: 'Work', href: '/work' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
   ],
 };
 
@@ -25,7 +25,7 @@ export const hero = {
     { text: 'Based in Ghent', muted: false },
   ],
   intro: "A one-person studio for full-cycle product development. Pairing a designer's eye with a developer's craft.",
-  cta: { label: 'Get in touch', href: '#contact' },
+  cta: { label: 'Get in touch', href: '/contact' },
   scrollHint: 'Scroll down',
 };
 
@@ -45,7 +45,7 @@ export const pitch = {
 export const work = {
   label: 'Some recent projects',
   title: 'Made with technical expertise, and a well trained eye for design',
-  cta: { label: 'View all projects', href: '#work' },
+  cta: { label: 'View all projects', href: '/work' },
 };
 
 export const servicesIntro = {
@@ -58,4 +58,8 @@ export const footer = {
   company: 'Robbe Van Aken BV',
   location: 'Ghent, Belgium',
   backToTop: 'Back to top',
+  legal: [
+    { label: 'Privacy notice', href: '/privacy' },
+  ],
+  cookieSettings: 'Cookie settings',
 };

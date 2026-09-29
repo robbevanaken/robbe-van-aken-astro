@@ -1,0 +1,71 @@
+/* vanilla-cookieconsent themed to the site. `html #cc-main` outranks the library's own `#cc-main` defaults. */
+html #cc-main{
+  --cc-font-family:var(--font);
+  --cc-z-index:100;
+  --cc-modal-border-radius:0;
+  --cc-btn-border-radius:0;
+  --cc-pm-toggle-border-radius:0;
+  --cc-modal-margin:var(--margin);
+  --cc-modal-transition-duration:.45s;
+
+  --cc-bg:#1d1310;
+  --cc-primary-color:var(--fg);
+  --cc-secondary-color:var(--muted);
+  --cc-link-color:var(--fg);
+  --cc-overlay-bg:rgba(10,6,5,.7);
+  --cc-separator-border-color:var(--line);
+
+  --cc-btn-primary-bg:var(--fg);
+  --cc-btn-primary-color:var(--ink);
+  --cc-btn-primary-border-color:var(--fg);
+  --cc-btn-primary-hover-bg:var(--fg);
+  --cc-btn-primary-hover-color:var(--ink);
+  --cc-btn-primary-hover-border-color:var(--fg);
+  --cc-btn-secondary-bg:transparent;
+  --cc-btn-secondary-color:var(--fg);
+  --cc-btn-secondary-border-color:var(--line-strong);
+  --cc-btn-secondary-hover-bg:transparent;
+  --cc-btn-secondary-hover-color:var(--fg);
+  --cc-btn-secondary-hover-border-color:var(--fg);
+
+  --cc-toggle-on-bg:var(--accent);
+  --cc-toggle-off-bg:var(--line-strong);
+  --cc-toggle-on-knob-bg:var(--fg);
+  --cc-toggle-off-knob-bg:var(--fg);
+  --cc-toggle-enabled-icon-color:var(--accent);
+  --cc-toggle-disabled-icon-color:var(--line-strong);
+  --cc-toggle-readonly-bg:var(--line);
+  --cc-toggle-readonly-knob-bg:var(--subtle);
+  --cc-toggle-readonly-knob-icon-color:var(--line);
+
+  --cc-section-category-border:var(--line);
+  --cc-cookie-category-block-bg:transparent;
+  --cc-cookie-category-block-border:var(--line);
+  --cc-cookie-category-block-hover-bg:rgba(255,255,255,.03);
+  --cc-cookie-category-block-hover-border:var(--line-strong);
+  --cc-cookie-category-expanded-block-bg:transparent;
+  --cc-cookie-category-expanded-block-hover-bg:rgba(255,255,255,.03);
+
+  --cc-footer-bg:#1d1310;
+  --cc-footer-color:var(--muted);
+  --cc-footer-border-color:var(--line);
+  --cc-webkit-scrollbar-bg:var(--line);
+  --cc-webkit-scrollbar-hover-bg:var(--line-strong);
+}
+@media (min-width:640px){ html #cc-main{--cc-modal-margin:20px} }
+/* type + details in the site's language: label-style titles, 1px lines, buttons that scale down like .btn */
+html #cc-main .cm,html #cc-main .pm{border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+html #cc-main .cm__title,html #cc-main .pm__title{font-size:var(--fs-label);font-weight:500;letter-spacing:var(--ls-label);text-transform:uppercase}
+html #cc-main .cm__desc,html #cc-main .pm__section-desc{font-size:15px;line-height:1.45}
+html #cc-main .cm__btn,html #cc-main .pm__btn{font-size:var(--fs-ui);font-weight:400;padding:12px 18px;
+  transition:transform var(--hover-dur) var(--ease-punch),border-color var(--hover-dur) var(--ease-punch),background-color var(--hover-dur) var(--ease-punch),color var(--hover-dur) var(--ease-punch)}
+/* toggles and the close icon move on the same punch ease as the rest of the site */
+html #cc-main .toggle__icon{transition:all var(--hover-dur) var(--ease-punch)}
+html #cc-main .toggle__icon-circle{transition:transform var(--hover-dur) var(--ease-punch),background-color var(--hover-dur) var(--ease-punch)}
+html #cc-main .toggle__icon-on,html #cc-main .toggle__icon-off{transition:opacity var(--hover-dur) var(--ease-punch)}
+html #cc-main .pm__close-btn,html #cc-main .pm__close-btn svg{transition:all var(--hover-dur) var(--ease-punch)}
+html #cc-main .pm__section--toggle,html #cc-main .pm__section-title{transition:background-color var(--hover-dur) var(--ease-punch),border-color var(--hover-dur) var(--ease-punch)}
+html #cc-main .cm__btn:hover,html #cc-main .pm__btn:hover{transform:scale(.96)}
+html #cc-main a,html #cc-main .cc__link{text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px;background:none}
+html #cc-main a,html #cc-main .cc__link{transition:color var(--hover-dur) var(--ease-punch),text-decoration-color var(--hover-dur) var(--ease-punch)}
+html #cc-main a:hover,html #cc-main .cc__link:hover{color:var(--accent);text-decoration-color:var(--accent)}

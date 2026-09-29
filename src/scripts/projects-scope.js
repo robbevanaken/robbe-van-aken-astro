@@ -23,9 +23,9 @@ export function initProjectsScope() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const stage = wrap.querySelector('.pstage'), frame = wrap.querySelector('.pframe');
   const cards = [...wrap.querySelectorAll('.pcard')], imgs = cards.map((c) => c.querySelector('.pimg')), n = cards.length;
-  const col1 = wrap.querySelector('.rcol1'), col2 = wrap.querySelector('.rcol2'), nextCol = wrap.querySelector('.pnext');
-  const capT = document.getElementById('pc-t'), capD = document.getElementById('pc-d'), cnt = document.getElementById('p-count');
-  const PROJ = cards.map((c) => [c.dataset.title, c.dataset.desc]);
+  const col1 = document.querySelector('.rulers .rcol1'), col2 = document.querySelector('.rulers .rcol2'), nextCol = document.querySelector('.rulers .pnext');
+  const capLink = document.getElementById('pc-link'), capT = document.getElementById('pc-t'), capD = document.getElementById('pc-d'), cnt = document.getElementById('p-count');
+  const PROJ = cards.map((c) => [c.dataset.title, c.dataset.desc, c.dataset.href]);
 
   let W = 0, H = 0, sm = .24, side = 0, step = 0;
   let cur = 0, last = -1, shown = 0;
@@ -33,19 +33,23 @@ export function initProjectsScope() {
     const mob = innerWidth < 640, cx = document.documentElement.clientWidth / 2;
     // read the live grid from the rulers (col 1, col 2, last col)
     const c1 = col1.getBoundingClientRect(), c2 = col2.getBoundingClientRect();
-    const colW = c1.width, gutter = c2.left - c1.right;
+    const colW = c1.width, gutter = c2.left - c1.right > 0 ? c2.left - c1.right : 12, margin = c1.left;
     const cols = parseInt(getComputedStyle(wrap).getPropertyValue('--cols'), 10) || 12;
-    // breathing room between the frame and the R above / the caption below
-    const breath = clamp(innerHeight * .05, 24, 56);
+    const maxW = document.documentElement.clientWidth - 2 * margin; // never wider than the content area
+    // the image spans whole columns (6 on wide screens, 4 when the screen is too short), centred on the grid;
+    // the corner brackets sit one gutter outside it
+    const spans = (cols >= 6 ? [6, 4] : [4]);
+    const spanW = (n) => Math.min(n * colW + (n - 1) * gutter, maxW);
+    // the caption always spans the widest column span, so it keeps its width even when the image has to shrink
+    wrap.style.setProperty('--mw', spanW(spans[0]) + 'px');
+    // breathing room between the frame and the R above / the caption below (tighter on very short screens)
+    const breath = innerHeight < 700 ? 12 : mob ? clamp(innerHeight * .06, 32, 64) : clamp(innerHeight * .05, 24, 56);
     stage.style.marginBlock = gutter + breath + 'px';
     const cs = getComputedStyle(wrap);
-    const avail = innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
-      - wrap.querySelector('.phead').offsetHeight - wrap.querySelector('.pfoot').offsetHeight - 2 * (gutter + breath);
-    // pick the widest centred column span that still fits the height, so the corners always land on column edges
-    const spans = (cols >= 12 ? [10, 8, 6] : cols >= 6 ? [6, 4] : [4]);
-    const spanW = (n) => n * colW + (n - 1) * gutter - 2 * gutter; // image sits one gutter inside the frame columns
-    let span = spans.find((n) => spanW(n) / avail <= MAX_RATIO) || spans[spans.length - 1];
-    W = Math.max(200, Math.min(spanW(span), avail * MAX_RATIO));
+    const avail = Math.max(180, innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
+      - wrap.querySelector('.phead').offsetHeight - wrap.querySelector('.pfoot').offsetHeight - 2 * (gutter + breath));
+    const span = spans.find((n) => spanW(n) / avail <= MAX_RATIO) || spans[spans.length - 1];
+    W = Math.max(160, Math.min(spanW(span), avail * MAX_RATIO));
     H = Math.min(W / RATIO, avail);
     sm = mob ? .3 : .24;
     const smW = W * sm;
@@ -53,14 +57,13 @@ export function initProjectsScope() {
     step = smW + gutter;
     cards.forEach((c) => { c.style.width = W + 'px'; c.style.height = H + 'px'; });
     stage.style.height = H + 'px';
-    wrap.style.setProperty('--mw', W + 'px');
     last = -1; // force a redraw
   }
 
   const st = ScrollTrigger.create({
     trigger: wrap, pin: true, start: 'top top',
     end: () => '+=' + Math.round(innerHeight * .85 * (n - 1)),
-    invalidateOnRefresh: true, onRefreshInit: dims,
+    invalidateOnRefresh: true, onRefreshInit: dims, onRefresh: dims,
   });
 
   function render() {
@@ -94,6 +97,7 @@ export function initProjectsScope() {
     if (idx !== shown) {
       shown = idx;
       capD.textContent = PROJ[idx][1];
+      capLink.href = PROJ[idx][2];
       cnt.textContent = pad(idx + 1);
       const text = pad(idx + 1) + ' — ' + PROJ[idx][0];
       if (reduce) capT.textContent = text;
@@ -111,6 +115,6 @@ export function initProjectsScope() {
     const p = st.progress * (n - 1), i = clamp(st.direction > 0 ? Math.floor(p + .75) : Math.ceil(p - .75), 0, n - 1);
     if (Math.abs(p - i) > .01) scrollToY(yFor(i), .8);
   });
-  // clicking a side project brings it into the frame
-  cards.forEach((c, i) => c.addEventListener('click', () => { if (i !== Math.round(cur)) scrollToY(yFor(i), 1.1); }));
+  // clicking a side project brings it into the frame, clicking the active one opens its page
+  cards.forEach((c, i) => c.addEventListener('click', () => { if (i !== Math.round(cur)) scrollToY(yFor(i), 1.1); else location.href = c.dataset.href; }));
 }

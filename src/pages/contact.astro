@@ -1,0 +1,16 @@
+---
+import Page from '../layouts/Page.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import { contactPage as p } from '../data/pages';
+import { meta } from '../data/site';
+---
+<Page title="Contact">
+  <PageIntro label={p.label} title={p.title} intro={p.intro}>
+    <a class="mail-link t-lead" href={`mailto:${meta.email}`}>{meta.email}</a>
+  </PageIntro>
+</Page>
+
+<style>
+  .mail-link{grid-column:1 / -1;justify-self:start;text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:6px;transition:color var(--hover-dur) var(--ease-punch),border-color var(--hover-dur) var(--ease-punch)}
+  .mail-link:hover{color:var(--accent);border-color:var(--accent)}
+</style>

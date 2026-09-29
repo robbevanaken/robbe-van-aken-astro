@@ -17,8 +17,8 @@ import { pitch } from '../../data/site';
 
 <style>
   /* R on cols 1–6, text on cols 7–12, portrait on cols 7–9 */
-  .pitch{padding-block:var(--space-section);min-height:110vh}
-  .r-anchor{grid-column:1 / span 6;grid-row:1;height:92vh;align-self:center}
+  .pitch{padding-block:var(--space-section);min-height:clamp(640px,110vh,1300px)}
+  .r-anchor{grid-column:1 / span 6;grid-row:1;height:clamp(420px,92vh,1100px);align-self:center}
   .body{grid-column:7 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-content:start}
   .quote{grid-column:1 / -1}
   .quote :global(.arrow){color:var(--accent);width:.75em;height:.625em;margin-right:.5em;vertical-align:.02em}
@@ -27,7 +27,7 @@ import { pitch } from '../../data/site';
 
   @media (max-width:1023px){
     .pitch{min-height:0}
-    .r-anchor{grid-column:1 / -1;grid-row:2;height:46vh}
+    .r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(260px,46vh,560px)}
     .body{grid-column:1 / -1}
     .portrait{grid-column:1 / span 3}
   }

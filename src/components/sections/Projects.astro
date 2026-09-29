@@ -10,18 +10,18 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <section class="pintro grid" id="work">
   <p class="label t-label"><Icon name="arrow" class="arrow" />{work.label}</p>
   <h2 class="title t-lead" data-highlight-text>{work.title}</h2>
+  <!-- invisible grid rulers (outside the pinned section, so pinning never distorts them): the script reads the live grid from these, sizes the image to a centred column span
+       (6 columns = cols 4–9, or 4 columns when the screen is short) and parks the next project on the last column -->
+  <div class="rulers grid" aria-hidden="true"><i class="rcol1"></i><i class="rcol2"></i><i class="pnext"></i></div>
 </section>
 
 <!-- Pinned "scope" section, driven by src/scripts/projects-scope.js (class names are JS hooks). -->
 <section class="pwrap" data-stage="2" aria-label="Featured projects">
   <div class="phead"><div class="r-slot" id="a-craft"></div></div>
-  <!-- invisible grid rulers: the script reads the live grid from these, sizes the frame to a centred column span
-       (cols 2–11, or 3–10 / 4–9 when the screen is short) and parks the next project on the last column -->
-  <div class="grid rulers" aria-hidden="true"><i class="rcol1"></i><i class="rcol2"></i><i class="pnext"></i></div>
   <div class="pstage">
     <div class="pframe" aria-hidden="true"><Corners /></div>
     {projects.map((p) => (
-      <article class="pcard" aria-label={p.title} data-title={p.title} data-desc={p.description}>
+      <article class="pcard" aria-label={p.title} data-title={p.title} data-desc={p.description} data-href={`/work/${p.slug}`}>
         <div class="pmedia">
           {p.image
             ? <img class="pimg" src={p.image} alt="" />
@@ -32,7 +32,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   </div>
   <div class="pfoot">
     <div class="pcap" aria-live="polite">
-      <small class="t-label" id="pc-t">01 — {first.title}</small>
+      <a class="pc-link" id="pc-link" href={`/work/${first.slug}`}><small class="t-label" id="pc-t">01 — {first.title}</small></a>
       <p class="t-body-l" id="pc-d">{first.description}</p>
     </div>
     <div class="pside">
@@ -44,7 +44,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 <style>
   /* intro: label + title on cols 1–6 */
-  .pintro{padding-top:var(--space-section);padding-bottom:var(--space-l)}
+  .pintro{position:relative;padding-top:var(--space-section);padding-bottom:var(--space-l)}
   .label{display:flex;gap:var(--space-xs);align-items:center;color:var(--muted);margin-bottom:var(--space-m)}
   .label :global(.arrow){color:var(--accent);font-size:14px}
   .title{grid-column:1 / span 5;line-height:var(--lh-heading)}
@@ -52,7 +52,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .pwrap{height:100svh;display:flex;flex-direction:column;justify-content:center;padding:3vh 0 clamp(40px,9vh,110px);overflow:hidden;position:relative;background:var(--bg)}
   .phead{display:flex;justify-content:center}
   .r-slot{width:56px;height:56px}
-  .rulers{position:absolute;left:0;right:0;top:0;height:0;visibility:hidden}
+  .rulers{position:absolute;grid-column:auto;left:0;right:0;bottom:0;height:0;visibility:hidden} /* grid-column:auto: positioned against the section edges, not a grid area */
   .rcol1{grid-column:1}
   .rcol2{grid-column:2}
   .pnext{grid-column:-2 / -1}
@@ -65,7 +65,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
     background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
   .pfoot{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-m);margin:0 auto;width:var(--mw,62vw)}
+  .pc-link{text-decoration:none}
   .pcap small{color:var(--fg)}
+  .pc-link:hover small{color:var(--accent)}
   .pcap p{margin-top:var(--space-2xs);color:var(--muted);max-width:34em}
   .pside{display:flex;align-items:center;gap:var(--space-s);flex:none}
   .pcount{color:var(--muted)}
@@ -73,6 +75,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   @media (max-width:1023px){
     .title{grid-column:1 / -1}
-    .pfoot{flex-direction:column;align-items:flex-start;gap:var(--space-s)}
+    .pfoot{flex-direction:column;align-items:flex-start;gap:var(--space-m)}
   }
 </style>

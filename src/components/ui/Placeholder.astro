@@ -1,0 +1,11 @@
+---
+// Empty content block for pages that are not written yet.
+interface Props { text?: string }
+const { text = 'Content coming soon' } = Astro.props;
+---
+<div class="ph grid"><div class="box t-label">{text}</div></div>
+
+<style>
+  .ph{margin-top:var(--space-xl)}
+  .box{grid-column:1 / -1;display:grid;place-items:center;min-height:clamp(240px,40vh,480px);border:1px dashed var(--line-strong);color:var(--subtle)}
+</style>
