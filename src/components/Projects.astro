@@ -1,0 +1,27 @@
+---
+import Button from './Button.astro';
+import { projects } from '../data/projects';
+const first = projects[0];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<section class="pintro" id="work">
+    <p class="plabel"><svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 7h11M7 2l5 5-5 5"/></svg>Some recent projects</p>
+    <h2>Made with <span>technical expertise,</span> and a well trained <span>eye for design</span></h2>
+  </section>
+<section class="pwrap" data-stage="2" aria-label="Featured projects">
+  <div class="phead"><div class="r-slot" id="a-craft"></div></div>
+  <div class="pstage">
+    <div class="pframe brk" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    {projects.map((p) => (
+      <article class="pcard" aria-label={p.title} data-title={p.title} data-desc={p.description}>
+        {p.image
+          ? <img class="pimg" src={p.image} alt="" style="object-fit:cover" />
+          : <div class="pimg" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`}>{p.label}</div>}
+      </article>
+    ))}
+  </div>
+  <div class="pfoot">
+    <div class="pcap" aria-live="polite"><small id="pc-t">01, {first.title}</small><p id="pc-d">{first.description}</p></div>
+    <div class="pside"><span class="pcount"><b id="p-count">01</b> / {pad(projects.length)}</span><Button href="#work">View all projects</Button></div>
+  </div>
+</section>

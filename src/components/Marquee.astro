@@ -1,0 +1,12 @@
+---
+interface Props { text?: string }
+const { text = 'Now booking projects worldwide' } = Astro.props;
+const items = Array.from({ length: 16 });
+---
+<div class="marquee" aria-label={text}>
+  <div class="track" aria-hidden="true">
+    {items.map(() => (
+      <span>{text} <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/></svg></span>
+    ))}
+  </div>
+</div>

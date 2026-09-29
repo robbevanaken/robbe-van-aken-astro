@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Marquee from '../components/Marquee.astro';
+import Pitch from '../components/Pitch.astro';
+import Projects from '../components/Projects.astro';
+import Services from '../components/Services.astro';
+import Footer from '../components/Footer.astro';
+import DevHud from '../components/DevHud.astro';
+---
+<Base>
+  <canvas id="r-canvas" aria-hidden="true"></canvas>
+  <Nav />
+  <main id="top">
+    <Hero />
+    <Marquee />
+    <Pitch />
+    <Projects />
+    <Services />
+  </main>
+  <Footer />
+  {import.meta.env.DEV && <DevHud />}
+</Base>
+
+<script>
+  import { initProjectsScope } from '../scripts/projects-scope.js';
+  import { initREngine } from '../scripts/r-journey/engine.js';
+  initProjectsScope();
+  initREngine();
+</script>
