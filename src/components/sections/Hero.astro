@@ -1,0 +1,39 @@
+---
+import Button from '../ui/Button.astro';
+import { hero } from '../../data/site';
+---
+<section class="hero grid" data-stage="0">
+  <h1 class="title t-display" data-scramble="load">
+    {hero.title.map((l) => <span class:list={['line', { 't-muted': l.muted }]}>{l.text}</span>)}
+  </h1>
+  <!-- R anchor: the engine centres the big R on this box -->
+  <div class="r-slot"><div class="r-anchor" id="a-hero"></div></div>
+  <div class="side">
+    <p class="t-body-l">{hero.intro}</p>
+    <Button href={hero.cta.href}>{hero.cta.label}</Button>
+  </div>
+  <div class="scroll t-label">{hero.scrollHint}</div>
+</section>
+
+<style>
+  /* One row: title (cols 1–4), R (cols 5–8), intro (cols 10–12). Title and intro share a top line. */
+  .hero{position:relative;min-height:100svh;align-content:center;grid-template-rows:auto;padding-block:calc(var(--space-xl) + var(--nav-top)) var(--space-xl)}
+  .title{grid-column:1 / span 4;grid-row:1}
+  .line{display:block;white-space:nowrap}
+  .r-slot{grid-column:5 / span 4;grid-row:1;position:relative}
+  .r-anchor{position:absolute;left:0;right:0;top:50%;height:62vh;transform:translateY(-50%)}
+  .side{grid-column:10 / span 3;grid-row:1;display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-m)}
+  .side p{color:var(--muted)}
+  .scroll{position:absolute;grid-column:1;left:0;bottom:var(--space-l);display:flex;align-items:flex-end;gap:var(--space-s);text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)}
+  .scroll::before{content:"";width:1px;height:90px;background:var(--line-strong)}
+
+  @media (max-width:1023px){
+    .hero{grid-template-rows:auto 40vh auto;row-gap:var(--space-l)}
+    .title{grid-column:1 / -1}
+    .r-slot{grid-column:1 / -1;grid-row:2}
+    .r-anchor{height:100%}
+    .side{grid-column:1 / span 4;grid-row:3}
+    .scroll{display:none}
+  }
+  @media (max-width:639px){ .side{grid-column:1 / -1} }
+</style>

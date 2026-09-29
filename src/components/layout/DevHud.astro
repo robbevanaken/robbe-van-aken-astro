@@ -1,0 +1,16 @@
+<!-- Dev only: shows the R state, toggles Glyph/Pixels (G) and the layout grid (L). -->
+<div class="hud" aria-live="polite">
+  <button type="button" id="mode" class="mode">Glyph</button>
+  <button type="button" id="grid-toggle" class="mode off">Grid</button>
+  R state: <b id="hud-name">Pixel</b>
+  <div class="bar"><i id="hud-bar"></i></div>
+</div>
+
+<style>
+  .hud{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;font-size:11px;background:rgba(23,14,11,.8);border:1px solid var(--line);padding:8px 10px;color:var(--muted);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  .hud b{color:var(--fg);font-weight:500}
+  .mode{font:inherit;font-size:11px;background:var(--fg);color:var(--ink);border:1px solid var(--fg);padding:2px 7px;margin-right:4px;cursor:pointer}
+  .mode.off{background:none;color:var(--fg);border-color:var(--line-strong)}
+  .bar{height:2px;background:var(--line);margin-top:6px;position:relative}
+  .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);width:0}
+</style>

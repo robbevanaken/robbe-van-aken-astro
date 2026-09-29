@@ -1,0 +1,47 @@
+---
+import Marquee from '../ui/Marquee.astro';
+import { footer, meta } from '../../data/site';
+---
+<footer class="foot" id="contact" data-stage="4">
+  <Marquee />
+  <div class="main grid">
+    <div class="cta">
+      <h2 class="t-display" data-scramble="scroll">{footer.title}</h2>
+      <a class="mail t-lead" href={`mailto:${meta.email}`}>{meta.email}</a>
+    </div>
+    <div class="r-anchor" id="a-foot"></div>
+  </div>
+  <div class="bottom grid t-ui">
+    <span class="company">{footer.company}</span>
+    <span class="location">{footer.location}</span>
+    <a class="top" href="#top">{footer.backToTop}</a>
+  </div>
+</footer>
+
+<style>
+  /* title cols 1–6, R cols 7–12 */
+  .foot{min-height:100svh;display:flex;flex-direction:column}
+  .main{flex:1;align-items:center;padding-block:var(--space-xl)}
+  .cta{grid-column:1 / span 6;grid-row:1}
+  h2{max-width:12ch}
+  .mail{display:inline-block;margin-top:var(--space-m);text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:4px;transition:color .2s,border-color .2s}
+  .mail:hover{color:var(--accent);border-color:var(--accent)}
+  .r-anchor{grid-column:7 / -1;grid-row:1;height:68vh}
+  .bottom{padding-block:var(--space-s) calc(var(--space-s) + env(safe-area-inset-bottom,0px));color:var(--muted);border-top:1px solid var(--line)}
+  .company{grid-column:1 / span 3}
+  .location{grid-column:4 / span 3}
+  .top{grid-column:-4 / -1;justify-self:end;text-decoration:none}
+  .top:hover{color:var(--fg)}
+
+  @media (max-width:1023px){
+    .cta{grid-column:1 / -1}
+    .r-anchor{grid-column:1 / -1;grid-row:2;height:38vh}
+    .company{grid-column:1 / span 2}
+    .location{grid-column:3 / span 2}
+    .top{grid-column:5 / -1}
+  }
+  @media (max-width:639px){
+    .bottom{row-gap:var(--space-2xs);padding-block:var(--space-m) calc(var(--space-m) + env(safe-area-inset-bottom,0px))}
+    .company,.location,.top{grid-column:1 / -1;justify-self:start}
+  }
+</style>

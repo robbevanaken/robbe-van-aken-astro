@@ -1,0 +1,19 @@
+/* Layout grid. Every section is a .grid; children place themselves with grid-column.
+   Columns: 12 (desktop), 6 (< 1024), 4 (< 640). See tokens.css. */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(var(--cols),minmax(0,1fr));
+  column-gap:var(--gutter);
+  padding-inline:var(--margin);
+}
+.grid > *{grid-column:1 / -1}
+
+/* Dev overlay, toggled with L (or the HUD). Mirrors .grid exactly. */
+.grid-overlay{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  display:none;
+}
+.grid-overlay.is-on{display:grid}
+.grid-overlay span{grid-column:auto;background:rgba(255,79,0,.08);border-inline:1px solid rgba(255,79,0,.18)}
+@media (max-width:1023px){ .grid-overlay span:nth-child(n+7){display:none} }
+@media (max-width:639px){ .grid-overlay span:nth-child(n+5){display:none} }

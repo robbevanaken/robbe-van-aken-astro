@@ -1,62 +1,105 @@
-// Featured projects: a pinned, scrubbed GSAP timeline that always settles on a project.
-// Like a scope picking a new target: the current project and the frame shrink,
-// the row slides until the next project sits in the small frame, then it grows.
+// Featured projects: a pinned section where scrolling moves a continuous row of projects through a fixed "scope" frame.
+// One smoothed value (cur = project index, fractional between projects) drives everything each frame:
+//   - cards: position, scale and opacity from their distance to cur (neighbour rests on the .pnext column)
+//   - images: a small horizontal parallax inside each card
+//   - frame: breathes in between projects, locks back on when a project is centred
+//   - caption: label scrambles to the new project, description cross-fades
+// When scrolling stops between two projects it glides to the nearest one.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import { scrollToY } from './smooth-scroll.js';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
+
+const RATIO = 1.37, MAX_RATIO = 1.9; // image aspect (w/h) as in Figma; on short screens it may widen up to MAX_RATIO
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+const smooth = (t) => t * t * (3 - 2 * t);
+const pad = (n) => String(n).padStart(2, '0');
 
 export function initProjectsScope() {
-  const motion = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1;
-    const wrap=document.querySelector('.pwrap');if(!wrap)return;
-    const stage=wrap.querySelector('.pstage'),frame=wrap.querySelector('.pframe'),cards=[...wrap.querySelectorAll('.pcard')],n=cards.length;
-    const PROJ=cards.map(c=>[c.dataset.title,c.dataset.desc]);
-    const capT=document.getElementById('pc-t'),capD=document.getElementById('pc-d'),cap=wrap.querySelector('.pcap'),cnt=document.getElementById('p-count');
-    let mainW,mainH,sm,gap,side;
-    function dims(){
-      const mob=innerWidth<760;
-      const avail=innerHeight*.9-wrap.querySelector('.phead').offsetHeight-wrap.querySelector('.pfoot').offsetHeight-(mob?40:56);
-      mainW=Math.max(200,Math.min(innerWidth*(mob?.88:.68),mob?9999:1040,avail*1.6));mainH=mainW/1.6;sm=mob?.3:.24;gap=mainW*sm+26;side=mainW/2+44+mainW*sm/2;
-      cards.forEach(c=>{c.style.width=mainW+'px';c.style.height=mainH+'px'});stage.style.height=mainH+'px';wrap.style.setProperty('--mw',mainW+'px');
-    }
-    dims();
-    const restX=(i,k)=>{const d=i-k;return d===0?0:Math.sign(d)*(side+(Math.abs(d)-1)*gap)};
-    const zoomX=(i,k)=>(i-k)*gap;
-    const REST=.4,SHRINK=1,SLIDE=.9,GROW=1,STEP=SHRINK+SLIDE+GROW+REST;
-    let shown=0;
-    function caption(time){
-      const f=time/STEP,idx=clamp(Math.round(f),0,n-1),dist=Math.abs(f-idx);
-      cap.style.opacity=clamp(1-(dist-.06)*5,0,1);
-      if(idx!==shown){shown=idx;capT.textContent=String(idx+1).padStart(2,'0')+', '+PROJ[idx][0];capD.textContent=PROJ[idx][1];cnt.textContent=String(idx+1).padStart(2,'0')}
-    }
-    ScrollTrigger.addEventListener('refreshInit',dims);
-    gsap.set(frame,{xPercent:-50,yPercent:-50,width:()=>mainW,height:()=>mainH});
-    cards.forEach((c,i)=>gsap.set(c,{xPercent:-50,yPercent:-50,x:()=>restX(i,0),scale:i===0?1:sm,opacity:i===0?1:.4,zIndex:i===0?2:1}));
-    const tl=gsap.timeline({defaults:{ease:'power2.inOut'},onUpdate:()=>caption(tl.time()),scrollTrigger:{
-      trigger:wrap,pin:true,start:'top top',end:()=>'+='+Math.round(innerHeight*.9*(n-1)),invalidateOnRefresh:true,
-      scrub:motion?.45:true,
-      snap:{snapTo:'labelsDirectional',duration:{min:.25,max:.7},delay:.04,ease:'power1.inOut',inertia:false}}});
-    tl.addLabel('p0',0);
-    for(let k=0;k<n-1;k++){
-      const t=k*STEP+REST/2,next=k+1;
-      // 1. zoom out: the frame and the current project shrink, the row closes in
-      tl.to(frame,{width:()=>mainW*sm,height:()=>mainH*sm,duration:SHRINK},t);
-      cards.forEach((c,i)=>tl.to(c,{x:()=>zoomX(i,k),scale:sm,opacity:i===k?1:.55,duration:SHRINK},t));
-      // 2. retarget: the row slides until the next project sits in the small frame
-      cards.forEach((c,i)=>tl.to(c,{x:()=>zoomX(i,next),opacity:i===next?1:.55,zIndex:i===next?2:1,duration:SLIDE,ease:'power3.inOut'},t+SHRINK));
-      // 3. lock on: the new project and the frame grow back to full size
-      tl.to(frame,{width:()=>mainW,height:()=>mainH,duration:GROW},t+SHRINK+SLIDE);
-      cards.forEach((c,i)=>tl.to(c,{x:()=>restX(i,next),scale:i===next?1:sm,opacity:i===next?1:.4,duration:GROW},t+SHRINK+SLIDE));
-      tl.addLabel('p'+next,(k+1)*STEP);
-    }
-    tl.to({},{duration:REST/2},(n-1)*STEP-REST/2);
-    // scrolling scrubs the animation (fast scrolls stay smooth), and it always settles on a project:
-    // snapping handles the normal case, this safety net catches any stop between two projects
-    ScrollTrigger.addEventListener('scrollEnd',()=>{
-      const st=tl.scrollTrigger;if(!st||!st.isActive)return;
-      const k=n-1,x=st.progress*k,r=clamp(st.direction>0?Math.ceil(x-.02):Math.floor(x+.02),0,k);
-      if(Math.abs(x-r)>.004)window.scrollTo({top:st.start+(st.end-st.start)*r/k,behavior:motion?'smooth':'auto'});
+  const wrap = document.querySelector('.pwrap');
+  if (!wrap) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stage = wrap.querySelector('.pstage'), frame = wrap.querySelector('.pframe');
+  const cards = [...wrap.querySelectorAll('.pcard')], imgs = cards.map((c) => c.querySelector('.pimg')), n = cards.length;
+  const measure = wrap.querySelector('.pmeasure'), nextCol = wrap.querySelector('.pnext');
+  const capT = document.getElementById('pc-t'), capD = document.getElementById('pc-d'), cnt = document.getElementById('p-count');
+  const PROJ = cards.map((c) => [c.dataset.title, c.dataset.desc]);
+
+  let W = 0, H = 0, sm = .24, side = 0, step = 0;
+  let cur = 0, last = -1, shown = 0;
+  function dims() {
+    const mob = innerWidth < 640, gutter = parseFloat(getComputedStyle(wrap).getPropertyValue('--gutter')) || 20;
+    const avail = innerHeight * .9 - wrap.querySelector('.phead').offsetHeight - wrap.querySelector('.pfoot').offsetHeight - 2 * gutter - (mob ? 40 : 56);
+    const m = measure.getBoundingClientRect(), cx = innerWidth / 2;
+    // the image sits one gutter inside the frame columns, so the corner brackets land on the column edges
+    W = Math.max(200, Math.min(m.width - 2 * gutter, avail * MAX_RATIO));
+    H = Math.min(W / RATIO, avail);
+    sm = mob ? .3 : .24;
+    const smW = W * sm;
+    side = Math.max(nextCol.getBoundingClientRect().left - cx + smW / 2, W / 2 + gutter * 2 + smW / 2);
+    step = smW + gutter;
+    cards.forEach((c) => { c.style.width = W + 'px'; c.style.height = H + 'px'; });
+    stage.style.height = H + 'px';
+    wrap.style.setProperty('--mw', W + 'px');
+    last = -1; // force a redraw
+  }
+
+  const st = ScrollTrigger.create({
+    trigger: wrap, pin: true, start: 'top top',
+    end: () => '+=' + Math.round(innerHeight * .85 * (n - 1)),
+    invalidateOnRefresh: true, onRefreshInit: dims,
+  });
+
+  function render() {
+    const target = st.progress * (n - 1);
+    cur = reduce ? target : cur + (target - cur) * .18;
+    if (Math.abs(target - cur) < 1e-4) cur = target;
+    if (cur === last) return;
+    last = cur;
+
+    cards.forEach((c, i) => {
+      const d = i - cur, a = Math.abs(d), e = smooth(Math.min(a, 1));
+      const x = Math.sign(d) * (a <= 1 ? e * side : side + (a - 1) * step);
+      const s = 1 - (1 - sm) * e;
+      c.style.transform = `translate3d(calc(-50% + ${x.toFixed(2)}px),-50%,0) scale(${s.toFixed(4)})`;
+      c.style.opacity = (1 - .55 * e).toFixed(3);
+      c.style.zIndex = a < .5 ? 2 : 1;
+      if (!reduce) imgs[i].style.transform = `translate3d(${(clamp(d, -1.5, 1.5) * -7).toFixed(2)}%,0,0) scale(1.14)`;
     });
-    caption(0);
+
+    // frame breathes in between projects (0 when a project is centred, 1 halfway)
+    const f = cur - Math.floor(cur), bump = Math.sin(Math.PI * f);
+    const fs = 1 - .12 * bump;
+    frame.style.width = W * fs + 'px';
+    frame.style.height = H * fs + 'px';
+
+    // caption: description fades out towards the halfway point, swaps, fades back in
+    const idx = clamp(Math.round(cur), 0, n - 1), dist = Math.abs(cur - idx);
+    const o = 1 - smooth(clamp((dist - .08) / .3, 0, 1));
+    capD.style.opacity = o.toFixed(3);
+    capD.style.transform = `translate3d(0,${((1 - o) * 12).toFixed(2)}px,0)`;
+    if (idx !== shown) {
+      shown = idx;
+      capD.textContent = PROJ[idx][1];
+      cnt.textContent = pad(idx + 1);
+      const text = pad(idx + 1) + ' — ' + PROJ[idx][0];
+      if (reduce) capT.textContent = text;
+      else gsap.to(capT, { duration: .7, overwrite: true, scrambleText: { text, chars: 'upperCase', speed: .9 } });
+    }
+  }
+  dims();
+  gsap.ticker.add(render);
+
+  // settle: glide to the nearest project once scrolling stops in between
+  const yFor = (i) => st.start + (st.end - st.start) * i / (n - 1);
+  ScrollTrigger.addEventListener('scrollEnd', () => {
+    if (!st.isActive) return;
+    // direction-aware: a quarter of the way is enough to continue to the next project
+    const p = st.progress * (n - 1), i = clamp(st.direction > 0 ? Math.floor(p + .75) : Math.ceil(p - .75), 0, n - 1);
+    if (Math.abs(p - i) > .01) scrollToY(yFor(i), .8);
+  });
+  // clicking a side project brings it into the frame
+  cards.forEach((c, i) => c.addEventListener('click', () => { if (i !== Math.round(cur)) scrollToY(yFor(i), 1.1); }));
 }

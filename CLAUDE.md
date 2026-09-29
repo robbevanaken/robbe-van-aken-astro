@@ -3,7 +3,29 @@
 Personal site for Robbe Van Aken, a freelance developer (Craft CMS, Laravel) with a background in design, based in Ghent. It replaces the old Booold brand. Goal: an Awwwards Site of the Day. Development leads the positioning, branding is offered more quietly, and copy should never suggest he works strictly alone (he brings in people on bigger projects).
 
 ## Stack
-Astro (static), plain JS modules, GSAP + ScrollTrigger. No framework components. `npm run dev` / `npm run build`.
+Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) + Lenis. No framework components. `npm run dev` / `npm run build`.
+
+## File structure
+- `src/data/` all copy. `site.ts` (per section, in page order), `clients.ts`, `projects.ts`, `services.ts`. Change text here, not in components.
+- `src/components/sections/` one file per page section (Hero, TrustedBy, Pitch, Projects, Services, Footer), each with its own scoped `<style>`.
+- `src/components/ui/` small reusable pieces: Button, Icon (brand arrow, globe), Corners (bracket frame, animatable via `--pull-x/--pull-y/--corner-opacity`), Marquee.
+- `src/components/layout/` Nav (fixed, hides on scroll down / shows on scroll up, full-screen menu below 640px), and dev-only DevHud + GridOverlay.
+- `src/scripts/` `smooth-scroll.js` (Lenis on the GSAP ticker; use `scrollToY()` for programmatic scrolls), `reveal.js` (`data-reveal` → `.is-in` once in view), `scramble.js` (Osmo text scramble, see below), `projects-scope.js`, `r-journey/`.
+- `public/clients/` client logos (white SVG, one file per logo).
+
+## Motion
+- Text scramble (Osmo Supply resource, kept as delivered, GSAP ScrambleText + SplitText): `data-scramble="load"` (hero title), `data-scramble="scroll"` (labels + section titles), `data-scramble-hover="link"` + `data-scramble-hover="target"` (nav links, buttons). Runs after `document.fonts.ready`.
+- Button hover: brand arrow turns from 45° to 0°, four corner brackets slide out of the button's corners.
+- Trusted by: corners start around the logo and move apart to the cell edges, then the logo fades in (staggered).
+- Everything is off or instant with `prefers-reduced-motion`.
+- `src/styles/` `tokens.css` (colours, grid, type scale, spacing), `base.css` (reset + `.t-*` type classes), `grid.css` (`.grid` + overlay). `global.css` only imports them.
+
+## Layout grid (Figma frame 1440 wide)
+12 columns, 60px margin, 20px gutter at 1440, fluid in vw (tokens `--cols`, `--margin`, `--gutter`). 6 columns below 1024px, 4 below 640px. Every section is a `.grid` and places children with `grid-column`; nested rows use `subgrid`. Press `L` in dev (or the HUD "Grid" button) for the column overlay.
+Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 · projects title 1–6, frame 3–10 (corners on the column edges, image one gutter inside), next project parked on col 12.
+
+## Type scale (`tokens.css`, sizes @1440, measured from Figma)
+display 58 · h2 48 · lead 32 · body-l 20 · body 16 · ui 15 · label 12 (uppercase, medium, tracked). Use the `.t-display/.t-h2/.t-lead/.t-body-l/.t-ui/.t-label` classes instead of one-off sizes.
 
 ## The core idea: one R that travels
 A blackletter R (source: `public/R.svg`, path in `src/scripts/r-journey/r-shape.js`) is sampled into particles once and then moves through the whole page on a fixed full-screen canvas (`#r-canvas`). It is one object throughout; nothing is swapped.
@@ -13,7 +35,7 @@ States are defined by elements with `data-stage` (the engine blends between them
 | stage | section | what the R does | anchor element |
 |---|---|---|---|
 | 0 | Hero | big, extruded 3D, tumbles with the mouse | `#a-hero` |
-| 1 | Pitch | "exploded view": fragments slightly apart, still readable | `#a-pitch` |
+| 1 | Pitch (`#about`) | "exploded view": fragments slightly apart, still readable | `#a-pitch` |
 | 2 | Projects (pinned) | small and calm at the top center | `#a-craft` |
 | 3 | Services | splits in 4 quarters that rebuild into 3D icons | `.svc-slot` (4x) |
 | 4 | Footer | big again, pixels get pushed away by the cursor | `#a-foot` |
@@ -32,10 +54,10 @@ Tunables worth knowing:
 - `PAL` colour ramp for pixel mode.
 
 ## Projects (`src/scripts/projects-scope.js`)
-Pinned, scrubbed GSAP timeline. Each step works like a scope retargeting: current project + frame corners shrink, the row slides until the next project sits in the small frame, then it grows. Always settles on a project (label snapping + a `scrollEnd` safety net). Data lives in `src/data/projects.ts`; set `image` to use a real visual.
+Pinned section, continuous (no stepped timeline): one smoothed value `cur` (project index, fractional in between) drives card position/scale/opacity, a small image parallax, the frame "breathing" in between projects, and the caption (label scrambles, description cross-fades). When scrolling stops in between it glides to the nearest project in the scroll direction; clicking a side project brings it in. Sizes come from the grid: the hidden rulers `.pmeasure` (frame columns) and `.pnext` (resting column of the next project) in `Projects.astro`; `RATIO` is the image aspect. Data lives in `src/data/projects.ts`; set `image` to use a real visual.
 
 ## Design rules
-- Palette tokens in `src/styles/global.css` `:root` (dark warm brown `#170e0b`, off-white, orange `#ff4f00` accent used sparingly).
+- Palette tokens in `src/styles/tokens.css` `:root` (dark warm brown `#170e0b`, orange `#ff4a00` accent used sparingly). Text is only ever white `#FFFFFF` (`--fg`) or grey `#B2B2B2` (`--muted`, `.t-muted`), as in Figma.
 - Inter Tight for all type. The R is the one bold element; keep everything around it quiet.
 - Copy: English, sentence case, plain and honest, "not salesy, not slimy". Key line: "Solid code, thoughtful design, genuine care for the craft, and AI where it actually helps. I want to build something we're both proud of. That's the whole pitch."
 - Respect `prefers-reduced-motion` (engine and GSAP already do).

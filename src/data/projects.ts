@@ -1,4 +1,5 @@
-// Featured projects shown in the pinned "scope" section. Placeholders: swap in real work + images.
+// Featured projects shown in the pinned "scope" section, in order. Placeholders: swap in real work + images.
+// The caption shows "01 — TITLE"; the image should be about 1.37:1 (see RATIO in projects-scope.js).
 export interface Project {
   title: string;       // shown in the caption, e.g. "Woonpact Gent"
   label: string;       // big word on the placeholder visual

@@ -1,0 +1,24 @@
+---
+// Hover: the arrow turns 45° and four corner brackets slide out of the button's corners.
+import Icon from './Icon.astro';
+import Corners from './Corners.astro';
+interface Props { href: string }
+const { href } = Astro.props;
+---
+<a class="btn t-ui" href={href} data-scramble-hover="link">
+  <Corners />
+  <span class="label" data-scramble-hover="target"><slot /></span>
+  <span class="end"><Icon name="arrow" /></span>
+</a>
+
+<style>
+  .btn{
+    --corner-opacity:0;--corner-color:var(--fg);--corner-size:8px;--corner-dur:.5s;
+    position:relative;display:inline-flex;align-items:stretch;background:var(--fg);color:var(--ink);text-decoration:none;
+  }
+  .label{padding:12px 16px;min-width:112px;white-space:nowrap}
+  .end{display:grid;place-items:center;padding:0 13px;border-left:1px solid rgba(23,14,11,.15);color:var(--ink)}
+  .end :global(.icon){width:14px;height:12px;transform:rotate(-45deg);transition:transform .6s var(--ease-out),color .3s}
+  .btn:hover,.btn:focus-visible{--corner-opacity:1;--pull-x:-6px;--pull-y:-6px}
+  .btn:hover .end :global(.icon),.btn:focus-visible .end :global(.icon){transform:rotate(0deg);color:var(--accent)}
+</style>

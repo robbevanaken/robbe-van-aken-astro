@@ -1,0 +1,59 @@
+/* Design tokens. Figma frame is 1440 wide: fluid values hit their Figma size at 1440. */
+:root{
+  /* colour */
+  --bg:#170e0b;
+  --fg:#ffffff;       /* primary text (Figma: white) */
+  --muted:#b2b2b2;    /* secondary text (Figma: #B2B2B2) */
+  --subtle:#8c827c;   /* tertiary: footer meta, counters */
+  --line:#3a2f2a;
+  --line-strong:#6e625b;
+  --accent:#ff4a00;
+  --card:#d8d2cc;
+  --ink:#170e0b;
+
+  /* layout grid: 12 columns, 60px margin, 20px gutter @1440 */
+  --cols:12;
+  --margin:clamp(20px,4.1667vw,80px);
+  --gutter:clamp(12px,1.3889vw,28px);
+
+  /* type: family */
+  --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  /* type: scale (size @1440 in comments, measured from the Figma frame) */
+  --fs-display:clamp(38px,4.0278vw,76px);  /* 58  hero + footer title */
+  --fs-h2:clamp(30px,3.3333vw,64px);       /* 48  section titles */
+  --fs-lead:clamp(21px,2.2222vw,40px);     /* 32  pitch quote, project description */
+  --fs-body-l:clamp(17px,1.3889vw,24px);   /* 20  intro copy, service text */
+  --fs-body:16px;                          /*     default body, marquee */
+  --fs-ui:15px;                            /*     nav, buttons */
+  --fs-label:12px;                         /*     uppercase labels, captions */
+
+  --lh-tight:1.05;
+  --lh-heading:1.1;
+  --lh-text:1.35;
+  --ls-tight:-.02em;
+  --ls-label:.08em;
+
+  /* spacing (size @1440 in comments) */
+  --space-2xs:8px;
+  --space-xs:12px;
+  --space-s:clamp(16px,1.6667vw,28px);     /* 24 */
+  --space-m:clamp(24px,2.7778vw,48px);     /* 40 */
+  --space-l:clamp(40px,4.4444vw,80px);     /* 64 */
+  --space-xl:clamp(64px,8.3333vw,150px);   /* 120 */
+  --space-section:clamp(96px,11.1111vw,200px); /* 160 */
+
+  --nav-top:clamp(20px,2.7778vw,48px);     /* 40 */
+  --ease-out:cubic-bezier(.2,.7,.2,1);
+
+  color-scheme:dark;
+}
+
+/* tablet: 6 columns */
+@media (max-width:1023px){
+  :root{ --cols:6; }
+}
+/* phone: 4 columns */
+@media (max-width:639px){
+  :root{ --cols:4; --margin:24px; --gutter:12px; }
+}

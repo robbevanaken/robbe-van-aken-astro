@@ -1,0 +1,40 @@
+---
+import Corners from '../ui/Corners.astro';
+import { servicesIntro } from '../../data/site';
+import { services } from '../../data/services';
+---
+<section class="services grid" id="services" data-stage="3">
+  <h2 class="t-h2" data-scramble="scroll">{servicesIntro.title}</h2>
+  <p class="intro t-body-l t-muted">{servicesIntro.text}</p>
+  <ul class="list">
+    {services.map((s, q) => (
+      <li class="row" tabindex="0" data-q={q}>
+        <!-- icon slot: the engine rebuilds quarter q of the R in here -->
+        <div class="svc-slot"><Corners /></div>
+        <h3 class="t-lead">{s.title}</h3>
+        <p class="t-body-l t-muted">{s.description}</p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  /* title cols 1–6, intro cols 7–10; rows: icon col 1, title cols 3–6, text cols 7–10 */
+  .services{padding-block:var(--space-section);min-height:100vh;row-gap:var(--space-xl)}
+  h2{grid-column:1 / span 6}
+  .intro{grid-column:7 / span 4;align-self:end}
+  .list{display:grid;grid-template-columns:subgrid}
+  .row{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:center;border-top:1px solid var(--line);padding-block:var(--space-m);cursor:default}
+  .row:last-child{border-bottom:1px solid var(--line)}
+  .svc-slot{grid-column:1 / span 1;position:relative;aspect-ratio:1;width:100%;max-width:84px}
+  h3{grid-column:3 / span 4;transition:transform .5s var(--ease-out),color .3s}
+  .row p{grid-column:7 / span 4}
+  .row:hover h3,.row:focus-visible h3{transform:translateX(10px);color:var(--accent)}
+
+  @media (max-width:1023px){
+    h2,.intro{grid-column:1 / -1}
+    .svc-slot{max-width:64px}
+    h3{grid-column:2 / -1}
+    .row p{grid-column:2 / -1;margin-top:var(--space-xs)}
+  }
+</style>

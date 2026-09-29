@@ -1,0 +1,15 @@
+---
+// Line icons, drawn with currentColor. Size them from the parent (width/height).
+interface Props { name: 'arrow' | 'globe'; class?: string }
+const { name, class: cls } = Astro.props;
+const box = name === 'arrow' ? '0 0 24 20' : '0 0 16 16';
+---
+<svg class:list={['icon', `icon-${name}`, cls]} viewBox={box} fill="none" aria-hidden="true">
+  {name === 'arrow' && <path fill="currentColor" d="M13.8393 0L24 10L13.8393 20H9.71009V17.7778H12.8054L19.5792 11.1111H0V8.88889H19.5792L12.8054 2.22222H9.71009V0H13.8393Z" />}
+  {name === 'globe' && <g stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.5" /><path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13" /></g>}
+</svg>
+
+<style>
+  .icon{display:inline-block;height:1em;width:1em;flex:none}
+  .icon-arrow{width:1.2em}
+</style>

@@ -1,13 +1,16 @@
 ---
+// Page order. Copy lives in src/data/, layout grid in src/styles/grid.css.
 import Base from '../layouts/Base.astro';
-import Nav from '../components/Nav.astro';
-import Hero from '../components/Hero.astro';
-import Marquee from '../components/Marquee.astro';
-import Pitch from '../components/Pitch.astro';
-import Projects from '../components/Projects.astro';
-import Services from '../components/Services.astro';
-import Footer from '../components/Footer.astro';
-import DevHud from '../components/DevHud.astro';
+import Nav from '../components/layout/Nav.astro';
+import DevHud from '../components/layout/DevHud.astro';
+import GridOverlay from '../components/layout/GridOverlay.astro';
+import Marquee from '../components/ui/Marquee.astro';
+import Hero from '../components/sections/Hero.astro';
+import TrustedBy from '../components/sections/TrustedBy.astro';
+import Pitch from '../components/sections/Pitch.astro';
+import Projects from '../components/sections/Projects.astro';
+import Services from '../components/sections/Services.astro';
+import Footer from '../components/sections/Footer.astro';
 ---
 <Base>
   <canvas id="r-canvas" aria-hidden="true"></canvas>
@@ -15,17 +18,24 @@ import DevHud from '../components/DevHud.astro';
   <main id="top">
     <Hero />
     <Marquee />
+    <TrustedBy />
     <Pitch />
     <Projects />
     <Services />
   </main>
   <Footer />
-  {import.meta.env.DEV && <DevHud />}
+  {import.meta.env.DEV && <><DevHud /><GridOverlay /></>}
 </Base>
 
 <script>
+  import { initSmoothScroll } from '../scripts/smooth-scroll.js';
+  import { initReveal } from '../scripts/reveal.js';
+  import { initScramble } from '../scripts/scramble.js';
   import { initProjectsScope } from '../scripts/projects-scope.js';
   import { initREngine } from '../scripts/r-journey/engine.js';
+  initSmoothScroll();
   initProjectsScope();
   initREngine();
+  initReveal();
+  document.fonts.ready.then(initScramble);
 </script>
