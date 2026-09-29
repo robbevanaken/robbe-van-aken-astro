@@ -9,7 +9,8 @@
 .is-scrolled .c-site-header__body::before,.is-open .c-site-header__body::before{opacity:1}
 
 .c-site-header__brand{grid-column:1 / span 3;grid-row:1;text-decoration:none;line-height:1.3}
-.c-site-header__role{display:block;color:var(--muted)}
+.c-site-header__name,.c-site-header__role{display:block}
+.c-site-header__role{color:var(--muted)}
 
 /* subpages: slot for the small R, centred on the page (the engine draws the R on this box) */
 .c-site-header__r{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);width:56px;height:56px;transform:translateX(-50%)}
@@ -24,12 +25,18 @@
 .c-site-header__toggle{grid-column:-3 / -1;grid-row:1;justify-self:end}
 
 /* full-screen menu (phones) */
-.c-site-header__menu{position:fixed;inset:0;z-index:-2;background:var(--bg);align-content:end;padding-bottom:calc(var(--space-xl) + env(safe-area-inset-bottom,0px));opacity:0;transition:opacity .45s var(--ease-out)}
+/* items start at the top, just below the header row */
+.c-site-header__menu{position:fixed;inset:0;z-index:-2;background:var(--bg);align-content:start;padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 110px);padding-bottom:calc(var(--space-xl) + env(safe-area-inset-bottom,0px));opacity:0;transition:opacity .45s var(--ease-out)}
 .c-site-header__menu[hidden]{display:none}
 .c-site-header__menu.is-in{opacity:1}
 .c-site-header__menu-item{overflow:hidden}
 .c-site-header__menu-link{display:block;text-decoration:none;padding-block:.08em;transform:translateY(100%);transition:transform .7s var(--ease-out);transition-delay:calc(var(--i) * .06s + .1s)}
 .c-site-header__menu.is-in .c-site-header__menu-link{transform:none}
+/* hover / tap: the other items dim, the active one shifts right (the colour eases on the punch ease) */
+.c-site-header__menu-link{color:var(--fg)}
+.c-site-header__menu-label{display:inline-block;transition:transform var(--hover-dur) var(--ease-punch),color var(--hover-dur) var(--ease-punch)}
+.c-site-header__menu-list:hover .c-site-header__menu-label,.c-site-header__menu-list:focus-within .c-site-header__menu-label{color:var(--muted)}
+.c-site-header__menu-link:hover .c-site-header__menu-label,.c-site-header__menu-link:focus-visible .c-site-header__menu-label,.c-site-header__menu-link:active .c-site-header__menu-label{color:var(--fg);transform:translateX(12px)}
 .c-site-header__menu-socials{margin-top:var(--space-l);opacity:0;transition:opacity .6s var(--ease-out) .35s}
 .c-site-header__menu.is-in .c-site-header__menu-socials{opacity:1}
 

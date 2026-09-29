@@ -8,7 +8,8 @@
 // while the scope is off screen.
 import { R_PATH } from './r-shape.js';
 
-export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false } = {}) {
+// `follow`: the small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R.
+export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true } = {}) {
   if (!canvas || !scope) return;
 
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,motion=reduce?0:1;
@@ -194,7 +195,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
     RY[0]=(smx*1.7+Math.sin(tm*.4)*.55)*motion;RX[0]=(smy*1.1+Math.sin(tm*.29)*.3)*motion;RZ[0]=(Math.sin(tm*.23)*.3+smx*.25)*motion;
     RY[1]=(smx*.7+Math.sin(tm*.3)*.4)*motion;RX[1]=(.25+Math.sin(tm*.25)*.15)*motion;RZ[1]=-.12*motion;
-    RY[2]=Math.sin(tm*.6)*.35*motion;RX[2]=0;RZ[2]=0;
+    // follow: the hero's mouse turn at 45% strength (max ~60° turn), so the small R stays readable at the extremes
+    if(follow){const FS=.45;RY[2]=RY[0]*FS;RX[2]=RX[0]*FS;RZ[2]=RZ[0]*FS}else{RY[2]=Math.sin(tm*.6)*.35*motion;RX[2]=0;RZ[2]=0}
     RY[3]=0;RX[3]=0;RZ[3]=0;
     RY[4]=(smx*1.3+Math.sin(tm*.35)*.3)*motion;RX[4]=(smy*.8)*motion;RZ[4]=Math.sin(tm*.2)*.12*motion;
 

@@ -8,7 +8,7 @@ const { withR = false } = Astro.props;
 ---
 <header class="c-site-header" data-site-header>
   <div class="c-site-header__body o-container o-grid">
-    <a class="c-site-header__brand u-text-ui" href="/">{nav.name}<span class="c-site-header__role">{nav.role}</span></a>
+    <a class="c-site-header__brand u-text-ui" href="/" data-text-hover><span class="c-site-header__name">{nav.name}</span><span class="c-site-header__role">{nav.role}</span></a>
     {withR && <a class="c-site-header__r" href="/" aria-label="Home" data-stage="2"><span class="c-site-header__r-anchor" id="a-craft"></span></a>}
     <nav class="c-site-header__nav u-text-ui" aria-label="Main">
       <ul class="c-site-header__nav-list">
@@ -16,13 +16,13 @@ const { withR = false } = Astro.props;
       </ul>
     </nav>
     <button class="c-button-menu c-site-header__toggle u-text-ui" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-toggle>
-      <span class="c-button-menu__open">Menu</span><span class="c-button-menu__close">Close</span>
+      <span class="c-button-menu__label"><span class="c-button-menu__text c-button-menu__open">Menu</span><span class="c-button-menu__text c-button-menu__close">Close</span></span>
       <span class="c-button-menu__lines" aria-hidden="true"><i class="c-button-menu__line"></i><i class="c-button-menu__line"></i></span>
     </button>
   </div>
   <div class="c-site-header__menu o-container o-grid" id="site-menu" hidden data-menu>
     <ul class="c-site-header__menu-list">
-      {nav.links.map((l, i) => <li class="c-site-header__menu-item" style={`--i:${i}`}><a class="c-site-header__menu-link u-text-display" href={l.href}>{l.label}</a></li>)}
+      {nav.links.map((l, i) => <li class="c-site-header__menu-item" style={`--i:${i}`}><a class="c-site-header__menu-link u-text-display" href={l.href}><span class="c-site-header__menu-label">{l.label}</span></a></li>)}
     </ul>
     <Socials class="c-site-header__menu-socials" />
   </div>

@@ -11,6 +11,7 @@ import { initFeaturedProjects } from './components/featuredProjects.js';
 import { initScrollNext } from './components/scrollNext.js';
 import { initMarquee } from './components/marquee.js';
 import { initHighlight } from './components/highlightText.js';
+import { initTextHover } from './components/textHover.js';
 import { initREngine } from './r-journey/engine.js';
 
 initSmoothScroll();
@@ -19,6 +20,7 @@ initFeaturedProjects();
 // one R per <canvas data-r-canvas>; data-r-scope limits it to part of the page (subpages: header + footer)
 document.querySelectorAll('[data-r-canvas]').forEach((canvas) => {
   const sel = canvas.dataset.rScope;
+  // the small R (projects on home, header on subpages) follows the mouse like the hero R
   initREngine({ canvas, scope: sel ? document.querySelector(sel) : document, cull: !!sel });
 });
 initScrollNext();
@@ -26,4 +28,4 @@ initMarquee();
 initReveal();
 initDebugGrid();
 initCookieConsent();
-document.fonts.ready.then(initHighlight);
+document.fonts.ready.then(() => { initHighlight(); initTextHover(); });

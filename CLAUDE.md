@@ -9,7 +9,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - `src/data/` all copy. `site.ts` (per section, in page order, plus `socials` for footer + mobile menu), `pages.ts` (subpages), `clients.ts`, `projects.ts`, `services.ts`. Change text here, not in components.
 - `src/components/sections/` one file per page section, `ui/` small reusable pieces (Button, Icon, Corners, Marquee, Placeholder), `layout/` Nav + dev-only DevHud and GridOverlay. Components contain markup only: no `<style>` or `<script>`.
 - `src/styles/main.css` imports, in order: `base/` (`_fonts.css`: self-hosted Inter Tight @font-face (files in `public/fonts`, OFL license alongside, latin 400/500 preloaded in `Base.astro`); `_tokens.css`: colours, grid, type scale, spacing, eases; `_document.css`: reset, selection, R canvas) → `objects/` (`_container.css`, `_grid.css`) → `components/` (one `_name.css` per component, imported alphabetically in `index.css`) → `utilities/` (`_text.css`, `_screen-reader.css`) → `vendor/` (`_cookieconsent.css`).
-- `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`) and starts everything in order; each init does nothing when its element is missing. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid), `components/` (featuredProjects, scrollNext, marquee, highlightText), `r-journey/` (the R engine).
+- `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`) and starts everything in order; each init does nothing when its element is missing. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid), `components/` (featuredProjects, scrollNext, marquee, highlightText, textHover), `r-journey/` (the R engine).
 - `public/clients/` client logos (white SVG, one file per logo).
 
 ## Class and hook conventions
@@ -19,7 +19,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 
 ## Pages
 - `/` home (`src/pages/index.astro`, the only page with the R canvas).
-- Each R is its own engine instance: one per `<canvas data-r-canvas>`, limited to `data-r-scope` (home: whole page; subpages: `[data-site-header]` for the small header R and `[data-site-footer]` for the big footer R). Instances whose scope is off screen skip their work. Small R's (<~140px) are boosted to mostly bright crosses so they read white.
+- Each R is its own engine instance: one per `<canvas data-r-canvas>`, limited to `data-r-scope` (home: whole page; subpages: `[data-site-header]` for the small header R and `[data-site-footer]` for the big footer R). Instances whose scope is off screen skip their work. The small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R, at 45% strength (`follow`, `FS` in the engine). Small R's (<~140px) are boosted to mostly bright crosses so they read white.
 - `/work`, `/work/<slug>` (one per project, slug in `projects.ts`), `/about`, `/contact`, `/privacy`: empty templates on `src/layouts/Page.astro` (Nav + content + Footer). On subpages the R has one stage: small and calm, centred in the header (`<Nav withR>` renders `#a-craft` there; the engine falls back to `#a-craft` for every anchor a page doesn't have). The footer there has its own separate R.
 - Project detail pages end in "scroll to next project" (`sections/ScrollNext.astro` + `scripts/components/scrollNext.js`, Osmo resource in our style: next project's visual full-screen, corners closing in, a 6-column progress line; at 100% it opens the next project). These pages have no footer (`<Page footer={false}>`). Copy in `src/data/pages.ts`; `PageIntro.astro` renders label/title/intro, `ui/Placeholder.astro` marks unwritten content.
 - In the featured projects, clicking the active project (or the caption label) opens its detail page; clicking a side project scrolls it in.
@@ -33,6 +33,8 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - Hovers use the "punch" ease (`--ease-punch` in CSS, `CustomEase 'punch'` in GSAP via `scripts/global/eases.js`, same curve).
 - Button hover: scales down slightly, brand arrow turns from 45° to 0°, four corner brackets slide out of the button's corners.
 - Footer: title spans 5 columns, "Let's build" in the muted grey (title parts in `site.ts`); the footer is one screen + the marquee tall, so at the very bottom the marquee sits just above the fold.
+- Name/title top left (`data-text-hover`, `components/textHover.js`): on hover the text reveal plays in reverse as a wave (letters dim right to left and come straight back).
+- Mobile: the menu toggle's lines spread (bottom one shortens) on hover, the open cross spins a quarter turn; slide-out items start at the top, and on hover/tap the others dim while the active one shifts right.
 - Nav links: underline that wipes in from the left. Footer email: light underline, orange one wipes in on hover.
 - Marquee (`components/marquee.js`): constant loop that speeds up with scroll velocity (both directions) and eases back.
 - Glyph cells scale with the shape's size below 140px (service icons and the small header/projects R, ~36 glyphs tall, min 3 device px per glyph); big R's use the density-based size. Service icons are rasterised at 60×60 (`IG`) for detail. Glyphs are the intended look; pixel mode is only a dev fallback.
@@ -57,7 +59,7 @@ States are defined by elements with `data-stage` (the engine blends between them
 |---|---|---|---|
 | 0 | Hero | big, extruded 3D, tumbles with the mouse | `#a-hero` |
 | 1 | Pitch (`#about`) | "exploded view": fragments slightly apart, still readable | `#a-pitch` |
-| 2 | Projects (pinned) | small and calm at the top center | `#a-craft` |
+| 2 | Projects (pinned) | small at the top center, turns with the mouse | `#a-craft` |
 | 3 | Services | splits in 4 quarters that rebuild into 3D icons | `[data-service-slot]` (4x) |
 | 4 | Footer | big again, pixels get pushed away by the cursor | `#a-foot` |
 
