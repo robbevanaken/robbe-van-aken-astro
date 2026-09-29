@@ -1,4 +1,4 @@
-// Smooth scrolling (Lenis), driven by the GSAP ticker so ScrollTrigger, the R engine and Lenis share one frame.
+// Lenis smooth scroll, driven by the GSAP ticker so ScrollTrigger, the R engine and Lenis share one frame.
 // Skipped for prefers-reduced-motion. Use scrollToY() for programmatic scrolls so they stay in sync.
 import Lenis from 'lenis';
 import gsap from 'gsap';

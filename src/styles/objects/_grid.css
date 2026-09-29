@@ -1,0 +1,9 @@
+/* Layout grid: 12 columns (desktop), 6 (< 1024), 4 (< 640). Use together with .o-container.
+   Children span the full row by default and place themselves with grid-column.
+   :where() keeps this default at zero specificity, so component rules always win. */
+.o-grid{
+  display:grid;
+  grid-template-columns:repeat(var(--cols),minmax(0,1fr));
+  column-gap:var(--gutter);
+}
+:where(.o-grid) > *{grid-column:1 / -1}

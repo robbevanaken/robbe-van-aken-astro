@@ -1,0 +1,6 @@
+/* Social links (footer + mobile menu): same underline hover as the header links. */
+.c-socials{display:flex;flex-wrap:wrap;gap:var(--space-2xs) var(--space-m)}
+.c-socials__link{position:relative;text-decoration:none;padding-bottom:3px;color:var(--muted);transition:color var(--hover-dur) var(--ease-punch)}
+.c-socials__link::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform var(--hover-dur) var(--ease-punch)}
+.c-socials__link:hover,.c-socials__link:focus-visible{color:var(--fg)}
+.c-socials__link:hover::after,.c-socials__link:focus-visible::after{transform:scaleX(1);transform-origin:left}

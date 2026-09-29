@@ -1,0 +1,30 @@
+/* Pinned "scope" section, driven by components/featuredProjects.js (sizes and positions are set inline). */
+.c-featured-projects{height:100svh;display:flex;flex-direction:column;justify-content:center;padding:3vh 0 clamp(40px,9vh,110px);overflow:hidden;position:relative;background:var(--bg)}
+.c-featured-projects__head{display:flex;justify-content:center}
+.c-featured-projects__r{width:56px;height:56px}
+.c-featured-projects__stage{position:relative;width:100%;flex:none} /* vertical margins set by the script (gutter + breathing room) */
+.c-featured-projects__card,.c-featured-projects__frame{position:absolute;left:50%;top:50%}
+.c-featured-projects__card{will-change:transform,opacity;transform:translate(-50%,-50%);cursor:pointer}
+.c-featured-projects__media{width:100%;height:100%;overflow:hidden}
+.c-featured-projects__frame{z-index:5;pointer-events:none;transform:translate(-50%,-50%);--corner-offset:var(--gutter);--corner-color:var(--fg);--corner-size:18px}
+.c-featured-projects__img{width:100%;height:100%;object-fit:cover;will-change:transform;transform:scale(1.14)}
+.c-featured-projects__placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
+  background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
+
+.c-featured-projects__foot{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-m);margin:0 auto;width:var(--mw,62vw)}
+.c-featured-projects__caption-link{text-decoration:none}
+.c-featured-projects__caption-title{color:var(--fg);transition:color var(--hover-dur) var(--ease-punch)}
+.c-featured-projects__caption-link:hover .c-featured-projects__caption-title{color:var(--accent)}
+.c-featured-projects__caption-text{margin-top:var(--space-2xs);color:var(--muted);max-width:34em}
+.c-featured-projects__side{display:flex;align-items:center;gap:var(--space-s);flex:none}
+.c-featured-projects__count{color:var(--muted)}
+.c-featured-projects__count-current{color:var(--fg);font-weight:400}
+
+@media (max-width:1023px){
+  .c-featured-projects__foot{flex-direction:column;align-items:flex-start;gap:var(--space-m)}
+}
+/* phones: the pinned R sits exactly where the header R does (same row as the name and Menu) */
+@media (max-width:639px){
+  .c-featured-projects__head{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--nav-top));left:0;right:0}
+  .c-featured-projects__r{width:40px;height:40px}
+}

@@ -1,5 +1,5 @@
 ---
-// Page order. Copy lives in src/data/, layout grid in src/styles/grid.css.
+// Home. Page order below; copy lives in src/data/, scripts start from src/scripts/main.js.
 import Base from '../layouts/Base.astro';
 import Nav from '../components/layout/Nav.astro';
 import DevHud from '../components/layout/DevHud.astro';
@@ -13,7 +13,7 @@ import Services from '../components/sections/Services.astro';
 import Footer from '../components/sections/Footer.astro';
 ---
 <Base>
-  <canvas id="r-canvas" aria-hidden="true"></canvas>
+  <canvas id="r-canvas" class="c-r-canvas" aria-hidden="true" data-r-canvas></canvas>
   <Nav />
   <main id="top">
     <Hero />
@@ -26,17 +26,3 @@ import Footer from '../components/sections/Footer.astro';
   <Footer />
   {import.meta.env.DEV && <><DevHud /><GridOverlay /></>}
 </Base>
-
-<script>
-  import '../scripts/eases.js';
-  import { initSmoothScroll } from '../scripts/smooth-scroll.js';
-  import { initReveal } from '../scripts/reveal.js';
-  import { initHighlight } from '../scripts/highlight.js';
-  import { initProjectsScope } from '../scripts/projects-scope.js';
-  import { initREngine } from '../scripts/r-journey/engine.js';
-  initSmoothScroll();
-  initProjectsScope();
-  initREngine();
-  initReveal();
-  document.fonts.ready.then(initHighlight);
-</script>

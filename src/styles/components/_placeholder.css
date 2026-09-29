@@ -1,0 +1,3 @@
+/* Empty content block for pages that are not written yet. */
+.c-placeholder{margin-top:var(--space-xl)}
+.c-placeholder__box{grid-column:1 / -1;display:grid;place-items:center;min-height:clamp(240px,40vh,480px);border:1px dashed var(--line-strong);color:var(--subtle)}

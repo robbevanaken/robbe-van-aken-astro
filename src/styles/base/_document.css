@@ -1,0 +1,26 @@
+/* Reset, element defaults, selection and the fixed R canvas. */
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px)}
+html.is-menu-open{overflow:hidden}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-text);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-weight:400}
+a{color:inherit}
+img{display:block;max-width:100%}
+ul{list-style:none;margin:0;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+::selection{background:var(--accent);color:var(--ink)}
+
+/* the R sits above the header (z 30) so the header background never covers it; hidden behind the open mobile menu */
+/* the R canvases ([data-r-canvas], one per R) sit above the header (z 30) so the header background never covers them;
+   hidden behind the open mobile menu */
+.c-r-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:35}
+html.is-menu-open .c-r-canvas{visibility:hidden}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition-duration:0s !important;animation-duration:0s !important}
+}

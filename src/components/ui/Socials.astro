@@ -1,0 +1,13 @@
+---
+// Social links (Instagram, LinkedIn). Styles: styles/components/_socials.css.
+// Until a URL is filled in (src/data/site.ts) the label shows but isn't clickable.
+import { socials } from '../../data/site';
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+const items = socials;
+---
+{items.length > 0 && (
+  <ul class:list={['c-socials u-text-ui', cls]}>
+    {items.map((s) => <li class="c-socials__item"><a class="c-socials__link" href={s.href || undefined} target={s.href ? '_blank' : undefined} rel={s.href ? 'noopener' : undefined}>{s.label}</a></li>)}
+  </ul>
+)}

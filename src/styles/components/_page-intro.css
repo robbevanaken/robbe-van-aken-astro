@@ -1,0 +1,8 @@
+/* Top of a subpage: label, title (cols 1–8) and intro (cols 1–5). */
+.c-page-intro{padding-top:calc(var(--space-section) + var(--nav-top) + 40px);row-gap:var(--space-m);align-items:start}
+.c-page-intro__label{display:flex;gap:var(--space-xs);align-items:center;color:var(--muted)}
+.c-page-intro__arrow{color:var(--accent);font-size:14px}
+.c-page-intro__title{grid-column:1 / span 8}
+.c-page-intro__text{grid-column:1 / span 5;color:var(--muted)}
+
+@media (max-width:1023px){ .c-page-intro__title,.c-page-intro__text{grid-column:1 / -1} }

@@ -1,20 +1,13 @@
 ---
+// Orange banner. Styles: styles/components/_marquee.css, motion: scripts/components/marquee.js
 import Icon from './Icon.astro';
 import { marquee } from '../../data/site';
 interface Props { text?: string }
 const { text = marquee.text } = Astro.props;
 const items = Array.from({ length: 12 });
 ---
-<div class="marquee t-body" role="note" aria-label={text}>
-  <div class="track" aria-hidden="true">
-    {items.map(() => <span>{text}<Icon name="globe" /></span>)}
+<div class="c-marquee" role="note" aria-label={text} data-marquee>
+  <div class="c-marquee__track" aria-hidden="true" data-marquee-track>
+    {items.map(() => <span class="c-marquee__item">{text}<Icon name="globe" /></span>)}
   </div>
 </div>
-
-<style>
-  .marquee{position:relative;z-index:1;display:flex;align-items:center;height:var(--marquee-h);overflow:hidden;white-space:nowrap;background:var(--accent);color:var(--ink);font-size:var(--fs-body);font-weight:400;line-height:1;text-transform:uppercase;letter-spacing:.02em}
-  span :global(.icon){width:23px;height:23px}
-  .track{display:inline-flex;animation:mq 30s linear infinite}
-  span{display:inline-flex;align-items:center;gap:var(--space-m);padding-right:var(--space-m)}
-  @keyframes mq{to{transform:translateX(-50%)}}
-</style>

@@ -1,0 +1,3 @@
+/* Line icons (components/ui/Icon.astro). Size them from the parent. */
+.c-icon{display:inline-block;height:1em;width:1em;flex:none}
+.c-icon--arrow{width:1.2em}

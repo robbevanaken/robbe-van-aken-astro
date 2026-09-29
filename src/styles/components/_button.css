@@ -1,0 +1,12 @@
+/* Button. Hover: scales down, the arrow turns 45° and four corner brackets slide out of the button's corners. */
+.c-button{
+  --corner-opacity:0;--corner-color:var(--fg);--corner-size:8px;--corner-dur:var(--hover-dur);--corner-ease:var(--ease-punch);
+  position:relative;display:inline-flex;align-items:stretch;background:var(--fg);color:var(--ink);text-decoration:none;
+  transition:transform var(--hover-dur) var(--ease-punch);
+}
+.c-button__label{padding:12px 16px;min-width:112px;white-space:nowrap}
+.c-button__icon{display:grid;place-items:center;padding:0 13px;border-left:1px solid rgba(23,14,11,.15)}
+.c-button__icon .c-icon{width:14px;height:12px;transform:rotate(-45deg);transition:transform var(--hover-dur) var(--ease-punch)}
+
+.c-button:hover,.c-button:focus-visible{transform:scale(.96);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px}
+.c-button:hover .c-button__icon .c-icon,.c-button:focus-visible .c-button__icon .c-icon{transform:rotate(0deg)}

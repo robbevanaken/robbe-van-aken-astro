@@ -1,35 +1,17 @@
 ---
+// Pitch with the exploded R. Styles: styles/components/_pitch.css
 import Icon from '../ui/Icon.astro';
 import { pitch } from '../../data/site';
 ---
-<section class="pitch grid" id="about" data-stage="1">
+<section class="c-pitch o-container o-grid" id="about" data-stage="1">
   <!-- R anchor: the exploded R sits on the left half -->
-  <div class="r-anchor" id="a-pitch"></div>
-  <div class="body">
-    <p class="quote t-lead" data-highlight-text><Icon name="arrow" class="arrow" />{pitch.quote}</p>
-    <figure class="portrait">
+  <div class="c-pitch__r-anchor" id="a-pitch"></div>
+  <div class="c-pitch__body">
+    <p class="c-pitch__quote u-text-lead" data-highlight-text><Icon name="arrow" class="c-pitch__arrow" />{pitch.quote}</p>
+    <figure class="c-pitch__portrait">
       {pitch.portrait.image
-        ? <img src={pitch.portrait.image} alt={pitch.portrait.alt} />
-        : <figcaption class="t-label">{pitch.portrait.placeholder}</figcaption>}
+        ? <img class="c-pitch__portrait-img" src={pitch.portrait.image} alt={pitch.portrait.alt} />
+        : <figcaption class="u-text-label">{pitch.portrait.placeholder}</figcaption>}
     </figure>
   </div>
 </section>
-
-<style>
-  /* R on cols 1–6, text on cols 7–12, portrait on cols 7–9 */
-  .pitch{padding-block:var(--space-section);min-height:clamp(640px,110vh,1300px)}
-  .r-anchor{grid-column:1 / span 6;grid-row:1;height:clamp(420px,92vh,1100px);align-self:center}
-  .body{grid-column:7 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-content:start}
-  .quote{grid-column:1 / -1}
-  .quote :global(.arrow){color:var(--accent);width:.75em;height:.625em;margin-right:.5em;vertical-align:.02em}
-  .portrait{grid-column:1 / span 3;margin:var(--space-xl) 0 0;aspect-ratio:315 / 372;background:var(--card);color:#6f6660;display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}
-  .portrait img{width:100%;height:100%;object-fit:cover;margin:calc(-1 * var(--space-xs))}
-
-  @media (max-width:1023px){
-    .pitch{min-height:0}
-    .r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(260px,46vh,560px)}
-    .body{grid-column:1 / -1}
-    .portrait{grid-column:1 / span 3}
-  }
-  @media (max-width:639px){ .portrait{grid-column:1 / span 3} }
-</style>

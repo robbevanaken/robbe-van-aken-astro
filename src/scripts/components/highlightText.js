@@ -46,7 +46,7 @@ function initHighlightText(){
   });
 }
 
-// Initialize Highlight Text on Scroll (called from the page once fonts are ready)
+// Initialize Highlight Text on Scroll (called from main.js once fonts are ready)
 export function initHighlight() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   initHighlightText();

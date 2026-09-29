@@ -1,9 +1,8 @@
-// Cookie consent (vanilla-cookieconsent v3), themed in styles/cookieconsent.css.
+// Cookie consent (vanilla-cookieconsent v3), themed in styles/vendor/_cookieconsent.css.
 // Categories: "necessary" (always on) and "analytics" (off until accepted). No analytics script exists yet:
 // when you add one, load it with <script type="text/plain" data-category="analytics" ...> so it only runs after consent.
 // The footer button [data-cc="show-preferencesModal"] reopens the preferences.
 import 'vanilla-cookieconsent/dist/cookieconsent.css';
-import '../styles/cookieconsent.css';
 import * as CookieConsent from 'vanilla-cookieconsent';
 
 export function initCookieConsent() {

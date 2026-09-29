@@ -1,21 +1,12 @@
 ---
-// Top of a subpage: label, title (cols 1–8) and intro (cols 1–6).
+// Top of a subpage: label, title and intro. Styles: styles/components/_page-intro.css
 import Icon from '../ui/Icon.astro';
 interface Props { label: string; title: string; intro?: string }
 const { label, title, intro } = Astro.props;
 ---
-<header class="intro grid">
-  <p class="label t-label"><Icon name="arrow" class="arrow" />{label}</p>
-  <h1 class="t-display">{title}</h1>
-  {intro && <p class="text t-body-l">{intro}</p>}
+<header class="c-page-intro o-container o-grid">
+  <p class="c-page-intro__label u-text-label"><Icon name="arrow" class="c-page-intro__arrow" />{label}</p>
+  <h1 class="c-page-intro__title u-text-display">{title}</h1>
+  {intro && <p class="c-page-intro__text u-text-body-l">{intro}</p>}
   <slot />
 </header>
-
-<style>
-  .intro{padding-top:calc(var(--space-section) + var(--nav-top) + 40px);row-gap:var(--space-m);align-items:start}
-  .label{display:flex;gap:var(--space-xs);align-items:center;color:var(--muted)}
-  .label :global(.arrow){color:var(--accent);font-size:14px}
-  h1{grid-column:1 / span 8}
-  .text{grid-column:1 / span 5;color:var(--muted)}
-  @media (max-width:1023px){ h1,.text{grid-column:1 / -1} }
-</style>

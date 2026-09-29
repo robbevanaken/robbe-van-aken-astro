@@ -3,13 +3,16 @@
 // 3 services "Parts" (the R rebuilds into 4 icons), 4 footer "Play".
 // Pipeline per frame: scroll -> state blend -> 3D targets per particle (springs) -> lighting -> draw
 // (glyph dither by default, raw pixels as fallback; toggle with the dev HUD or the G key).
+// Instances: every <canvas data-r-canvas> runs its own R. `scope` limits which [data-stage] elements and anchors it
+// uses (home: the whole page; subpages: one R in the header, a separate one in the footer). `cull` skips all work
+// while the scope is off screen.
 import { R_PATH } from './r-shape.js';
 
-export function initREngine() {
-  if (!document.getElementById('r-canvas')) return;
+export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false } = {}) {
+  if (!canvas || !scope) return;
 
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,motion=reduce?0:1;
-  const cvs=document.getElementById('r-canvas'),ctx=cvs.getContext('2d');
+  const cvs=canvas,ctx=cvs.getContext('2d');
   let W=0,H=0,DPR=1;
   function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cvs.width=W*DPR;cvs.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
   addEventListener('resize',resize);resize();
@@ -17,16 +20,19 @@ export function initREngine() {
   let mx=0,my=0,smx=0,smy=0,mpx=-9999,mpy=-9999;
   addEventListener('pointermove',e=>{mx=e.clientX/W*2-1;my=e.clientY/H*2-1;mpx=e.clientX;mpy=e.clientY},{passive:true});
   let hoverQ=-1;
-  document.querySelectorAll('.row').forEach(r=>{const q=+r.dataset.q;
+  scope.querySelectorAll('[data-service]').forEach(r=>{const q=+r.dataset.service;
     r.addEventListener('mouseenter',()=>hoverQ=q);r.addEventListener('mouseleave',()=>hoverQ=-1);
     r.addEventListener('focus',()=>hoverQ=q);r.addEventListener('blur',()=>hoverQ=-1)});
 
-  const stages=[...document.querySelectorAll('[data-stage]')],SV=stages.map(e=>+e.dataset.stage);
-  // Subpages only have #a-craft (the small R in the header): every missing anchor falls back to it.
-  const aCraft=document.getElementById('a-craft');if(!aCraft)return;
-  const byId=(id)=>document.getElementById(id)||aCraft;
-  const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aFoot=byId('a-foot');
-  const slots=[...document.querySelectorAll('.svc-slot')],svcSlots=slots.length===4?slots:[aCraft,aCraft,aCraft,aCraft];
+  // stages include the scope itself when it is a stage (e.g. the footer)
+  const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...scope.querySelectorAll('[data-stage]')],SV=stages.map(e=>+e.dataset.stage);
+  if(!stages.length)return;
+  // A scope may have only one anchor (header: #a-craft, footer: #a-foot): every missing anchor falls back to it.
+  const find=(id)=>scope.querySelector?.('#'+id)||(scope===document?document.getElementById(id):null);
+  const main=find('a-craft')||find('a-foot')||find('a-hero');if(!main)return;
+  const byId=(id)=>find(id)||main;
+  const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aCraft=byId('a-craft'),aFoot=byId('a-foot');
+  const slots=[...scope.querySelectorAll('[data-service-slot]')],svcSlots=slots.length===4?slots:[main,main,main,main];
   const NAMES=['Pixel','Fragment','Craft','Parts','Play'];
   const hudName=document.getElementById('hud-name'),hudBar=document.getElementById('hud-bar');
   function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -159,17 +165,24 @@ export function initREngine() {
     const key=cell+'@'+DPR;if(spriteCache.has(key))return spriteCache.get(key);
     const px=Math.max(2,Math.round(cell*DPR)),out=G_COLORS.map(col=>{
       const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');
-      const pad=px*.26;g.strokeStyle=col;g.lineWidth=px*.27;g.lineCap='round';
+      const pad=px*.26;g.strokeStyle=col;g.lineWidth=Math.max(1,px*.27);g.lineCap=px<6?'butt':'round';
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c});
     spriteCache.set(key,out);return out;
   }
-  const modeBtn=document.getElementById('mode');
-  if(modeBtn)modeBtn.onclick=()=>{glyph=!glyph;modeBtn.textContent=glyph?'Glyph':'Pixels';modeBtn.classList.toggle('off',!glyph)};
+  const modeBtn=scope===document?document.getElementById('mode'):null;
+  if(modeBtn)modeBtn.onclick=()=>{glyph=!glyph;modeBtn.textContent=glyph?'Glyph':'Pixels';modeBtn.classList.toggle('is-off',!glyph)};
   addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()});
 
+  let culled=false;
   function frame(ts){
     requestAnimationFrame(frame);
     if(!inited)return;
+    if(cull){
+      const r=(scope===document?document.documentElement:scope).getBoundingClientRect();
+      const off=r.bottom<-200||r.top>innerHeight+200;
+      if(off){if(!culled){ctx.clearRect(0,0,W,H);culled=true}return}
+      culled=false;
+    }
     time=ts/1000;const tm=time*motion;
     smx+=(mx-smx)*.06*motion;smy+=(my-smy)*.06*motion;
     rect(aHero,A[0]);A[0].S=Math.min(A[0].h,A[0].w*1.05)*.92;
@@ -222,7 +235,11 @@ export function initREngine() {
 
     ctx.clearRect(0,0,W,H);
     if(glyph){
-      const CELL=size<1.1?3:clamp(Math.round(size*1.35),4,7),cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
+      // small R (header / projects): finer cells so the R stays readable (~22 cells tall); big R's are unchanged
+      const rh=(i0===3?Qh:A[i0].S)*(1-f)+(i1===3?Qh:A[i1].S)*f,baseCell=size<1.1?3:clamp(Math.round(size*1.35),4,7);
+      const small=clamp((140-rh)/60,0,1);
+      const minCell=DPR>=2?2:3; // at least ~4 device px per glyph, otherwise the crosses blur to grey
+      const CELL=rh<120?Math.min(baseCell,Math.max(minCell,Math.round(rh/22))):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
       if(!GC||GC.length<NN){GC=new Float32Array(NN);GS=new Float32Array(NN);GN=new Uint16Array(NN);GO=new Uint8Array(NN);OCC=new Uint32Array(NN)}nOcc=0;
       GC.fill(0,0,NN);GS.fill(0,0,NN);GN.fill(0,0,NN);GO.fill(0,0,NN);
       const sp=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f,expect=Math.max(1,(CELL/Math.max(sp,.3))**2*.45),hc=size/2;
@@ -236,6 +253,7 @@ export function initREngine() {
       for(let o=0;o<nOcc;o++){
         const ci=OCC[o],n=GN[ci],r=(ci/cols)|0,q=ci-r*cols;
         const base=GC[ci]>0?GC[ci]:GS[ci];let v=Math.pow(clamp(base*Math.min(1,.35+.65*n/expect),0,1),1/G_GAMMA);
+        if(small>0)v+=(1-v)*.75*small; // small R: mostly bright crosses, so it reads white instead of grey
         const lv=clamp(Math.round(v*2+((BAYER4[(r&3)*4+(q&3)]+.5)/16-.5)*.9),0,2);if(!lv)continue;
         ctx.drawImage(spr[(GO[ci]?2:0)+lv-1],q*CELL,r*CELL,CELL,CELL);
       }

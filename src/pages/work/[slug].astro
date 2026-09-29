@@ -1,5 +1,6 @@
 ---
-// Project detail page. Empty for now: caption, title, the placeholder visual and a link to the next project.
+// Project detail page. Empty for now: caption, title, the placeholder visual, then "scroll to next project".
+// Styles: styles/components/_project-detail.css
 import Page from '../../layouts/Page.astro';
 import PageIntro from '../../components/sections/PageIntro.astro';
 import Placeholder from '../../components/ui/Placeholder.astro';
@@ -17,22 +18,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <Page title={project.title} description={project.description} footer={false}>
   <PageIntro label={`${pad(index + 1)} — ${project.title}`} title={project.title} intro={project.description} />
-  <div class="visual grid">
+  <div class="c-project-detail__visual o-container o-grid">
     {project.image
-      ? <img src={project.image} alt="" />
-      : <div class="placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}>{project.label}</div>}
+      ? <img class="c-project-detail__media" src={project.image} alt="" />
+      : <div class="c-project-detail__media c-project-detail__placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}>{project.label}</div>}
   </div>
   <Placeholder text={projectPage.placeholder} />
-  <div class="back grid"><a class="t-ui" href="/work">{projectPage.back}</a></div>
+  <div class="c-project-detail__back o-container o-grid"><a class="c-project-detail__back-link u-text-ui" href="/work">{projectPage.back}</a></div>
   <ScrollNext project={next} label={projectPage.next} />
 </Page>
-
-<style>
-  .visual{margin-top:var(--space-xl)}
-  .visual > *{grid-column:1 / -1;aspect-ratio:16 / 9;width:100%;object-fit:cover}
-  .placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
-    background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
-  .back{margin-top:var(--space-l)}
-  .back a{grid-column:1 / span 3;color:var(--muted);text-decoration:none;transition:color var(--hover-dur) var(--ease-punch)}
-  .back a:hover{color:var(--fg)}
-</style>

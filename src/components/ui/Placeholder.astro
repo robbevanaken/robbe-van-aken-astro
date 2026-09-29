@@ -1,11 +1,6 @@
 ---
-// Empty content block for pages that are not written yet.
+// Empty content block for pages that are not written yet. Styles: styles/components/_placeholder.css
 interface Props { text?: string }
 const { text = 'Content coming soon' } = Astro.props;
 ---
-<div class="ph grid"><div class="box t-label">{text}</div></div>
-
-<style>
-  .ph{margin-top:var(--space-xl)}
-  .box{grid-column:1 / -1;display:grid;place-items:center;min-height:clamp(240px,40vh,480px);border:1px dashed var(--line-strong);color:var(--subtle)}
-</style>
+<div class="c-placeholder o-container o-grid"><div class="c-placeholder__box u-text-label">{text}</div></div>

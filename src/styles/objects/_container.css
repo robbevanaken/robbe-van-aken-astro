@@ -1,0 +1,5 @@
+/* Page margins. 60px @1440, 24px on phones (see --margin in base/_tokens.css). */
+.o-container{
+  width:100%;
+  padding-inline:var(--margin);
+}

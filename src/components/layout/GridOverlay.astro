@@ -1,22 +1,4 @@
-<!-- Dev only: shows the 12-column layout grid. Toggle with L or the HUD button. -->
-<div class="grid grid-overlay" id="grid-overlay" aria-hidden="true">
-  {Array.from({ length: 12 }).map(() => <span></span>)}
+<!-- Dev only: shows the layout columns. Toggle with L or the HUD. Styles: _debug-grid.css, behaviour: scripts/global/debugGrid.js -->
+<div class="c-debug-grid o-container o-grid" id="grid-overlay" aria-hidden="true" data-debug-grid>
+  {Array.from({ length: 12 }).map(() => <span class="c-debug-grid__col"></span>)}
 </div>
-
-<script>
-  const el = document.getElementById('grid-overlay')!;
-  const btn = document.getElementById('grid-toggle');
-  const KEY = 'rva-grid';
-  const set = (on: boolean) => {
-    el.classList.toggle('is-on', on);
-    btn?.classList.toggle('off', !on);
-    try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {}
-  };
-  let on = false;
-  try { on = localStorage.getItem(KEY) === '1'; } catch {}
-  set(on);
-  btn?.addEventListener('click', () => set(!el.classList.contains('is-on')));
-  addEventListener('keydown', (e) => {
-    if ((e.key === 'l' || e.key === 'L') && !(e.target as HTMLElement).closest('input,textarea')) set(!el.classList.contains('is-on'));
-  });
-</script>

@@ -1,0 +1,14 @@
+/* Pitch: exploded R on cols 1–6, quote on cols 7–12, portrait on cols 7–9. */
+.c-pitch{padding-block:var(--space-section);min-height:clamp(640px,110vh,1300px)}
+.c-pitch__r-anchor{grid-column:1 / span 6;grid-row:1;height:clamp(420px,92vh,1100px);align-self:center}
+.c-pitch__body{grid-column:7 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-content:start}
+.c-pitch__quote{grid-column:1 / -1}
+.c-pitch__arrow{color:var(--accent);width:.75em;height:.625em;margin-right:.5em;vertical-align:.02em}
+.c-pitch__portrait{grid-column:1 / span 3;margin:var(--space-xl) 0 0;aspect-ratio:315 / 372;background:var(--card);color:#6f6660;display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}
+.c-pitch__portrait-img{width:100%;height:100%;object-fit:cover;margin:calc(-1 * var(--space-xs))}
+
+@media (max-width:1023px){
+  .c-pitch{min-height:0}
+  .c-pitch__r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(260px,46vh,560px)}
+  .c-pitch__body{grid-column:1 / -1}
+}

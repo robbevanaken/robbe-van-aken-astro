@@ -1,0 +1,3 @@
+/* Subpage wrapper (layouts/Page.astro). --end: the page ends in its own full-screen section (no footer). */
+.c-page{min-height:70svh;padding-bottom:var(--space-section)}
+.c-page--end{padding-bottom:0}

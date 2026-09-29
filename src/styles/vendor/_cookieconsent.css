@@ -57,15 +57,17 @@ html #cc-main{
 html #cc-main .cm,html #cc-main .pm{border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.45)}
 html #cc-main .cm__title,html #cc-main .pm__title{font-size:var(--fs-label);font-weight:500;letter-spacing:var(--ls-label);text-transform:uppercase}
 html #cc-main .cm__desc,html #cc-main .pm__section-desc{font-size:15px;line-height:1.45}
-html #cc-main .cm__btn,html #cc-main .pm__btn{font-size:var(--fs-ui);font-weight:400;padding:12px 18px;
+/* .cc--anim variants included: the library's own .cc--anim rule is more specific and would drop the ease */
+html #cc-main .cm__btn,html #cc-main .pm__btn,html #cc-main .cc--anim .cm__btn,html #cc-main .cc--anim .pm__btn{font-size:var(--fs-ui);font-weight:400;padding:12px 18px;
   transition:transform var(--hover-dur) var(--ease-punch),border-color var(--hover-dur) var(--ease-punch),background-color var(--hover-dur) var(--ease-punch),color var(--hover-dur) var(--ease-punch)}
+html #cc-main .cc--anim .cm,html #cc-main .cc--anim .pm{transition:opacity var(--cc-modal-transition-duration) var(--ease-punch),visibility var(--cc-modal-transition-duration) var(--ease-punch),transform var(--cc-modal-transition-duration) var(--ease-punch)}
 /* toggles and the close icon move on the same punch ease as the rest of the site */
 html #cc-main .toggle__icon{transition:all var(--hover-dur) var(--ease-punch)}
 html #cc-main .toggle__icon-circle{transition:transform var(--hover-dur) var(--ease-punch),background-color var(--hover-dur) var(--ease-punch)}
 html #cc-main .toggle__icon-on,html #cc-main .toggle__icon-off{transition:opacity var(--hover-dur) var(--ease-punch)}
 html #cc-main .pm__close-btn,html #cc-main .pm__close-btn svg{transition:all var(--hover-dur) var(--ease-punch)}
 html #cc-main .pm__section--toggle,html #cc-main .pm__section-title{transition:background-color var(--hover-dur) var(--ease-punch),border-color var(--hover-dur) var(--ease-punch)}
-html #cc-main .cm__btn:hover,html #cc-main .pm__btn:hover{transform:scale(.96)}
+html #cc-main .cm__btn:hover,html #cc-main .pm__btn:hover,html #cc-main .cc--anim .cm__btn:hover,html #cc-main .cc--anim .pm__btn:hover{transform:scale(.96)}
 html #cc-main a,html #cc-main .cc__link{text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px;background:none}
 html #cc-main a,html #cc-main .cc__link{transition:color var(--hover-dur) var(--ease-punch),text-decoration-color var(--hover-dur) var(--ease-punch)}
 html #cc-main a:hover,html #cc-main .cc__link:hover{color:var(--accent);text-decoration-color:var(--accent)}

@@ -1,63 +1,26 @@
 ---
+// Site footer. Styles: styles/components/_site-footer.css
+// The footer is always an R stage (big, pushed around by the cursor): on home the travelling R ends here,
+// on subpages it has its own R (a second canvas scoped to [data-site-footer]).
 import Marquee from '../ui/Marquee.astro';
+import Socials from '../ui/Socials.astro';
 import { footer, meta } from '../../data/site';
-// rStage: on the home page the footer is the R's last stage (big, pushed around by the cursor). Subpages keep the R in the header.
-interface Props { rStage?: boolean }
-const { rStage = true } = Astro.props;
 ---
-<footer class="foot" id="contact" data-stage={rStage ? 4 : undefined}>
+<footer class="c-site-footer" id="contact" data-stage="4" data-site-footer>
   <Marquee />
-  <div class="main grid">
-    <div class="cta">
-      <h2 class="t-display" data-highlight-text>{footer.title}</h2>
-      <a class="mail t-lead" href={`mailto:${meta.email}`}>{meta.email}</a>
+  <div class="c-site-footer__main o-container o-grid">
+    <div class="c-site-footer__cta">
+      <h2 class="c-site-footer__title u-text-display" data-highlight-text>{footer.title}</h2>
+      <a class="c-site-footer__mail u-text-lead" href={`mailto:${meta.email}`}>{meta.email}</a>
+      <Socials class="c-site-footer__socials" />
     </div>
-    {rStage && <div class="r-anchor" id="a-foot"></div>}
+    <div class="c-site-footer__r-anchor" id="a-foot"></div>
   </div>
-  <div class="bottom grid t-ui">
-    <span class="company">{footer.company}</span>
-    <span class="location">{footer.location}</span>
-    {footer.legal.map((l) => <a class="legal" href={l.href}>{l.label}</a>)}
-    <button class="legal cookies" type="button" data-cc="show-preferencesModal">{footer.cookieSettings}</button>
-    <a class="top" href="#top">{footer.backToTop}</a>
+  <div class="c-site-footer__bottom o-container o-grid u-text-ui">
+    <span class="c-site-footer__company">{footer.company}</span>
+    <span class="c-site-footer__location">{footer.location}</span>
+    {footer.legal.map((l) => <a class="c-site-footer__legal" href={l.href}>{l.label}</a>)}
+    <button class="c-site-footer__legal c-site-footer__legal--cookies" type="button" data-cc="show-preferencesModal">{footer.cookieSettings}</button>
+    <a class="c-site-footer__top" href="#top">{footer.backToTop}</a>
   </div>
 </footer>
-
-<style>
-  /* title cols 1–6, R cols 7–12 */
-  .foot{min-height:clamp(560px,100svh,1200px);display:flex;flex-direction:column}
-  .main{flex:1;align-items:center;padding-block:var(--space-xl)}
-  .cta{grid-column:1 / span 6;grid-row:1}
-  h2{max-width:12ch}
-  /* email: light underline by default, an orange one wipes in on hover */
-  .mail{position:relative;display:inline-block;margin-top:var(--space-m);text-decoration:none;padding-bottom:6px;transition:color var(--hover-dur) var(--ease-punch)}
-  .mail:hover,.mail:focus-visible{color:var(--accent)}
-  .mail::before,.mail::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px}
-  .mail::before{background:var(--line-strong)}
-  .mail::after{background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform var(--hover-dur) var(--ease-punch)}
-  .mail:hover::after,.mail:focus-visible::after{transform:scaleX(1);transform-origin:left}
-  .r-anchor{grid-column:7 / -1;grid-row:1;height:clamp(300px,68vh,820px)}
-  /* bottom bar @12 cols: company 1–3, location 4–6, privacy 7–8, cookies 9–10, back to top 12 */
-  .bottom{padding-block:var(--space-s) calc(var(--space-s) + env(safe-area-inset-bottom,0px));color:var(--muted);
-    background:linear-gradient(var(--line),var(--line)) center top / calc(100% - 2 * var(--margin)) 1px no-repeat}
-  .company{grid-column:1 / span 3}
-  .location{grid-column:4 / span 3}
-  .legal{grid-column:span 2;justify-self:start;color:inherit;text-decoration:none;-webkit-appearance:none;appearance:none;background:none;border:0;border-radius:0;padding:0;font:inherit;cursor:pointer;text-align:left}
-  .top{grid-column:-2 / -1;justify-self:start;text-decoration:none;white-space:nowrap}
-  .legal,.top{transition:color var(--hover-dur) var(--ease-punch)}
-  .legal:hover,.top:hover,.legal:focus-visible,.top:focus-visible{color:var(--fg)}
-
-  @media (max-width:1023px){
-    .cta{grid-column:1 / -1}
-    .r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(220px,38vh,480px)}
-    .bottom{row-gap:var(--space-xs)}
-    .company,.legal{grid-column:span 3}
-    .location{grid-column:4 / span 3}
-    .top{grid-column:1 / span 3}
-  }
-  @media (max-width:639px){
-    .bottom{row-gap:var(--space-2xs);padding-block:var(--space-m) calc(var(--space-m) + env(safe-area-inset-bottom,0px))}
-    .company,.location,.legal,.top{grid-column:1 / -1;justify-self:start}
-    .cookies{margin-bottom:var(--space-xs)}
-  }
-</style>

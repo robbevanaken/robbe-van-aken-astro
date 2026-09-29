@@ -1,0 +1,14 @@
+/* Mobile menu toggle: "Menu" + two thin lines that turn into a cross ("Close") when the menu is open. */
+.c-button-menu{display:none;align-items:center;gap:12px;background:none;border:0;color:var(--fg);font:inherit;padding:0;cursor:pointer}
+.c-button-menu__close,.is-open .c-button-menu__open{display:none}
+.is-open .c-button-menu__close{display:inline}
+.c-button-menu__lines{position:relative;width:20px;height:9px}
+.c-button-menu__line{position:absolute;left:0;right:0;height:1px;background:currentColor;transition:transform var(--hover-dur) var(--ease-punch)}
+.c-button-menu__line:first-child{top:0}
+.c-button-menu__line:last-child{bottom:0}
+.is-open .c-button-menu__line:first-child{transform:translateY(4px) rotate(45deg)}
+.is-open .c-button-menu__line:last-child{transform:translateY(-4px) rotate(-45deg)}
+
+@media (max-width:639px){
+  .c-button-menu{display:inline-flex}
+}

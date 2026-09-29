@@ -7,6 +7,12 @@ export const meta = {
   email: 'robbe.vanaken@gmail.com',
 };
 
+// Social profiles: shown in the footer and the mobile menu.
+export const socials = [
+  { label: 'Instagram', href: '' }, // TODO: full profile URL, e.g. https://www.instagram.com/<handle>/
+  { label: 'LinkedIn', href: '' },  // TODO: full profile URL, e.g. https://www.linkedin.com/in/<handle>/
+];
+
 export const nav = {
   name: 'Robbe Van Aken',
   role: 'Freelance Developer',

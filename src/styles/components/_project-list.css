@@ -1,0 +1,16 @@
+/* /work: rows on the grid: number col 1, name cols 2–5, description cols 7–11, arrow col 12. */
+.c-project-list{margin-top:var(--space-xl)}
+.c-project-list__row{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));column-gap:var(--gutter);align-items:baseline;padding-block:var(--space-m);border-top:1px solid var(--line);text-decoration:none}
+.c-project-list__item:last-child .c-project-list__row{border-bottom:1px solid var(--line)}
+.c-project-list__num{grid-column:1;color:var(--muted)}
+.c-project-list__name{grid-column:2 / span 4;transition:transform var(--hover-dur) var(--ease-punch)}
+.c-project-list__desc{grid-column:7 / span 5;color:var(--muted)}
+.c-project-list__go{grid-column:-2;justify-self:end;font-size:16px;transform:rotate(-45deg);transition:transform var(--hover-dur) var(--ease-punch)}
+.c-project-list__row:hover .c-project-list__name{transform:translateX(10px)}
+.c-project-list__row:hover .c-project-list__go{transform:rotate(0deg)}
+
+@media (max-width:1023px){
+  .c-project-list__row{row-gap:var(--space-2xs)}
+  .c-project-list__name{grid-column:2 / -2}
+  .c-project-list__desc{grid-column:2 / -1;grid-row:2}
+}

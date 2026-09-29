@@ -1,0 +1,3 @@
+/* Large email link (contact page). */
+.c-link-mail{grid-column:1 / -1;justify-self:start;text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:6px;transition:color var(--hover-dur) var(--ease-punch),border-color var(--hover-dur) var(--ease-punch)}
+.c-link-mail:hover,.c-link-mail:focus-visible{color:var(--accent);border-color:var(--accent)}

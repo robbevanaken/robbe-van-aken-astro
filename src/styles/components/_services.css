@@ -1,0 +1,19 @@
+/* Services: title cols 1–6, intro cols 7–10; rows: icon col 1, title cols 3–6, text cols 7–10.
+   The engine rebuilds quarter i of the R inside each [data-service-slot]. */
+.c-services{padding-block:var(--space-section);min-height:100vh;row-gap:var(--space-xl)}
+.c-services__title{grid-column:1 / span 6}
+.c-services__intro{grid-column:7 / span 4;align-self:end}
+.c-services__list{display:grid;grid-template-columns:subgrid}
+.c-services__row{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:center;border-top:1px solid var(--line);padding-block:var(--space-m);cursor:default}
+.c-services__row:last-child{border-bottom:1px solid var(--line)}
+.c-services__slot{grid-column:1 / span 1;position:relative;aspect-ratio:1;width:100%;max-width:84px}
+.c-services__name{grid-column:3 / span 4;transition:transform var(--hover-dur) var(--ease-punch),color .3s}
+.c-services__text{grid-column:7 / span 4}
+.c-services__row:hover .c-services__name,.c-services__row:focus-visible .c-services__name{transform:translateX(10px);color:var(--accent)}
+
+@media (max-width:1023px){
+  .c-services__title,.c-services__intro{grid-column:1 / -1}
+  .c-services__slot{max-width:64px}
+  .c-services__name{grid-column:2 / -1}
+  .c-services__text{grid-column:2 / -1;margin-top:var(--space-xs)}
+}

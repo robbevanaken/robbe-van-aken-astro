@@ -1,10 +1,10 @@
 ---
-// Line icons, drawn with currentColor. Size them from the parent (width/height).
+// Line icons, drawn with currentColor. Size them from the parent. Styles: styles/components/_icon.css
 interface Props { name: 'arrow' | 'globe'; class?: string }
 const { name, class: cls } = Astro.props;
 const box = name === 'arrow' ? '0 0 24 20' : '0 0 23 23';
 ---
-<svg class:list={['icon', `icon-${name}`, cls]} viewBox={box} fill="none" aria-hidden="true">
+<svg class:list={['c-icon', `c-icon--${name}`, cls]} viewBox={box} fill="none" aria-hidden="true">
   {name === 'arrow' && <path fill="currentColor" d="M13.8393 0L24 10L13.8393 20H9.71009V17.7778H12.8054L19.5792 11.1111H0V8.88889H19.5792L12.8054 2.22222H9.71009V0H13.8393Z" />}
   {name === 'globe' && <g stroke="currentColor">
     <path d="M11.5003 21.0834C16.793 21.0834 21.0837 16.7927 21.0837 11.5001C21.0837 6.20735 16.793 1.91675 11.5003 1.91675C6.2076 1.91675 1.91699 6.20735 1.91699 11.5001C1.91699 16.7927 6.2076 21.0834 11.5003 21.0834Z" />
@@ -14,8 +14,3 @@ const box = name === 'arrow' ? '0 0 24 20' : '0 0 23 23';
     <path d="M3.83398 5.75C6.25829 6.76873 8.87196 7.25879 11.5006 7.1875C14.1294 7.25879 16.743 6.76873 19.1673 5.75" />
   </g>}
 </svg>
-
-<style>
-  .icon{display:inline-block;height:1em;width:1em;flex:none}
-  .icon-arrow{width:1.2em}
-</style>

@@ -1,0 +1,5 @@
+/* Orange banner. Moved by components/marquee.js (constant loop, faster while scrolling). */
+.c-marquee{position:relative;z-index:1;display:flex;align-items:center;height:var(--marquee-h);overflow:hidden;white-space:nowrap;background:var(--accent);color:var(--ink);font-size:var(--fs-body);font-weight:400;line-height:1;text-transform:uppercase;letter-spacing:.02em}
+.c-marquee__track{display:inline-flex;will-change:transform}
+.c-marquee__item{display:inline-flex;align-items:center;gap:var(--space-m);padding-right:var(--space-m)}
+.c-marquee__item .c-icon{width:23px;height:23px}

@@ -1,0 +1,7 @@
+/* Entry stylesheet (same structure as the woonpact project):
+   base (tokens, document) → objects (o-*) → components (c-*) → utilities (u-*) → vendor. */
+@import "./base/index.css";
+@import "./objects/index.css";
+@import "./components/index.css";
+@import "./utilities/index.css";
+@import "./vendor/index.css";

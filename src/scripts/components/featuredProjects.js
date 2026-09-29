@@ -8,23 +8,24 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-import { scrollToY } from './smooth-scroll.js';
+import { scrollToY } from '../global/lenis.js';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
-const RATIO = 1.37, MAX_RATIO = 1.75; // image aspect (w/h) as in Figma; on short screens it may widen up to MAX_RATIO
+const RATIO = 1.37; // image aspect (w/h) as in Figma; on short screens the image keeps its width and gets less tall
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const smooth = (t) => t * t * (3 - 2 * t);
 const pad = (n) => String(n).padStart(2, '0');
 
-export function initProjectsScope() {
-  const wrap = document.querySelector('.pwrap');
+export function initFeaturedProjects() {
+  const wrap = document.querySelector('[data-featured-projects]');
   if (!wrap) return;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const stage = wrap.querySelector('.pstage'), frame = wrap.querySelector('.pframe');
-  const cards = [...wrap.querySelectorAll('.pcard')], imgs = cards.map((c) => c.querySelector('.pimg')), n = cards.length;
-  const col1 = document.querySelector('.rulers .rcol1'), col2 = document.querySelector('.rulers .rcol2'), nextCol = document.querySelector('.rulers .pnext');
-  const capLink = document.getElementById('pc-link'), capT = document.getElementById('pc-t'), capD = document.getElementById('pc-d'), cnt = document.getElementById('p-count');
+  const stage = wrap.querySelector('[data-fp-stage]'), frame = wrap.querySelector('[data-fp-frame]');
+  const head = wrap.querySelector('[data-fp-head]'), foot = wrap.querySelector('[data-fp-foot]');
+  const cards = [...wrap.querySelectorAll('[data-fp-card]')], imgs = cards.map((c) => c.querySelector('[data-fp-img]')), n = cards.length;
+  const col1 = document.querySelector('[data-fp-ruler="col1"]'), col2 = document.querySelector('[data-fp-ruler="col2"]'), nextCol = document.querySelector('[data-fp-ruler="next"]');
+  const capLink = wrap.querySelector('[data-fp-link]'), capT = wrap.querySelector('[data-fp-title]'), capD = wrap.querySelector('[data-fp-text]'), cnt = wrap.querySelector('[data-fp-count]');
   const PROJ = cards.map((c) => [c.dataset.title, c.dataset.desc, c.dataset.href]);
 
   let W = 0, H = 0, sm = .24, side = 0, step = 0;
@@ -36,9 +37,8 @@ export function initProjectsScope() {
     const colW = c1.width, gutter = c2.left - c1.right > 0 ? c2.left - c1.right : 12, margin = c1.left;
     const cols = parseInt(getComputedStyle(wrap).getPropertyValue('--cols'), 10) || 12;
     const maxW = document.documentElement.clientWidth - 2 * margin; // never wider than the content area
-    // the image spans whole columns (6 on wide screens, 4 when the screen is too short), centred on the grid;
-    // the corner brackets sit one gutter outside it
-    const spans = (cols >= 6 ? [6, 4] : [4]);
+    // the image spans whole columns (6, or all 4 on phones), centred on the grid; the corner brackets sit one gutter outside it
+    const spans = (cols >= 6 ? [6] : [4]);
     const spanW = (n) => Math.min(n * colW + (n - 1) * gutter, maxW);
     // the caption always spans the widest column span, so it keeps its width even when the image has to shrink
     wrap.style.setProperty('--mw', spanW(spans[0]) + 'px');
@@ -47,10 +47,10 @@ export function initProjectsScope() {
     stage.style.marginBlock = gutter + breath + 'px';
     const cs = getComputedStyle(wrap);
     const avail = Math.max(180, innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
-      - wrap.querySelector('.phead').offsetHeight - wrap.querySelector('.pfoot').offsetHeight - 2 * (gutter + breath));
-    const span = spans.find((n) => spanW(n) / avail <= MAX_RATIO) || spans[spans.length - 1];
-    W = Math.max(160, Math.min(spanW(span), avail * MAX_RATIO));
-    H = Math.min(W / RATIO, avail);
+      - head.offsetHeight - foot.offsetHeight - 2 * (gutter + breath));
+    // the image always fills the full column span; on short screens only its height gives (object-fit: cover crops it)
+    W = spanW(spans[0]);
+    H = Math.max(160, Math.min(W / RATIO, avail));
     sm = mob ? .3 : .24;
     const smW = W * sm;
     side = Math.max(nextCol.getBoundingClientRect().left - cx + smW / 2, W / 2 + gutter * 2 + smW / 2);

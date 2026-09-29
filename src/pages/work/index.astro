@@ -1,4 +1,5 @@
 ---
+// /work: all projects. Styles: styles/components/_project-list.css
 import Page from '../../layouts/Page.astro';
 import PageIntro from '../../components/sections/PageIntro.astro';
 import Icon from '../../components/ui/Icon.astro';
@@ -8,35 +9,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <Page title="Work">
   <PageIntro label={p.label} title={p.title} intro={p.intro} />
-  <ul class="list grid">
+  <ul class="c-project-list o-container o-grid">
     {projects.map((pr, i) => (
-      <li>
-        <a class="row" href={`/work/${pr.slug}`}>
-          <span class="num t-label">{pad(i + 1)}</span>
-          <span class="name t-lead">{pr.title}</span>
-          <span class="desc t-body-l">{pr.description}</span>
-          <span class="go"><Icon name="arrow" /></span>
+      <li class="c-project-list__item">
+        <a class="c-project-list__row" href={`/work/${pr.slug}`}>
+          <span class="c-project-list__num u-text-label">{pad(i + 1)}</span>
+          <span class="c-project-list__name u-text-lead">{pr.title}</span>
+          <span class="c-project-list__desc u-text-body-l">{pr.description}</span>
+          <span class="c-project-list__go"><Icon name="arrow" /></span>
         </a>
       </li>
     ))}
   </ul>
 </Page>
-
-<style>
-  .list{margin-top:var(--space-xl)}
-  li{grid-column:1 / -1}
-  /* rows on the grid: number col 1, name cols 2–5, description cols 7–11, arrow col 12 */
-  .row{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));column-gap:var(--gutter);align-items:baseline;padding-block:var(--space-m);border-top:1px solid var(--line);text-decoration:none}
-  li:last-child .row{border-bottom:1px solid var(--line)}
-  .num{grid-column:1;color:var(--muted)}
-  .name{grid-column:2 / span 4;transition:transform var(--hover-dur) var(--ease-punch)}
-  .desc{grid-column:7 / span 5;color:var(--muted)}
-  .go{grid-column:-2;justify-self:end;font-size:16px;transform:rotate(-45deg);transition:transform var(--hover-dur) var(--ease-punch)}
-  .row:hover .name{transform:translateX(10px)}
-  .row:hover .go{transform:rotate(0deg)}
-  @media (max-width:1023px){
-    .row{row-gap:var(--space-2xs)}
-    .name{grid-column:2 / -2}
-    .desc{grid-column:2 / -1;grid-row:2}
-  }
-</style>

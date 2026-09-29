@@ -1,43 +1,17 @@
 ---
+// Home hero. Styles: styles/components/_hero-home.css
 import Button from '../ui/Button.astro';
 import { hero } from '../../data/site';
 ---
-<section class="hero grid" data-stage="0">
-  <h1 class="title t-display">
-    {hero.title.map((l) => <span class:list={['line', { 't-muted': l.muted }]}>{l.text}</span>)}
+<section class="c-hero-home o-container o-grid" data-stage="0">
+  <h1 class="c-hero-home__title u-text-display">
+    {hero.title.map((l) => <span class:list={['c-hero-home__line', { 'u-text-muted': l.muted }]}>{l.text}</span>)}
   </h1>
   <!-- R anchor: the engine centres the big R on this box -->
-  <div class="r-slot"><div class="r-anchor" id="a-hero"></div></div>
-  <div class="side">
-    <p class="t-body-l">{hero.intro}</p>
+  <div class="c-hero-home__r"><div class="c-hero-home__r-anchor" id="a-hero"></div></div>
+  <div class="c-hero-home__side">
+    <p class="c-hero-home__intro u-text-body-l">{hero.intro}</p>
     <Button href={hero.cta.href}>{hero.cta.label}</Button>
   </div>
-  <div class="scroll t-label"><span class="track" aria-hidden="true"><i></i></span>{hero.scrollHint}</div>
+  <div class="c-hero-home__scroll u-text-label"><span class="c-hero-home__scroll-track" aria-hidden="true"><i class="c-hero-home__scroll-thumb"></i></span>{hero.scrollHint}</div>
 </section>
-
-<style>
-  /* One row: title (cols 1–4), R (cols 5–8), intro (cols 10–12). Title and intro share a top line. */
-  /* the hero leaves room for the marquee, so the orange banner sits just above the fold */
-  .hero{position:relative;min-height:calc(100svh - var(--marquee-h));align-content:center;grid-template-rows:auto;padding-block:calc(var(--space-xl) + var(--nav-top)) var(--space-xl)}
-  .title{grid-column:1 / span 4;grid-row:1}
-  .line{display:block;white-space:nowrap}
-  .r-slot{grid-column:5 / span 4;grid-row:1;position:relative}
-  .r-anchor{position:absolute;left:0;right:0;top:50%;height:clamp(260px,62vh,760px);transform:translateY(-50%)}
-  .side{grid-column:10 / span 3;grid-row:1;display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-m)}
-  .side p{color:var(--muted)}
-  .scroll{position:absolute;grid-column:1;left:0;bottom:var(--space-l);display:flex;align-items:flex-end;gap:var(--space-s);text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)}
-  /* scroll indicator: a scrollbar-like thumb that runs down the track */
-  .track{position:relative;width:1px;height:90px;background:var(--line-strong);overflow:hidden}
-  .track i{position:absolute;left:0;top:0;width:100%;height:36%;background:var(--fg);animation:thumb 2.2s var(--ease-punch) infinite}
-  @keyframes thumb{0%{transform:translateY(-100%)}70%,100%{transform:translateY(280%)}}
-
-  @media (max-width:1023px){
-    .hero{grid-template-rows:auto clamp(220px,40vh,520px) auto;row-gap:var(--space-l)}
-    .title{grid-column:1 / -1}
-    .r-slot{grid-column:1 / -1;grid-row:2}
-    .r-anchor{height:100%}
-    .side{grid-column:1 / span 4;grid-row:3}
-    .scroll{display:none}
-  }
-  @media (max-width:639px){ .side{grid-column:1 / -1} }
-</style>

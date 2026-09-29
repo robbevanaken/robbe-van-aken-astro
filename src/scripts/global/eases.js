@@ -1,4 +1,4 @@
-// Shared GSAP eases. "punch" is the hover ease; CSS uses the identical curve as --ease-punch (tokens.css).
+// Shared GSAP eases. "punch" is the hover ease; CSS uses the identical curve as --ease-punch (styles/base/_tokens.css).
 import gsap from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
 

@@ -1,0 +1,25 @@
+/* Home hero. One row: title (cols 1–4), R (cols 5–8), intro (cols 10–12). Title and intro share a top line.
+   The hero leaves room for the marquee, so the orange banner sits just above the fold. */
+.c-hero-home{position:relative;min-height:calc(100svh - var(--marquee-h));align-content:center;grid-template-rows:auto;padding-block:calc(var(--space-xl) + var(--nav-top)) var(--space-xl)}
+.c-hero-home__title{grid-column:1 / span 4;grid-row:1}
+.c-hero-home__line{display:block;white-space:nowrap}
+.c-hero-home__r{grid-column:5 / span 4;grid-row:1;position:relative}
+.c-hero-home__r-anchor{position:absolute;left:0;right:0;top:50%;height:clamp(260px,62vh,760px);transform:translateY(-50%)}
+.c-hero-home__side{grid-column:10 / span 3;grid-row:1;display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-m)}
+.c-hero-home__intro{color:var(--muted)}
+
+/* scroll indicator: a scrollbar-like thumb that runs down the track */
+.c-hero-home__scroll{position:absolute;grid-column:1;left:0;bottom:var(--space-l);display:flex;align-items:flex-end;gap:var(--space-s);text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)}
+.c-hero-home__scroll-track{position:relative;width:1px;height:90px;background:var(--line-strong);overflow:hidden}
+.c-hero-home__scroll-thumb{position:absolute;left:0;top:0;width:100%;height:36%;background:var(--fg);animation:c-hero-home-thumb 2.2s var(--ease-punch) infinite}
+@keyframes c-hero-home-thumb{0%{transform:translateY(-100%)}70%,100%{transform:translateY(280%)}}
+
+@media (max-width:1023px){
+  .c-hero-home{grid-template-rows:auto clamp(220px,40vh,520px) auto;row-gap:var(--space-l)}
+  .c-hero-home__title{grid-column:1 / -1}
+  .c-hero-home__r{grid-column:1 / -1;grid-row:2}
+  .c-hero-home__r-anchor{height:100%}
+  .c-hero-home__side{grid-column:1 / span 4;grid-row:3}
+  .c-hero-home__scroll{display:none}
+}
+@media (max-width:639px){ .c-hero-home__side{grid-column:1 / -1} }

@@ -1,0 +1,6 @@
+/* Dev only: column overlay, mirrors .o-container.o-grid (global/debugGrid.js, toggle with L). */
+.c-debug-grid{position:fixed;inset:0;z-index:50;pointer-events:none;display:none}
+.c-debug-grid.is-on{display:grid}
+.c-debug-grid__col{grid-column:auto;background:rgba(255,79,0,.08);border-inline:1px solid rgba(255,79,0,.18)}
+@media (max-width:1023px){ .c-debug-grid__col:nth-child(n+7){display:none} }
+@media (max-width:639px){ .c-debug-grid__col:nth-child(n+5){display:none} }
