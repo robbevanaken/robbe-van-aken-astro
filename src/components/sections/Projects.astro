@@ -8,17 +8,16 @@ const first = projects[0];
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <section class="pintro grid" id="work">
-  <p class="label t-label" data-scramble="scroll"><Icon name="arrow" class="arrow" />{work.label}</p>
-  <h2 class="t-h2" data-scramble="scroll">
-    {work.title.map((p) => <span class:list={{ 't-muted': p.muted }}>{p.text}</span>)}
-  </h2>
+  <p class="label t-label"><Icon name="arrow" class="arrow" />{work.label}</p>
+  <h2 class="title t-lead" data-highlight-text>{work.title}</h2>
 </section>
 
 <!-- Pinned "scope" section, driven by src/scripts/projects-scope.js (class names are JS hooks). -->
 <section class="pwrap" data-stage="2" aria-label="Featured projects">
   <div class="phead"><div class="r-slot" id="a-craft"></div></div>
-  <!-- invisible grid rulers: the script sizes the frame to cols 3–10 and parks the next project on col 12 -->
-  <div class="grid rulers" aria-hidden="true"><i class="pmeasure"></i><i class="pnext"></i></div>
+  <!-- invisible grid rulers: the script reads the live grid from these, sizes the frame to a centred column span
+       (cols 2–11, or 3–10 / 4–9 when the screen is short) and parks the next project on the last column -->
+  <div class="grid rulers" aria-hidden="true"><i class="rcol1"></i><i class="rcol2"></i><i class="pnext"></i></div>
   <div class="pstage">
     <div class="pframe" aria-hidden="true"><Corners /></div>
     {projects.map((p) => (
@@ -34,7 +33,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <div class="pfoot">
     <div class="pcap" aria-live="polite">
       <small class="t-label" id="pc-t">01 — {first.title}</small>
-      <p class="t-lead" id="pc-d">{first.description}</p>
+      <p class="t-body-l" id="pc-d">{first.description}</p>
     </div>
     <div class="pside">
       <span class="pcount t-ui"><b id="p-count">01</b> / {pad(projects.length)}</span>
@@ -48,32 +47,32 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .pintro{padding-top:var(--space-section);padding-bottom:var(--space-l)}
   .label{display:flex;gap:var(--space-xs);align-items:center;color:var(--muted);margin-bottom:var(--space-m)}
   .label :global(.arrow){color:var(--accent);font-size:14px}
-  h2{grid-column:1 / span 6}
+  .title{grid-column:1 / span 5;line-height:var(--lh-heading)}
 
-  .pwrap{height:100svh;display:flex;flex-direction:column;justify-content:space-between;padding:5vh 0;overflow:hidden;position:relative;background:var(--bg)}
+  .pwrap{height:100svh;display:flex;flex-direction:column;justify-content:center;padding:3vh 0 clamp(40px,9vh,110px);overflow:hidden;position:relative;background:var(--bg)}
   .phead{display:flex;justify-content:center}
   .r-slot{width:56px;height:56px}
   .rulers{position:absolute;left:0;right:0;top:0;height:0;visibility:hidden}
-  .pmeasure{grid-column:3 / span 8}
+  .rcol1{grid-column:1}
+  .rcol2{grid-column:2}
   .pnext{grid-column:-2 / -1}
-  .pstage{position:relative;width:100%;flex:none}
+  .pstage{position:relative;width:100%;flex:none} /* vertical margins set by the script (gutter + breathing room) */
   .pcard,.pframe{position:absolute;left:50%;top:50%}
   .pcard{will-change:transform,opacity;transform:translate(-50%,-50%);cursor:pointer}
   .pmedia{width:100%;height:100%;overflow:hidden}
   .pframe{z-index:5;pointer-events:none;transform:translate(-50%,-50%);--corner-offset:var(--gutter);--corner-color:var(--fg);--corner-size:18px}
   .pimg{width:100%;height:100%;object-fit:cover;will-change:transform;transform:scale(1.14)}
-  .placeholder{display:grid;place-items:center;font-size:clamp(34px,7vw,110px);letter-spacing:-.04em;color:var(--t);
+  .placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
     background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
   .pfoot{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-m);margin:0 auto;width:var(--mw,62vw)}
   .pcap small{color:var(--fg)}
-  .pcap p{margin-top:var(--space-xs);color:var(--muted);max-width:30em}
+  .pcap p{margin-top:var(--space-2xs);color:var(--muted);max-width:34em}
   .pside{display:flex;align-items:center;gap:var(--space-s);flex:none}
   .pcount{color:var(--muted)}
   .pcount b{color:var(--fg);font-weight:400}
 
   @media (max-width:1023px){
-    h2{grid-column:1 / -1}
-    .pmeasure{grid-column:1 / -1}
+    .title{grid-column:1 / -1}
     .pfoot{flex-direction:column;align-items:flex-start;gap:var(--space-s)}
   }
 </style>

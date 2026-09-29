@@ -12,7 +12,7 @@ import { scrollToY } from './smooth-scroll.js';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
-const RATIO = 1.37, MAX_RATIO = 1.9; // image aspect (w/h) as in Figma; on short screens it may widen up to MAX_RATIO
+const RATIO = 1.37, MAX_RATIO = 1.75; // image aspect (w/h) as in Figma; on short screens it may widen up to MAX_RATIO
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const smooth = (t) => t * t * (3 - 2 * t);
 const pad = (n) => String(n).padStart(2, '0');
@@ -23,18 +23,29 @@ export function initProjectsScope() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const stage = wrap.querySelector('.pstage'), frame = wrap.querySelector('.pframe');
   const cards = [...wrap.querySelectorAll('.pcard')], imgs = cards.map((c) => c.querySelector('.pimg')), n = cards.length;
-  const measure = wrap.querySelector('.pmeasure'), nextCol = wrap.querySelector('.pnext');
+  const col1 = wrap.querySelector('.rcol1'), col2 = wrap.querySelector('.rcol2'), nextCol = wrap.querySelector('.pnext');
   const capT = document.getElementById('pc-t'), capD = document.getElementById('pc-d'), cnt = document.getElementById('p-count');
   const PROJ = cards.map((c) => [c.dataset.title, c.dataset.desc]);
 
   let W = 0, H = 0, sm = .24, side = 0, step = 0;
   let cur = 0, last = -1, shown = 0;
   function dims() {
-    const mob = innerWidth < 640, gutter = parseFloat(getComputedStyle(wrap).getPropertyValue('--gutter')) || 20;
-    const avail = innerHeight * .9 - wrap.querySelector('.phead').offsetHeight - wrap.querySelector('.pfoot').offsetHeight - 2 * gutter - (mob ? 40 : 56);
-    const m = measure.getBoundingClientRect(), cx = innerWidth / 2;
-    // the image sits one gutter inside the frame columns, so the corner brackets land on the column edges
-    W = Math.max(200, Math.min(m.width - 2 * gutter, avail * MAX_RATIO));
+    const mob = innerWidth < 640, cx = document.documentElement.clientWidth / 2;
+    // read the live grid from the rulers (col 1, col 2, last col)
+    const c1 = col1.getBoundingClientRect(), c2 = col2.getBoundingClientRect();
+    const colW = c1.width, gutter = c2.left - c1.right;
+    const cols = parseInt(getComputedStyle(wrap).getPropertyValue('--cols'), 10) || 12;
+    // breathing room between the frame and the R above / the caption below
+    const breath = clamp(innerHeight * .05, 24, 56);
+    stage.style.marginBlock = gutter + breath + 'px';
+    const cs = getComputedStyle(wrap);
+    const avail = innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
+      - wrap.querySelector('.phead').offsetHeight - wrap.querySelector('.pfoot').offsetHeight - 2 * (gutter + breath);
+    // pick the widest centred column span that still fits the height, so the corners always land on column edges
+    const spans = (cols >= 12 ? [10, 8, 6] : cols >= 6 ? [6, 4] : [4]);
+    const spanW = (n) => n * colW + (n - 1) * gutter - 2 * gutter; // image sits one gutter inside the frame columns
+    let span = spans.find((n) => spanW(n) / avail <= MAX_RATIO) || spans[spans.length - 1];
+    W = Math.max(200, Math.min(spanW(span), avail * MAX_RATIO));
     H = Math.min(W / RATIO, avail);
     sm = mob ? .3 : .24;
     const smW = W * sm;

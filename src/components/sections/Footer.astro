@@ -6,7 +6,7 @@ import { footer, meta } from '../../data/site';
   <Marquee />
   <div class="main grid">
     <div class="cta">
-      <h2 class="t-display" data-scramble="scroll">{footer.title}</h2>
+      <h2 class="t-display" data-highlight-text>{footer.title}</h2>
       <a class="mail t-lead" href={`mailto:${meta.email}`}>{meta.email}</a>
     </div>
     <div class="r-anchor" id="a-foot"></div>
@@ -24,8 +24,12 @@ import { footer, meta } from '../../data/site';
   .main{flex:1;align-items:center;padding-block:var(--space-xl)}
   .cta{grid-column:1 / span 6;grid-row:1}
   h2{max-width:12ch}
-  .mail{display:inline-block;margin-top:var(--space-m);text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:4px;transition:color .2s,border-color .2s}
-  .mail:hover{color:var(--accent);border-color:var(--accent)}
+  /* email: light underline by default, an orange one wipes in on hover */
+  .mail{position:relative;display:inline-block;margin-top:var(--space-m);text-decoration:none;padding-bottom:6px}
+  .mail::before,.mail::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px}
+  .mail::before{background:var(--line-strong)}
+  .mail::after{background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform var(--hover-dur) var(--ease-punch)}
+  .mail:hover::after,.mail:focus-visible::after{transform:scaleX(1);transform-origin:left}
   .r-anchor{grid-column:7 / -1;grid-row:1;height:68vh}
   .bottom{padding-block:var(--space-s) calc(var(--space-s) + env(safe-area-inset-bottom,0px));color:var(--muted);border-top:1px solid var(--line)}
   .company{grid-column:1 / span 3}

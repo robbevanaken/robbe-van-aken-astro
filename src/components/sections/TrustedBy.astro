@@ -4,7 +4,7 @@ import { trustedBy } from '../../data/site';
 import { clients } from '../../data/clients';
 ---
 <section class="trusted grid" aria-labelledby="trusted-label">
-  <p class="label t-label" id="trusted-label" data-scramble="scroll">{trustedBy.label}</p>
+  <p class="label t-label" id="trusted-label">{trustedBy.label}</p>
   <!-- Reveal: the corners start around the logo and move apart to the cell edges, then the logo fades in -->
   <ul class="logos" data-reveal>
     {clients.map((c, i) => {
@@ -40,8 +40,6 @@ import { clients } from '../../data/clients';
     transition-delay:calc(var(--i) * .12s + .35s)}
   .is-in .cell{--pull-x:0px;--pull-y:0px;--corner-opacity:1}
   .is-in img{opacity:1;filter:none;transform:none}
-  /* after the reveal, hovering a cell opens the corners a little further */
-  .is-in .cell:hover{--pull-x:-6px;--pull-y:-6px;--corner-delay:0s;--corner-dur:.5s}
 
   @media (max-width:639px){
     li{grid-column:span 2}

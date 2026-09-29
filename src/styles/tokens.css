@@ -45,6 +45,10 @@
 
   --nav-top:clamp(20px,2.7778vw,48px);     /* 40 */
   --ease-out:cubic-bezier(.2,.7,.2,1);
+  /* hover ease, same curve as GSAP CustomEase "punch" (M0,0 C0.19,1 0.22,1 1,1), registered in scripts/eases.js */
+  --ease-punch:cubic-bezier(.19,1,.22,1);
+  --hover-dur:.6s;
+  --marquee-h:48px;
 
   color-scheme:dark;
 }

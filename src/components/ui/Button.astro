@@ -5,20 +5,21 @@ import Corners from './Corners.astro';
 interface Props { href: string }
 const { href } = Astro.props;
 ---
-<a class="btn t-ui" href={href} data-scramble-hover="link">
+<a class="btn t-ui" href={href}>
   <Corners />
-  <span class="label" data-scramble-hover="target"><slot /></span>
+  <span class="label"><slot /></span>
   <span class="end"><Icon name="arrow" /></span>
 </a>
 
 <style>
   .btn{
-    --corner-opacity:0;--corner-color:var(--fg);--corner-size:8px;--corner-dur:.5s;
+    --corner-opacity:0;--corner-color:var(--fg);--corner-size:8px;--corner-dur:var(--hover-dur);--corner-ease:var(--ease-punch);
     position:relative;display:inline-flex;align-items:stretch;background:var(--fg);color:var(--ink);text-decoration:none;
+    transition:transform var(--hover-dur) var(--ease-punch);
   }
   .label{padding:12px 16px;min-width:112px;white-space:nowrap}
-  .end{display:grid;place-items:center;padding:0 13px;border-left:1px solid rgba(23,14,11,.15);color:var(--ink)}
-  .end :global(.icon){width:14px;height:12px;transform:rotate(-45deg);transition:transform .6s var(--ease-out),color .3s}
-  .btn:hover,.btn:focus-visible{--corner-opacity:1;--pull-x:-6px;--pull-y:-6px}
-  .btn:hover .end :global(.icon),.btn:focus-visible .end :global(.icon){transform:rotate(0deg);color:var(--accent)}
+  .end{display:grid;place-items:center;padding:0 13px;border-left:1px solid rgba(23,14,11,.15)}
+  .end :global(.icon){width:14px;height:12px;transform:rotate(-45deg);transition:transform var(--hover-dur) var(--ease-punch)}
+  .btn:hover,.btn:focus-visible{transform:scale(.96);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px}
+  .btn:hover .end :global(.icon),.btn:focus-visible .end :global(.icon){transform:rotate(0deg)}
 </style>

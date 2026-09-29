@@ -8,7 +8,7 @@ import { nav } from '../../data/site';
     <a class="id t-ui" href="#top">{nav.name}<span>{nav.role}</span></a>
     <nav class="links t-ui" aria-label="Main">
       <ul>
-        {nav.links.map((l) => <li><a href={l.href} data-scramble-hover="link"><span data-scramble-hover="target">{l.label}</span></a></li>)}
+        {nav.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
       </ul>
     </nav>
     <button class="toggle t-ui" type="button" aria-expanded="false" aria-controls="menu">
@@ -64,8 +64,9 @@ import { nav } from '../../data/site';
   .id span{display:block;color:var(--muted)}
   .links{grid-column:-5 / -1}
   .links ul{display:flex;justify-content:flex-end;gap:var(--space-m)}
-  .links a{text-decoration:none;transition:color .2s}
-  .links a:hover{color:var(--accent)}
+  .links a{position:relative;text-decoration:none;padding-bottom:3px}
+  .links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform var(--hover-dur) var(--ease-punch)}
+  .links a:hover::after,.links a:focus-visible::after{transform:scaleX(1);transform-origin:left}
   .toggle{display:none;grid-column:-2 / -1;justify-self:end;background:none;border:0;color:var(--fg);font:inherit;padding:0;cursor:pointer}
   .toggle .close,.is-open .toggle .open{display:none}
   .is-open .toggle .close{display:inline}

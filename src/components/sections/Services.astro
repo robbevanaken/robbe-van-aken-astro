@@ -4,15 +4,15 @@ import { servicesIntro } from '../../data/site';
 import { services } from '../../data/services';
 ---
 <section class="services grid" id="services" data-stage="3">
-  <h2 class="t-h2" data-scramble="scroll">{servicesIntro.title}</h2>
-  <p class="intro t-body-l t-muted">{servicesIntro.text}</p>
+  <h2 class="t-h2">{servicesIntro.title}</h2>
+  <p class="intro t-body-l t-muted" data-highlight-text>{servicesIntro.text}</p>
   <ul class="list">
     {services.map((s, q) => (
       <li class="row" tabindex="0" data-q={q}>
         <!-- icon slot: the engine rebuilds quarter q of the R in here -->
         <div class="svc-slot"><Corners /></div>
         <h3 class="t-lead">{s.title}</h3>
-        <p class="t-body-l t-muted">{s.description}</p>
+        <p class="t-body-l t-muted" data-highlight-text>{s.description}</p>
       </li>
     ))}
   </ul>
@@ -27,7 +27,7 @@ import { services } from '../../data/services';
   .row{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:center;border-top:1px solid var(--line);padding-block:var(--space-m);cursor:default}
   .row:last-child{border-bottom:1px solid var(--line)}
   .svc-slot{grid-column:1 / span 1;position:relative;aspect-ratio:1;width:100%;max-width:84px}
-  h3{grid-column:3 / span 4;transition:transform .5s var(--ease-out),color .3s}
+  h3{grid-column:3 / span 4;transition:transform var(--hover-dur) var(--ease-punch),color .3s}
   .row p{grid-column:7 / span 4}
   .row:hover h3,.row:focus-visible h3{transform:translateX(10px);color:var(--accent)}
 

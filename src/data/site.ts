@@ -44,13 +44,7 @@ export const pitch = {
 
 export const work = {
   label: 'Some recent projects',
-  // Title parts: `muted` parts are shown in the softer colour.
-  title: [
-    { text: 'Made with ', muted: false },
-    { text: 'technical expertise,', muted: true },
-    { text: ' and a well trained ', muted: false },
-    { text: 'eye for design', muted: true },
-  ],
+  title: 'Made with technical expertise, and a well trained eye for design',
   cta: { label: 'View all projects', href: '#work' },
 };
 

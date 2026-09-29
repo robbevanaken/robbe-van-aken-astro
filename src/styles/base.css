@@ -24,7 +24,9 @@ ul{list-style:none;margin:0;padding:0}
 
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-#r-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:5}
+/* the R sits above the header (z 30) so the header background never covers it; hidden behind the open mobile menu */
+#r-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:35}
+html.menu-open #r-canvas{visibility:hidden}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition-duration:0s !important;animation-duration:0s !important}

@@ -3,7 +3,7 @@
 // Driven by CSS variables set on any ancestor, so parents can animate them:
 //   --corner-offset  push the whole frame outwards (default 0 = on the edge)
 //   --pull-x/--pull-y  move each bracket towards the centre (positive) or outwards (negative)
-//   --corner-opacity, --corner-color, --corner-size, --corner-delay
+//   --corner-opacity, --corner-color, --corner-size, --corner-delay, --corner-dur, --corner-ease
 ---
 <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
 
@@ -14,7 +14,7 @@
     position:absolute;width:var(--corner-size,14px);height:var(--corner-size,14px);
     border:0 solid var(--corner-color,var(--line-strong));
     opacity:var(--corner-opacity,1);
-    transition:transform var(--corner-dur,.9s) var(--ease-out),opacity var(--corner-dur,.9s) var(--ease-out),border-color .3s;
+    transition:transform var(--corner-dur,.9s) var(--corner-ease,var(--ease-out)),opacity var(--corner-dur,.9s) var(--corner-ease,var(--ease-out)),border-color .3s;
     transition-delay:var(--corner-delay,0s);
   }
   i:nth-child(1){top:0;left:0;border-top-width:1px;border-left-width:1px;transform:translate(var(--px),var(--py))}
