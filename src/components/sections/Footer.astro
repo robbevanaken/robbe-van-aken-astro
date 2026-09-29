@@ -4,13 +4,14 @@
 // on subpages it has its own R (a second canvas scoped to [data-site-footer]).
 import Marquee from '../ui/Marquee.astro';
 import Socials from '../ui/Socials.astro';
+import Icon from '../ui/Icon.astro';
 import { footer, meta } from '../../data/site';
 ---
 <footer class="c-site-footer" id="contact" data-stage="4" data-site-footer>
   <Marquee />
   <div class="c-site-footer__main o-container o-grid">
     <div class="c-site-footer__cta">
-      <h2 class="c-site-footer__title u-text-display" data-highlight-text>{footer.title}</h2>
+      <h2 class="c-site-footer__title u-text-display" data-highlight-text>{footer.title.map((p) => <span class:list={{ 'u-text-muted': p.muted }}>{p.text}</span>)}</h2>
       <a class="c-site-footer__mail u-text-lead" href={`mailto:${meta.email}`}>{meta.email}</a>
       <Socials class="c-site-footer__socials" />
     </div>
@@ -21,6 +22,6 @@ import { footer, meta } from '../../data/site';
     <span class="c-site-footer__location">{footer.location}</span>
     {footer.legal.map((l) => <a class="c-site-footer__legal" href={l.href}>{l.label}</a>)}
     <button class="c-site-footer__legal c-site-footer__legal--cookies" type="button" data-cc="show-preferencesModal">{footer.cookieSettings}</button>
-    <a class="c-site-footer__top" href="#top">{footer.backToTop}</a>
+    <a class="c-site-footer__top" href="#top"><span class="c-site-footer__top-label">{footer.backToTop}</span><span class="c-site-footer__top-icon"><Icon name="arrow" /></span></a>
   </div>
 </footer>

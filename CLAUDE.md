@@ -8,7 +8,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 ## File structure (same conventions as the woonpact project, without Tailwind)
 - `src/data/` all copy. `site.ts` (per section, in page order, plus `socials` for footer + mobile menu), `pages.ts` (subpages), `clients.ts`, `projects.ts`, `services.ts`. Change text here, not in components.
 - `src/components/sections/` one file per page section, `ui/` small reusable pieces (Button, Icon, Corners, Marquee, Placeholder), `layout/` Nav + dev-only DevHud and GridOverlay. Components contain markup only: no `<style>` or `<script>`.
-- `src/styles/main.css` imports, in order: `base/` (`_tokens.css`: colours, grid, type scale, spacing, eases; `_document.css`: reset, selection, R canvas) → `objects/` (`_container.css`, `_grid.css`) → `components/` (one `_name.css` per component, imported alphabetically in `index.css`) → `utilities/` (`_text.css`, `_screen-reader.css`) → `vendor/` (`_cookieconsent.css`).
+- `src/styles/main.css` imports, in order: `base/` (`_fonts.css`: self-hosted Inter Tight @font-face (files in `public/fonts`, OFL license alongside, latin 400/500 preloaded in `Base.astro`); `_tokens.css`: colours, grid, type scale, spacing, eases; `_document.css`: reset, selection, R canvas) → `objects/` (`_container.css`, `_grid.css`) → `components/` (one `_name.css` per component, imported alphabetically in `index.css`) → `utilities/` (`_text.css`, `_screen-reader.css`) → `vendor/` (`_cookieconsent.css`).
 - `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`) and starts everything in order; each init does nothing when its element is missing. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid), `components/` (featuredProjects, scrollNext, marquee, highlightText), `r-journey/` (the R engine).
 - `public/clients/` client logos (white SVG, one file per logo).
 
@@ -32,9 +32,10 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - Highlight text on scroll (Osmo Supply resource, kept as delivered, `scripts/components/highlightText.js`): `data-highlight-text` on longer texts (pitch quote, projects title, services intro + descriptions, footer title); letters go from 0.2 to full opacity, scrubbed with scroll.
 - Hovers use the "punch" ease (`--ease-punch` in CSS, `CustomEase 'punch'` in GSAP via `scripts/global/eases.js`, same curve).
 - Button hover: scales down slightly, brand arrow turns from 45° to 0°, four corner brackets slide out of the button's corners.
+- Footer: title spans 5 columns, "Let's build" in the muted grey (title parts in `site.ts`); the footer is one screen + the marquee tall, so at the very bottom the marquee sits just above the fold.
 - Nav links: underline that wipes in from the left. Footer email: light underline, orange one wipes in on hover.
 - Marquee (`components/marquee.js`): constant loop that speeds up with scroll velocity (both directions) and eases back.
-- Glyph cells scale with the R's size below 120px (header/projects R ~22 cells tall); big R's use the density-based size.
+- Glyph cells scale with the shape's size below 140px (service icons and the small header/projects R, ~36 glyphs tall, min 3 device px per glyph); big R's use the density-based size. Service icons are rasterised at 60×60 (`IG`) for detail. Glyphs are the intended look; pixel mode is only a dev fallback.
 - The R canvas (`#r-canvas`, z 35) always renders above the fixed header (z 30).
 - Hero: the hero is `100svh - --marquee-h`, so the orange banner sits just above the fold; the scroll hint has a looping scrollbar thumb.
 - Trusted by: corners start around the logo and move apart to the cell edges, then the logo fades in (staggered).
@@ -79,7 +80,7 @@ Pinned section, continuous (no stepped timeline): one smoothed value `cur` (proj
 ## Design rules
 - `::selection` is orange with dark text.
 - Palette tokens in `src/styles/base/_tokens.css` `:root` (dark warm brown `#170e0b`, orange `#ff4a00` accent used sparingly). Text is only ever white `#FFFFFF` (`--fg`) or grey `#B2B2B2` (`--muted`, `.t-muted`), as in Figma.
-- Inter Tight for all type. The R is the one bold element; keep everything around it quiet.
+- Inter Tight for all type, self-hosted (no Google Fonts requests). The R is the one bold element; keep everything around it quiet.
 - Copy: English, sentence case, plain and honest, "not salesy, not slimy". Key line: "Solid code, thoughtful design, genuine care for the craft, and AI where it actually helps. I want to build something we're both proud of. That's the whole pitch."
 - Respect `prefers-reduced-motion` (engine and GSAP already do).
 - Extreme heights: R anchors use `clamp(min, Nvh, max)` heights, the pitch R is also capped by its box width, the projects section tightens its spacing below 700px height.

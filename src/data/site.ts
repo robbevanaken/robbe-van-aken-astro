@@ -9,8 +9,8 @@ export const meta = {
 
 // Social profiles: shown in the footer and the mobile menu.
 export const socials = [
-  { label: 'Instagram', href: '' }, // TODO: full profile URL, e.g. https://www.instagram.com/<handle>/
-  { label: 'LinkedIn', href: '' },  // TODO: full profile URL, e.g. https://www.linkedin.com/in/<handle>/
+  { label: 'Instagram', href: 'https://www.instagram.com/robbe_vnaken/' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/robbe-van-aken/?skipRedirect=true' },
 ];
 
 export const nav = {
@@ -60,7 +60,11 @@ export const servicesIntro = {
 };
 
 export const footer = {
-  title: "Let's build something we're both proud of.",
+  // Each part in order; `muted` parts are shown in the grey (like "Freelance Dev" in the hero).
+  title: [
+    { text: "Let's build", muted: true },
+    { text: " something we're both proud of.", muted: false },
+  ],
   company: 'Robbe Van Aken BV',
   location: 'Ghent, Belgium',
   backToTop: 'Back to top',

@@ -81,8 +81,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     CC=new Float32Array(KN);CS=new Float32Array(KN);OX=new Float32Array(KN);OY=new Float32Array(KN);OZ=new Float32Array(KN);
     for(let k=0;k<KN;k++){const a=(r()-.5)*1.3;CC[k]=Math.cos(a);CS[k]=Math.sin(a);OX[k]=(r()-.5)*.28;OY[k]=(r()-.5)*.28;OZ[k]=(r()-.5)*.5}
 
-    // service icons: bold, simple shapes that get extruded like the R
-    const IG=30;
+    // service icons: bold, simple shapes that get extruded like the R. Drawn in a 30-unit box, rasterised at IG px
+    // (60: twice the detail, which the particle count per quarter can fill)
+    const IG=60;
     const P=(g,pts)=>{g.beginPath();g.moveTo(pts[0],pts[1]);for(let k=2;k<pts.length;k+=2)g.lineTo(pts[k],pts[k+1]);g.closePath();g.fill()};
     const CUT=(g,fn)=>{g.globalCompositeOperation='destination-out';fn();g.globalCompositeOperation='source-over'};
     const drawIcon=[
@@ -97,7 +98,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       g=>{g.beginPath();g.moveTo(4,3);g.lineTo(26,3);g.lineTo(26,13);g.quadraticCurveTo(26,23,15,29);g.quadraticCurveTo(4,23,4,13);g.closePath();g.fill();
         CUT(g,()=>P(g,[8,19,15,11,22,19,22,23,15,15.5,8,23]))}
     ];
-    const icons=drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=IG;const g=c.getContext('2d');g.fillStyle='#fff';fn(g);
+    const icons=drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=IG;const g=c.getContext('2d');g.scale(IG/30,IG/30);g.fillStyle='#fff';fn(g);
       const id=g.getImageData(0,0,IG,IG).data,ins=(x,y)=>x>=0&&y>=0&&x<IG&&y<IG&&id[(y*IG+x)*4+3]>120,cap=[],bd=[];
       for(let y=0;y<IG;y++)for(let x=0;x<IG;x++){if(!ins(x,y))continue;const u=(x+.5)/IG-.5,v=(y+.5)/IG-.5;
         let nx=0,ny=0,o=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if((dx||dy)&&!ins(x+dx,y+dy)){nx+=dx;ny+=dy;o++}
@@ -187,7 +188,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     smx+=(mx-smx)*.06*motion;smy+=(my-smy)*.06*motion;
     rect(aHero,A[0]);A[0].S=Math.min(A[0].h,A[0].w*1.05)*.92;
     rect(aPitch,A[1]);A[1].S=Math.min(A[1].h*.8,A[1].w*1.15);A[1].cx-=A[1].w*.1;
-    rect(aCraft,A[2]);A[2].S=A[2].h*.78;
+    rect(aCraft,A[2]);A[2].S=A[2].h*.9;
     for(let q=0;q<4;q++)rect(svcSlots[q],Q[q]);
     rect(aFoot,A[4]);A[4].S=Math.min(A[4].h,A[4].w*1.05)*.9;
 
@@ -235,11 +236,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
     ctx.clearRect(0,0,W,H);
     if(glyph){
-      // small R (header / projects): finer cells so the R stays readable (~22 cells tall); big R's are unchanged
+      // small shapes (service icons, the small R in the header / projects): finer cells so there is enough detail
+      // (~36 glyphs tall); big R's keep the density-based size
       const rh=(i0===3?Qh:A[i0].S)*(1-f)+(i1===3?Qh:A[i1].S)*f,baseCell=size<1.1?3:clamp(Math.round(size*1.35),4,7);
-      const small=clamp((140-rh)/60,0,1);
-      const minCell=DPR>=2?2:3; // at least ~4 device px per glyph, otherwise the crosses blur to grey
-      const CELL=rh<120?Math.min(baseCell,Math.max(minCell,Math.round(rh/22))):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
+      const iconW=(i0===3?1-f:0)+(i1===3?f:0); // how much of this frame is the icons state
+      const small=clamp((140-rh)/60,0,1)*(1-iconW); // white boost for the small R only; icons keep their 3D shading
+      const minCell=3/DPR; // glyphs of at least 3 device px (1.5 css px on retina): smaller and the crosses blur to grey
+      const CELL=rh<140?Math.min(baseCell,Math.max(minCell,Math.round(rh/36*2)/2)):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
       if(!GC||GC.length<NN){GC=new Float32Array(NN);GS=new Float32Array(NN);GN=new Uint16Array(NN);GO=new Uint8Array(NN);OCC=new Uint32Array(NN)}nOcc=0;
       GC.fill(0,0,NN);GS.fill(0,0,NN);GN.fill(0,0,NN);GO.fill(0,0,NN);
       const sp=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f,expect=Math.max(1,(CELL/Math.max(sp,.3))**2*.45),hc=size/2;
