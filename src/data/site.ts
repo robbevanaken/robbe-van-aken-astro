@@ -67,7 +67,6 @@ export const footer = {
   ],
   company: 'Robbe Van Aken BV',
   location: 'Ghent, Belgium',
-  backToTop: 'Back to top',
   legal: [
     { label: 'Privacy notice', href: '/privacy' },
   ],

@@ -7,6 +7,6 @@ const { href, class: cls } = Astro.props;
 ---
 <a class:list={['c-button u-text-ui', cls]} href={href}>
   <Corners />
-  <span class="c-button__label"><slot /></span>
+  <span class="c-button__label"><span class="c-button__text"><slot /></span></span>
   <span class="c-button__icon"><Icon name="arrow" /></span>
 </a>
