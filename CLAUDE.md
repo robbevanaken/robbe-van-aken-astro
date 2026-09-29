@@ -10,19 +10,24 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - `src/components/sections/` one file per page section (Hero, TrustedBy, Pitch, Projects, Services, Footer), each with its own scoped `<style>`.
 - `src/components/ui/` small reusable pieces: Button, Icon (brand arrow, globe), Corners (bracket frame, animatable via `--pull-x/--pull-y/--corner-opacity`), Marquee.
 - `src/components/layout/` Nav (fixed, hides on scroll down / shows on scroll up, full-screen menu below 640px), and dev-only DevHud + GridOverlay.
-- `src/scripts/` `smooth-scroll.js` (Lenis on the GSAP ticker; use `scrollToY()` for programmatic scrolls), `reveal.js` (`data-reveal` → `.is-in` once in view), `scramble.js` (Osmo text scramble, see below), `projects-scope.js`, `r-journey/`.
+- `src/scripts/` `eases.js`, `smooth-scroll.js` (Lenis on the GSAP ticker; use `scrollToY()` for programmatic scrolls), `reveal.js` (`data-reveal` → `.is-in` once in view), `highlight.js` (Osmo highlight text), `projects-scope.js`, `r-journey/`.
 - `public/clients/` client logos (white SVG, one file per logo).
 
 ## Motion
-- Text scramble (Osmo Supply resource, kept as delivered, GSAP ScrambleText + SplitText): `data-scramble="load"` (hero title), `data-scramble="scroll"` (labels + section titles), `data-scramble-hover="link"` + `data-scramble-hover="target"` (nav links, buttons). Runs after `document.fonts.ready`.
-- Button hover: brand arrow turns from 45° to 0°, four corner brackets slide out of the button's corners.
+- Text scramble: only on the project caption label (`01 — TITLE`), when the active project changes (GSAP ScrambleText in `projects-scope.js`). Removed everywhere else on purpose.
+- Highlight text on scroll (Osmo Supply resource, kept as delivered, `src/scripts/highlight.js`): `data-highlight-text` on longer texts (pitch quote, projects title, services intro + descriptions, footer title); letters go from 0.2 to full opacity, scrubbed with scroll.
+- Hovers use the "punch" ease (`--ease-punch` in CSS, `CustomEase 'punch'` in GSAP via `scripts/eases.js`, same curve).
+- Button hover: scales down slightly, brand arrow turns from 45° to 0°, four corner brackets slide out of the button's corners.
+- Nav links: underline that wipes in from the left. Footer email: light underline, orange one wipes in on hover.
+- The R canvas (`#r-canvas`, z 35) always renders above the fixed header (z 30).
+- Hero: the hero is `100svh - --marquee-h`, so the orange banner sits just above the fold; the scroll hint has a looping scrollbar thumb.
 - Trusted by: corners start around the logo and move apart to the cell edges, then the logo fades in (staggered).
 - Everything is off or instant with `prefers-reduced-motion`.
 - `src/styles/` `tokens.css` (colours, grid, type scale, spacing), `base.css` (reset + `.t-*` type classes), `grid.css` (`.grid` + overlay). `global.css` only imports them.
 
 ## Layout grid (Figma frame 1440 wide)
 12 columns, 60px margin, 20px gutter at 1440, fluid in vw (tokens `--cols`, `--margin`, `--gutter`). 6 columns below 1024px, 4 below 640px. Every section is a `.grid` and places children with `grid-column`; nested rows use `subgrid`. Press `L` in dev (or the HUD "Grid" button) for the column overlay.
-Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 · projects title 1–6, frame 3–10 (corners on the column edges, image one gutter inside), next project parked on col 12.
+Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 · projects title 1–5 (lead size), frame 2–11, stepping down to 3–10 / 4–9 on short screens (corners always on column edges, image one gutter inside), next project parked on col 12.
 
 ## Type scale (`tokens.css`, sizes @1440, measured from Figma)
 display 58 · h2 48 · lead 32 · body-l 20 · body 16 · ui 15 · label 12 (uppercase, medium, tracked). Use the `.t-display/.t-h2/.t-lead/.t-body-l/.t-ui/.t-label` classes instead of one-off sizes.
@@ -54,7 +59,7 @@ Tunables worth knowing:
 - `PAL` colour ramp for pixel mode.
 
 ## Projects (`src/scripts/projects-scope.js`)
-Pinned section, continuous (no stepped timeline): one smoothed value `cur` (project index, fractional in between) drives card position/scale/opacity, a small image parallax, the frame "breathing" in between projects, and the caption (label scrambles, description cross-fades). When scrolling stops in between it glides to the nearest project in the scroll direction; clicking a side project brings it in. Sizes come from the grid: the hidden rulers `.pmeasure` (frame columns) and `.pnext` (resting column of the next project) in `Projects.astro`; `RATIO` is the image aspect. Data lives in `src/data/projects.ts`; set `image` to use a real visual.
+Pinned section, continuous (no stepped timeline): one smoothed value `cur` (project index, fractional in between) drives card position/scale/opacity, a small image parallax, the frame "breathing" in between projects, and the caption (label scrambles, description cross-fades). When scrolling stops in between it glides to the nearest project in the scroll direction; clicking a side project brings it in. Sizes come from the grid: hidden rulers `.rcol1/.rcol2` (column + gutter width) and `.pnext` (resting column of the next project) in `Projects.astro`; the frame takes the widest centred span that fits the height with breathing room. `RATIO`/`MAX_RATIO` set the image aspect. Data lives in `src/data/projects.ts`; set `image` to use a real visual.
 
 ## Design rules
 - Palette tokens in `src/styles/tokens.css` `:root` (dark warm brown `#170e0b`, orange `#ff4a00` accent used sparingly). Text is only ever white `#FFFFFF` (`--fg`) or grey `#B2B2B2` (`--muted`, `.t-muted`), as in Figma.
