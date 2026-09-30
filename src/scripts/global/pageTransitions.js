@@ -83,6 +83,7 @@ export function initPageTransitions({ mount, unmount }) {
     if (!target) return false;
     const lenis = getLenis();
     lenis ? lenis.scrollTo(target) : target.scrollIntoView({ behavior: 'smooth' });
+    target.focus({ preventScroll: true }); // the skip link (#top): keyboard focus moves along; no-op on non-focusable targets
     return true;
   });
 

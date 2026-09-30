@@ -4,5 +4,6 @@
 .c-page-intro__arrow{color:var(--accent);font-size:14px}
 .c-page-intro__title{grid-column:1 / span 8}
 .c-page-intro__text{grid-column:1 / span 5;color:var(--muted)}
+.c-page-intro__action{grid-column:1 / -1;justify-self:start}
 
 @media (max-width:1023px){ .c-page-intro__title,.c-page-intro__text{grid-column:1 / -1} }

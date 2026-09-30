@@ -25,6 +25,13 @@ export const privacyPage = {
   intro: 'How this site handles your data. The full notice is coming soon.',
 };
 
+export const notFoundPage = {
+  label: '404',
+  title: "This page doesn't exist.",
+  intro: 'It may have moved, or the link is off. The home page is a good place to start again.',
+  cta: { label: 'Back to home', href: '/' },
+};
+
 export const projectPage = {
   label: 'Project',
   placeholder: 'Case study coming soon',

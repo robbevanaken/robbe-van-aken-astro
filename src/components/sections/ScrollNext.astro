@@ -11,7 +11,7 @@ const { project, label, pageLabel } = Astro.props;
   <a data-scroll-next-link href={`/work/${project.slug}`} class="c-scroll-next__inner">
     <div class="c-scroll-next__bg" data-scroll-next-box>
       {project.image
-        ? <img src={project.image} alt="" data-scroll-next-bg class="c-scroll-next__bg-img" />
+        ? <img src={project.image} alt="" loading="lazy" decoding="async" data-scroll-next-bg class="c-scroll-next__bg-img" />
         : <div data-scroll-next-bg class="c-scroll-next__bg-img c-scroll-next__bg-img--placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}><span class="c-scroll-next__word" data-scroll-next-word>{project.label}</span></div>}
       <div data-scroll-next-overlay class="c-scroll-next__bg-overlay"></div>
     </div>

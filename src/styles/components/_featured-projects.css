@@ -28,3 +28,9 @@
   .c-featured-projects__head{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--nav-top));left:0;right:0}
   .c-featured-projects__r{width:40px;height:40px}
 }
+
+/* very low screens (phones held sideways): tighter padding and a smaller R, so everything fits between header and fold */
+@media (max-height:500px){
+  .c-featured-projects{padding:8px 0 16px}
+  .c-featured-projects__r{width:36px;height:36px}
+}

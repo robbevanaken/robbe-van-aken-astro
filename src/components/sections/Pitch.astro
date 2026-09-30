@@ -10,7 +10,7 @@ import { pitch } from '../../data/site';
     <p class="c-pitch__quote u-text-lead" data-highlight-text><Icon name="arrow" class="c-pitch__arrow" />{pitch.quote}</p>
     <figure class="c-pitch__portrait">
       {pitch.portrait.image
-        ? <img class="c-pitch__portrait-img" src={pitch.portrait.image} alt={pitch.portrait.alt} />
+        ? <img class="c-pitch__portrait-img" src={pitch.portrait.image} alt={pitch.portrait.alt} loading="lazy" decoding="async" />
         : <figcaption class="u-text-label">{pitch.portrait.placeholder}</figcaption>}
     </figure>
   </div>

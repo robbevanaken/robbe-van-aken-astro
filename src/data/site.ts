@@ -5,6 +5,7 @@ export const meta = {
   title: "Robbe Van Aken, developer with a designer's eye",
   description: 'Freelance developer in Ghent. Websites, custom software and AI workflows.',
   email: 'robbe.vanaken@gmail.com',
+  image: '/og.png', // social preview (1200×630), in /public
 };
 
 // Social profiles: shown in the footer and the mobile menu.

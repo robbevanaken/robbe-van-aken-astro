@@ -51,7 +51,7 @@ export function initFeaturedProjects(root = document) {
       - head.offsetHeight - foot.offsetHeight - 2 * (gutter + breath));
     // the image always fills the full column span; on short screens only its height gives (object-fit: cover crops it)
     W = spanW(spans[0]);
-    H = Math.max(160, Math.min(W / RATIO, avail));
+    H = Math.max(innerHeight < 500 ? 110 : 160, Math.min(W / RATIO, avail)); // phones held sideways: less room
     sm = mob ? .3 : .24;
     const smW = W * sm;
     side = Math.max(nextCol.getBoundingClientRect().left - cx + smW / 2, W / 2 + gutter * 2 + smW / 2);

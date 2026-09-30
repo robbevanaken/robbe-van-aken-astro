@@ -5,15 +5,15 @@ import Base from './Base.astro';
 import Nav from '../components/layout/Nav.astro';
 import Footer from '../components/sections/Footer.astro';
 import GridOverlay from '../components/layout/GridOverlay.astro';
-interface Props { title: string; description?: string; footer?: boolean }
-const { title, description, footer = true } = Astro.props;
+interface Props { title: string; description?: string; footer?: boolean; noindex?: boolean }
+const { title, description, footer = true, noindex = false } = Astro.props;
 ---
-<Base title={`${title} · Robbe Van Aken`} description={description}>
+<Base title={`${title} · Robbe Van Aken`} description={description} noindex={noindex}>
   <!-- two separate R's on subpages: a small one in the header and a big one in the footer -->
   <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-header]"></canvas>
   {footer && <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-footer]"></canvas>}
   <Nav withR />
-  <main id="top" class:list={['c-page', { 'c-page--end': !footer }]}>
+  <main id="top" tabindex="-1" class:list={['c-page', { 'c-page--end': !footer }]}>
     <slot />
   </main>
   {footer && <Footer />}

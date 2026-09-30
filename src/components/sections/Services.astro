@@ -9,7 +9,7 @@ import { services } from '../../data/services';
   <p class="c-services__intro u-text-body-l u-text-muted" data-highlight-text>{servicesIntro.text}</p>
   <ul class="c-services__list">
     {services.map((s, q) => (
-      <li class="c-services__row" tabindex="0" data-service={q}>
+      <li class="c-services__row" data-service={q}>
         <div class="c-services__slot" data-service-slot><Corners /></div>
         <h3 class="c-services__name u-text-lead">{s.title}</h3>
         <p class="c-services__text u-text-body-l u-text-muted" data-highlight-text>{s.description}</p>

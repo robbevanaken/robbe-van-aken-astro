@@ -17,11 +17,18 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,motion=reduce?0:1;
   const cvs=canvas,ctx=cvs.getContext('2d');
   let W=0,H=0,DPR=1;
-  function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cvs.width=W*DPR;cvs.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
+  // the CSS size follows innerWidth/innerHeight exactly (100vh is taller than the visible area on iOS while the toolbar shows,
+  // which would stretch the drawing)
+  function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cvs.width=W*DPR;cvs.height=H*DPR;cvs.style.width=W+'px';cvs.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0)}
   addEventListener('resize',resize,{signal});resize();
 
   let mx=0,my=0,smx=0,smy=0,mpx=-9999,mpy=-9999;
   addEventListener('pointermove',e=>{mx=e.clientX/W*2-1;my=e.clientY/H*2-1;mpx=e.clientX;mpy=e.clientY},{passive:true,signal});
+  // touch: a finger pushes the footer's pixels away too (pointermove stops as soon as the browser starts scrolling);
+  // it doesn't turn the R, or every scroll would tilt it
+  const touch=e=>{const t=e.touches[0];if(t){mpx=t.clientX;mpy=t.clientY}};
+  addEventListener('touchstart',touch,{passive:true,signal});addEventListener('touchmove',touch,{passive:true,signal});
+  addEventListener('touchend',()=>{mpx=mpy=-9999},{passive:true,signal});
   let hoverQ=-1;
   scope.querySelectorAll('[data-service]').forEach(r=>{const q=+r.dataset.service;
     r.addEventListener('mouseenter',()=>hoverQ=q);r.addEventListener('mouseleave',()=>hoverQ=-1);
@@ -118,6 +125,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       sides.forEach((k,j)=>{const sl=Math.floor(j*slots/sides.length),b=ic.bd[sl%ic.bd.length],l=Math.floor(sl/ic.bd.length);IU[k]=b[0];IV[k]=b[1];IZ[k]=-1+2*(l+.5)/ILAY;INX[k]=b[2];INY[k]=b[3]});
     }
     for(let i=0;i<N;i++)K[i]=motion?(.055+r()*.09+CH[i]*.004):1;
+    K2=new Float32Array(N);for(let i=0;i<N;i++)K2[i]=1-(1-K[i])**2; // the same spring over two frames (half-rate mode)
     inited=true;
   }
 
@@ -177,11 +185,15 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   if(modeBtn)modeBtn.onclick=()=>{glyph=!glyph;modeBtn.textContent=glyph?'Glyph':'Pixels';modeBtn.classList.toggle('is-off',!glyph)};
   addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()},{signal});
 
-  let culled=false;
+  // Slow devices: when a frame's own work stays above ~10 ms, render every other frame (springs take a double step, so
+  // the R moves just as fast). Fast devices never notice.
+  let culled=false,cost=0,slow=false,odd=false,K2=null;
   function frame(ts){
     if(!alive)return;
     raf=requestAnimationFrame(frame);
     if(!inited)return;
+    if(slow&&(odd=!odd))return;
+    const fStart=performance.now();
     if(cull){
       const r=(scope===document?document.documentElement:scope).getBoundingClientRect();
       const off=r.bottom<-200||r.top>innerHeight+200;
@@ -189,7 +201,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       culled=false;
     }
     time=ts/1000;const tm=time*motion;
-    smx+=(mx-smx)*.06*motion;smy+=(my-smy)*.06*motion;
+    const ml=(slow?.1164:.06)*motion;smx+=(mx-smx)*ml;smy+=(my-smy)*ml;
     rect(aHero,A[0]);A[0].S=Math.min(A[0].h,A[0].w*1.05)*.92;
     rect(aPitch,A[1]);A[1].S=Math.min(A[1].h*.8,A[1].w*1.15);A[1].cx-=A[1].w*.1;
     rect(aCraft,A[2]);A[2].S=A[2].h*.9;
@@ -211,7 +223,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
     const dt=Math.min(.05,time-lastT);lastT=time;
     for(let q=0;q<4;q++){
-      if(q===hoverQ&&motion)QA[q]+=dt*3.2;else{const tgt=Math.round(QA[q]/TAU)*TAU;QA[q]+=(tgt-QA[q])*.08}
+      if(q===hoverQ&&motion)QA[q]+=dt*3.2;else{const tgt=Math.round(QA[q]/TAU)*TAU;QA[q]+=(tgt-QA[q])*(slow?.1536:.08)}
       mat(-.55+Math.sin(tm*.7+q*1.3)*.25+QA[q],.32+Math.sin(tm*.5+q)*.1,-.06,MQ[q]);SQ[q]=MQ[q][8]>=0?1:-1;
     }
     const Qh=Q[0].h;
@@ -225,7 +237,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       target(i0,p,t0);let tx=t0[0],ty=t0[1];
       if(f>0&&i1!==i0){target(i1,p,t1);tx+=(t1[0]-tx)*f;ty+=(t1[1]-ty)*f}
       if(X[p]===0&&Y[p]===0){X[p]=tx;Y[p]=ty}
-      const k=K[p];X[p]+=(tx-X[p])*k;Y[p]+=(ty-Y[p])*k;
+      const k=slow?K2[p]:K[p];X[p]+=(tx-X[p])*k;Y[p]+=(ty-Y[p])*k;
       OR[p]=nearParts&&QD[p]===hoverQ?1:0;
       let b;
       if(p<NC){
@@ -281,6 +293,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     const idx=Math.round(s);if(idx!==lastIdx){if(hudName)hudName.textContent=NAMES[idx];lastIdx=idx}
     if(hudBar)hudBar.style.width=(s/4*100)+'%';
+    cost+=(performance.now()-fStart-cost)*.05;slow=cost>10?true:cost<6?false:slow;
   }
 
   build().then(() => { if (alive) raf = requestAnimationFrame(frame); });

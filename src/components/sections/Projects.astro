@@ -29,7 +29,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <article class="c-featured-projects__card" aria-label={p.title} data-fp-card data-title={p.title} data-desc={p.description} data-href={`/work/${p.slug}`}>
         <div class="c-featured-projects__media">
           {p.image
-            ? <img class="c-featured-projects__img" src={p.image} alt="" data-fp-img />
+            ? <img class="c-featured-projects__img" src={p.image} alt="" loading="lazy" decoding="async" data-fp-img />
             : <div class="c-featured-projects__img c-featured-projects__placeholder" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-img>{p.label}</div>}
         </div>
       </article>

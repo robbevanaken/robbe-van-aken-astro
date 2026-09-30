@@ -14,15 +14,23 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 
 ## Class and hook conventions
 - Namespaced BEM: `o-` objects (`o-container` = page margins, `o-grid` = the column grid, used together), `c-` components (`c-site-header__nav-link`, modifiers `--name`), `u-` utilities (`u-text-display/h2/lead/body-l/ui/label/muted`, `u-sr-only`). State classes: `is-*` (`is-hidden`, `is-open`, `is-in`, `is-on`, `is-off`).
-- JS never selects on styling classes: it uses `data-` attributes (`data-site-header`, `data-menu-toggle`, `data-featured-projects` + `data-fp-*`, `data-service` / `data-service-slot`, `data-marquee`, `data-reveal`, `data-highlight-text`, `data-scroll-next-*`, `data-debug-grid`). Exceptions: the R anchor ids (`#a-hero`, `#a-pitch`, `#a-craft`, `#a-foot`), `#r-canvas`, and the dev HUD ids.
+- JS never selects on styling classes: it uses `data-` attributes (`data-site-header`, `data-menu-toggle`, `data-featured-projects` + `data-fp-*`, `data-service` / `data-service-slot`, `data-marquee`, `data-reveal`, `data-highlight-text`, `data-scroll-next-*`, `data-debug-grid`, `data-skip-link`, `data-cookie-settings`). Exceptions: the R anchor ids (`#a-hero`, `#a-pitch`, `#a-craft`, `#a-foot`), `#r-canvas`, and the dev HUD ids.
 - The dev HUD (Glyph/Grid, bottom right) and the grid overlay only render in `npm run dev`, never in the build.
 
 ## Pages
 - `/` home (`src/pages/index.astro`, the only page with the R canvas).
 - Each R is its own engine instance: one per `<canvas data-r-canvas>`, limited to `data-r-scope` (home: whole page; subpages: `[data-site-header]` for the small header R and `[data-site-footer]` for the big footer R). Instances whose scope is off screen skip their work. The small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R, at 45% strength (`follow`, `FS` in the engine). Small R's (<~140px) are boosted to mostly bright crosses so they read white.
+- `/404` (`404.astro`, noindex, copy in `pages.ts`), `/sitemap.xml` and `/robots.txt` (static endpoints in `src/pages`, built from `projects.ts` and `site` in `astro.config.mjs`: https://robbevanaken.be).
 - `/work`, `/work/<slug>` (one per project, slug in `projects.ts`), `/about`, `/contact`, `/privacy`: empty templates on `src/layouts/Page.astro` (Nav + content + Footer). On subpages the R has one stage: small and calm, centred in the header (`<Nav withR>` renders `#a-craft` there; the engine falls back to `#a-craft` for every anchor a page doesn't have). The footer there has its own separate R.
 - Project detail pages end in "scroll to next project" (`sections/ScrollNext.astro` + `scripts/components/scrollNext.js`, Osmo resource in our style: next project's visual full-screen, corners closing in, a 6-column progress line; at 100% it opens the next project). These pages have no footer (`<Page footer={false}>`). Copy in `src/data/pages.ts`; `PageIntro.astro` renders label/title/intro, `ui/Placeholder.astro` marks unwritten content.
 - In the featured projects, clicking the active project (or the caption label) opens its detail page; clicking a side project scrolls it in.
+
+## Head, accessibility, robustness
+- `Base.astro` sets the canonical (no trailing slash, like the links and the sitemap), Open Graph + Twitter tags with `public/og.png` (1200×630, `meta.image` in `site.ts`); `noindex` prop for pages to keep out of search.
+- "Skip to content" link (`data-skip-link`) jumps to `main#top` (`tabindex="-1"`, focus moves along via swup's `scroll:anchor`).
+- Mobile menu: while open everything next to the header (and the skip link) is `inert`; Escape closes it and returns focus to the toggle.
+- Highlight texts are hidden from screen readers (`aria: "hidden"`) with a visually hidden copy (same tag) right before them: SplitText's default `aria-label` isn't allowed on `<p>`.
+- Images: `loading="lazy"` + `decoding="async"` below the fold, `fetchpriority="high"` on the project detail visual (its LCP). With real visuals, consider Astro `<Image>` for AVIF/WebP + srcset.
 
 ## Cookie consent
 `vanilla-cookieconsent` v3, started from `scripts/main.js` (all pages) via `scripts/global/cookieConsent.js`; theme in `styles/vendor/_cookieconsent.css`. Categories: necessary + analytics (no analytics script exists yet; load one with `type="text/plain" data-category="analytics"`). Footer "Cookie settings" reopens the preferences (`data-cookie-settings`, a delegated click so it survives page swaps). The banner is hidden from bots (`hideFromBots`, default), so headless test browsers won't show it unless `navigator.webdriver` is spoofed.
@@ -74,6 +82,9 @@ Between stages the R does a full turn around its Y axis. The pinned projects sec
 ## Engine (`src/scripts/r-journey/engine.js`)
 - `build()`: rasterize the R, create cap particles (front/back face) + side-wall particles (extrusion layers), Voronoi fragments for stage 1, quadrant split + icon assignment for stage 3. Icons are drawn in `drawIcon` (gothic window, split lozenge, star, shield).
 - `frame()`: compute scroll state `s`, per-stage rotation matrices, per-particle 3D targets with springs, lighting (light dir `LX/LY/LZ`), then draw.
+- The canvas CSS size is set from `innerWidth`/`innerHeight` in `resize()` (CSS `100vh` is taller than the visible area on iOS and would stretch the drawing).
+- Slow devices: when a frame's own work averages over ~10 ms the engine renders every other frame, with springs (`K2`) and lerps doubled so the motion speed stays the same.
+- Touch: a finger pushes the footer R's pixels too (touchstart/touchmove), without turning the R.
 - Rendering: **glyph dither** by default (Unicorn Studio "Glyph Dither" look: screen grid, each cell empty / dim cross / bright cross). Fallback raw pixel mode exists; toggle with the dev HUD or `G`.
 
 Tunables worth knowing:
@@ -91,11 +102,11 @@ Pinned section, continuous (no stepped timeline): one smoothed value `cur` (proj
 - Inter Tight for all type, self-hosted (no Google Fonts requests). The R is the one bold element; keep everything around it quiet.
 - Copy: English, sentence case, plain and honest, "not salesy, not slimy". Key line: "Solid code, thoughtful design, genuine care for the craft, and AI where it actually helps. I want to build something we're both proud of. That's the whole pitch."
 - Respect `prefers-reduced-motion` (engine and GSAP already do).
-- Extreme heights: R anchors use `clamp(min, Nvh, max)` heights, the pitch R is also capped by its box width, the projects section tightens its spacing below 700px height.
+- Extreme heights: R anchors use `clamp(min, Nvh, max)` heights, the pitch R is also capped by its box width, the projects section tightens its spacing below 700px height, and below 500px (phones held sideways) its padding, R and minimum image height shrink.
 
 ## Open work / ideas
 - Replace placeholder projects with real work and imagery; project detail pages + page transitions.
 - Port the engine to WebGL (instanced quads or a point shader + dither pass) for performance on low-end devices; Canvas 2D is near its limit.
-- Mobile pass: particle counts, pin behaviour, touch interaction for the footer.
+- Mobile pass: particle counts, pin behaviour. (Glyph drawing is the main cost: ~3–5k `drawImage` calls per frame; one stroked path per colour benchmarked ~4× faster in software rendering but looks slightly different.)
 - Portrait/video in the pitch section (currently a placeholder box).
 - Possibly source content from Craft CMS later (headless) if the site grows.

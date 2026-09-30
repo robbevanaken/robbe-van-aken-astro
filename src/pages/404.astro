@@ -1,0 +1,12 @@
+---
+// Not found. Astro builds this as /404.html; the host serves it for unknown URLs. Copy in src/data/pages.ts.
+import Page from '../layouts/Page.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import Button from '../components/ui/Button.astro';
+import { notFoundPage as p } from '../data/pages';
+---
+<Page title={p.title} noindex>
+  <PageIntro label={p.label} title={p.title} intro={p.intro}>
+    <div class="c-page-intro__action"><Button href={p.cta.href}>{p.cta.label}</Button></div>
+  </PageIntro>
+</Page>

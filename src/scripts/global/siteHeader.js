@@ -1,5 +1,7 @@
 // Site header: hides on scroll down, returns on scroll up; full-screen menu on phones.
 // Hooks: [data-site-header], [data-menu-toggle], [data-menu]. State classes: is-hidden, is-scrolled, is-open, html.is-menu-open.
+// While the menu is open the rest of the page is inert (focus stays in the header + menu); Escape closes it and puts
+// focus back on the toggle.
 // Returns a cleanup function (the header is part of every page swap).
 import { getLenis } from './lenis.js';
 
@@ -20,8 +22,11 @@ export function initSiteHeader(root = document) {
     lastY = y;
   }, { passive: true, signal });
 
+  // everything on the page next to the header (main, footer, canvases) and the skip link
+  const rest = () => [...header.parentElement.children, ...document.querySelectorAll('[data-skip-link]')].filter((el) => el !== header);
   const setMenu = (v) => {
     open = v;
+    rest().forEach((el) => { el.inert = v; });
     toggle.setAttribute('aria-expanded', String(v));
     header.classList.toggle('is-open', v);
     if (v) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('is-in')); }
@@ -31,10 +36,10 @@ export function initSiteHeader(root = document) {
   };
   toggle.addEventListener('click', () => setMenu(!open));
   menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) setMenu(false); }, { signal });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) { setMenu(false); toggle.focus(); } }, { signal });
 
   return () => {
     ac.abort();
-    if (open) { document.documentElement.classList.remove('is-menu-open'); getLenis()?.start(); }
+    if (open) { document.documentElement.classList.remove('is-menu-open'); rest().forEach((el) => { el.inert = false; }); getLenis()?.start(); }
   };
 }

@@ -1,0 +1,3 @@
+/* "Skip to content" (layouts/Base.astro): off screen until it gets keyboard focus, then top left above everything. */
+.c-skip-link{position:fixed;top:var(--space-2xs);left:var(--space-2xs);z-index:50;padding:var(--space-2xs) var(--space-xs);background:var(--fg);color:var(--bg);text-decoration:none;transform:translateY(calc(-100% - 2 * var(--space-2xs)))}
+.c-skip-link:focus-visible{transform:none;outline-offset:2px}

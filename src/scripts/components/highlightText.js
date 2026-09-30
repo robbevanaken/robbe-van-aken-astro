@@ -1,6 +1,8 @@
 // Highlight text on scroll (Osmo Supply "Highlight Text on Scroll"), kept as delivered.
 // Only changes: npm imports instead of CDN scripts, one export instead of DOMContentLoaded, nothing runs with prefers-reduced-motion,
-// and it takes a root and returns a cleanup function (page swaps).
+// it takes a root and returns a cleanup function (page swaps), and accessibility: SplitText's default puts an aria-label on
+// the element, which isn't allowed on a <p>, so the split text is hidden from screen readers instead (aria: "hidden") and
+// a visually hidden copy of the text sits right before it.
 //   data-highlight-text           the element to highlight letter by letter while scrolling
 //   data-highlight-scroll-start   default "top 90%"
 //   data-highlight-scroll-end     default "center 40%"
@@ -14,7 +16,7 @@ gsap.registerPlugin(ScrollTrigger, SplitText)
 
 function initHighlightText(root){
 
-  const splits = []
+  const splits = [], copies = []
 
   let splitHeadingTargets = root.querySelectorAll("[data-highlight-text]")
   splitHeadingTargets.forEach((heading) => {
@@ -24,8 +26,15 @@ function initHighlightText(root){
     const fadedValue = heading.getAttribute("data-highlight-fade") || 0.2 // Opacity of letter
     const staggerValue =  heading.getAttribute("data-highlight-stagger") || 0.1 // Smoother reveal
 
+    const copy = document.createElement(heading.tagName)
+    copy.className = "u-sr-only"
+    copy.textContent = heading.textContent.trim()
+    heading.before(copy)
+    copies.push(copy)
+
     splits.push(new SplitText(heading, {
       type: "words, chars",
+      aria: "hidden",
       autoSplit: true,
       onSplit(self) {
         let ctx = gsap.context(() => {
@@ -48,7 +57,7 @@ function initHighlightText(root){
     }));
   });
 
-  return () => splits.forEach((s) => s.revert())
+  return () => { splits.forEach((s) => s.revert()); copies.forEach((c) => c.remove()) }
 }
 
 // Initialize Highlight Text on Scroll (called from main.js once fonts are ready)

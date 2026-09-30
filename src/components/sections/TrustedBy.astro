@@ -13,7 +13,7 @@ import { clients } from '../../data/clients';
         <li class="c-trusted-by__item" style={`--i:${i};--w:${c.width}`}>
           <Tag class="c-trusted-by__cell" href={c.url} target={c.url ? '_blank' : undefined} rel={c.url ? 'noopener' : undefined}>
             <Corners />
-            <img class="c-trusted-by__logo" src={c.logo} alt={c.name} loading="lazy" />
+            <img class="c-trusted-by__logo" src={c.logo} alt={c.name} loading="lazy" decoding="async" />
           </Tag>
         </li>
       );
