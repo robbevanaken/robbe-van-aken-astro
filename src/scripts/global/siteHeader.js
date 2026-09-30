@@ -1,5 +1,6 @@
 // Site header: hides on scroll down, returns on scroll up; full-screen menu on phones.
 // Hooks: [data-site-header], [data-menu-toggle], [data-menu]. State classes: is-hidden, is-scrolled, is-open, html.is-menu-open.
+// Returns a cleanup function (the header is part of every page swap).
 import { getLenis } from './lenis.js';
 
 export function initSiteHeader() {
@@ -8,6 +9,7 @@ export function initSiteHeader() {
   const toggle = header.querySelector('[data-menu-toggle]');
   const menu = header.querySelector('[data-menu]');
   let lastY = scrollY, open = false;
+  const ac = new AbortController(), signal = ac.signal;
 
   // hide on scroll down, show on scroll up (always shown near the top or while the menu is open)
   addEventListener('scroll', () => {
@@ -16,7 +18,7 @@ export function initSiteHeader() {
     header.classList.toggle('is-hidden', !open && dy > 0 && y > 120);
     header.classList.toggle('is-scrolled', y > 40);
     lastY = y;
-  }, { passive: true });
+  }, { passive: true, signal });
 
   const setMenu = (v) => {
     open = v;
@@ -29,5 +31,10 @@ export function initSiteHeader() {
   };
   toggle.addEventListener('click', () => setMenu(!open));
   menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) setMenu(false); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) setMenu(false); }, { signal });
+
+  return () => {
+    ac.abort();
+    if (open) { document.documentElement.classList.remove('is-menu-open'); getLenis()?.start(); }
+  };
 }

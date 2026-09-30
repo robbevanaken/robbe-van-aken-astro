@@ -13,17 +13,17 @@ export function getStaticPaths() {
 }
 interface Props { project: Project; index: number }
 const { project, index } = Astro.props;
-const next = projects[(index + 1) % projects.length];
+const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <Page title={project.title} description={project.description} footer={false}>
   <PageIntro label={`${pad(index + 1)} — ${project.title}`} title={project.title} intro={project.description} />
-  <div class="c-project-detail__visual o-container o-grid">
+  <div class="c-project-detail__visual o-container o-grid" data-project-visual>
     {project.image
-      ? <img class="c-project-detail__media" src={project.image} alt="" />
-      : <div class="c-project-detail__media c-project-detail__placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}>{project.label}</div>}
+      ? <img class="c-project-detail__media" src={project.image} alt="" data-project-media />
+      : <div class="c-project-detail__media c-project-detail__placeholder" data-project-media style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}>{project.label}</div>}
   </div>
   <Placeholder text={projectPage.placeholder} />
   <div class="c-project-detail__back o-container o-grid"><a class="c-project-detail__back-link u-text-ui" href="/work">{projectPage.back}</a></div>
-  <ScrollNext project={next} label={projectPage.next} />
+  <ScrollNext project={next} label={projectPage.next} pageLabel={`${pad(nextIndex + 1)} — ${next.title}`} />
 </Page>

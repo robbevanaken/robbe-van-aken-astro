@@ -8,9 +8,11 @@ import { SplitText } from 'gsap/SplitText';
 gsap.registerPlugin(SplitText);
 
 export function initTextHover() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+  const ac = new AbortController(), signal = ac.signal, splits = [];
   document.querySelectorAll('[data-text-hover]').forEach((el) => {
     const split = new SplitText(el.children.length ? [...el.children] : el, { type: 'chars' });
+    splits.push(split);
     let tl = null, outside = false;
     const play = () => {
       if (tl && tl.isActive()) return;
@@ -19,8 +21,9 @@ export function initTextHover() {
         .to(split.chars, { opacity: 1, duration: 0.45, ease: 'punch', stagger: { each: 0.018, from: 'end' } }, 0.16);
     };
     // the pointer has been seen outside the element at least once since the page loaded
-    addEventListener('pointermove', (e) => { if (!el.contains(e.target)) outside = true; }, { passive: true });
+    addEventListener('pointermove', (e) => { if (!el.contains(e.target)) outside = true; }, { passive: true, signal });
     el.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && outside) play(); });
     el.addEventListener('focus', () => { if (el.matches(':focus-visible')) play(); });
   });
+  return () => { ac.abort(); splits.forEach((s) => s.revert()); };
 }

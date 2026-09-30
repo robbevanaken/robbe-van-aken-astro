@@ -9,6 +9,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { scrollToY } from '../global/lenis.js';
+import { navigate } from '../global/pageTransitions.js';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
@@ -19,7 +20,7 @@ const pad = (n) => String(n).padStart(2, '0');
 
 export function initFeaturedProjects() {
   const wrap = document.querySelector('[data-featured-projects]');
-  if (!wrap) return;
+  if (!wrap) return null;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const stage = wrap.querySelector('[data-fp-stage]'), frame = wrap.querySelector('[data-fp-frame]');
   const head = wrap.querySelector('[data-fp-head]'), foot = wrap.querySelector('[data-fp-foot]');
@@ -109,12 +110,19 @@ export function initFeaturedProjects() {
 
   // settle: glide to the nearest project once scrolling stops in between
   const yFor = (i) => st.start + (st.end - st.start) * i / (n - 1);
-  ScrollTrigger.addEventListener('scrollEnd', () => {
+  const settle = () => {
     if (!st.isActive) return;
     // direction-aware: a quarter of the way is enough to continue to the next project
     const p = st.progress * (n - 1), i = clamp(st.direction > 0 ? Math.floor(p + .75) : Math.ceil(p - .75), 0, n - 1);
     if (Math.abs(p - i) > .01) scrollToY(yFor(i), .8);
-  });
+  };
+  ScrollTrigger.addEventListener('scrollEnd', settle);
   // clicking a side project brings it into the frame, clicking the active one opens its page
-  cards.forEach((c, i) => c.addEventListener('click', () => { if (i !== Math.round(cur)) scrollToY(yFor(i), 1.1); else location.href = c.dataset.href; }));
+  cards.forEach((c, i) => c.addEventListener('click', () => { if (i !== Math.round(cur)) scrollToY(yFor(i), 1.1); else navigate(c.dataset.href); }));
+
+  return () => {
+    gsap.ticker.remove(render);
+    ScrollTrigger.removeEventListener('scrollEnd', settle);
+    st.kill(true);
+  };
 }

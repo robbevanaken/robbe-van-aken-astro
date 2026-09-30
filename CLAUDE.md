@@ -3,13 +3,13 @@
 Personal site for Robbe Van Aken, a freelance developer (Craft CMS, Laravel) with a background in design, based in Ghent. It replaces the old Booold brand. Goal: an Awwwards Site of the Day. Development leads the positioning, branding is offered more quietly, and copy should never suggest he works strictly alone (he brings in people on bigger projects).
 
 ## Stack
-Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) + Lenis. No framework components. `npm run dev` / `npm run build`.
+Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) + Lenis, swup (page transitions, + head and preload plugins). No framework components. `npm run dev` / `npm run build`.
 
 ## File structure (same conventions as the woonpact project, without Tailwind)
 - `src/data/` all copy. `site.ts` (per section, in page order, plus `socials` for footer + mobile menu), `pages.ts` (subpages), `clients.ts`, `projects.ts`, `services.ts`. Change text here, not in components.
-- `src/components/sections/` one file per page section, `ui/` small reusable pieces (Button, Icon, Corners, Marquee, Placeholder), `layout/` Nav + dev-only DevHud and GridOverlay. Components contain markup only: no `<style>` or `<script>`.
+- `src/components/sections/` one file per page section, `ui/` small reusable pieces (Button, Icon, Corners, Marquee, Placeholder), `layout/` Nav, PageTransition (loader/transition veil, in `Base.astro`) + dev-only DevHud and GridOverlay. Components contain markup only: no `<style>` or `<script>`.
 - `src/styles/main.css` imports, in order: `base/` (`_fonts.css`: self-hosted Inter Tight @font-face (files in `public/fonts`, OFL license alongside, latin 400/500 preloaded in `Base.astro`); `_tokens.css`: colours, grid, type scale, spacing, eases; `_document.css`: reset, selection, R canvas) → `objects/` (`_container.css`, `_grid.css`) → `components/` (one `_name.css` per component, imported alphabetically in `index.css`) → `utilities/` (`_text.css`, `_screen-reader.css`) → `vendor/` (`_cookieconsent.css`).
-- `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`) and starts everything in order; each init does nothing when its element is missing. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid), `components/` (featuredProjects, scrollNext, marquee, highlightText, textHover), `r-journey/` (the R engine).
+- `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`). Once: eases, Lenis, cookie consent, page transitions. Per page: `mount()` runs every page init again after each swup swap; each init does nothing when its element is missing and returns a cleanup (window listeners via an AbortController, ticker callbacks removed, ScrollTriggers killed), which `unmount()` calls before the content is replaced. New page scripts must follow this. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid, pageTransitions), `components/` (featuredProjects, scrollNext, marquee, highlightText, textHover), `r-journey/` (the R engine, veil).
 - `public/clients/` client logos (white SVG, one file per logo).
 
 ## Class and hook conventions
@@ -25,7 +25,14 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - In the featured projects, clicking the active project (or the caption label) opens its detail page; clicking a side project scrolls it in.
 
 ## Cookie consent
-`vanilla-cookieconsent` v3, started from `scripts/main.js` (all pages) via `scripts/global/cookieConsent.js`; theme in `styles/vendor/_cookieconsent.css`. Categories: necessary + analytics (no analytics script exists yet; load one with `type="text/plain" data-category="analytics"`). Footer "Cookie settings" reopens the preferences (`data-cc="show-preferencesModal"`). The banner is hidden from bots (`hideFromBots`, default), so headless test browsers won't show it unless `navigator.webdriver` is spoofed.
+`vanilla-cookieconsent` v3, started from `scripts/main.js` (all pages) via `scripts/global/cookieConsent.js`; theme in `styles/vendor/_cookieconsent.css`. Categories: necessary + analytics (no analytics script exists yet; load one with `type="text/plain" data-category="analytics"`). Footer "Cookie settings" reopens the preferences (`data-cookie-settings`, a delegated click so it survives page swaps). The banner is hidden from bots (`hideFromBots`, default), so headless test browsers won't show it unless `navigator.webdriver` is spoofed.
+
+## Page transitions (swup, `scripts/global/pageTransitions.js`)
+- Everything in `<body>` except the veil lives in `#swup` and is swapped. Use `navigate(url)` from `pageTransitions.js` for programmatic navigation. Scroll restoration is manual (set through `ScrollTrigger.clearScrollMemory('manual')`, ScrollTrigger overrides it otherwise); every swap lands at the top; Lenis is stopped during a transition.
+- Veil (`r-journey/veil.js`, canvas in `layout/PageTransition.astro`, z 100): a grid of glyph cells; a dithered wave (crosses at the front, a few orange, solid background behind) closes from the click point, the R dithers in and shimmers in the middle, then the R dithers out while the wave bursts open from the centre.
+- Loader (first load): `html.is-loading` (set inline in `Base.astro`, safety timeout 9s) covers the page; the R builds up while "Loading 000–100" follows fonts + images (min 1.3s, max 6s), then the veil opens.
+- Next project (project detail): no veil. In the second half of the scroll-next section the full-screen visual shrinks to exactly its box on the next page (measured by cloning this page's intro + visual with the next project's texts, `data-next-*` on the section, hooks `data-page-intro*`, `data-project-visual`, `data-project-media`). On the swap the visual is lifted into a fixed copy (`handOff`), the new page's header, R, intro and the rest fade in around it (`arrive`). The link only fires after real input (wheel/touch/keys), so back/forward never re-triggers it.
+- `prefers-reduced-motion`: no loader, instant swaps.
 
 ## Motion
 - Text scramble: only on the project caption label (`01 — TITLE`), when the active project changes (GSAP ScrambleText in `components/featuredProjects.js`). Removed everywhere else on purpose.

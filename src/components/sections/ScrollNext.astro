@@ -3,15 +3,16 @@
 // Styles: styles/components/_scroll-next.css, behaviour: scripts/components/scrollNext.js. Keep the data- attributes.
 import Corners from '../ui/Corners.astro';
 import type { Project } from '../../data/projects';
-interface Props { project: Project; label: string }
-const { project, label } = Astro.props;
+// pageLabel: the label the next project's page shows above its title (scrollNext.js measures that page's layout with it)
+interface Props { project: Project; label: string; pageLabel: string }
+const { project, label, pageLabel } = Astro.props;
 ---
-<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next">
+<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next" data-next-label={pageLabel} data-next-title={project.title} data-next-intro={project.description}>
   <a data-scroll-next-link href={`/work/${project.slug}`} class="c-scroll-next__inner">
-    <div class="c-scroll-next__bg">
+    <div class="c-scroll-next__bg" data-scroll-next-box>
       {project.image
         ? <img src={project.image} alt="" data-scroll-next-bg class="c-scroll-next__bg-img" />
-        : <div data-scroll-next-bg class="c-scroll-next__bg-img c-scroll-next__bg-img--placeholder" style={`--a:${project.colors.a};--b:${project.colors.b}`}></div>}
+        : <div data-scroll-next-bg class="c-scroll-next__bg-img c-scroll-next__bg-img--placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}><span class="c-scroll-next__word" data-scroll-next-word>{project.label}</span></div>}
       <div data-scroll-next-overlay class="c-scroll-next__bg-overlay"></div>
     </div>
     <div class="c-scroll-next__center o-container o-grid">
@@ -21,7 +22,7 @@ const { project, label } = Astro.props;
         <h2 class="c-scroll-next__h u-text-display">{project.title}</h2>
       </div>
       <!-- progress: a line across 6 columns; the second line is drawn by the script -->
-      <div class="c-scroll-next__progress">
+      <div class="c-scroll-next__progress" data-scroll-next-progress>
         <svg class="c-scroll-next__progress-svg" viewBox="0 0 1000 2" preserveAspectRatio="none" aria-hidden="true">
           <line x1="0" y1="1" x2="1000" y2="1" stroke="currentColor" stroke-opacity=".3" vector-effect="non-scaling-stroke" />
           <line x1="0" y1="1" x2="1000" y2="1" stroke="currentColor" vector-effect="non-scaling-stroke" data-scroll-next-path />

@@ -10,11 +10,13 @@ export function initDebugGrid() {
     btn?.classList.toggle('is-off', !on);
     try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {}
   };
+  const ac = new AbortController();
   let on = false;
   try { on = localStorage.getItem(KEY) === '1'; } catch {}
   set(on);
   btn?.addEventListener('click', () => set(!el.classList.contains('is-on')));
   addEventListener('keydown', (e) => {
     if ((e.key === 'l' || e.key === 'L') && !e.target.closest('input,textarea')) set(!el.classList.contains('is-on'));
-  });
+  }, { signal: ac.signal });
+  return () => ac.abort();
 }

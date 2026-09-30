@@ -8,17 +8,18 @@ const MAX = 7;         // cap: at most 1 + MAX times the base speed
 
 export function initMarquee() {
   const bands = [...document.querySelectorAll('[data-marquee]')];
-  if (!bands.length) return;
+  if (!bands.length) return null;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const items = bands.map((el) => ({ track: el.querySelector('[data-marquee-track]'), x: 0, half: 0 }));
   const measure = () => items.forEach((m) => { m.half = m.track.scrollWidth / 2; });
   measure();
   addEventListener('resize', measure);
   document.fonts?.ready.then(measure);
-  if (reduce) return;
+  const off = () => removeEventListener('resize', measure);
+  if (reduce) return off;
 
   let lastY = scrollY, boost = 0;
-  gsap.ticker.add((time, dt) => {
+  const tick = (time, dt) => {
     const v = Math.abs(scrollY - lastY) * (16.67 / Math.max(dt, 1)); // px per 60fps frame
     lastY = scrollY;
     const target = Math.min(v * BOOST * 60, MAX);
@@ -29,5 +30,7 @@ export function initMarquee() {
       m.x = (m.x + step * m.half) % m.half;
       m.track.style.transform = `translate3d(${-m.x}px,0,0)`;
     });
-  });
+  };
+  gsap.ticker.add(tick);
+  return () => { off(); gsap.ticker.remove(tick); };
 }

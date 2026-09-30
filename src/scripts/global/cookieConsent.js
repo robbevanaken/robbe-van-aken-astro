@@ -1,11 +1,12 @@
 // Cookie consent (vanilla-cookieconsent v3), themed in styles/vendor/_cookieconsent.css.
 // Categories: "necessary" (always on) and "analytics" (off until accepted). No analytics script exists yet:
 // when you add one, load it with <script type="text/plain" data-category="analytics" ...> so it only runs after consent.
-// The footer button [data-cc="show-preferencesModal"] reopens the preferences.
+// The footer button [data-cookie-settings] reopens the preferences (delegated, so it keeps working after page swaps).
 import 'vanilla-cookieconsent/dist/cookieconsent.css';
 import * as CookieConsent from 'vanilla-cookieconsent';
 
 export function initCookieConsent() {
+  document.addEventListener('click', (e) => { if (e.target.closest('[data-cookie-settings]')) CookieConsent.showPreferences(); });
   CookieConsent.run({
     guiOptions: {
       consentModal: { layout: 'box', position: 'bottom left', equalWeightButtons: true, flipButtons: false },

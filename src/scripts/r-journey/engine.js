@@ -10,16 +10,18 @@ import { R_PATH } from './r-shape.js';
 
 // `follow`: the small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R.
 export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true } = {}) {
-  if (!canvas || !scope) return;
+  if (!canvas || !scope) return null;
+  // page swaps: every window listener goes through this signal, destroy() stops the frame loop
+  const ac=new AbortController(),signal=ac.signal;let alive=true,raf=0;
 
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,motion=reduce?0:1;
   const cvs=canvas,ctx=cvs.getContext('2d');
   let W=0,H=0,DPR=1;
   function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cvs.width=W*DPR;cvs.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
-  addEventListener('resize',resize);resize();
+  addEventListener('resize',resize,{signal});resize();
 
   let mx=0,my=0,smx=0,smy=0,mpx=-9999,mpy=-9999;
-  addEventListener('pointermove',e=>{mx=e.clientX/W*2-1;my=e.clientY/H*2-1;mpx=e.clientX;mpy=e.clientY},{passive:true});
+  addEventListener('pointermove',e=>{mx=e.clientX/W*2-1;my=e.clientY/H*2-1;mpx=e.clientX;mpy=e.clientY},{passive:true,signal});
   let hoverQ=-1;
   scope.querySelectorAll('[data-service]').forEach(r=>{const q=+r.dataset.service;
     r.addEventListener('mouseenter',()=>hoverQ=q);r.addEventListener('mouseleave',()=>hoverQ=-1);
@@ -27,10 +29,10 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
   // stages include the scope itself when it is a stage (e.g. the footer)
   const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...scope.querySelectorAll('[data-stage]')],SV=stages.map(e=>+e.dataset.stage);
-  if(!stages.length)return;
+  if(!stages.length)return null;
   // A scope may have only one anchor (header: #a-craft, footer: #a-foot): every missing anchor falls back to it.
   const find=(id)=>scope.querySelector?.('#'+id)||(scope===document?document.getElementById(id):null);
-  const main=find('a-craft')||find('a-foot')||find('a-hero');if(!main)return;
+  const main=find('a-craft')||find('a-foot')||find('a-hero');if(!main)return null;
   const byId=(id)=>find(id)||main;
   const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aCraft=byId('a-craft'),aFoot=byId('a-foot');
   const slots=[...scope.querySelectorAll('[data-service-slot]')],svcSlots=slots.length===4?slots:[main,main,main,main];
@@ -173,11 +175,12 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   }
   const modeBtn=scope===document?document.getElementById('mode'):null;
   if(modeBtn)modeBtn.onclick=()=>{glyph=!glyph;modeBtn.textContent=glyph?'Glyph':'Pixels';modeBtn.classList.toggle('is-off',!glyph)};
-  addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()});
+  addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()},{signal});
 
   let culled=false;
   function frame(ts){
-    requestAnimationFrame(frame);
+    if(!alive)return;
+    raf=requestAnimationFrame(frame);
     if(!inited)return;
     if(cull){
       const r=(scope===document?document.documentElement:scope).getBoundingClientRect();
@@ -280,5 +283,6 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     if(hudBar)hudBar.style.width=(s/4*100)+'%';
   }
 
-  build().then(() => requestAnimationFrame(frame));
+  build().then(() => { if (alive) raf = requestAnimationFrame(frame); });
+  return () => { alive = false; cancelAnimationFrame(raf); ac.abort(); };
 }
