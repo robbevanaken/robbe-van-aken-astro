@@ -1,6 +1,6 @@
 // Highlight text on scroll (Osmo Supply "Highlight Text on Scroll"), kept as delivered.
 // Only changes: npm imports instead of CDN scripts, one export instead of DOMContentLoaded, nothing runs with prefers-reduced-motion,
-// and it returns a cleanup function (page swaps).
+// and it takes a root and returns a cleanup function (page swaps).
 //   data-highlight-text           the element to highlight letter by letter while scrolling
 //   data-highlight-scroll-start   default "top 90%"
 //   data-highlight-scroll-end     default "center 40%"
@@ -12,11 +12,11 @@ import { SplitText } from 'gsap/SplitText';
 
 gsap.registerPlugin(ScrollTrigger, SplitText)
 
-function initHighlightText(){
+function initHighlightText(root){
 
   const splits = []
 
-  let splitHeadingTargets = document.querySelectorAll("[data-highlight-text]")
+  let splitHeadingTargets = root.querySelectorAll("[data-highlight-text]")
   splitHeadingTargets.forEach((heading) => {
 
     const scrollStart = heading.getAttribute("data-highlight-scroll-start") || "top 90%"
@@ -52,7 +52,7 @@ function initHighlightText(){
 }
 
 // Initialize Highlight Text on Scroll (called from main.js once fonts are ready)
-export function initHighlight() {
+export function initHighlight(root = document) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
-  return initHighlightText();
+  return initHighlightText(root);
 }

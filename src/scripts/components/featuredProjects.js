@@ -18,14 +18,14 @@ const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const smooth = (t) => t * t * (3 - 2 * t);
 const pad = (n) => String(n).padStart(2, '0');
 
-export function initFeaturedProjects() {
-  const wrap = document.querySelector('[data-featured-projects]');
+export function initFeaturedProjects(root = document) {
+  const wrap = root.querySelector('[data-featured-projects]');
   if (!wrap) return null;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const stage = wrap.querySelector('[data-fp-stage]'), frame = wrap.querySelector('[data-fp-frame]');
   const head = wrap.querySelector('[data-fp-head]'), foot = wrap.querySelector('[data-fp-foot]');
   const cards = [...wrap.querySelectorAll('[data-fp-card]')], imgs = cards.map((c) => c.querySelector('[data-fp-img]')), n = cards.length;
-  const col1 = document.querySelector('[data-fp-ruler="col1"]'), col2 = document.querySelector('[data-fp-ruler="col2"]'), nextCol = document.querySelector('[data-fp-ruler="next"]');
+  const col1 = root.querySelector('[data-fp-ruler="col1"]'), col2 = root.querySelector('[data-fp-ruler="col2"]'), nextCol = root.querySelector('[data-fp-ruler="next"]');
   const capLink = wrap.querySelector('[data-fp-link]'), capT = wrap.querySelector('[data-fp-title]'), capD = wrap.querySelector('[data-fp-text]'), cnt = wrap.querySelector('[data-fp-count]');
   const PROJ = cards.map((c) => [c.dataset.title, c.dataset.desc, c.dataset.href]);
 

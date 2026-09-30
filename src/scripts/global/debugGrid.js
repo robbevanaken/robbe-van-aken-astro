@@ -1,10 +1,10 @@
 // Dev only: column overlay ([data-debug-grid], only rendered in `npm run dev`). Toggle with L or the HUD "Grid" button.
 const KEY = 'rva-grid';
 
-export function initDebugGrid() {
-  const el = document.querySelector('[data-debug-grid]');
+export function initDebugGrid(root = document) {
+  const el = root.querySelector('[data-debug-grid]');
   if (!el) return;
-  const btn = document.getElementById('grid-toggle');
+  const btn = root.querySelector('#grid-toggle');
   const set = (on) => {
     el.classList.toggle('is-on', on);
     btn?.classList.toggle('is-off', !on);

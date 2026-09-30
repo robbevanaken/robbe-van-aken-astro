@@ -7,10 +7,10 @@ import { SplitText } from 'gsap/SplitText';
 
 gsap.registerPlugin(SplitText);
 
-export function initTextHover() {
+export function initTextHover(root = document) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
   const ac = new AbortController(), signal = ac.signal, splits = [];
-  document.querySelectorAll('[data-text-hover]').forEach((el) => {
+  root.querySelectorAll('[data-text-hover]').forEach((el) => {
     const split = new SplitText(el.children.length ? [...el.children] : el, { type: 'chars' });
     splits.push(split);
     let tl = null, outside = false;

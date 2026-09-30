@@ -1,7 +1,8 @@
 // Script entry for every page (loaded from layouts/Base.astro).
 // Once: eases, Lenis, cookie consent and the page transitions (global/pageTransitions.js: loader + swup).
 // Per page: mount() below, run on the first load and again after every swup page swap; every init returns a cleanup
-// (or nothing), and each does nothing when its element isn't on the page.
+// (or nothing), and each does nothing when its element isn't on the page. unmount() runs the cleanups just before swup
+// replaces the page.
 // Order matters: the pinned projects before the R engine (the pin changes where the R anchors sit),
 // text effects once the fonts are in (they split text into lines).
 import './global/eases.js';
@@ -20,24 +21,25 @@ import { initREngine } from './r-journey/engine.js';
 
 let cleanups = [], page = 0;
 
+// every init only looks inside the page's own container (root)
 function mount() {
-  const id = ++page;
+  const id = ++page, root = document.getElementById('swup');
   cleanups = [
-    initSiteHeader(),
-    initFeaturedProjects(),
+    initSiteHeader(root),
+    initFeaturedProjects(root),
     // one R per <canvas data-r-canvas>; data-r-scope limits it to part of the page (subpages: header + footer)
-    ...[...document.querySelectorAll('[data-r-canvas]')].map((canvas) => {
+    ...[...root.querySelectorAll('[data-r-canvas]')].map((canvas) => {
       const sel = canvas.dataset.rScope;
-      return initREngine({ canvas, scope: sel ? document.querySelector(sel) : document, cull: !!sel });
+      return initREngine({ canvas, scope: sel ? root.querySelector(sel) : root, cull: !!sel });
     }),
-    initScrollNext(),
-    initMarquee(),
-    initReveal(),
-    initDebugGrid(),
+    initScrollNext(root),
+    initMarquee(root),
+    initReveal(root),
+    initDebugGrid(root),
   ];
   document.fonts.ready.then(() => {
     if (id !== page) return; // swapped away in the meantime
-    cleanups.push(initHighlight(), initTextHover());
+    cleanups.push(initHighlight(root), initTextHover(root));
   });
 }
 

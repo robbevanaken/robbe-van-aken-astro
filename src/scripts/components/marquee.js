@@ -6,8 +6,8 @@ const BASE = 1 / 30;   // base speed: half the track per 30 s
 const BOOST = 0.012;   // extra speed per px/frame of scroll velocity
 const MAX = 7;         // cap: at most 1 + MAX times the base speed
 
-export function initMarquee() {
-  const bands = [...document.querySelectorAll('[data-marquee]')];
+export function initMarquee(root = document) {
+  const bands = [...root.querySelectorAll('[data-marquee]')];
   if (!bands.length) return null;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const items = bands.map((el) => ({ track: el.querySelector('[data-marquee-track]'), x: 0, half: 0 }));

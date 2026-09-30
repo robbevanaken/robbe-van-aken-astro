@@ -3,8 +3,8 @@
 // Returns a cleanup function (the header is part of every page swap).
 import { getLenis } from './lenis.js';
 
-export function initSiteHeader() {
-  const header = document.querySelector('[data-site-header]');
+export function initSiteHeader(root = document) {
+  const header = root.querySelector('[data-site-header]');
   if (!header) return;
   const toggle = header.querySelector('[data-menu-toggle]');
   const menu = header.querySelector('[data-menu]');

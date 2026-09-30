@@ -14,8 +14,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Where the next project's visual sits on its own page, scrolled to the top: this page's intro + visual, cloned
 // off screen with the next project's texts (both pages use the same template).
-function measureTarget(wrap) {
-  const intro = document.querySelector('[data-page-intro]'), visual = document.querySelector('[data-project-visual]');
+function measureTarget(root, wrap) {
+  const intro = root.querySelector('[data-page-intro]'), visual = root.querySelector('[data-project-visual]');
   if (!intro || !visual) return null;
   const probe = document.createElement('div');
   probe.style.cssText = 'position:absolute;top:0;left:0;width:100%;visibility:hidden;pointer-events:none';
@@ -34,8 +34,8 @@ function measureTarget(wrap) {
   return out;
 }
 
-function initScrollToNextPage() {
-  const wrap = document.querySelector("[data-scroll-next-wrap]");
+function initScrollToNextPage(root) {
+  const wrap = root.querySelector("[data-scroll-next-wrap]");
 
   if (!wrap) return null;
 
@@ -76,7 +76,7 @@ function initScrollToNextPage() {
 
   // target box of the visual on the next page (re-measured on every refresh)
   let target = null;
-  const measure = () => { target = measureTarget(wrap); };
+  const measure = () => { target = measureTarget(root, wrap); };
   measure();
 
   const tl = gsap.timeline({
@@ -134,8 +134,8 @@ function initScrollToNextPage() {
   return () => { ac.abort(); tl.scrollTrigger?.kill(); };
 }
 
-export function initScrollNext() {
-  const kill = initScrollToNextPage();
+export function initScrollNext(root = document) {
+  const kill = initScrollToNextPage(root);
   if (!kill) return null;
   // text reveals split lines once fonts are in, which can change the page height: re-measure
   document.fonts?.ready.then(() => ScrollTrigger.refresh());

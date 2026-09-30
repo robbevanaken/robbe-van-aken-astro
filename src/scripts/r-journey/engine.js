@@ -31,13 +31,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...scope.querySelectorAll('[data-stage]')],SV=stages.map(e=>+e.dataset.stage);
   if(!stages.length)return null;
   // A scope may have only one anchor (header: #a-craft, footer: #a-foot): every missing anchor falls back to it.
-  const find=(id)=>scope.querySelector?.('#'+id)||(scope===document?document.getElementById(id):null);
+  const find=(id)=>scope.querySelector?.('#'+id)||null;
   const main=find('a-craft')||find('a-foot')||find('a-hero');if(!main)return null;
   const byId=(id)=>find(id)||main;
   const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aCraft=byId('a-craft'),aFoot=byId('a-foot');
   const slots=[...scope.querySelectorAll('[data-service-slot]')],svcSlots=slots.length===4?slots:[main,main,main,main];
   const NAMES=['Pixel','Fragment','Craft','Parts','Play'];
-  const hudName=document.getElementById('hud-name'),hudBar=document.getElementById('hud-bar');
+  const hudName=cull?null:scope.querySelector('#hud-name'),hudBar=cull?null:scope.querySelector('#hud-bar');
   function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 
@@ -173,7 +173,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c});
     spriteCache.set(key,out);return out;
   }
-  const modeBtn=scope===document?document.getElementById('mode'):null;
+  const modeBtn=cull?null:scope.querySelector('#mode');
   if(modeBtn)modeBtn.onclick=()=>{glyph=!glyph;modeBtn.textContent=glyph?'Glyph':'Pixels';modeBtn.classList.toggle('is-off',!glyph)};
   addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()},{signal});
 
