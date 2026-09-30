@@ -1,10 +1,13 @@
-// Page transitions (swup). The whole page lives in the swup container (#swup, layouts/Base.astro); Lenis and the cookie
-// consent live outside it and stay.
+// Page loader + page transitions (swup). The whole page lives in the swup container (#swup, layouts/Base.astro); the
+// loader overlay with the four corner brackets ([data-transition], layout/PageTransition.astro), Lenis and the cookie consent
+// live outside it and stay.
+//   first load     the brackets close in from the screen corners around the name (spelled out letter by letter) while
+//                  the counter runs to 100, then open out to the screen corners again and the page appears
 //   default        the page fades out, the next one is swapped in at the top and fades in
 //   next project   ([data-scroll-next-link], components/scrollNext.js) the next project's visual already sits where
 //                  the new page shows it, so it's carried over and only the rest fades in
 // mount() starts every page script, unmount() runs their cleanups just before the content is replaced.
-// prefers-reduced-motion: instant swaps.
+// prefers-reduced-motion: no loader, instant swaps.
 import Swup from 'swup';
 import SwupHeadPlugin from '@swup/head-plugin';
 import SwupPreloadPlugin from '@swup/preload-plugin';
@@ -15,7 +18,9 @@ import { handOff, arrive } from '../components/scrollNext.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const FADE_OUT = .4, FADE_IN = .6;
+const LOADER_MIN = 1.4; // seconds the loader stays at least, so the name can be spelled out
+const LOADER_MAX = 6;   // never wait longer than this for fonts and images
+const FADE_OUT = .4, FADE_IN = .6; // page swaps
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let swup = null;
 
@@ -33,8 +38,92 @@ function scrollTop() {
 
 const page = () => document.querySelector('#swup');
 
+// -----------------------------------------
+// THE FRAME (four corner brackets)
+// -----------------------------------------
+
+function createFrame(overlay) {
+  const frame = overlay.querySelector('[data-transition-frame]');
+  const loader = overlay.querySelector('[data-loader]');
+  // the brackets at the screen corners, on the page margin (--margin, resolved to px)
+  const edges = () => {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:absolute;width:var(--margin)';
+    overlay.append(probe);
+    const m = probe.offsetWidth;
+    probe.remove();
+    return { width: innerWidth - 2 * m, height: innerHeight - 2 * m };
+  };
+  // closed: tight around the name block
+  const closed = () => ({ width: loader.offsetWidth, height: loader.offsetHeight });
+  return { frame, loader, edges, closed };
+}
+
+// -----------------------------------------
+// LOADER (first load)
+// -----------------------------------------
+
+// fonts count for half, the images on the page for the rest
+function loadProgress(onProgress) {
+  const imgs = [...document.images].filter((i) => !i.complete && i.loading !== 'lazy');
+  let done = 0, fonts = 0;
+  const report = () => onProgress(.5 * fonts + .5 * (imgs.length ? done / imgs.length : 1));
+  imgs.forEach((i) => { const d = () => { done++; report(); }; i.addEventListener('load', d, { once: true }); i.addEventListener('error', d, { once: true }); });
+  document.fonts.ready.then(() => { fonts = 1; report(); });
+  report();
+}
+
+async function runLoader(overlay, f) {
+  const root = document.documentElement, bg = overlay.querySelector('[data-transition-bg]');
+  const chars = overlay.querySelectorAll('[data-loader-char]'), count = overlay.querySelector('[data-loader-count]');
+  getLenis()?.stop();
+  const from = f.edges(), to = f.closed();
+  gsap.set(f.frame, { ...from, autoAlpha: 1 });
+  // spell out the name, then the role
+  gsap.to(chars, { opacity: 1, duration: .5, ease: 'power2.out', stagger: .03, delay: .15 });
+
+  // the counter follows the real progress, never faster than the minimum time allows; the brackets close in with it
+  let real = 0;
+  loadProgress((v) => { real = v; });
+  const t0 = performance.now(), shown = { v: 0 };
+  await new Promise((resolve) => {
+    const tick = () => {
+      const t = (performance.now() - t0) / 1000;
+      const target = t > LOADER_MAX ? 1 : Math.min(real, t / LOADER_MIN, 1);
+      shown.v += (target - shown.v) * .1;
+      if (target === 1 && 1 - shown.v < .004) shown.v = 1;
+      count.textContent = String(Math.round(shown.v * 100)).padStart(3, '0');
+      // the brackets are closed by 60% and wait there for the counter
+      const e = 1 - Math.pow(1 - Math.min(1, shown.v / .6), 3);
+      gsap.set(f.frame, { width: from.width + (to.width - from.width) * e, height: from.height + (to.height - from.height) * e });
+      if (shown.v === 1) { gsap.ticker.remove(tick); resolve(); }
+    };
+    gsap.ticker.add(tick);
+  });
+
+  // out: the text goes, the brackets open out to the screen corners while the page appears behind them
+  await gsap.timeline({ delay: .2 })
+    .to(f.loader, { autoAlpha: 0, duration: .3, ease: 'power1.in' })
+    .to(f.frame, { ...f.edges(), duration: .9, ease: 'expo.inOut' }, .1)
+    .to(bg, { opacity: 0, duration: .7, ease: 'power2.inOut' }, .35)
+    .to(f.frame, { autoAlpha: 0, duration: .35, ease: 'power1.in' }, .75);
+  root.classList.remove('is-loading');
+  gsap.set([f.loader, bg], { clearProps: 'all' });
+  getLenis()?.start();
+}
+
+// -----------------------------------------
+// SWUP
+// -----------------------------------------
+
 export function initPageTransitions({ mount, unmount }) {
+  const overlay = document.querySelector('[data-transition]');
+  const f = overlay && !reducedMotion ? createFrame(overlay) : null;
+  const fades = (visit) => visit.animation.name !== 'next-project' && !reducedMotion;
+
   mount();
+  if (f && document.documentElement.classList.contains('is-loading')) runLoader(overlay, f);
+  else document.documentElement.classList.remove('is-loading');
 
   // swup swaps pages at the top; don't let the browser restore old scroll positions on back/forward.
   // Set through ScrollTrigger: it re-applies its own remembered value ("auto") on every refresh otherwise.
@@ -48,7 +137,6 @@ export function initPageTransitions({ mount, unmount }) {
   });
 
   let carried = null;
-  const fades = (visit) => visit.animation.name !== 'next-project' && !reducedMotion;
 
   swup.hooks.on('visit:start', (visit) => {
     if (visit.trigger.el?.closest('[data-scroll-next-link]')) visit.animation.name = 'next-project';

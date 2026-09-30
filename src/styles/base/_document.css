@@ -1,6 +1,6 @@
 /* Reset, element defaults, selection and the fixed R canvas. */
 *,*::before,*::after{box-sizing:border-box}
-html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px)}
+html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-tap-highlight-color:transparent} /* no grey tap flash on phones: links have their own :active / focus styles */
 html.is-menu-open{overflow:hidden}
 body{
   margin:0;background:var(--bg);color:var(--fg);

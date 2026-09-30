@@ -2,6 +2,7 @@
 // HTML shell for every page: styles, font preloads and the single script entry (scripts/main.js).
 import '../styles/main.css';
 import { meta } from '../data/site';
+import PageTransition from '../components/layout/PageTransition.astro';
 // noindex: pages search engines should skip (404)
 interface Props { title?: string; description?: string; noindex?: boolean }
 const { title = meta.title, description = meta.description, noindex = false } = Astro.props;
@@ -16,6 +17,8 @@ const image = new URL(meta.image, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless) -->
+    <script is:inline>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');setTimeout(()=>document.documentElement.classList.remove('is-loading'),8000)}</script>
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <!-- social previews (LinkedIn, Slack, X, ...) -->
     <meta property="og:type" content="website" />
@@ -45,6 +48,7 @@ const image = new URL(meta.image, Astro.site);
     <div id="swup">
       <slot />
     </div>
+    <PageTransition />
     <script>
       import '../scripts/main.js';
     </script>

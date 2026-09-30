@@ -1,7 +1,8 @@
 // Site header: hides on scroll down, returns on scroll up; full-screen menu on phones.
 // Hooks: [data-site-header], [data-menu-toggle], [data-menu]. State classes: is-hidden, is-scrolled, is-open, html.is-menu-open.
 // While the menu is open the rest of the page is inert (focus stays in the header + menu); Escape closes it and puts
-// focus back on the toggle.
+// focus back on the toggle. A menu link to another page of the site keeps the menu open: only its items fade out
+// (is-leaving) while the page transition fades everything; the next page arrives with a fresh, closed header.
 // Returns a cleanup function (the header is part of every page swap).
 import { getLenis } from './lenis.js';
 
@@ -35,7 +36,12 @@ export function initSiteHeader(root = document) {
     const lenis = getLenis(); if (lenis) v ? lenis.stop() : lenis.start();
   };
   toggle.addEventListener('click', () => setMenu(!open));
-  menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+  menu.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    const toOtherPage = a.origin === location.origin && !a.target && a.pathname !== location.pathname;
+    if (toOtherPage) menu.classList.add('is-leaving'); else setMenu(false);
+  });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) { setMenu(false); toggle.focus(); } }, { signal });
 
   return () => {

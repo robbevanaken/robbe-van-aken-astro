@@ -8,7 +8,7 @@
 .c-site-header__body::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--bg) 35%,transparent);opacity:0;transition:opacity .5s}
 .is-scrolled .c-site-header__body::before,.is-open .c-site-header__body::before{opacity:1}
 
-.c-site-header__brand{grid-column:1 / span 3;grid-row:1;text-decoration:none;line-height:1.3}
+.c-site-header__brand{grid-column:1 / span 3;grid-row:1;justify-self:start;width:fit-content;text-decoration:none;line-height:1.3} /* hover area = the text */
 .c-site-header__name,.c-site-header__role{display:block}
 .c-site-header__role{color:var(--muted)}
 
@@ -39,6 +39,9 @@
 .c-site-header__menu-link:hover .c-site-header__menu-label,.c-site-header__menu-link:focus-visible .c-site-header__menu-label,.c-site-header__menu-link:active .c-site-header__menu-label{color:var(--fg);transform:translateX(12px)}
 .c-site-header__menu-socials{margin-top:var(--space-l);opacity:0;transition:opacity .6s var(--ease-out) .35s}
 .c-site-header__menu.is-in .c-site-header__menu-socials{opacity:1}
+/* a menu link to another page was tapped: the items fade out (quickly, top to bottom), the menu itself stays until the
+   page transition has faded everything */
+.c-site-header__menu.is-leaving .c-site-header__menu-link,.c-site-header__menu.is-leaving .c-site-header__menu-socials{opacity:0;transition:opacity .25s var(--ease-out);transition-delay:calc(var(--i,4) * .03s)}
 
 @media (max-width:639px){
   /* the header R lines up with the name block (and with the pinned R in the featured projects) */

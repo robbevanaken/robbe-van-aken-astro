@@ -1,0 +1,16 @@
+/* Page loader overlay (layout/PageTransition.astro, driven by global/pageTransitions.js).
+   The frame (four corner brackets) is sized and moved by the script; the loader text sits in the middle of the screen.
+   html.is-loading (set inline in Base.astro) shows the loader before any script runs. */
+.c-transition{position:fixed;inset:0;z-index:100;pointer-events:none;visibility:hidden}
+html.is-loading .c-transition{visibility:visible;pointer-events:auto}
+.c-transition__bg{position:absolute;inset:0;background:var(--bg);opacity:0}
+html.is-loading .c-transition__bg{opacity:1}
+.c-transition__frame{position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);opacity:0;--corner-color:var(--fg);--corner-size:12px;--corner-dur:0s}
+html.is-loading .c-transition__frame{opacity:1;width:calc(100% - 2 * var(--margin));height:calc(100% - 2 * var(--margin))}
+
+.c-transition__loader{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:var(--space-m);white-space:nowrap;visibility:hidden}
+html.is-loading .c-transition__loader{visibility:visible}
+.c-transition__line{line-height:1.15}
+.c-transition__char{display:inline-block;opacity:0}
+.c-transition__meta{display:flex;justify-content:space-between;gap:var(--space-m);margin-top:var(--space-s);line-height:1;color:var(--muted)}
+.c-transition__count{color:var(--fg);font-variant-numeric:tabular-nums}
