@@ -9,8 +9,9 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - `src/data/` all copy. `site.ts` (per section, in page order, plus `socials` for footer + mobile menu), `pages.ts` (subpages), `clients.ts`, `projects.ts`, `services.ts`. Change text here, not in components.
 - `src/components/sections/` one file per page section, `ui/` small reusable pieces (Button, Icon, Corners, Marquee (props: text, icon, fill), Placeholder), `layout/` Nav, PageTransition (the page loader overlay, in `Base.astro`) + dev-only DevHud and GridOverlay. Components contain markup only: no `<style>` or `<script>`.
 - `src/styles/main.css` imports, in order: `base/` (`_fonts.css`: self-hosted Inter Tight @font-face (files in `public/fonts`, OFL license alongside, latin 400/500 preloaded in `Base.astro`); `_tokens.css`: colours, grid, type scale, spacing, eases; `_document.css`: reset, selection, R canvas) → `objects/` (`_container.css`, `_grid.css`) → `components/` (one `_name.css` per component, imported alphabetically in `index.css`) → `utilities/` (`_text.css`, `_screen-reader.css`) → `vendor/` (`_cookieconsent.css`).
-- `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`). Once: eases, Lenis, cookie consent, page transitions. Per page: `mount()` runs every page init again after each swup swap, with the page's container as `root`; each init does nothing when its element is missing and returns a cleanup (window listeners via an AbortController, ticker callbacks removed, ScrollTriggers killed), which `unmount()` calls before the content is replaced. New page scripts must follow this. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid, pageTransitions), `components/` (featuredProjects, scrollNext, marquee, highlightText, textHover), `r-journey/` (the R engine).
+- `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`). Once: eases, Lenis, cookie consent, page transitions. Per page: `mount()` runs every page init again after each swup swap, with the page's container as `root`; each init does nothing when its element is missing and returns a cleanup (window listeners via an AbortController, ticker callbacks removed, ScrollTriggers killed), which `unmount()` calls before the content is replaced. New page scripts must follow this. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid, pageTransitions), `components/` (featuredProjects, glyphHover (parked), scrollNext, marquee, highlightText, textHover), `r-journey/` (the R engine).
 - `public/clients/` client logos (white SVG, one file per logo).
+- `public/projects/` project visuals. For now made-up device mockups (laptop + iPhone with a fake site in the project's colours, square SVG with the devices in the middle 16:9 band so a 16:9 cover crop keeps them whole); replace with real work.
 
 ## Class and hook conventions
 - Namespaced BEM: `o-` objects (`o-container` = page margins, `o-grid` = the column grid, used together), `c-` components (`c-site-header__nav-link`, modifiers `--name`), `u-` utilities (`u-text-display/h2/lead/body-l/ui/label/muted`, `u-sr-only`). State classes: `is-*` (`is-hidden`, `is-open`, `is-in`, `is-on`, `is-off`).
@@ -21,9 +22,10 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - `/` home (`src/pages/index.astro`, the only page with the R canvas).
 - Each R is its own engine instance: one per `<canvas data-r-canvas>`, limited to `data-r-scope` (home: whole page; subpages: `[data-site-header]` for the small header R and `[data-site-footer]` for the big footer R). Instances whose scope is off screen skip their work. The small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R, at 45% strength (`follow`, `FS` in the engine). Small R's (<~140px) are boosted to mostly bright crosses so they read white.
 - `/404` (`404.astro`, noindex, copy in `pages.ts`), `/sitemap.xml` and `/robots.txt` (static endpoints in `src/pages`, built from `projects.ts` and `site` in `astro.config.mjs`: https://robbevanaken.be).
-- `/work`, `/work/<slug>` (one per project, slug in `projects.ts`), `/about`, `/contact`, `/privacy`: empty templates on `src/layouts/Page.astro` (Nav + content + Footer). On subpages the R has one stage: small and calm, centred in the header (`<Nav withR>` renders `#a-craft` there; the engine falls back to `#a-craft` for every anchor a page doesn't have). The footer there has its own separate R.
+- `/work`: the page intro + all projects on the globe in a grid, two per row of 6 columns, bent the same way but without the corner brackets (`<ProjectGlobe layout="grid">`).
+- `/work/<slug>` (one per project, slug in `projects.ts`), `/about`, `/contact`, `/privacy`: empty templates on `src/layouts/Page.astro` (Nav + content + Footer). On subpages the R has one stage: small and calm, centred in the header (`<Nav withR>` renders `#a-craft` there; the engine falls back to `#a-craft` for every anchor a page doesn't have). The footer there has its own separate R.
 - Project detail pages end in "scroll to next project" (`sections/ScrollNext.astro` + `scripts/components/scrollNext.js`, based on the Osmo resource, not clickable (only scrolling opens it): right after the content (the section is pulled up under it by `--lead`, set by the script): only the next project's visual, two columns narrower than on its page (desktop cols 2–11, 16:9 like the detail visual, `[data-scroll-next-slot]`), about 65% above the fold (no label, progress or brackets for now); while pinned it rises and grows into its box on the next page, never full-screen; at 100% it opens the next project; past 42%, stopping on the way down glides on to the end by itself, ease-in-out: `MAGNET` in `scrollNext.js`). These pages have no footer (`<Page footer={false}>`). Copy in `src/data/pages.ts`; `PageIntro.astro` renders label/title/intro (label and intro optional, `modifier` prop). The project detail intro is only the title (cols 1–5, `--fs-title`) the service (cols 8–9) and the year (cols 11–12) (ui size; tablet: title cols 1–3, service 4–5, year 6; phones: title only) (`service` / `year` in `projects.ts`, labels `projectPage.service` / `.year`); the visual follows one gutter (20px @1440) below. The scroll-next section carries the next project's title + service (`data-next-title`, `data-next-service`) for the clone that measures where its visual lands, `ui/Placeholder.astro` marks unwritten content.
-- In the featured projects, clicking the active project (or the caption label) opens its detail page; clicking a side project scrolls it in.
+- In the featured projects, clicking the project in the middle (or the caption label) opens its detail page; clicking a neighbour turns it in.
 
 ## Head, accessibility, robustness
 - `Base.astro` sets the canonical (no trailing slash, like the links and the sitemap), Open Graph + Twitter tags with `public/og.png` (1200×630, `meta.image` in `site.ts`); `noindex` prop for pages to keep out of search.
@@ -45,7 +47,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - `prefers-reduced-motion`: no loader, instant swaps.
 
 ## Motion
-- Text scramble: only on the project caption label (`01 — TITLE`), when the active project changes (GSAP ScrambleText in `components/featuredProjects.js`). Removed everywhere else on purpose.
+- Text scramble: not used anywhere at the moment (it was on the featured projects' caption; removed everywhere else on purpose).
 - Highlight text on scroll (Osmo Supply resource, kept as delivered, `scripts/components/highlightText.js`): `data-highlight-text` on longer texts (pitch quote, projects title, services intro + descriptions, footer title); letters go from 0.2 to full opacity, scrubbed with scroll.
 - Hovers use the "punch" ease (`--ease-punch` in CSS, `CustomEase 'punch'` in GSAP via `scripts/global/eases.js`, same curve).
 - Button hover: scales down slightly, brand arrow turns from 45° to 0°, four corner brackets slide out of the button's corners.
@@ -63,7 +65,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 
 ## Layout grid (Figma frame 1440 wide)
 12 columns, 60px margin, 20px gutter at 1440, fluid in vw (tokens `--cols`, `--margin`, `--gutter`). 6 columns below 1024px, 4 below 640px. Every section is `.o-container.o-grid` and places children with `grid-column`; nested rows use `subgrid`. Press Shift+G or `L` in dev (or the HUD "Grid" button) for the column overlay.
-Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 · projects title 1–5 (lead size), image always exactly 6 columns (cols 4–9; all 4 on phones), corner brackets one gutter outside; on short screens only the height shrinks (cover crop); caption on the same span, next project parked on col 12.
+Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 · projects intro 1–5 (lead size) level with the first project, projects alternately cols 8–11 (first) and 2–5 (all 4 on phones), the corner brackets one gutter outside the project in the middle.
 
 ## Type scale (`styles/base/_tokens.css`, sizes @1440, measured from Figma)
 display 58 · h2 48 · lead 32 · body-l 20 · body 16 · ui 15 · label 12 (uppercase, medium, tracked). Use the `.u-text-display/-h2/-lead/-body-l/-ui/-label` classes instead of one-off sizes. Exception: the project detail title, 64 (`--fs-title`).
@@ -77,11 +79,11 @@ States are defined by elements with `data-stage` (the engine blends between them
 |---|---|---|---|
 | 0 | Hero | big, extruded 3D, tumbles with the mouse | `#a-hero` |
 | 1 | Pitch (`#about`) | "exploded view": fragments slightly apart, still readable | `#a-pitch` |
-| 2 | Projects (pinned) | small at the top center, turns with the mouse | `#a-craft` |
+| 2 | Projects | small at the top center (sticky), turns with the mouse | `#a-craft` |
 | 3 | Services | splits in 4 quarters that rebuild into 3D icons | `[data-service-slot]` (4x) |
 | 4 | Footer | big again, pixels get pushed away by the cursor | `#a-foot` |
 
-Between stages the R does a full turn around its Y axis. The pinned projects section uses stage 2 twice (`.c-featured-projects` is also `data-stage="2"`), so the R holds still during the pin. Anchors are plain empty elements in the layout, so positions come from CSS and stay responsive.
+Between stages the R does a full turn around its Y axis. The projects section uses stage 2 twice (its sticky head and an end marker), so the R holds still while the projects pass. Anchors are plain empty elements in the layout, so positions come from CSS and stay responsive.
 
 ## Engine (`src/scripts/r-journey/engine.js`)
 - `build()`: rasterize the R, create cap particles (front/back face) + side-wall particles (extrusion layers), Voronoi fragments for stage 1, quadrant split + icon assignment for stage 3. Icons are drawn in `drawIcon` (gothic window, split lozenge, star, shield).
@@ -97,8 +99,8 @@ Tunables worth knowing:
 - Glyph look: `G_GAMMA`, `G_COLORS`, sprite `pad` / `lineWidth` in `sprites()`, grid size `CELL` in the glyph draw block.
 - `PAL` colour ramp for pixel mode.
 
-## Featured projects (`src/scripts/components/featuredProjects.js`)
-Pinned section, continuous (no stepped timeline): one smoothed value `cur` (project index, fractional in between) drives card position/scale/opacity, a small image parallax, the frame "breathing" in between projects, and the caption (label scrambles, description cross-fades). When scrolling stops in between it glides to the nearest project in the scroll direction; clicking a side project brings it in. Sizes come from the grid: hidden rulers `[data-fp-ruler="col1|col2|next"]` (column + gutter width, resting column of the next project) in the intro section of `Projects.astro`, outside the pinned part; the image always fills the 6-column span; `RATIO` is its aspect, and on short screens only its height gives (min 160px). Data lives in `src/data/projects.ts`; set `image` to use a real visual.
+## Project globe (`sections/ProjectGlobe.astro`, `src/scripts/components/featuredProjects.js`)
+Used on home (the first `work.featured` = 3 projects, `sections/Projects.astro`, `layout="spread"`) and on `/work` (all projects, `layout="grid"`: two per row, 6 columns each, no brackets). Not pinned: the projects spread right (cols 8–11, the first one) and left (cols 2–5) down the page (tablet: 3–6 / 1–4, phones: one column), one grid row each (`grid-row` inline), every next one starting 4vw before the previous one ends; each card is its square image + caption (`01 — Title`, description), and links to its project. While they pass each card is bent over a globe according to where it is on the screen: flat in the middle, tilting away towards the top/bottom (rotateX) and the sides (rotateY), a little smaller towards the edges (`TILT`, `SHRINK`, `LENS`; measured on the untransformed `<li>`). The corner brackets (one frame, `[data-fp-frame]`) follow the project nearest the middle of the screen (image and caption) on a spring and glide over to the next one (`K`/`D` in `render`); the project in the brackets eases a little smaller (`FOCUS`). Home: the intro (label + title, slot "intro") sits on the grid's first row, cols 1–5, level with the first project on the right (above the projects below 1024px); the small R stays at the top of the screen while the projects pass (slot "head": a sticky head holding `#a-craft`, stage 2, down to an end marker `.c-featured-projects__end`, also stage 2), then "View all projects", centred. Only runs while the section is on screen; reduced motion: no bend. Parked for later (not wired up): a glyph hover on the images (`components/glyphHover.js`, hook `[data-glyph-hover]`, add it to `mount()` to use it: a canvas over the image, 4×4 Bayer-dithered cells: dim crosses at the edge, bright crosses, dark cells with orange crosses in the core; opens on enter, follows the cursor, closes on leave; not on touch or with reduced motion). Data lives in `src/data/projects.ts`; set `image` to use a real visual.
 
 ## Design rules
 - `::selection` is orange with dark text.
@@ -106,10 +108,10 @@ Pinned section, continuous (no stepped timeline): one smoothed value `cur` (proj
 - Inter Tight for all type, self-hosted (no Google Fonts requests). The R is the one bold element; keep everything around it quiet.
 - Copy: English, sentence case, plain and honest, "not salesy, not slimy". Key line: "Solid code, thoughtful design, genuine care for the craft, and AI where it actually helps. I want to build something we're both proud of. That's the whole pitch."
 - Respect `prefers-reduced-motion` (engine and GSAP already do).
-- Extreme heights: R anchors use `clamp(min, Nvh, max)` heights, the pitch R is also capped by its box width, the projects section tightens its spacing below 700px height, and below 500px (phones held sideways) its padding, R and minimum image height shrink.
+- Extreme heights: R anchors use `clamp(min, Nvh, max)` heights, the pitch R is also capped by its box width.
 
 ## Open work / ideas
-- Replace placeholder projects with real work and imagery; project detail pages + page transitions.
+- Replace placeholder projects and the mockup visuals in `public/projects/` with real work and imagery; project detail pages + page transitions.
 - Port the engine to WebGL (instanced quads or a point shader + dither pass) for performance on low-end devices; Canvas 2D is near its limit.
 - Mobile pass: particle counts, pin behaviour. (Glyph drawing is the main cost: ~3–5k `drawImage` calls per frame; one stroked path per colour benchmarked ~4× faster in software rendering but looks slightly different.)
 - Portrait/video in the pitch section (currently a placeholder box).

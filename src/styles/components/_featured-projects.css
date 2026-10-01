@@ -1,36 +1,59 @@
-/* Pinned "scope" section, driven by components/featuredProjects.js (sizes and positions are set inline). */
-.c-featured-projects{height:100svh;display:flex;flex-direction:column;justify-content:center;padding:3vh 0 clamp(40px,9vh,110px);overflow:hidden;position:relative;background:var(--bg)}
-.c-featured-projects__head{display:flex;justify-content:center}
+/* The projects on a globe (sections/ProjectGlobe.astro, components/featuredProjects.js): home's featured projects and
+   /work. Spread right (cols 8–11, the first one) and left (cols 2–5) down the page, one grid row each, every next one starting a
+   little before the previous one ends; the images are square. The script bends each card over a
+   globe according to where it is on the screen and moves the corner brackets (one frame) onto the project nearest the
+   middle. Home: the head keeps the small R at the top of the screen while the projects pass. Phones: one column. */
+.c-featured-projects{position:relative;padding-bottom:var(--space-section)}
+/* home: after the pitch, the section's own top spacing (the intro sits in the grid) */
+.c-featured-projects:has(.c-projects-intro){padding-top:var(--space-section)}
+/* home: the button and the services follow on their own spacing */
+.c-featured-projects:has(.c-featured-projects__foot){padding-bottom:0}
+.c-featured-projects__head{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);z-index:2;display:flex;justify-content:center;height:56px;pointer-events:none}
 .c-featured-projects__r{width:56px;height:56px}
-.c-featured-projects__stage{position:relative;width:100%;flex:none} /* vertical margins set by the script (gutter + breathing room) */
-.c-featured-projects__card,.c-featured-projects__frame{position:absolute;left:50%;top:50%}
-.c-featured-projects__card{will-change:transform,opacity;transform:translate(-50%,-50%);cursor:pointer}
-.c-featured-projects__media{width:100%;height:100%;overflow:hidden}
-.c-featured-projects__frame{z-index:5;pointer-events:none;transform:translate(-50%,-50%);--corner-offset:var(--gutter);--corner-color:var(--fg);--corner-size:18px}
-.c-featured-projects__img{width:100%;height:100%;object-fit:cover;will-change:transform;transform:scale(1.14)}
+
+.c-featured-projects__grid{margin-top:var(--space-l)}
+/* the list spans the whole grid from the first row (the intro, if any, overlaps its left side there) */
+.c-featured-projects__list{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;list-style:none;margin:0;padding:0}
+.c-featured-projects__item{grid-column:8 / span 4}
+.c-featured-projects__item:nth-child(even){grid-column:2 / span 4}
+/* one row each (grid-row inline): every next project starts a little before the previous one ends (not more: bent
+   towards you, a card's near edge grows) */
+.c-featured-projects__item + .c-featured-projects__item{margin-top:-4vw}
+
+.c-featured-projects__card{display:block;text-decoration:none;color:inherit;transform-origin:50% 50%;will-change:transform}
+.c-featured-projects__media{position:relative;display:block;aspect-ratio:1;overflow:hidden}
+/* the glyph hover (components/glyphHover.js) draws on a canvas over the image */
+.c-featured-projects__glyphs{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.c-featured-projects__img{display:block;width:100%;height:100%;object-fit:cover}
 .c-featured-projects__placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
   background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
-
-.c-featured-projects__foot{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-m);margin:0 auto;width:var(--mw,62vw)}
-.c-featured-projects__caption-link{text-decoration:none}
+.c-featured-projects__caption{display:grid;gap:var(--space-2xs);margin-top:var(--space-s)}
 .c-featured-projects__caption-title{color:var(--fg);transition:color var(--hover-dur) var(--ease-punch)}
-.c-featured-projects__caption-link:hover .c-featured-projects__caption-title{color:var(--accent)}
-.c-featured-projects__caption-text{margin-top:var(--space-2xs);color:var(--muted);max-width:34em}
-.c-featured-projects__side{display:flex;align-items:center;gap:var(--space-s);flex:none}
-.c-featured-projects__count{color:var(--muted)}
-.c-featured-projects__count-current{color:var(--fg);font-weight:400}
+.c-featured-projects__card:hover .c-featured-projects__caption-title,.c-featured-projects__card:focus-visible .c-featured-projects__caption-title{color:var(--accent)}
+.c-featured-projects__caption-text{color:var(--muted);max-width:30em}
+
+/* the corner brackets: one frame, placed by the script around the project nearest the middle (image and caption) */
+.c-featured-projects__frame{position:absolute;top:0;left:0;z-index:1;pointer-events:none;--corner-offset:var(--gutter);--corner-color:var(--fg);--corner-size:18px;--corner-dur:0s}
+
+.c-featured-projects__foot{margin-top:var(--space-xl)}
+.c-featured-projects__all{grid-column:1 / -1;justify-self:center}
+.c-featured-projects__end{height:1px}
+
+/* grid (/work): two per row, 6 columns each, rows of their own height */
+.c-featured-projects--grid .c-featured-projects__list{row-gap:var(--space-xl)}
+.c-featured-projects--grid .c-featured-projects__item:nth-child(n){grid-column:span 6;margin-top:0}
 
 @media (max-width:1023px){
-  .c-featured-projects__foot{flex-direction:column;align-items:flex-start;gap:var(--space-m)}
+  .c-featured-projects--grid .c-featured-projects__item:nth-child(n){grid-column:span 3}
+  .c-projects-intro + .c-featured-projects__list{grid-row:2;margin-top:var(--space-l)}
+  .c-featured-projects__item{grid-column:3 / span 4}
+  .c-featured-projects__item:nth-child(even){grid-column:1 / span 4}
 }
-/* phones: the pinned R sits exactly where the header R does (same row as the name and Menu) */
 @media (max-width:639px){
-  .c-featured-projects__head{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--nav-top));left:0;right:0}
+  .c-featured-projects--grid .c-featured-projects__item:nth-child(n){grid-column:1 / -1}
+  .c-featured-projects__head{top:calc(env(safe-area-inset-top,0px) + var(--nav-top));height:40px}
   .c-featured-projects__r{width:40px;height:40px}
-}
-
-/* very low screens (phones held sideways): tighter padding and a smaller R, so everything fits between header and fold */
-@media (max-height:500px){
-  .c-featured-projects{padding:8px 0 16px}
-  .c-featured-projects__r{width:36px;height:36px}
+  .c-featured-projects__item,.c-featured-projects__item:nth-child(even){grid-column:1 / -1}
+  .c-featured-projects__item + .c-featured-projects__item{margin-top:var(--space-xl)}
+  .c-featured-projects__frame{--corner-size:12px;--corner-offset:8px}
 }

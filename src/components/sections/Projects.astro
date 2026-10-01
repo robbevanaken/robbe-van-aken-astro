@@ -1,48 +1,21 @@
 ---
-// Featured projects: intro + pinned "scope" section.
-// Styles: styles/components/_projects-intro.css + _featured-projects.css, behaviour: scripts/components/featuredProjects.js
+// Featured projects on home: the first `work.featured` projects on the globe (sections/ProjectGlobe.astro), the intro
+// text on the left next to the first project.
+// The small R stays at the top of the screen while they pass (stage 2 from the sticky head down to the end marker).
+// Styles: styles/components/_projects-intro.css + _featured-projects.css
 import Button from '../ui/Button.astro';
-import Corners from '../ui/Corners.astro';
 import Icon from '../ui/Icon.astro';
+import ProjectGlobe from './ProjectGlobe.astro';
 import { work } from '../../data/site';
 import { projects } from '../../data/projects';
-const first = projects[0];
-const pad = (n: number) => String(n).padStart(2, '0');
 ---
-<section class="c-projects-intro o-container o-grid" id="work">
-  <p class="c-projects-intro__label u-text-label"><Icon name="arrow" class="c-projects-intro__arrow" />{work.label}</p>
-  <h2 class="c-projects-intro__title u-text-lead" data-highlight-text>{work.title}</h2>
-  <!-- invisible grid rulers: the script reads the live grid from these, sizes the image to a centred column span
-       (6 columns = cols 4–9, or 4 columns when the screen is short) and parks the next project on the last column -->
-  <div class="c-projects-intro__rulers o-container o-grid" aria-hidden="true">
-    <i class="c-projects-intro__ruler c-projects-intro__ruler--col1" data-fp-ruler="col1"></i>
-    <i class="c-projects-intro__ruler c-projects-intro__ruler--col2" data-fp-ruler="col2"></i>
-    <i class="c-projects-intro__ruler c-projects-intro__ruler--next" data-fp-ruler="next"></i>
+<ProjectGlobe projects={projects.slice(0, work.featured)} label="Featured projects">
+  <div class="c-featured-projects__head" slot="head" data-stage="2"><div class="c-featured-projects__r" id="a-craft"></div></div>
+  <div class="c-projects-intro" id="work" slot="intro">
+    <p class="c-projects-intro__label u-text-label"><Icon name="arrow" class="c-projects-intro__arrow" />{work.label}</p>
+    <h2 class="c-projects-intro__title u-text-lead" data-highlight-text>{work.title}</h2>
   </div>
-</section>
-
-<section class="c-featured-projects" data-stage="2" aria-label="Featured projects" data-featured-projects>
-  <div class="c-featured-projects__head" data-fp-head><div class="c-featured-projects__r" id="a-craft"></div></div>
-  <div class="c-featured-projects__stage" data-fp-stage>
-    <div class="c-featured-projects__frame" aria-hidden="true" data-fp-frame><Corners /></div>
-    {projects.map((p) => (
-      <article class="c-featured-projects__card" aria-label={p.title} data-fp-card data-title={p.title} data-desc={p.description} data-href={`/work/${p.slug}`}>
-        <div class="c-featured-projects__media">
-          {p.image
-            ? <img class="c-featured-projects__img" src={p.image} alt="" loading="lazy" decoding="async" data-fp-img />
-            : <div class="c-featured-projects__img c-featured-projects__placeholder" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-img>{p.label}</div>}
-        </div>
-      </article>
-    ))}
-  </div>
-  <div class="c-featured-projects__foot" data-fp-foot>
-    <div class="c-featured-projects__caption" aria-live="polite">
-      <a class="c-featured-projects__caption-link" href={`/work/${first.slug}`} data-fp-link><small class="c-featured-projects__caption-title u-text-label" data-fp-title>01 — {first.title}</small></a>
-      <p class="c-featured-projects__caption-text u-text-body-l" data-fp-text>{first.description}</p>
-    </div>
-    <div class="c-featured-projects__side">
-      <span class="c-featured-projects__count u-text-ui"><b class="c-featured-projects__count-current" data-fp-count>01</b> / {pad(projects.length)}</span>
-      <Button href={work.cta.href}>{work.cta.label}</Button>
-    </div>
-  </div>
-</section>
+  <div class="c-featured-projects__foot o-container o-grid"><Button href={work.cta.href} class="c-featured-projects__all">{work.cta.label}</Button></div>
+  <!-- the R stays in stage 2 down to here -->
+  <div class="c-featured-projects__end" data-stage="2" aria-hidden="true"></div>
+</ProjectGlobe>

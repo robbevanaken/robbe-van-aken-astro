@@ -53,6 +53,7 @@ export const work = {
   label: 'Some recent projects',
   title: 'Made with technical expertise, and a well trained eye for design',
   cta: { label: 'View all projects', href: '/work' },
+  featured: 3, // how many projects home shows (the first ones in projects.ts)
 };
 
 export const servicesIntro = {

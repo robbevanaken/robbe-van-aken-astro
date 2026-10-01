@@ -1,24 +1,13 @@
 ---
-// /work: all projects. Styles: styles/components/_project-list.css
+// /work: the page intro, then all projects on the globe in a grid, two per row (sections/ProjectGlobe.astro, as on home
+// but without the corner brackets).
 import Page from '../../layouts/Page.astro';
 import PageIntro from '../../components/sections/PageIntro.astro';
-import Icon from '../../components/ui/Icon.astro';
+import ProjectGlobe from '../../components/sections/ProjectGlobe.astro';
 import { workPage as p } from '../../data/pages';
 import { projects } from '../../data/projects';
-const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <Page title="Work">
   <PageIntro label={p.label} title={p.title} intro={p.intro} />
-  <ul class="c-project-list o-container o-grid">
-    {projects.map((pr, i) => (
-      <li class="c-project-list__item">
-        <a class="c-project-list__row" href={`/work/${pr.slug}`}>
-          <span class="c-project-list__num u-text-label">{pad(i + 1)}</span>
-          <span class="c-project-list__name u-text-lead">{pr.title}</span>
-          <span class="c-project-list__desc u-text-body-l">{pr.description}</span>
-          <span class="c-project-list__go"><Icon name="arrow" /></span>
-        </a>
-      </li>
-    ))}
-  </ul>
+  <ProjectGlobe projects={projects} label={p.title} layout="grid" />
 </Page>

@@ -1,14 +1,8 @@
-/* Intro above the featured projects: label + title on cols 1–5.
-   Also holds the invisible grid rulers read by components/featuredProjects.js (outside the pinned section, so
-   pinning never distorts them). */
-.c-projects-intro{position:relative;padding-top:var(--space-section);padding-bottom:var(--space-l)}
+/* Intro of the featured projects on home: label + title, on the globe's grid next to the first project (cols 1–5,
+   first row; above the projects below 1024px). */
+.c-projects-intro{grid-column:1 / span 5;grid-row:1;position:relative;z-index:1;align-self:start}
 .c-projects-intro__label{display:flex;gap:var(--space-xs);align-items:center;color:var(--muted);margin-bottom:var(--space-m)}
 .c-projects-intro__arrow{color:var(--accent);font-size:14px}
-.c-projects-intro__title{grid-column:1 / span 5;line-height:var(--lh-heading)}
-/* grid-column:auto: positioned against the section edges, not a grid area */
-.c-projects-intro__rulers{position:absolute;grid-column:auto;left:0;right:0;bottom:0;height:0;visibility:hidden}
-.c-projects-intro__ruler--col1{grid-column:1}
-.c-projects-intro__ruler--col2{grid-column:2}
-.c-projects-intro__ruler--next{grid-column:-2 / -1}
+.c-projects-intro__title{line-height:var(--lh-heading)}
 
-@media (max-width:1023px){ .c-projects-intro__title{grid-column:1 / -1} }
+@media (max-width:1023px){ .c-projects-intro{grid-column:1 / -1} }
