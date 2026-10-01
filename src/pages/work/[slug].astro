@@ -1,5 +1,5 @@
 ---
-// Project detail page. Empty for now: caption, title, the placeholder visual, then "scroll to next project".
+// Project detail page. Empty for now: title + service, the placeholder visual, then "scroll to next project".
 // Styles: styles/components/_project-detail.css
 import Page from '../../layouts/Page.astro';
 import PageIntro from '../../components/sections/PageIntro.astro';
@@ -14,10 +14,14 @@ export function getStaticPaths() {
 interface Props { project: Project; index: number }
 const { project, index } = Astro.props;
 const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
-const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <Page title={project.title} description={project.description} footer={false}>
-  <PageIntro label={`${pad(index + 1)} — ${project.title}`} title={project.title} intro={project.description} />
+  <PageIntro title={project.title} modifier="project">
+    <dl class="c-page-intro__meta">
+      <dt class="c-page-intro__meta-label u-text-label">{projectPage.service}</dt>
+      <dd class="c-page-intro__meta-value u-text-ui" data-page-intro-service>{project.service}</dd>
+    </dl>
+  </PageIntro>
   <div class="c-project-detail__visual o-container o-grid" data-project-visual>
     {project.image
       ? <img class="c-project-detail__media" src={project.image} alt="" fetchpriority="high" decoding="async" data-project-media />
@@ -25,5 +29,5 @@ const pad = (n: number) => String(n).padStart(2, '0');
   </div>
   <Placeholder text={projectPage.placeholder} />
   <div class="c-project-detail__back o-container o-grid"><a class="c-project-detail__back-link u-text-ui" href="/work">{projectPage.back}</a></div>
-  <ScrollNext project={next} label={projectPage.next} pageLabel={`${pad(nextIndex + 1)} — ${next.title}`} />
+  <ScrollNext project={next} label={projectPage.next} />
 </Page>

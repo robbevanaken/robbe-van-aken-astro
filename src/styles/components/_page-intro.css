@@ -6,4 +6,10 @@
 .c-page-intro__text{grid-column:1 / span 5;color:var(--muted)}
 .c-page-intro__action{grid-column:1 / -1;justify-self:start}
 
-@media (max-width:1023px){ .c-page-intro__title,.c-page-intro__text{grid-column:1 / -1} }
+/* project detail: only the title (cols 1–5, 64px @1440) and, from col 8, the service */
+.c-page-intro--project .c-page-intro__title{grid-column:1 / span 5;font-size:var(--fs-title)}
+.c-page-intro__meta{grid-column:8 / -1;align-self:end;margin:0;display:grid;}
+.c-page-intro__meta-label{color:var(--muted)}
+.c-page-intro__meta-value{margin:0}
+
+@media (max-width:1023px){ .c-page-intro__title,.c-page-intro__text,.c-page-intro--project .c-page-intro__title,.c-page-intro__meta{grid-column:1 / -1} }

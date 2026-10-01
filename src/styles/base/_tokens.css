@@ -21,6 +21,7 @@
 
   /* type: scale (size @1440 in comments, measured from the Figma frame) */
   --fs-display:clamp(38px,4.0278vw,76px);  /* 58  hero + footer title */
+  --fs-title:clamp(40px,4.4444vw,84px);    /* 64  project detail title */
   --fs-h2:clamp(30px,3.3333vw,64px);       /* 48  section titles */
   --fs-lead:clamp(21px,2.2222vw,40px);     /* 32  pitch quote, project description */
   --fs-body-l:clamp(17px,1.3889vw,24px);   /* 20  intro copy, service text */

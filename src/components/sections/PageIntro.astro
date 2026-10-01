@@ -1,11 +1,12 @@
 ---
-// Top of a subpage: label, title and intro. Styles: styles/components/_page-intro.css
+// Top of a subpage: label, title and intro (label and intro optional; extra content in the slot).
+// Styles: styles/components/_page-intro.css. modifier: e.g. "project" (project detail: title + service).
 import Icon from '../ui/Icon.astro';
-interface Props { label: string; title: string; intro?: string }
-const { label, title, intro } = Astro.props;
+interface Props { label?: string; title: string; intro?: string; modifier?: string }
+const { label, title, intro, modifier } = Astro.props;
 ---
-<header class="c-page-intro o-container o-grid" data-page-intro>
-  <p class="c-page-intro__label u-text-label"><Icon name="arrow" class="c-page-intro__arrow" /><span data-page-intro-label>{label}</span></p>
+<header class:list={['c-page-intro o-container o-grid', modifier && `c-page-intro--${modifier}`]} data-page-intro>
+  {label && <p class="c-page-intro__label u-text-label"><Icon name="arrow" class="c-page-intro__arrow" /><span data-page-intro-label>{label}</span></p>}
   <h1 class="c-page-intro__title u-text-display" data-page-intro-title>{title}</h1>
   {intro && <p class="c-page-intro__text u-text-body-l" data-page-intro-text>{intro}</p>}
   <slot />

@@ -9,6 +9,7 @@
 // so when the page swaps (global/pageTransitions.js) the visual is carried over and only the rest fades in.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { scrollToY } from '../global/lenis.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,9 +24,8 @@ function measureTarget(root, wrap) {
   probe.inert = true;
   const i = intro.cloneNode(true), v = visual.cloneNode(true);
   const put = (sel, text) => { const n = i.querySelector(sel); if (n && text != null) n.textContent = text; };
-  put('[data-page-intro-label]', wrap.dataset.nextLabel);
   put('[data-page-intro-title]', wrap.dataset.nextTitle);
-  put('[data-page-intro-text]', wrap.dataset.nextIntro);
+  put('[data-page-intro-service]', wrap.dataset.nextService);
   probe.append(i, v);
   document.body.append(probe);
   const r = v.querySelector('[data-project-media]').getBoundingClientRect();
@@ -69,9 +69,22 @@ function initScrollToNextPage(root) {
   const touched = () => { input = performance.now(); };
   ['wheel', 'touchmove', 'keydown'].forEach((t) => addEventListener(t, touched, { passive: true, signal: ac.signal }));
   const go = () => { if (gone) return; gone = true; link.click(); };
+  // magnet: stopping in the last quarter on the way down (after scrolling yourself) glides on to the end, which opens
+  // the next project
+  const MAGNET = .75;
+  let rest = 0;
+  const magnet = (self) => {
+    clearTimeout(rest);
+    rest = setTimeout(() => {
+      if (!armed || gone || self.direction < 0 || self.progress < MAGNET || self.progress >= .99) return; // not when heading back up
+      if (performance.now() - input < 150) return magnet(self); // still on the wheel / finger down: wait
+      scrollToY(self.end, .5 + (1 - self.progress) * 1.6);
+    }, 180);
+  };
   const onUpdate = (self) => {
     if (self.direction > 0 && performance.now() - input < 1500) armed = true;
     if (armed && self.progress >= 0.99) go();
+    else magnet(self);
   };
 
   // target box of the visual on the next page (re-measured on every refresh)
@@ -131,7 +144,7 @@ function initScrollToNextPage(root) {
     if (word) tl.fromTo(word, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 0.7);
   }
 
-  return () => { ac.abort(); tl.scrollTrigger?.kill(); };
+  return () => { ac.abort(); clearTimeout(rest); tl.scrollTrigger?.kill(); };
 }
 
 export function initScrollNext(root = document) {

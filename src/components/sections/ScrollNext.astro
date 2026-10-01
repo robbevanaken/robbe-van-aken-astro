@@ -3,11 +3,11 @@
 // Styles: styles/components/_scroll-next.css, behaviour: scripts/components/scrollNext.js. Keep the data- attributes.
 import Corners from '../ui/Corners.astro';
 import type { Project } from '../../data/projects';
-// pageLabel: the label the next project's page shows above its title (scrollNext.js measures that page's layout with it)
-interface Props { project: Project; label: string; pageLabel: string }
-const { project, label, pageLabel } = Astro.props;
+// data-next-*: the next project's texts; scrollNext.js measures that page's layout with them
+interface Props { project: Project; label: string }
+const { project, label } = Astro.props;
 ---
-<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next" data-next-label={pageLabel} data-next-title={project.title} data-next-intro={project.description}>
+<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next" data-next-title={project.title} data-next-service={project.service}>
   <a data-scroll-next-link href={`/work/${project.slug}`} class="c-scroll-next__inner">
     <div class="c-scroll-next__bg" data-scroll-next-box>
       {project.image
