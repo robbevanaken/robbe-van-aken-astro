@@ -55,7 +55,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - Mobile: the menu toggle's lines spread (bottom one shortens) on hover, the open cross spins a quarter turn; slide-out items start at the top, and on hover/tap the others dim while the active one shifts right.
 - Nav links: underline that wipes in from the left. Footer email: light underline, orange one wipes in on hover.
 - Marquee (`components/marquee.js`): constant loop that speeds up with scroll velocity (both directions) and eases back.
-- Glyph cells scale with the shape's size below 140px (service icons and the small header/projects R, ~36 glyphs tall, min 3 device px per glyph); big R's use the density-based size. Service icons are rasterised at 60×60 (`IG`) for detail. Glyphs are the intended look; pixel mode is only a dev fallback.
+- Glyph cells scale with the shape's size below 140px (the small header/projects R ~36 glyphs tall, the service icons `ICON_GLYPHS` = 24 for fewer, bigger crosses; min 3 device px per glyph); big R's use the density-based size. Service icons are rasterised at 60×60 (`IG`) for detail. Glyphs are the intended look; pixel mode is only a dev fallback.
 - The R canvas (`#r-canvas`, z 35) always renders above the fixed header (z 30).
 - Hero: the hero is `100svh - --marquee-h`, so the orange banner sits just above the fold; the scroll hint has a looping scrollbar thumb.
 - Trusted by: corners start around the logo and move apart to the cell edges, then the logo fades in (staggered).

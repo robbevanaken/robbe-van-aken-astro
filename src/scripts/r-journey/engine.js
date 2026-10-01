@@ -194,6 +194,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // Glyph dither mode (like Unicorn's Glyph Dither): particles are binned into a screen grid and every
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
   let glyph=true,GC=null,GS=null,GN=null,GO=null,OCC=null,nOcc=0;
+  const ICON_GLYPHS=24; // service icons: glyphs tall (fewer = bigger crosses)
   const G_GAMMA=1.4,G_COLORS=['#6d635d','#efe9e4','#8a2c00','#ff4f00'],BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
   function sprites(cell){
     const key=cell+'@'+DPR;if(spriteCache.has(key))return spriteCache.get(key);
@@ -284,12 +285,14 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     ctx.clearRect(0,0,W,H);
     if(glyph){
       // small shapes (service icons, the small R in the header / projects): finer cells so there is enough detail
-      // (~36 glyphs tall); big R's keep the density-based size
+      // (the small R ~36 glyphs tall, the service icons ICON_GLYPHS: fewer, bigger crosses); big R's keep the
+      // density-based size
       const rh=(i0===3?Qh:A[i0].S)*(1-f)+(i1===3?Qh:A[i1].S)*f,baseCell=size<1.1?3:clamp(Math.round(size*1.35),4,7);
       const iconW=(i0===3?1-f:0)+(i1===3?f:0); // how much of this frame is the icons state
       const small=clamp((140-rh)/60,0,1)*(1-iconW); // white boost for the small R only; icons keep their 3D shading
       const minCell=3/DPR; // glyphs of at least 3 device px (1.5 css px on retina): smaller and the crosses blur to grey
-      const CELL=rh<140?Math.min(baseCell,Math.max(minCell,Math.round(rh/36*2)/2)):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
+      const tall=36+(ICON_GLYPHS-36)*iconW,cap=iconW>.5?Infinity:baseCell;
+      const CELL=rh<140?Math.min(cap,Math.max(minCell,Math.round(rh/tall*2)/2)):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
       if(!grid.GC||grid.GC.length<NN)Object.assign(grid,{GC:new Float32Array(NN),GS:new Float32Array(NN),GN:new Uint16Array(NN),GO:new Uint8Array(NN),OCC:new Uint32Array(NN)});
       ({GC,GS,GN,GO,OCC}=grid);nOcc=0;
       GC.fill(0,0,NN);GS.fill(0,0,NN);GN.fill(0,0,NN);GO.fill(0,0,NN);
