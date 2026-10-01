@@ -1,7 +1,8 @@
 ---
-// Page loader: the name and role are spelled out where the header shows them, the small R floats in the middle, the
-// counter runs to 100 in the bottom right, and the four corner brackets (as on the buttons and the featured projects)
-// close in from the container width to the two middle columns; then they open out again. Page swaps are a plain fade.
+// Page loader: the name and role are spelled out where the header shows them, the page's own R floats in the middle,
+// the counter runs to 100 in the bottom right, and the four corner brackets (as on the buttons and the featured
+// projects) close in from the container width to the two middle columns; then they open out again and the R flies to
+// its place on the page. Page swaps use the same overlay with only the R and the counter.
 // Styles: styles/components/_transition.css, behaviour: scripts/global/pageTransitions.js.
 import Corners from '../ui/Corners.astro';
 import { nav } from '../../data/site';
@@ -22,6 +23,8 @@ const letters = (text: string) => [...text].map((c) => (c === ' ' ? '\u00a0' : c
     </div>
     <!-- where the small R floats: the page's own R is drawn here while loading (rIntro in scripts/r-journey/engine.js) -->
     <div class="c-transition__r" data-loader-r></div>
+    <!-- page swaps: a still of the old page's R, until the new page's R has drawn its first frame -->
+    <canvas class="c-transition__snap" data-loader-r-snap></canvas>
     <p class="c-transition__count u-text-ui" data-loader-count>000</p>
   </div>
 </div>

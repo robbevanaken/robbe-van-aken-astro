@@ -9,8 +9,8 @@ interface Props { title: string; description?: string; footer?: boolean; noindex
 const { title, description, footer = true, noindex = false } = Astro.props;
 ---
 <Base title={`${title} · Robbe Van Aken`} description={description} noindex={noindex}>
-  <!-- two separate R's on subpages: a small one in the header and a big one in the footer -->
-  <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-header]"></canvas>
+  <!-- two separate R's on subpages: a small one in the header (also the R in the page loader: data-r-intro) and a big one in the footer -->
+  <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-header]" data-r-intro></canvas>
   {footer && <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-footer]"></canvas>}
   <Nav withR />
   <main id="top" tabindex="-1" class:list={['c-page', { 'c-page--end': !footer }]}>

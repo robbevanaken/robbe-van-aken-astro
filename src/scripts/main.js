@@ -28,10 +28,10 @@ function mount() {
     initSiteHeader(root),
     initFeaturedProjects(root),
     // one R per <canvas data-r-canvas>; data-r-scope limits it to part of the page (subpages: header + footer).
-    // The first one (home: the R, subpages: the header's) also plays the R in the page loader.
-    ...[...root.querySelectorAll('[data-r-canvas]')].map((canvas, i) => {
+    // data-r-intro (home: the R, subpages: the header's) also plays the R in the page loader and page swaps.
+    ...[...root.querySelectorAll('[data-r-canvas]')].map((canvas) => {
       const sel = canvas.dataset.rScope;
-      return initREngine({ canvas, scope: sel ? root.querySelector(sel) : root, cull: !!sel, intro: i === 0 });
+      return initREngine({ canvas, scope: sel ? root.querySelector(sel) : root, cull: !!sel, intro: canvas.hasAttribute('data-r-intro') });
     }),
     initScrollNext(root),
     initMarquee(root),

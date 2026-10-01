@@ -1,36 +1,41 @@
 /* Page loader overlay (layout/PageTransition.astro, driven by global/pageTransitions.js).
    The name sits exactly where the header shows it, the small R in the middle of the screen, the counter bottom right.
    The frame (four corner brackets) is sized by the script: from the container width to the two middle columns.
-   html.is-loading (set inline in Base.astro) shows the loader before any script runs. */
-.c-transition{position:fixed;inset:0;z-index:100;pointer-events:none;visibility:hidden}
-html.is-loading .c-transition{visibility:visible;pointer-events:auto}
+   html.is-loading (set inline in Base.astro) shows the loader before any script runs; html.is-transitioning shows it
+   during a page swap (the script fades the background in; only the R and the counter show then). */
+.c-transition{--brand-fs:var(--fs-ui);position:fixed;inset:0;z-index:100;pointer-events:none;visibility:hidden}
+html.is-loading .c-transition,html.is-transitioning .c-transition{visibility:visible;pointer-events:auto}
 .c-transition__bg{position:absolute;inset:0;background:var(--bg);opacity:0}
 html.is-loading .c-transition__bg{opacity:1}
 .c-transition__frame{position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);opacity:0;--corner-color:var(--fg);--corner-size:12px;--corner-dur:0s}
 /* before the script runs: the open frame (as edges() in the script: container width, one gutter clear of the name) */
-html.is-loading .c-transition__frame{opacity:1;width:calc(100% - 2 * var(--margin));height:calc(100% - 2 * (env(safe-area-inset-top,0px) + var(--nav-top) + 2.6 * var(--fs-ui) + var(--gutter)))}
+html.is-loading .c-transition__frame{opacity:1;width:calc(100% - 2 * var(--margin));height:calc(100% - 2 * (env(safe-area-inset-top,0px) + var(--nav-top) + 2.6 * var(--brand-fs) + var(--gutter)))}
 
 /* ruler for the closed frame: the two middle columns */
 .c-transition__grid{position:absolute;left:0;right:0;top:0;visibility:hidden}
 .c-transition__ruler{grid-column:6 / span 2;height:0}
 
 .c-transition__loader{position:absolute;inset:0;visibility:hidden}
-html.is-loading .c-transition__loader{visibility:visible}
+html.is-loading .c-transition__loader,html.is-transitioning .c-transition__loader{visibility:visible}
 /* same box as the header brand (components/_site-header.css) */
 .c-transition__head{padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top))}
-.c-transition__brand{grid-column:1 / span 3;line-height:1.3}
+.c-transition__brand.c-transition__brand{grid-column:1 / span 3;font-size:var(--brand-fs);line-height:1.3} /* doubled: .u-text-ui is imported later */
 .c-transition__line{display:block}
 .c-transition__char{display:inline-block;opacity:0}
 
 /* the small R: same size as in the header, in the middle of the screen. The page's R canvas is drawn above the overlay
    while loading; it draws the R here first, then flies to its place on the page */
 .c-transition__r{position:absolute;left:50%;top:50%;width:56px;height:56px;transform:translate(-50%,-50%)}
-html.is-loading .c-r-canvas{z-index:101}
+html.is-loading .c-r-canvas[data-r-intro],html.is-transitioning .c-r-canvas[data-r-intro]{z-index:101;visibility:visible}
+/* page swaps: while the overlay is opaque the page beneath isn't painted (the R canvas above stays visible) */
+html.is-covered #swup{visibility:hidden}
+.c-transition__snap{position:absolute;inset:0;width:100%;height:100%;visibility:hidden}
 
 .c-transition__count{position:absolute;right:var(--margin);bottom:calc(env(safe-area-inset-bottom,0px) + var(--nav-top));font-variant-numeric:tabular-nums}
 
 @media (max-width:1023px){ .c-transition__ruler{grid-column:3 / span 2} }
 @media (max-width:639px){
+  .c-transition{--brand-fs:12px} /* as the header (components/_site-header.css) */
   .c-transition__ruler{grid-column:2 / span 2}
   .c-transition__r{width:40px;height:40px}
 }

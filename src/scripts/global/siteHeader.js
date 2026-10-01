@@ -2,7 +2,7 @@
 // Hooks: [data-site-header], [data-menu-toggle], [data-menu]. State classes: is-hidden, is-scrolled, is-open, html.is-menu-open.
 // While the menu is open the rest of the page is inert (focus stays in the header + menu); Escape closes it and puts
 // focus back on the toggle. A menu link to another page of the site keeps the menu open: only its items fade out
-// (is-leaving) while the page transition fades everything; the next page arrives with a fresh, closed header.
+// (is-leaving) while the page transition covers everything; the next page arrives with a fresh, closed header.
 // Returns a cleanup function (the header is part of every page swap).
 import { getLenis } from './lenis.js';
 

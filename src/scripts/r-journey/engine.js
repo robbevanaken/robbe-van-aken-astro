@@ -8,10 +8,19 @@
 // while the scope is off screen.
 import { R_PATH } from './r-shape.js';
 
-// The page loader (global/pageTransitions.js) borrows the page's R: while `rIntro.t` is 1 the engine with `intro` draws
-// it as the small R on `rIntro.el` (state 5, a copy of stage 2 on its own anchor); as t goes to 0 it blends, with a full
-// turn, into wherever the page has it (home: the hero, subpages: the header).
-export const rIntro = { el: null, t: 0 };
+// The page loader and page swaps (global/pageTransitions.js) borrow the page's R: while `rIntro.t` is 1 the engine with
+// `intro` draws it as the small R on `rIntro.el` (state 5, a copy of stage 2 on its own anchor); as t goes to 0 it
+// blends, with a full turn, into wherever the page has it (home: the hero, subpages: the header). Page swaps first take
+// it from 0 to 1. onDraw: called once after the next frame drawn in intro (a page swap then drops its still of the old R).
+// drift: how far (px, average) the intro R's particles still are from where they're heading; ~0 = at rest.
+export const rIntro = { el: null, t: 0, onDraw: null, drift: 0 };
+// the smoothed mouse, kept across page swaps: the next page's R starts turned exactly like the old one
+const mouse = { mx: 0, my: 0, smx: 0, smy: 0 };
+// page swaps: the R's static particle data is built once per size (geo) and reused by every next engine, and the intro
+// R hands its particle positions over (carry), so the next page's R is ready at once and goes on mid-flight
+let geo = null, carry = null;
+// shared by all engines (nothing is rebuilt after a page swap): glyph sprites per cell size, the glyph grid buffers
+const spriteCache = new Map(), grid = { GC: null, GS: null, GN: null, GO: null, OCC: null };
 
 // `follow`: the small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R.
 export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false } = {}) {
@@ -27,7 +36,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cvs.width=W*DPR;cvs.height=H*DPR;cvs.style.width=W+'px';cvs.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0)}
   addEventListener('resize',resize,{signal});resize();
 
-  let mx=0,my=0,smx=0,smy=0,mpx=-9999,mpy=-9999;
+  let {mx,my,smx,smy}=mouse,mpx=-9999,mpy=-9999;
   addEventListener('pointermove',e=>{mx=e.clientX/W*2-1;my=e.clientY/H*2-1;mpx=e.clientX;mpy=e.clientY},{passive:true,signal});
   // touch: a finger pushes the footer's pixels away too (pointermove stops as soon as the browser starts scrolling);
   // it doesn't turn the R, or every scroll would tilt it
@@ -59,7 +68,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const DEPTH=.075; // half thickness, in glyph heights
 
   async function build(){
-    GH=innerWidth<760?84:112;const GW=Math.round(GH*103/99);
+    const gh=innerWidth<760?84:112;
+    if(geo&&geo.GH===gh){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,QD,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,QU,QV,ICON_G}=geo);return ready()}
+    GH=gh;const GW=Math.round(GH*103/99);
     const oc=document.createElement('canvas');oc.width=GW;oc.height=GH;const o=oc.getContext('2d');
     const sc=Math.min(GW*.96/103,GH*.96/99);
     o.setTransform(sc,0,0,sc,(GW-103*sc)/2,(GH-99*sc)/2);o.fillStyle='#fff';o.fill(new Path2D(R_PATH));
@@ -131,6 +142,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     for(let i=0;i<N;i++)K[i]=motion?(.055+r()*.09+CH[i]*.004):1;
     K2=new Float32Array(N);for(let i=0;i<N;i++)K2[i]=1-(1-K[i])**2; // the same spring over two frames (half-rate mode)
+    geo={GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,QD,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,QU,QV,ICON_G};
+    ready();
+  }
+  // per-engine particle state; the intro R takes over the previous page's positions during a page swap
+  function ready(){
+    X=new Float32Array(N);Y=new Float32Array(N);OR=new Uint8Array(N);LV=new Uint8Array(N);BR=new Float32Array(N);
+    if(intro){if(carry&&carry.N===N&&rIntro.t>0){X.set(carry.X);Y.set(carry.Y)}carry=null}
     inited=true;
   }
 
@@ -177,7 +195,6 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
   let glyph=true,GC=null,GS=null,GN=null,GO=null,OCC=null,nOcc=0;
   const G_GAMMA=1.4,G_COLORS=['#6d635d','#efe9e4','#8a2c00','#ff4f00'],BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
-  const spriteCache=new Map();
   function sprites(cell){
     const key=cell+'@'+DPR;if(spriteCache.has(key))return spriteCache.get(key);
     const px=Math.max(2,Math.round(cell*DPR)),out=G_COLORS.map(col=>{
@@ -206,7 +223,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       culled=false;
     }
     time=ts/1000;const tm=time*motion;
-    const ml=(slow?.1164:.06)*motion;smx+=(mx-smx)*ml;smy+=(my-smy)*ml;
+    const ml=(slow?.1164:.06)*motion;smx+=(mx-smx)*ml;smy+=(my-smy)*ml;if(intro)Object.assign(mouse,{mx,my,smx,smy});
     rect(aHero,A[0]);A[0].S=Math.min(A[0].h,A[0].w*1.05)*.92;
     rect(aPitch,A[1]);A[1].S=Math.min(A[1].h*.8,A[1].w*1.15);A[1].cx-=A[1].w*.1;
     rect(aCraft,A[2]);A[2].S=A[2].h*.9;
@@ -237,16 +254,19 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     const Qh=Q[0].h;
     const sz=i=>i===3?Qh*.98/ICON_G*DENS[3]:A[i].S/GH*DENS[i];
-    const size=sz(i0)*(1-f)+sz(i1)*f,flat=Math.abs(s-3)<.5,nearParts=1-Math.abs(s-3)>.55,nearPlay=s>3.45,R4=A[4].S*.3;
+    const size=sz(i0)*(1-f)+sz(i1)*f,flat=Math.abs(s-3)<.5&&!(inIntro&&f<.5),nearParts=1-Math.abs(s-3)>.55,nearPlay=s>3.45,R4=A[4].S*.3;
 
     // lighting
     const cs=MB[8]>=0?1:-1,cnx=MB[2]*cs,cny=MB[5]*cs,cnz=MB[8]*cs;
     const capL=Math.max(0,cnx*LX+cny*LY+cnz*LZ);
+    let drift=0;
     for(let p=0;p<N;p++){
       target(i0,p,t0);let tx=t0[0],ty=t0[1];
       if(f>0&&i1!==i0){target(i1,p,t1);tx+=(t1[0]-tx)*f;ty+=(t1[1]-ty)*f}
       if(X[p]===0&&Y[p]===0){X[p]=tx;Y[p]=ty}
-      const k=slow?K2[p]:K[p];X[p]+=(tx-X[p])*k;Y[p]+=(ty-Y[p])*k;
+      // flying in or out of the loader the springs are twice as stiff: the R holds together and comes to rest sooner
+      let k=slow?K2[p]:K[p];if(inIntro)k=1-(1-k)*(1-k);X[p]+=(tx-X[p])*k;Y[p]+=(ty-Y[p])*k;
+      if(inIntro&&!(p&15))drift+=Math.abs(tx-X[p])+Math.abs(ty-Y[p]);
       OR[p]=nearParts&&QD[p]===hoverQ?1:0;
       let b;
       if(p<NC){
@@ -259,6 +279,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       }
       BR[p]=b;b+=BY[p]*.28;LV[p]=b<=0?0:b>=1?5:(b*6)|0;
     }
+    if(inIntro)rIntro.drift=drift/Math.ceil(N/16);
 
     ctx.clearRect(0,0,W,H);
     if(glyph){
@@ -269,7 +290,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       const small=clamp((140-rh)/60,0,1)*(1-iconW); // white boost for the small R only; icons keep their 3D shading
       const minCell=3/DPR; // glyphs of at least 3 device px (1.5 css px on retina): smaller and the crosses blur to grey
       const CELL=rh<140?Math.min(baseCell,Math.max(minCell,Math.round(rh/36*2)/2)):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
-      if(!GC||GC.length<NN){GC=new Float32Array(NN);GS=new Float32Array(NN);GN=new Uint16Array(NN);GO=new Uint8Array(NN);OCC=new Uint32Array(NN)}nOcc=0;
+      if(!grid.GC||grid.GC.length<NN)Object.assign(grid,{GC:new Float32Array(NN),GS:new Float32Array(NN),GN:new Uint16Array(NN),GO:new Uint8Array(NN),OCC:new Uint32Array(NN)});
+      ({GC,GS,GN,GO,OCC}=grid);nOcc=0;
       GC.fill(0,0,NN);GS.fill(0,0,NN);GN.fill(0,0,NN);GO.fill(0,0,NN);
       const sp=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f,expect=Math.max(1,(CELL/Math.max(sp,.3))**2*.45),hc=size/2;
       for(let p=0;p<N;p++){
@@ -302,9 +324,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     const idx=Math.round(s);if(idx!==lastIdx){if(hudName)hudName.textContent=NAMES[idx];lastIdx=idx}
     if(hudBar)hudBar.style.width=(s/4*100)+'%';
-    cost+=(performance.now()-fStart-cost)*.05;slow=cost>10?true:cost<6?false:slow;
+    if(inIntro&&rIntro.onDraw){const cb=rIntro.onDraw;rIntro.onDraw=null;cb()}
+    cost+=(performance.now()-fStart-cost)*.05;if(!(inIntro&&rIntro.t<1))slow=cost>10?true:cost<6?false:slow; // never switches while the R flies in or out of the loader
   }
 
   build().then(() => { if (alive) raf = requestAnimationFrame(frame); });
-  return () => { alive = false; cancelAnimationFrame(raf); ac.abort(); };
+  return () => {
+    alive = false; cancelAnimationFrame(raf); ac.abort();
+    if (intro && inited && rIntro.t > 0) carry = { N, X, Y }; // page swap: the next page's R goes on from here
+  };
 }

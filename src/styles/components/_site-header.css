@@ -47,6 +47,9 @@
   /* the header R lines up with the name block (and with the pinned R in the featured projects) */
   .c-site-header__r{width:40px;height:40px;top:calc(env(safe-area-inset-top,0px) + var(--nav-top))}
   .c-site-header__nav{display:none}
+  /* smaller name + role and menu label (doubled class: .u-text-ui is imported later) */
+  .c-site-header__brand.c-site-header__brand{font-size:12px}
+  .c-site-header__toggle.c-site-header__toggle{font-size:14px}
 }
 @media (max-width:379px){ .c-site-header__r{width:30px;height:30px;margin-left:12px} }
 @media (min-width:640px){ .c-site-header__menu{display:none} }
