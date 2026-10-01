@@ -1,8 +1,10 @@
 // Page loader + page transitions (swup). The whole page lives in the swup container (#swup, layouts/Base.astro); the
 // loader overlay with the four corner brackets ([data-transition], layout/PageTransition.astro), Lenis and the cookie consent
 // live outside it and stay.
-//   first load     the brackets close in from the screen corners around the name (spelled out letter by letter) while
-//                  the counter runs to 100, then open out to the screen corners again and the page appears
+//   first load     the name is spelled out where the header shows it, the small R floats in the middle, the counter runs
+//                  to 100 (bottom right) and the brackets close in from the container width to the two middle columns;
+//                  then they open out again and the page appears (the name stays put, the header's own sits beneath;
+//                  the R is the page's own: it flies from the loader into the hero on home, the header elsewhere)
 //   default        the page fades out, the next one is swapped in at the top and fades in
 //   next project   ([data-scroll-next-link], components/scrollNext.js) the next project's visual already sits where
 //                  the new page shows it, so it's carried over and only the rest fades in
@@ -15,6 +17,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getLenis } from './lenis.js';
 import { handOff, arrive } from '../components/scrollNext.js';
+import { rIntro } from '../r-journey/engine.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -45,17 +48,16 @@ const page = () => document.querySelector('#swup');
 function createFrame(overlay) {
   const frame = overlay.querySelector('[data-transition-frame]');
   const loader = overlay.querySelector('[data-loader]');
-  // the brackets at the screen corners, on the page margin (--margin, resolved to px)
+  const ruler = overlay.querySelector('[data-loader-ruler]'), brand = overlay.querySelector('[data-loader-brand]');
+  // open: the container width (page margin to page margin); vertically one gutter clear of the name (and, mirrored,
+  // of the counter)
   const edges = () => {
-    const probe = document.createElement('div');
-    probe.style.cssText = 'position:absolute;width:var(--margin)';
-    overlay.append(probe);
-    const m = probe.offsetWidth;
-    probe.remove();
-    return { width: innerWidth - 2 * m, height: innerHeight - 2 * m };
+    const grid = ruler.parentElement, cs = getComputedStyle(grid);
+    const top = brand.getBoundingClientRect().bottom + parseFloat(cs.columnGap);
+    return { width: grid.clientWidth - 2 * parseFloat(cs.paddingLeft), height: innerHeight - 2 * top };
   };
-  // closed: tight around the name block
-  const closed = () => ({ width: loader.offsetWidth, height: loader.offsetHeight });
+  // closed: a square on the two middle columns
+  const closed = () => ({ width: ruler.offsetWidth, height: ruler.offsetWidth });
   return { frame, loader, edges, closed };
 }
 
@@ -76,11 +78,15 @@ function loadProgress(onProgress) {
 async function runLoader(overlay, f) {
   const root = document.documentElement, bg = overlay.querySelector('[data-transition-bg]');
   const chars = overlay.querySelectorAll('[data-loader-char]'), count = overlay.querySelector('[data-loader-count]');
+  const brand = overlay.querySelector('[data-loader-brand]');
   getLenis()?.stop();
   const from = f.edges(), to = f.closed();
   gsap.set(f.frame, { ...from, autoAlpha: 1 });
   // spell out the name, then the role
   gsap.to(chars, { opacity: 1, duration: .5, ease: 'power2.out', stagger: .03, delay: .15 });
+  // the page's own R floats in the middle (its canvas is above the overlay while loading, _transition.css)
+  rIntro.el = overlay.querySelector('[data-loader-r]');
+  rIntro.t = 1;
 
   // the counter follows the real progress, never faster than the minimum time allows; the brackets close in with it
   let real = 0;
@@ -101,14 +107,18 @@ async function runLoader(overlay, f) {
     gsap.ticker.add(tick);
   });
 
-  // out: the text goes, the brackets open out to the screen corners while the page appears behind them
+  // out: the counter goes, the brackets open out again while the page appears behind them; the name fades with the
+  // background, so it seems to stay (the header shows it in the same place). The R flies from the middle to its place
+  // on the page, with a full turn (home: grows into the hero R, subpages: into the header).
   await gsap.timeline({ delay: .2 })
-    .to(f.loader, { autoAlpha: 0, duration: .3, ease: 'power1.in' })
+    .to(count, { autoAlpha: 0, duration: .3, ease: 'power1.in' })
     .to(f.frame, { ...f.edges(), duration: .9, ease: 'expo.inOut' }, .1)
-    .to(bg, { opacity: 0, duration: .7, ease: 'power2.inOut' }, .35)
+    .to(rIntro, { t: 0, duration: 1.3, ease: 'expo.inOut' }, .1)
+    .to([bg, brand], { opacity: 0, duration: .7, ease: 'power2.inOut' }, .35)
     .to(f.frame, { autoAlpha: 0, duration: .35, ease: 'power1.in' }, .75);
+  rIntro.el = null;
   root.classList.remove('is-loading');
-  gsap.set([f.loader, bg], { clearProps: 'all' });
+  gsap.set([f.loader, bg, brand, count], { clearProps: 'all' });
   getLenis()?.start();
 }
 

@@ -8,8 +8,13 @@
 // while the scope is off screen.
 import { R_PATH } from './r-shape.js';
 
+// The page loader (global/pageTransitions.js) borrows the page's R: while `rIntro.t` is 1 the engine with `intro` draws
+// it as the small R on `rIntro.el` (state 5, a copy of stage 2 on its own anchor); as t goes to 0 it blends, with a full
+// turn, into wherever the page has it (home: the hero, subpages: the header).
+export const rIntro = { el: null, t: 0 };
+
 // `follow`: the small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R.
-export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true } = {}) {
+export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false } = {}) {
   if (!canvas || !scope) return null;
   // page swaps: every window listener goes through this signal, destroy() stops the frame loop
   const ac=new AbortController(),signal=ac.signal;let alive=true,raf=0;
@@ -129,7 +134,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     inited=true;
   }
 
-  const A=[{},{},{},{},{}],Q=[{},{},{},{}];
+  const A=[{},{},{},{},{},{}],Q=[{},{},{},{}];
   function rect(el,o){const r=el.getBoundingClientRect();o.cx=r.left+r.width/2;o.cy=r.top+r.height/2;o.w=r.width;o.h=r.height;return o}
   function computeS(){
     const vc=H/2,cs=stages.map(e=>{const r=e.getBoundingClientRect();return r.top+r.height/2});
@@ -147,7 +152,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     m[6]=r20;m[7]=r21;m[8]=r22;return m;
   }
   const MQ=[0,1,2,3].map(()=>new Float32Array(9)),SQ=new Float32Array(4),QA=new Float32Array(4);let lastT=0;
-  const RY=new Float32Array(5),RX=new Float32Array(5),RZ=new Float32Array(5),M=[0,1,2,3,4].map(()=>new Float32Array(9)),MB=new Float32Array(9),SG=new Float32Array(5);
+  const RY=new Float32Array(6),RX=new Float32Array(6),RZ=new Float32Array(6),M=[0,1,2,3,4,5].map(()=>new Float32Array(9)),MB=new Float32Array(9),SG=new Float32Array(6);
   let spin=0,time=0;const TAU=Math.PI*2;
   function proj(i,a,lx,ly,lz,o){
     const m=M[i],x=m[0]*lx+m[1]*ly+m[2]*lz,y=m[3]*lx+m[4]*ly+m[5]*lz,z=m[6]*lx+m[7]*ly+m[8]*lz,k=1/(1-z*.55);
@@ -157,7 +162,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const u=U[p],v=V[p],z=(DZ[p]===2?SG[i]:DZ[p])*DEPTH;
     if(i===0)proj(0,A[0],u,v,z,o);
     else if(i===1){const k=CH[p],du=u-CU[k],dv=v-CV[k],sp=.13+.035*Math.sin(time*.9)*motion,rt=CS[k]*.1;proj(1,A[1],du-dv*rt+CU[k]*(1+sp)+OX[k]*.12,du*rt+dv+CV[k]*(1+sp)+OY[k]*.12,z+OZ[k]*.12,o)}
-    else if(i===2)proj(2,A[2],u,v,z,o);
+    else if(i===2||i===5)proj(i,A[i],u,v,z,o);
     else if(i===3){const q=QD[p],a=Q[q],box=a.h*.98*(q===hoverQ?1.1:1),m=MQ[q],lx=IU[p],ly=IV[p],lz=(IZ[p]===2?SQ[q]:IZ[p])*.1,
       x=m[0]*lx+m[1]*ly+m[2]*lz,y=m[3]*lx+m[4]*ly+m[5]*lz,z=m[6]*lx+m[7]*ly+m[8]*lz,k=1/(1-z*.6),fl=Math.sin(time*1.4+q*1.9)*a.h*.03*motion;
       o[0]=a.cx+x*k*box;o[1]=a.cy+y*k*box+fl}
@@ -166,7 +171,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   }
   const PAL=['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'];
   const LX=-.35,LY=-.55,LZ=.76;
-  const DENS=[.8,.82,1.12,.48,1.08];
+  const DENS=[.8,.82,1.12,.48,1.08,1.12];
   const t0=[0,0],t1=[0,0];let lastIdx=-1;
   // Glyph dither mode (like Unicorn's Glyph Dither): particles are binned into a screen grid and every
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
@@ -207,6 +212,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     rect(aCraft,A[2]);A[2].S=A[2].h*.9;
     for(let q=0;q<4;q++)rect(svcSlots[q],Q[q]);
     rect(aFoot,A[4]);A[4].S=Math.min(A[4].h,A[4].w*1.05)*.9;
+    const inIntro=intro&&rIntro.el&&rIntro.t>0;
+    if(inIntro){rect(rIntro.el,A[5]);A[5].S=A[5].h*.9}
 
     RY[0]=(smx*1.7+Math.sin(tm*.4)*.55)*motion;RX[0]=(smy*1.1+Math.sin(tm*.29)*.3)*motion;RZ[0]=(Math.sin(tm*.23)*.3+smx*.25)*motion;
     RY[1]=(smx*.7+Math.sin(tm*.3)*.4)*motion;RX[1]=(.25+Math.sin(tm*.25)*.15)*motion;RZ[1]=-.12*motion;
@@ -214,11 +221,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     if(follow){const FS=.45;RY[2]=RY[0]*FS;RX[2]=RX[0]*FS;RZ[2]=RZ[0]*FS}else{RY[2]=Math.sin(tm*.6)*.35*motion;RX[2]=0;RZ[2]=0}
     RY[3]=0;RX[3]=0;RZ[3]=0;
     RY[4]=(smx*1.3+Math.sin(tm*.35)*.3)*motion;RX[4]=(smy*.8)*motion;RZ[4]=Math.sin(tm*.2)*.12*motion;
+    RY[5]=RY[2];RX[5]=RX[2];RZ[5]=RZ[2];
 
-    const s=computeS(),i0=Math.min(Math.floor(s),4),i1=Math.min(i0+1,4);
-    let f=s-i0;f=f*f*(3-2*f);
+    const s=computeS();let i0=Math.min(Math.floor(s),4),i1=Math.min(i0+1,4),f=s-i0;f=f*f*(3-2*f);
     spin=i1!==i0?[1,-1,0,1][i0]*f*TAU*motion:0;
-    for(let i=0;i<5;i++){mat(RY[i]+(i===3?0:spin),RX[i],RZ[i],M[i]);SG[i]=M[i][8]>=0?1:-1}
+    // loader: from the intro R to the page's own state (rounded: the page sits at its top), with a full turn
+    if(inIntro){i1=Math.round(s);i0=5;f=1-rIntro.t;spin=f*TAU*motion}
+    for(let i=0;i<6;i++){mat(RY[i]+(i===3?0:spin),RX[i],RZ[i],M[i]);SG[i]=M[i][8]>=0?1:-1}
     mat((RY[i0]*(1-f)+RY[i1]*f)+spin*(i0===3||i1===3?(1-Math.abs(i1-3)*(1-f)-Math.abs(i0-3)*f):1),RX[i0]*(1-f)+RX[i1]*f,RZ[i0]*(1-f)+RZ[i1]*f,MB);
 
     const dt=Math.min(.05,time-lastT);lastT=time;

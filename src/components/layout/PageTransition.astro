@@ -1,18 +1,27 @@
 ---
-// Page loader: the four corner brackets (as on the buttons and the featured projects) close in from the screen corners
-// around the name while the counter runs to 100, then open out again. Page swaps are a plain fade (no overlay).
+// Page loader: the name and role are spelled out where the header shows them, the small R floats in the middle, the
+// counter runs to 100 in the bottom right, and the four corner brackets (as on the buttons and the featured projects)
+// close in from the container width to the two middle columns; then they open out again. Page swaps are a plain fade.
 // Styles: styles/components/_transition.css, behaviour: scripts/global/pageTransitions.js.
 import Corners from '../ui/Corners.astro';
 import { nav } from '../../data/site';
 // one span per letter, so the name can be spelled out
-const letters = (text: string) => [...text].map((c) => (c === ' ' ? ' ' : c));
+const letters = (text: string) => [...text].map((c) => (c === ' ' ? '\u00a0' : c));
 ---
 <div class="c-transition" aria-hidden="true" data-transition>
   <div class="c-transition__bg" data-transition-bg></div>
+  <!-- hidden ruler: the two middle columns, where the brackets end up -->
+  <div class="c-transition__grid o-container o-grid"><div class="c-transition__ruler" data-loader-ruler></div></div>
   <div class="c-transition__frame" data-transition-frame><Corners /></div>
   <div class="c-transition__loader" data-loader>
-    <p class="c-transition__line u-text-ui">{letters(nav.name).map((c) => <span class="c-transition__char" data-loader-char>{c}</span>)}</p>
-    <p class="c-transition__line u-text-ui u-text-muted">{letters(nav.role).map((c) => <span class="c-transition__char" data-loader-char>{c}</span>)}</p>
-    <p class="c-transition__meta u-text-label"><span>Loading</span><span class="c-transition__count" data-loader-count>000</span></p>
+    <div class="c-transition__head o-container o-grid">
+      <p class="c-transition__brand u-text-ui" data-loader-brand>
+        <span class="c-transition__line">{letters(nav.name).map((c) => <span class="c-transition__char" data-loader-char>{c}</span>)}</span>
+        <span class="c-transition__line u-text-muted">{letters(nav.role).map((c) => <span class="c-transition__char" data-loader-char>{c}</span>)}</span>
+      </p>
+    </div>
+    <!-- where the small R floats: the page's own R is drawn here while loading (rIntro in scripts/r-journey/engine.js) -->
+    <div class="c-transition__r" data-loader-r></div>
+    <p class="c-transition__count u-text-ui" data-loader-count>000</p>
   </div>
 </div>
