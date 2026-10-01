@@ -16,8 +16,10 @@ export function initSmoothScroll() {
   return lenis;
 }
 
-export function scrollToY(y, duration = 0.9) {
-  if (lenis) lenis.scrollTo(y, { duration, easing: (t) => 1 - Math.pow(1 - t, 3) });
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+export const easeInOut = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+export function scrollToY(y, duration = 0.9, easing = easeOut) {
+  if (lenis) lenis.scrollTo(y, { duration, easing });
   else window.scrollTo({ top: y, behavior: 'auto' });
 }
 

@@ -1,32 +1,25 @@
 ---
-// "Scroll to next project" (Osmo Supply resource in the site's style).
+// "Scroll to next project" (based on the Osmo Supply resource, in the site's style): right after the content, the next
+// project's visual, two columns narrower than on its own page (the detail page's 16:9), partly below the fold; it rises
+// and grows into exactly the box the next page shows it in. Only scrolling opens the next project:
+// the link can't be clicked (pointer-events), the script follows it at the end of the scroll.
 // Styles: styles/components/_scroll-next.css, behaviour: scripts/components/scrollNext.js. Keep the data- attributes.
-import Corners from '../ui/Corners.astro';
 import type { Project } from '../../data/projects';
 // data-next-*: the next project's texts; scrollNext.js measures that page's layout with them
 interface Props { project: Project; label: string }
-const { project, label } = Astro.props;
+const { project, label } = Astro.props; // label: for the link's accessible name
 ---
 <section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next" data-next-title={project.title} data-next-service={project.service}>
-  <a data-scroll-next-link href={`/work/${project.slug}`} class="c-scroll-next__inner">
-    <div class="c-scroll-next__bg" data-scroll-next-box>
-      {project.image
-        ? <img src={project.image} alt="" loading="lazy" decoding="async" data-scroll-next-bg class="c-scroll-next__bg-img" />
-        : <div data-scroll-next-bg class="c-scroll-next__bg-img c-scroll-next__bg-img--placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}><span class="c-scroll-next__word" data-scroll-next-word>{project.label}</span></div>}
-      <div data-scroll-next-overlay class="c-scroll-next__bg-overlay"></div>
+  <a data-scroll-next-link href={`/work/${project.slug}`} class="c-scroll-next__inner" aria-label={`${label}: ${project.title}`}>
+    <div class="c-scroll-next__stage">
+      <!-- where the visual starts, partly below the fold (the box below is laid over it by the script) -->
+      <div class="o-container o-grid"><div class="c-scroll-next__slot" data-scroll-next-slot></div></div>
     </div>
-    <div class="c-scroll-next__center o-container o-grid">
-      <div class="c-scroll-next__title" data-scroll-next-frame>
-        <Corners />
-        <span class="c-scroll-next__sub u-text-label">{label}</span>
-        <h2 class="c-scroll-next__h u-text-display">{project.title}</h2>
-      </div>
-      <!-- progress: a line across 6 columns; the second line is drawn by the script -->
-      <div class="c-scroll-next__progress" data-scroll-next-progress>
-        <svg class="c-scroll-next__progress-svg" viewBox="0 0 1000 2" preserveAspectRatio="none" aria-hidden="true">
-          <line x1="0" y1="1" x2="1000" y2="1" stroke="currentColor" stroke-opacity=".3" vector-effect="non-scaling-stroke" />
-          <line x1="0" y1="1" x2="1000" y2="1" stroke="currentColor" vector-effect="non-scaling-stroke" data-scroll-next-path />
-        </svg>
+    <div class="c-scroll-next__bg" data-scroll-next-box>
+      <div class="c-scroll-next__clip">
+        {project.image
+          ? <img src={project.image} alt="" loading="lazy" decoding="async" data-scroll-next-bg class="c-scroll-next__bg-img" />
+          : <div data-scroll-next-bg class="c-scroll-next__bg-img c-scroll-next__bg-img--placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}><span class="c-scroll-next__word" data-scroll-next-word>{project.label}</span></div>}
       </div>
     </div>
   </a>

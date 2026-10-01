@@ -3,3 +3,7 @@
 .c-marquee__track{display:inline-flex;will-change:transform}
 .c-marquee__item{display:inline-flex;align-items:center;gap:var(--space-m);padding-right:var(--space-m)}
 .c-marquee__item .c-icon{width:23px;height:23px}
+/* fill: white first, the orange fills it from the left (scaleX of the fill, set by a script) */
+.c-marquee--fill{background:var(--fg)}
+.c-marquee__fill{position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left}
+.c-marquee--fill .c-marquee__track{position:relative}

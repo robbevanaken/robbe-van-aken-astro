@@ -12,4 +12,14 @@
 .c-page-intro__meta-label{color:var(--muted)}
 .c-page-intro__meta-value{margin:0}
 
-@media (max-width:1023px){ .c-page-intro__title,.c-page-intro__text,.c-page-intro--project .c-page-intro__title,.c-page-intro__meta{grid-column:1 / -1} }
+@media (max-width:1023px){
+  .c-page-intro__title,.c-page-intro__text{grid-column:1 / -1}
+  /* project detail: title and service stay side by side */
+  .c-page-intro--project .c-page-intro__title{grid-column:1 / span 4}
+  .c-page-intro__meta{grid-column:5 / -1}
+}
+/* phones: only the title (too narrow for both side by side) */
+@media (max-width:639px){
+  .c-page-intro--project .c-page-intro__title{grid-column:1 / -1}
+  .c-page-intro__meta{display:none}
+}

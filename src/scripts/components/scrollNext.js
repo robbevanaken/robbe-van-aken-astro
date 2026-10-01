@@ -1,15 +1,15 @@
-// Scroll to next page (Osmo Supply "Scroll to Next Page"), kept as delivered where possible.
-// Changes, to fit the site: npm imports; our progress shape is a horizontal line instead of a circle (same
-// [data-scroll-next-path] stroke-draw); the corner brackets close in around the title ([data-scroll-next-frame]);
-// the link fires after a real downward scroll once the line is 99% full (so coming back with the back button,
+// Scroll to next page (based on Osmo Supply "Scroll to Next Page").
+// Changes, to fit the site: npm imports; no progress shape and no full-screen visual: the next project's visual starts
+// two columns narrower than on its page, partly below the fold, right after the content ([data-scroll-next-slot]);
+// the link fires after a real downward scroll once the scroll is 99% through (so coming back with the back button,
 // page restored at the bottom, doesn't bounce you straight to the next project again; the scroll has to come from
 // the visitor: wheel, touch or keys in the last moment).
-// Seamless hand-off: in the second half the full-screen visual shrinks to exactly the box the next project's page
+// Seamless hand-off: the visual rises and grows into exactly the box the next project's page
 // shows it in at the top (measured with a hidden copy of this page's intro filled with the next project's text),
 // so when the page swaps (global/pageTransitions.js) the visual is carried over and only the rest fades in.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { scrollToY } from '../global/lenis.js';
+import { scrollToY, easeInOut } from '../global/lenis.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,27 +40,18 @@ function initScrollToNextPage(root) {
   if (!wrap) return null;
 
   const link = wrap.querySelector("[data-scroll-next-link]");
-  const path = wrap.querySelector("[data-scroll-next-path]");
   const box = wrap.querySelector("[data-scroll-next-box]");
   const bg = wrap.querySelector("[data-scroll-next-bg]");
   const word = wrap.querySelector("[data-scroll-next-word]");
-  const overlay = wrap.querySelector("[data-scroll-next-overlay]");
-  const frame = wrap.querySelector("[data-scroll-next-frame]");
-  const progress = wrap.querySelector("[data-scroll-next-progress]");
+  const slot = wrap.querySelector("[data-scroll-next-slot]");
+  const stage = slot?.parentElement;
 
-  if (!link || !path) return null;
+  if (!link) return null;
 
   // ScrollTrigger defaults
   const start = wrap.getAttribute("data-scroll-start") || "top top";
   const end = wrap.getAttribute("data-scroll-end") || "bottom bottom";
 
-  // Prep SVG path for line draw animation
-  const pathLength = path.getTotalLength();
-
-  gsap.set(path, {
-    strokeDasharray: pathLength,
-    strokeDashoffset: pathLength,
-  });
 
   // only follow the link after the visitor has scrolled down into the section themselves,
   // and go as soon as the line is (nearly) full: smooth scrolling eases into the bottom and may never land on exactly 100%
@@ -69,16 +60,17 @@ function initScrollToNextPage(root) {
   const touched = () => { input = performance.now(); };
   ['wheel', 'touchmove', 'keydown'].forEach((t) => addEventListener(t, touched, { passive: true, signal: ac.signal }));
   const go = () => { if (gone) return; gone = true; link.click(); };
-  // magnet: stopping in the last quarter on the way down (after scrolling yourself) glides on to the end, which opens
-  // the next project
-  const MAGNET = .75;
+  // magnet: past MAGNET, stopping on the way down (after scrolling yourself) glides on to the end, which
+  // opens the next project; scrolling on yourself simply carries on
+  const MAGNET = .42;
   let rest = 0;
   const magnet = (self) => {
     clearTimeout(rest);
     rest = setTimeout(() => {
       if (!armed || gone || self.direction < 0 || self.progress < MAGNET || self.progress >= .99) return; // not when heading back up
       if (performance.now() - input < 150) return magnet(self); // still on the wheel / finger down: wait
-      scrollToY(self.end, .5 + (1 - self.progress) * 1.6);
+      // a soft start after the stop, no sudden pull
+      scrollToY(self.end, .6 + (1 - self.progress) * 1.4, easeInOut);
     }, 180);
   };
   const onUpdate = (self) => {
@@ -89,7 +81,12 @@ function initScrollToNextPage(root) {
 
   // target box of the visual on the next page (re-measured on every refresh)
   let target = null;
-  const measure = () => { target = measureTarget(root, wrap); };
+  const measure = () => {
+    target = measureTarget(root, wrap);
+    // how far down the sticky stage starts: the section is pulled up by that much (CSS --lead), so the label follows the
+    // content after a normal gap
+    if (stage) wrap.style.setProperty('--lead', stage.getBoundingClientRect().top - link.getBoundingClientRect().top + 'px');
+  };
   measure();
 
   const tl = gsap.timeline({
@@ -108,41 +105,26 @@ function initScrollToNextPage(root) {
     },
   });
 
-  // the timeline runs 0 → 1 over the whole scroll
-  tl.to(path, {
-    strokeDashoffset: 0,
-    duration: 1,
-    onComplete: () => {
-      if (armed) go();
-    }
-  });
+  // the timeline runs 0 → 1 over the whole (pinned) scroll: the visual rises from partly below the fold and grows into
+  // its box on the next page
+  tl.to({}, { duration: 1 }, 0);
+  tl.add(() => { if (armed) go(); }, 1);
 
-  // Optional bg scale (settles at 1 so it matches the next page)
-  if (bg) {
-    tl.fromTo(bg, { scale: 1.15 }, { scale: 1, duration: 1 }, 0);
-  }
-
- // Optional dark overlay animation: darker while the title is up, gone by the end (the next page has no overlay)
-  if (overlay) {
-    tl.to(overlay, { opacity: 0.5, duration: 0.4 }, 0).to(overlay, { opacity: 0, duration: 0.5 }, 0.5);
-  }
-
-  // Our addition: the corner brackets close in from wide around the title to tight, then the title makes way
-  if (frame) {
-    tl.fromTo(frame, { '--pull-x': '-18vw', '--pull-y': '-14vh' }, { '--pull-x': '0px', '--pull-y': '0px', duration: 0.5 }, 0);
-    tl.to(frame, { autoAlpha: 0, y: -24, duration: 0.25 }, 0.5);
-  }
-  if (progress) tl.to(progress, { autoAlpha: 0, duration: 0.08 }, 0.92);
-
-  // Our addition: the visual shrinks from full screen to its box on the next page
-  if (box && target) {
-    const inner = link;
+  // the visual starts on its slot (relative to the sticky stage) and ends on the next page's box
+  const slotBox = () => {
+    const r = slot.getBoundingClientRect(), i = link.getBoundingClientRect();
+    return { x: r.left - i.left, y: r.top - i.top, w: r.width, h: r.height };
+  };
+  const endBox = () => target || slotBox();
+  if (box && slot) {
     tl.fromTo(box,
-      { top: 0, left: 0, width: () => inner.clientWidth, height: () => inner.clientHeight },
-      { top: () => target.y, left: () => target.x, width: () => target.w, height: () => target.h, duration: 0.55, ease: 'power2.inOut' },
-      0.45);
-    if (word) tl.fromTo(word, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 0.7);
+      { top: () => slotBox().y, left: () => slotBox().x, width: () => slotBox().w, height: () => slotBox().h },
+      { top: () => endBox().y, left: () => endBox().x, width: () => endBox().w, height: () => endBox().h, duration: 1, ease: 'power2.inOut' },
+      0);
   }
+  // a slow settle of the image inside its box (ends at 1, as on the next page)
+  if (bg) tl.fromTo(bg, { scale: 1.15 }, { scale: 1, duration: 1 }, 0);
+  if (word) tl.fromTo(word, { autoAlpha: 0 }, { autoAlpha: 1, duration: .25 }, .75);
 
   return () => { ac.abort(); clearTimeout(rest); tl.scrollTrigger?.kill(); };
 }
@@ -164,7 +146,6 @@ export function handOff() {
   const box = document.querySelector('[data-scroll-next-box]');
   if (!box) return null;
   const r = box.getBoundingClientRect(), copy = box.cloneNode(true);
-  copy.querySelector('[data-scroll-next-overlay]')?.remove();
   copy.removeAttribute('data-scroll-next-box');
   copy.classList.add('c-scroll-next__bg--carried');
   Object.assign(copy.style, { top: r.top + 'px', left: r.left + 'px', width: r.width + 'px', height: r.height + 'px' });

@@ -1,4 +1,4 @@
-// Dev only: column overlay ([data-debug-grid], only rendered in `npm run dev`). Toggle with L or the HUD "Grid" button.
+// Dev only: column overlay ([data-debug-grid], only rendered in `npm run dev`). Toggle with Shift+G, L or the HUD "Grid" button.
 const KEY = 'rva-grid';
 
 export function initDebugGrid(root = document) {
@@ -16,7 +16,8 @@ export function initDebugGrid(root = document) {
   set(on);
   btn?.addEventListener('click', () => set(!el.classList.contains('is-on')));
   addEventListener('keydown', (e) => {
-    if ((e.key === 'l' || e.key === 'L') && !e.target.closest('input,textarea')) set(!el.classList.contains('is-on'));
+    const hit = e.key === 'l' || e.key === 'L' || (e.shiftKey && (e.key === 'G' || e.key === 'g'));
+    if (hit && !e.target.closest('input,textarea')) set(!el.classList.contains('is-on'));
   }, { signal: ac.signal });
   return () => ac.abort();
 }

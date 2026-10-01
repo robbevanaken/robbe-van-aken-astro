@@ -205,7 +205,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   }
   const modeBtn=cull?null:scope.querySelector('#mode');
   if(modeBtn)modeBtn.onclick=()=>{glyph=!glyph;modeBtn.textContent=glyph?'Glyph':'Pixels';modeBtn.classList.toggle('is-off',!glyph)};
-  addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()},{signal});
+  addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.shiftKey&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()},{signal}); // Shift+G: the grid overlay
 
   // Slow devices: when a frame's own work stays above ~10 ms, render every other frame (springs take a double step, so
   // the R moves just as fast). Fast devices never notice.

@@ -1,13 +1,15 @@
 ---
 // Orange banner. Styles: styles/components/_marquee.css, motion: scripts/components/marquee.js
+// fill: starts white and fills with orange from the left, driven by a script through [data-marquee-fill] (scroll next).
 import Icon from './Icon.astro';
 import { marquee } from '../../data/site';
-interface Props { text?: string }
-const { text = marquee.text } = Astro.props;
+interface Props { text?: string; icon?: 'globe' | 'arrow'; fill?: boolean }
+const { text = marquee.text, icon = 'globe', fill = false } = Astro.props;
 const items = Array.from({ length: 12 });
 ---
-<div class="c-marquee" role="note" aria-label={text} data-marquee>
+<div class:list={['c-marquee', { 'c-marquee--fill': fill }]} role="note" aria-label={text} data-marquee>
+  {fill && <span class="c-marquee__fill" data-marquee-fill></span>}
   <div class="c-marquee__track" aria-hidden="true" data-marquee-track>
-    {items.map(() => <span class="c-marquee__item">{text}<Icon name="globe" /></span>)}
+    {items.map(() => <span class="c-marquee__item">{text}<Icon name={icon} /></span>)}
   </div>
 </div>

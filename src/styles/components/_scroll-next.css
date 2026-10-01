@@ -1,18 +1,22 @@
-/* "Scroll to next project" (Osmo Supply resource in the site's style), driven by components/scrollNext.js.
-   Title block and progress line both span the middle 6 columns. */
-.c-scroll-next{min-height:200vh;position:relative;margin-top:var(--space-section)}
-.c-scroll-next__inner{position:sticky;top:0;display:flex;align-items:center;width:100%;height:100vh;height:100dvh;color:inherit;text-decoration:none;overflow:hidden}
-.c-scroll-next__bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+/* "Scroll to next project", driven by components/scrollNext.js. Not clickable: only scrolling opens the next project.
+   A sticky stage, at the bottom: the slot where the next project's visual starts: two columns narrower than on its
+   page (desktop cols 2–11), the detail page's 16:9, about 65% above the fold. The visual ([data-scroll-next-box], laid
+   over the slot by the script) rises and grows into its box on the next page. The section is pulled up under the content (--lead, set by the script: how far down the stage starts),
+   so the visual follows the content after a normal gap instead of a screen of empty space. */
+.c-scroll-next{min-height:180vh;position:relative;margin-top:calc(var(--space-xl) - var(--lead,0px))}
+.c-scroll-next__inner{pointer-events:none;position:sticky;top:0;display:block;width:100%;height:100vh;height:100dvh;color:inherit;text-decoration:none;overflow:hidden}
+.c-scroll-next__stage{position:absolute;left:0;right:0;bottom:0}
+/* about 65% above the fold: a negative margin of 35% of its height (grid items: % of the column span's width) */
+.c-scroll-next__slot{grid-column:2 / span 10;aspect-ratio:16 / 9;margin-bottom:-19.6875%}
+
+/* the visual: placed and sized by the script (from the slot to the next page's box) */
+.c-scroll-next__bg{position:absolute;top:0;left:0;z-index:2}
+.c-scroll-next__clip{position:absolute;inset:0;overflow:hidden}
 .c-scroll-next__bg-img{width:100%;height:100%;object-fit:cover}
 .c-scroll-next__bg-img--placeholder{display:grid;place-items:center;background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
 .c-scroll-next__word{font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);opacity:0} /* same as the detail page's placeholder */
 /* the visual lifted out of the page during the swap to the next project (scrollNext.js handOff) */
-.c-scroll-next__bg--carried{position:fixed;inset:auto;z-index:25;pointer-events:none}
-.c-scroll-next__bg-overlay{position:absolute;inset:0;z-index:2;background:var(--bg);opacity:.25}
-.c-scroll-next__center{position:relative;z-index:3;width:100%;row-gap:var(--space-l)}
-.c-scroll-next__title{grid-column:4 / span 6;position:relative;display:flex;flex-direction:column;align-items:center;gap:var(--space-s);padding:var(--space-l) var(--space-m);text-align:center;--corner-color:var(--fg);--corner-size:18px;--corner-dur:0s}
-.c-scroll-next__sub{color:var(--fg);opacity:.7}
-.c-scroll-next__progress{grid-column:4 / span 6;color:var(--fg)}
-.c-scroll-next__progress-svg{display:block;width:100%;height:2px;overflow:visible}
+.c-scroll-next__bg--carried{position:fixed;z-index:25;pointer-events:none}
 
-@media (max-width:1023px){ .c-scroll-next__title,.c-scroll-next__progress{grid-column:1 / -1} }
+@media (max-width:1023px){ .c-scroll-next__slot{grid-column:2 / span 4} }
+@media (max-width:639px){ .c-scroll-next__slot{grid-column:2 / span 2} }
