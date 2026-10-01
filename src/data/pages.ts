@@ -35,6 +35,7 @@ export const notFoundPage = {
 export const projectPage = {
   label: 'Project',
   service: 'Service',    // label above the service next to the title
+  year: 'Year',          // label above the year next to the service
   placeholder: 'Case study coming soon',
   next: 'Next project',  // label above the title in the scroll-to-next section
   back: 'All projects',

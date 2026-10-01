@@ -6,17 +6,19 @@
 .c-page-intro__text{grid-column:1 / span 5;color:var(--muted)}
 .c-page-intro__action{grid-column:1 / -1;justify-self:start}
 
-/* project detail: only the title (cols 1–5, 64px @1440) and, from col 8, the service */
+/* project detail: only the title (cols 1–5, 64px @1440), the service (cols 8–9) and the year (cols 11–12) */
 .c-page-intro--project .c-page-intro__title{grid-column:1 / span 5;font-size:var(--fs-title)}
-.c-page-intro__meta{grid-column:8 / -1;align-self:end;margin:0;display:grid;}
+.c-page-intro__meta{grid-column:8 / span 2;align-self:end;margin:0;display:grid;}
+.c-page-intro__meta--year{grid-column:11 / span 2}
 .c-page-intro__meta-label{color:var(--muted)}
 .c-page-intro__meta-value{margin:0}
 
 @media (max-width:1023px){
   .c-page-intro__title,.c-page-intro__text{grid-column:1 / -1}
-  /* project detail: title and service stay side by side */
-  .c-page-intro--project .c-page-intro__title{grid-column:1 / span 4}
-  .c-page-intro__meta{grid-column:5 / -1}
+  /* project detail: title, service and year stay side by side */
+  .c-page-intro--project .c-page-intro__title{grid-column:1 / span 3}
+  .c-page-intro__meta{grid-column:4 / span 2}
+  .c-page-intro__meta--year{grid-column:6}
 }
 /* phones: only the title (too narrow for both side by side) */
 @media (max-width:639px){

@@ -21,6 +21,10 @@ const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
       <dt class="c-page-intro__meta-label u-text-label">{projectPage.service}</dt>
       <dd class="c-page-intro__meta-value u-text-ui" data-page-intro-service>{project.service}</dd>
     </dl>
+    <dl class="c-page-intro__meta c-page-intro__meta--year">
+      <dt class="c-page-intro__meta-label u-text-label">{projectPage.year}</dt>
+      <dd class="c-page-intro__meta-value u-text-ui">{project.year}</dd>
+    </dl>
   </PageIntro>
   <div class="c-project-detail__visual o-container o-grid" data-project-visual>
     {project.image
