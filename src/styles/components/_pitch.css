@@ -1,5 +1,7 @@
-/* Pitch: exploded R on cols 1–6, quote on cols 7–12, portrait on cols 7–9. */
-.c-pitch{padding-block:var(--space-section);min-height:clamp(640px,110vh,1300px)}
+/* Pitch: exploded R on cols 1–6, quote on cols 7–12, portrait on cols 7–9. Spacing on top only, like every home
+   section: the R anchor ends the section and the projects' head (the small R) follows right after it.
+   Below 1024px: quote, R, portrait, so the R sits in the middle of the section, where it is when the section is. */
+.c-pitch{padding-top:var(--space-section)}
 .c-pitch__r-anchor{grid-column:1 / span 6;grid-row:1;height:clamp(420px,92vh,1100px);align-self:center}
 .c-pitch__body{grid-column:7 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-content:start}
 .c-pitch__quote{grid-column:1 / -1}
@@ -8,7 +10,9 @@
 .c-pitch__portrait-img{width:100%;height:100%;object-fit:cover;margin:calc(-1 * var(--space-xs))}
 
 @media (max-width:1023px){
-  .c-pitch{min-height:0}
+  .c-pitch{row-gap:var(--space-l)}
+  .c-pitch__body{display:contents}
+  .c-pitch__quote{grid-row:1}
   .c-pitch__r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(260px,46vh,560px)}
-  .c-pitch__body{grid-column:1 / -1}
+  .c-pitch__portrait{grid-row:3;margin-top:0}
 }

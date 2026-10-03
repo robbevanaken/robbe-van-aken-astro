@@ -1,5 +1,5 @@
-// Order matters: service i gets the i-th quarter of the R, rebuilt into icon i
-// (icons are drawn in src/scripts/r-journey/engine.js -> drawIcon).
+// Order matters: service i is shown with icon i (drawn in src/scripts/r-journey/engine.js -> drawIcon); on home the
+// R becomes icon 0 and morphs from icon to icon on scroll. Four services, four icons.
 export const services = [
   { title: 'Websites', description: 'Craft CMS sites that editors enjoy using, from design to hosting and maintenance.' },
   { title: 'Custom software', description: 'Laravel platforms, client portals and internal tools shaped around how your team works.' },

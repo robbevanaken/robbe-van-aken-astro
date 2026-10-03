@@ -4,8 +4,9 @@
    globe according to where it is on the screen and moves the corner brackets (one frame) onto the project nearest the
    middle. Home: the head keeps the small R at the top of the screen while the projects pass. Phones: one column. */
 .c-featured-projects{position:relative;padding-bottom:var(--space-section)}
-/* home: after the pitch, the section's own top spacing (the intro sits in the grid) */
-.c-featured-projects:has(.c-projects-intro){padding-top:var(--space-section)}
+/* home: the pitch ends on its R anchor (with room around the R in it), so a smaller step to the head (the small R);
+   below 1024px the pitch ends on the portrait: the full section spacing */
+.c-featured-projects:has(.c-projects-intro){padding-top:var(--space-l)}
 /* home: the button and the services follow on their own spacing */
 .c-featured-projects:has(.c-featured-projects__foot){padding-bottom:0}
 .c-featured-projects__head{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);z-index:2;display:flex;justify-content:center;height:56px;pointer-events:none}
@@ -44,6 +45,7 @@
 .c-featured-projects--grid .c-featured-projects__item:nth-child(n){grid-column:span 6;margin-top:0}
 
 @media (max-width:1023px){
+  .c-featured-projects:has(.c-projects-intro){padding-top:var(--space-section)}
   .c-featured-projects--grid .c-featured-projects__item:nth-child(n){grid-column:span 3}
   .c-projects-intro + .c-featured-projects__list{grid-row:2;margin-top:var(--space-l)}
   .c-featured-projects__item{grid-column:3 / span 4}

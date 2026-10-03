@@ -9,13 +9,13 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - `src/data/` all copy. `site.ts` (per section, in page order, plus `socials` for footer + mobile menu), `pages.ts` (subpages), `clients.ts`, `projects.ts`, `services.ts`. Change text here, not in components.
 - `src/components/sections/` one file per page section, `ui/` small reusable pieces (Button, Icon, Corners, Marquee (props: text, icon, fill), Placeholder), `layout/` Nav, PageTransition (the page loader overlay, in `Base.astro`) + dev-only DevHud and GridOverlay. Components contain markup only: no `<style>` or `<script>`.
 - `src/styles/main.css` imports, in order: `base/` (`_fonts.css`: self-hosted Inter Tight @font-face (files in `public/fonts`, OFL license alongside, latin 400/500 preloaded in `Base.astro`); `_tokens.css`: colours, grid, type scale, spacing, eases; `_document.css`: reset, selection, R canvas) → `objects/` (`_container.css`, `_grid.css`) → `components/` (one `_name.css` per component, imported alphabetically in `index.css`) → `utilities/` (`_text.css`, `_screen-reader.css`) → `vendor/` (`_cookieconsent.css`).
-- `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`). Once: eases, Lenis, cookie consent, page transitions. Per page: `mount()` runs every page init again after each swup swap, with the page's container as `root`; each init does nothing when its element is missing and returns a cleanup (window listeners via an AbortController, ticker callbacks removed, ScrollTriggers killed), which `unmount()` calls before the content is replaced. New page scripts must follow this. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid, pageTransitions), `components/` (featuredProjects, glyphHover (parked), scrollNext, marquee, highlightText, textHover), `r-journey/` (the R engine).
+- `src/scripts/main.js` is the only script entry (loaded from `layouts/Base.astro`). Once: eases, Lenis, cookie consent, page transitions. Per page: `mount()` runs every page init again after each swup swap, with the page's container as `root`; each init does nothing when its element is missing and returns a cleanup (window listeners via an AbortController, ticker callbacks removed, ScrollTriggers killed), which `unmount()` calls before the content is replaced. New page scripts must follow this. `global/` (eases, lenis, siteHeader, reveal, cookieConsent, debugGrid, pageTransitions), `components/` (featuredProjects, glyphHover (parked), scrollNext, services, marquee, highlightText, textHover), `r-journey/` (the R engine).
 - `public/clients/` client logos (white SVG, one file per logo).
 - `public/projects/` project visuals. For now made-up device mockups (laptop + iPhone with a fake site in the project's colours, square SVG with the devices in the middle 16:9 band so a 16:9 cover crop keeps them whole); replace with real work.
 
 ## Class and hook conventions
 - Namespaced BEM: `o-` objects (`o-container` = page margins, `o-grid` = the column grid, used together), `c-` components (`c-site-header__nav-link`, modifiers `--name`), `u-` utilities (`u-text-display/h2/lead/body-l/ui/label/muted`, `u-sr-only`). State classes: `is-*` (`is-hidden`, `is-open`, `is-in`, `is-on`, `is-off`).
-- JS never selects on styling classes: it uses `data-` attributes (`data-site-header`, `data-menu-toggle`, `data-featured-projects` + `data-fp-*`, `data-service` / `data-service-slot`, `data-marquee`, `data-reveal`, `data-highlight-text`, `data-scroll-next-*`, `data-debug-grid`, `data-skip-link`, `data-cookie-settings`). Exceptions: the R anchor ids (`#a-hero`, `#a-pitch`, `#a-craft`, `#a-foot`), `#r-canvas`, and the dev HUD ids.
+- JS never selects on styling classes: it uses `data-` attributes (`data-site-header`, `data-menu-toggle`, `data-featured-projects` + `data-fp-*`, `data-services` / `data-services-pin` / `data-service` / `data-service-slot`, `data-marquee`, `data-reveal`, `data-highlight-text`, `data-scroll-next-*`, `data-debug-grid`, `data-skip-link`, `data-cookie-settings`). Exceptions: the R anchor ids (`#a-hero`, `#a-pitch`, `#a-craft`, `#a-foot`), `#r-canvas`, and the dev HUD ids.
 - The dev HUD (Glyph/Grid, bottom right) and the grid overlay only render in `npm run dev`, never in the build.
 
 ## Pages
@@ -57,15 +57,16 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - Mobile: the menu toggle's lines spread (bottom one shortens) on hover, the open cross spins a quarter turn; slide-out items start at the top, and on hover/tap the others dim while the active one shifts right.
 - Nav links: underline that wipes in from the left. Footer email: light underline, orange one wipes in on hover.
 - Marquee (`components/marquee.js`): constant loop that speeds up with scroll velocity (both directions) and eases back.
-- Glyph cells scale with the shape's size below 140px (the small header/projects R ~36 glyphs tall, the service icons `ICON_GLYPHS` = 24 for fewer, bigger crosses; min 3 device px per glyph); big R's use the density-based size. Service icons are rasterised at 60×60 (`IG`) for detail. Glyphs are the intended look; pixel mode is only a dev fallback.
+- Glyph cells scale with the shape's size below 140px (the small header/projects R ~36 glyphs tall; min 3 device px per glyph); big shapes (the R's, the service icon) use the density-based size. Service icons are rasterised at 96×96 (`IG`), about as many pixels as the R has cap particles. Glyphs are the intended look; pixel mode is only a dev fallback.
 - The R canvas (`#r-canvas`, z 35) always renders above the fixed header (z 30).
 - Hero: the hero is `100svh - --marquee-h`, so the orange banner sits just above the fold; the scroll hint has a looping scrollbar thumb.
+- Services (`sections/Services.astro`, `components/services.js`): the head (title + intro) scrolls by, then the stage (one screen, `data-stage="3"`, sticky) is pinned for one screen per service (`[data-services-pin]`, `--services` × 100svh). The icon floats in the middle (cols 5–8, corner brackets one gutter out), count + name left (cols 1–4), text right (cols 10–12); phones: icon in the upper half, text at the bottom. `serviceProgress()` turns the scroll into 0…n−1 (each screen holds `HOLD` 20% at both ends, the morph eased in between); the engine morphs icon → icon with a full turn, coming apart in its fragments halfway; the text switches halfway through a morph (old one out upwards, new one up from below).
 - Trusted by: corners start around the logo and move apart to the cell edges, then the logo fades in (staggered).
 - Everything is off or instant with `prefers-reduced-motion`.
 
 ## Layout grid (Figma frame 1440 wide)
-12 columns, 60px margin, 20px gutter at 1440, fluid in vw (tokens `--cols`, `--margin`, `--gutter`). 6 columns below 1024px, 4 below 640px. Every section is `.o-container.o-grid` and places children with `grid-column`; nested rows use `subgrid`. Press Shift+G or `L` in dev (or the HUD "Grid" button) for the column overlay.
-Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 · projects intro 1–5 (lead size) level with the first project, projects alternately cols 8–11 (first) and 2–5 (all 4 on phones), the corner brackets one gutter outside the project in the middle.
+12 columns, 60px margin, 20px gutter at 1440, fluid in vw (tokens `--cols`, `--margin`, `--gutter`). 6 columns below 1024px, 4 below 640px. Every section is `.o-container.o-grid` and places children with `grid-column`; nested rows use `subgrid`. Home sections only space their top (`--space-section`); the pitch ends on its R anchor, so the projects follow at `--space-l` (full section spacing below 1024px, where the pitch ends on the portrait). Press Shift+G or `L` in dev (or the HUD "Grid" button) for the column overlay.
+Placement @1440: hero title cols 1–4, R 5–8, intro 10–12 · trusted-by logos 4 × 3 cols · pitch R 1–6, quote 7–12, portrait 7–9 (below 1024px: quote, R, portrait) · projects intro 1–5 (lead size) level with the first project, projects alternately cols 8–11 (first) and 2–5 (all 4 on phones), the corner brackets one gutter outside the project in the middle.
 
 ## Type scale (`styles/base/_tokens.css`, sizes @1440, measured from Figma)
 display 58 · h2 48 · lead 32 · body-l 20 · body 16 · ui 15 · label 12 (uppercase, medium, tracked). Use the `.u-text-display/-h2/-lead/-body-l/-ui/-label` classes instead of one-off sizes. Exception: the project detail title, 64 (`--fs-title`).
@@ -80,13 +81,13 @@ States are defined by elements with `data-stage` (the engine blends between them
 | 0 | Hero | big, extruded 3D, tumbles with the mouse | `#a-hero` |
 | 1 | Pitch (`#about`) | "exploded view": fragments slightly apart, still readable | `#a-pitch` |
 | 2 | Projects | small at the top center (sticky), turns with the mouse | `#a-craft` |
-| 3 | Services | splits in 4 quarters that rebuild into 3D icons | `[data-service-slot]` (4x) |
+| 3 | Services (pinned) | the whole R becomes one big 3D icon, morphing into the next service's icon on scroll | `[data-service-slot]` |
 | 4 | Footer | big again, pixels get pushed away by the cursor | `#a-foot` |
 
 Between stages the R does a full turn around its Y axis. The projects section uses stage 2 twice (its sticky head and an end marker), so the R holds still while the projects pass. Anchors are plain empty elements in the layout, so positions come from CSS and stay responsive.
 
 ## Engine (`src/scripts/r-journey/engine.js`)
-- `build()`: rasterize the R, create cap particles (front/back face) + side-wall particles (extrusion layers), Voronoi fragments for stage 1, quadrant split + icon assignment for stage 3. Icons are drawn in `drawIcon` (gothic window, split lozenge, star, shield).
+- `build()`: rasterize the R, create cap particles (front/back face) + side-wall particles (extrusion layers), Voronoi fragments for stage 1, quadrant split + icon assignment for stage 3. Icons are drawn in `drawIcon` (gothic window, split lozenge, star, shield); every particle gets a place in every icon (`IU/IV/IZ…` at `q*N + p`, both sides sorted top to bottom).
 - `frame()`: compute scroll state `s`, per-stage rotation matrices, per-particle 3D targets with springs, lighting (light dir `LX/LY/LZ`), then draw.
 - The canvas CSS size is set from `innerWidth`/`innerHeight` in `resize()` (CSS `100vh` is taller than the visible area on iOS and would stretch the drawing).
 - Slow devices: when a frame's own work averages over ~10 ms the engine renders every other frame, with springs (`K2`) and lerps doubled so the motion speed stays the same.
@@ -95,7 +96,7 @@ Between stages the R does a full turn around its Y axis. The projects section us
 
 Tunables worth knowing:
 - `DEPTH` extrusion thickness; `RY/RX/RZ[...]` rotation amounts per stage (in `frame`).
-- `DENS[]` particle size per stage (lower = looser, e.g. icons at .48).
+- `DENS[]` particle size per stage (lower = looser).
 - Glyph look: `G_GAMMA`, `G_COLORS`, sprite `pad` / `lineWidth` in `sprites()`, grid size `CELL` in the glyph draw block.
 - `PAL` colour ramp for pixel mode.
 

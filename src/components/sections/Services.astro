@@ -1,19 +1,30 @@
 ---
-// Services. Styles: styles/components/_services.css. The engine rebuilds quarter i of the R in [data-service-slot] i.
+// Services. Styles: styles/components/_services.css, script: scripts/components/services.js.
+// The head scrolls by, then the stage (one screen, stage 3) is pinned while [data-services-pin] scrolls on, one screen per
+// service: the R becomes service 0's icon in [data-service-slot] and morphs into the next one's on scroll (engine.js),
+// the text in the stage switches along with it (halfway through each morph).
 import Corners from '../ui/Corners.astro';
 import { servicesIntro } from '../../data/site';
 import { services } from '../../data/services';
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
-<section class="c-services o-container o-grid" id="services" data-stage="3">
-  <h2 class="c-services__title u-text-h2">{servicesIntro.title}</h2>
-  <p class="c-services__intro u-text-body-l u-text-muted" data-highlight-text>{servicesIntro.text}</p>
-  <ul class="c-services__list">
-    {services.map((s, q) => (
-      <li class="c-services__row" data-service={q}>
-        <div class="c-services__slot" data-service-slot><Corners /></div>
-        <h3 class="c-services__name u-text-lead">{s.title}</h3>
-        <p class="c-services__text u-text-body-l u-text-muted" data-highlight-text>{s.description}</p>
-      </li>
-    ))}
-  </ul>
+<section class="c-services" id="services" data-services style={`--services:${services.length}`}>
+  <div class="c-services__head o-container o-grid">
+    <h2 class="c-services__title u-text-h2">{servicesIntro.title}</h2>
+    <p class="c-services__intro u-text-body-l u-text-muted" data-highlight-text>{servicesIntro.text}</p>
+  </div>
+  <div class="c-services__pin" data-services-pin>
+    <div class="c-services__stage o-container o-grid" data-stage="3">
+      <div class="c-services__slot" data-service-slot><Corners /></div>
+      <ol class="c-services__list">
+        {services.map((s, i) => (
+          <li class:list={['c-services__item', { 'is-active': i === 0 }]} data-service={i}>
+            <p class="c-services__count u-text-label u-text-muted">{pad(i + 1)} / {pad(services.length)}</p>
+            <h3 class="c-services__name u-text-h2">{s.title}</h3>
+            <p class="c-services__text u-text-body-l u-text-muted">{s.description}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
 </section>

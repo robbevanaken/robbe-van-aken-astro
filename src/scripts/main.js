@@ -15,6 +15,7 @@ import { initPageTransitions } from './global/pageTransitions.js';
 import { initFeaturedProjects } from './components/featuredProjects.js';
 import { initScrollNext } from './components/scrollNext.js';
 import { initMarquee } from './components/marquee.js';
+import { initServices } from './components/services.js';
 import { initHighlight } from './components/highlightText.js';
 import { initTextHover } from './components/textHover.js';
 import { initREngine } from './r-journey/engine.js';
@@ -34,6 +35,7 @@ function mount() {
       return initREngine({ canvas, scope: sel ? root.querySelector(sel) : root, cull: !!sel, intro: canvas.hasAttribute('data-r-intro') });
     }),
     initScrollNext(root),
+    initServices(root),
     initMarquee(root),
     initReveal(root),
     initDebugGrid(root),

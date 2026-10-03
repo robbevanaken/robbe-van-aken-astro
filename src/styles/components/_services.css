@@ -1,19 +1,36 @@
-/* Services: title cols 1–6, intro cols 7–10; rows: icon col 1, title cols 3–6, text cols 7–10.
-   The engine rebuilds quarter i of the R inside each [data-service-slot]. */
-.c-services{padding-block:var(--space-section);min-height:100vh;row-gap:var(--space-xl)}
+/* Services: head (title cols 1–6, intro cols 7–10), then the stage: one screen, pinned while the pin track scrolls on
+   (one screen per service, --services set inline). The icon sits in the middle (slot, cols 5–8), the active service's
+   count + name on the left (cols 1–4), its text on the right (cols 10–12). All items share one grid cell; only the
+   active one shows. The engine rebuilds the R into the active icon inside [data-service-slot]. */
+.c-services{padding-top:var(--space-section)}
+.c-services__head{row-gap:var(--space-xl)}
 .c-services__title{grid-column:1 / span 6}
 .c-services__intro{grid-column:7 / span 4;align-self:end}
-.c-services__list{display:grid;grid-template-columns:subgrid}
-.c-services__row{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:center;border-top:1px solid var(--line);padding-block:var(--space-l);cursor:default}
-.c-services__row:last-child{border-bottom:1px solid var(--line)}
-.c-services__slot{grid-column:1 / span 1;position:relative;aspect-ratio:1;width:100%;max-width:84px}
-.c-services__name{grid-column:3 / span 4;transition:transform var(--hover-dur) var(--ease-punch),color .3s}
-.c-services__text{grid-column:7 / span 4}
-.c-services__row:hover .c-services__name,.c-services__row:focus-visible .c-services__name{transform:translateX(10px);color:var(--accent)}
+
+.c-services__pin{height:calc(var(--services,4) * 100svh)}
+.c-services__stage{position:sticky;top:0;height:100svh;grid-template-rows:1fr;align-items:center}
+.c-services__slot{grid-column:5 / span 4;grid-row:1;justify-self:center;position:relative;aspect-ratio:1;width:min(100%,52svh);--corner-offset:var(--gutter)}
+.c-services__list{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-self:stretch}
+.c-services__item{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;grid-template-rows:1fr auto 1fr;row-gap:var(--space-s);align-items:center}
+.c-services__count{grid-column:1 / span 4;grid-row:1;align-self:end}
+.c-services__name{grid-column:1 / span 4;grid-row:2}
+.c-services__text{grid-column:10 / span 3;grid-row:2}
+
+/* switching: the old service leaves upwards, the next comes up from below (and the other way round scrolling back) */
+.c-services__item>*{opacity:0;transform:translateY(24px);transition:opacity .35s var(--ease-out),transform .9s var(--ease-punch)}
+.c-services__item.is-past>*{transform:translateY(-24px)}
+.c-services__item.is-active>*{opacity:1;transform:none;transition-duration:.6s,.9s}
+.c-services__item.is-active>:nth-child(2){transition-delay:.05s}
+.c-services__item.is-active>:nth-child(3){transition-delay:.12s}
 
 @media (max-width:1023px){
+  .c-services__head{row-gap:var(--space-m)}
   .c-services__title,.c-services__intro{grid-column:1 / -1}
-  .c-services__slot{max-width:64px}
-  .c-services__name{grid-column:2 / -1}
-  .c-services__text{grid-column:2 / -1;margin-top:var(--space-xs)}
+  /* icon in the upper half, the text at the bottom */
+  .c-services__slot{grid-column:1 / -1;align-self:start;margin-top:max(96px,14svh);width:min(64vw,38svh)}
+  .c-services__item{grid-template-rows:1fr auto auto;row-gap:var(--space-xs);padding-bottom:var(--space-l)}
+  .c-services__name{grid-column:1 / -1}
+  .c-services__text{grid-column:1 / -1;grid-row:3}
 }
+@media (max-width:639px){.c-services__name{font-size:var(--fs-lead)}}
+@media (prefers-reduced-motion:reduce){.c-services__item>*{transition:none!important;transform:none!important}}
