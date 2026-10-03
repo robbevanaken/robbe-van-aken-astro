@@ -181,7 +181,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     else if(i===2||i===5)proj(i,A[i],u,v,z,o);
     else if(i===3){
       // mid-morph the shape comes apart in its fragments (the pitch's exploded view) and closes again as the next icon
-      const a=AS,box=a.h*.98,m=MS,j0=sq0*N+p,j1=sq1*N+p,g=sg,c=CH[p],e=Math.sin(Math.PI*g)*.8*motion,
+      const a=AS,box=a.h*.98,m=MS,j0=sq0*N+p,j1=sq1*N+p,g=sg,c=CH[p],e=Math.sin(Math.PI*g)*.45*motion,
         z0=IZ[j0]===2?SS:IZ[j0],z1=IZ[j1]===2?SS:IZ[j1],
         lx=IU[j0]+(IU[j1]-IU[j0])*g+OX[c]*e,ly=IV[j0]+(IV[j1]-IV[j0])*g+OY[c]*e,lz=(z0+(z1-z0)*g)*.1+OZ[c]*e*.3,
         x=m[0]*lx+m[1]*ly+m[2]*lz,y=m[3]*lx+m[4]*ly+m[5]*lz,z=m[6]*lx+m[7]*ly+m[8]*lz,k=1/(1-z*.6),fl=Math.sin(time*1.1)*a.h*.012*motion;
@@ -197,12 +197,16 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // Glyph dither mode (like Unicorn's Glyph Dither): particles are binned into a screen grid and every
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
   let glyph=true,GC=null,GS=null,GN=null,OCC=null,nOcc=0;
-  const G_GAMMA=1.4,G_COLORS={dark:['#6d635d','#efe9e4'],light:['#b3a89f','#1f1511']},BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+  // glyph look per theme. gamma > 1 pushes cells towards the bright cross (a heavier, more present R); colors: [dim,
+  // bright]; line / pad: cross stroke width and inset, as a share of the cell. Light needs more: dark on light reads
+  // thinner and greyer than white on dark, so more full crosses, heavier strokes, and a paler dim tone so the shaded
+  // sides fall back and the front face (the shape) stands out.
+  const G={dark:{gamma:2,colors:['#8d817a','#ffffff'],line:.32,pad:.23},light:{gamma:3,colors:['#c2b8af','#140b08'],line:.37,pad:.21}},BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
   function sprites(cell){
     const key=cell+'@'+DPR+theme.mode;if(spriteCache.has(key))return spriteCache.get(key);
-    const px=Math.max(2,Math.round(cell*DPR)),out=G_COLORS[theme.mode].map(col=>{
+    const gs=G[theme.mode],px=Math.max(2,Math.round(cell*DPR)),out=gs.colors.map(col=>{
       const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');
-      const pad=px*.26;g.strokeStyle=col;g.lineWidth=Math.max(1,px*.27);g.lineCap=px<6?'butt':'round';
+      const pad=px*gs.pad;g.strokeStyle=col;g.lineWidth=Math.max(1,px*gs.line);g.lineCap=px<6?'butt':'round';
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c});
     spriteCache.set(key,out);return out;
   }
@@ -299,10 +303,10 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
         if(p<NC){if(b>GC[ci])GC[ci]=b}else if(b>GS[ci])GS[ci]=b;
         if(GN[ci]===0)OCC[nOcc++]=ci;if(GN[ci]<65000)GN[ci]++;
       }
-      const spr=sprites(CELL);
+      const spr=sprites(CELL),gamma=G[theme.mode].gamma;
       for(let o=0;o<nOcc;o++){
         const ci=OCC[o],n=GN[ci],r=(ci/cols)|0,q=ci-r*cols;
-        const base=GC[ci]>0?GC[ci]:GS[ci];let v=Math.pow(clamp(base*Math.min(1,.35+.65*n/expect),0,1),1/G_GAMMA);
+        const base=GC[ci]>0?GC[ci]:GS[ci];let v=Math.pow(clamp(base*Math.min(1,.35+.65*n/expect),0,1),1/gamma);
         if(small>0)v+=(1-v)*.75*small; // small R: mostly bright crosses, so it reads white instead of grey
         const lv=clamp(Math.round(v*2+((BAYER4[(r&3)*4+(q&3)]+.5)/16-.5)*.9),0,2);if(!lv)continue;
         ctx.drawImage(spr[lv-1],q*CELL,r*CELL,CELL,CELL);

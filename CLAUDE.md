@@ -66,7 +66,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 - Glyph cells scale with the shape's size below 140px (the small header/projects R ~36 glyphs tall; min 3 device px per glyph); big shapes (the R's, the service icon) use the density-based size. Service icons are rasterised at 96×96 (`IG`), about as many pixels as the R has cap particles. Glyphs are the intended look; pixel mode is only a dev fallback.
 - The R canvas (`#r-canvas`, z 35) always renders above the fixed header (z 30).
 - Hero: the hero is `100svh - --marquee-h`, so the orange banner sits just above the fold; the scroll hint has a looping scrollbar thumb.
-- Services (`sections/Services.astro`, `components/services.js`): the head (title cols 4–9 + intro cols 5–8, centred) scrolls by, then the stage (one screen, `data-stage="3"`, sticky) is pinned for one screen per service (`[data-services-pin]`, `--services` × 100svh): the icon in the middle (cols 5–8, corner brackets one gutter out), count + name left (cols 1–4), text right (cols 10–12); below 1024px: icon in the upper half, text at the bottom. `serviceProgress()` turns the scroll into 0…n−1 (each screen holds `HOLD` 20% at both ends, the morph eased in between); the engine morphs icon → icon with a full turn, coming apart in its fragments halfway; the text switches halfway through a morph (old one out upwards, new one up from below).
+- Services (`sections/Services.astro`, `components/services.js`): the head (title cols 4–9 + intro cols 5–8, centred) scrolls by, then the stage (one screen, `data-stage="3"`, sticky) is pinned for one screen per service (`[data-services-pin]`, `--services` × 100svh): the icon in the middle (cols 5–8, corner brackets one gutter out), count + name left (cols 1–4), text right (cols 10–12); below 1024px: icon in the upper half, text at the bottom. `serviceProgress()` turns the scroll into 0…n−1 (each screen holds `HOLD` 30% at both ends, the morph eased over the 40% between, so a readable shape shows most of the time); the engine morphs icon → icon with a full turn, coming a little apart in its fragments halfway (.45 in `target`); the text switches halfway through a morph (old one out upwards, new one up from below).
 - Trusted by: corners start around the logo and move apart to the cell edges, then the logo fades in (staggered).
 - Everything is off or instant with `prefers-reduced-motion`.
 
@@ -103,7 +103,7 @@ Between stages the R does a full turn around its Y axis. The projects section us
 Tunables worth knowing:
 - `DEPTH` extrusion thickness; `RY/RX/RZ[...]` rotation amounts per stage (in `frame`).
 - `DENS[]` particle size per stage (lower = looser).
-- Glyph look: `G_GAMMA`, `G_COLORS`, sprite `pad` / `lineWidth` in `sprites()`, grid size `CELL` in the glyph draw block.
+- Glyph look per theme in `G` (`gamma`: >1 = more cells bright crosses, a heavier R; `colors` [dim, bright]; cross weight `line` and inset `pad`, heavier and the crosses start touching into a mesh). Dark: gamma 2, `#8d817a` / `#fff`, .32 / .23. Light needs more to read as clearly (dark on light looks thinner and greyer): gamma 3, a pale dim `#c2b8af` so the shaded sides fall back, `#140b08`, .37 / .21. Grid size `CELL` in the glyph draw block.
 - `PAL` colour ramp for pixel mode.
 
 ## Project globe (`sections/ProjectGlobe.astro`, `src/scripts/components/featuredProjects.js`)

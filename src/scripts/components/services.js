@@ -2,7 +2,7 @@
 // serviceProgress() turns that scroll into 0 … n-1: whole numbers hold a service, fractions are the eased morph to the
 // next one. The R engine reads it for the icon, initServices() for the text (it switches halfway through a morph).
 // Hooks: [data-services] on the section, [data-services-pin] on the tall pin track, [data-service] on each item.
-const HOLD = .2; // part of each screen at the start and at the end where the shape holds still
+const HOLD = .3; // part of each screen at the start and at the end where the shape holds still (the morph: the 40% between)
 
 export function serviceProgress(el) {
   const n = el.querySelectorAll('[data-service]').length, r = el.querySelector('[data-services-pin]').getBoundingClientRect();
