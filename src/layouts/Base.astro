@@ -17,6 +17,8 @@ const image = new URL(meta.image, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <!-- theme (scripts/global/theme.js): the saved choice, else dark, set before the first paint -->
+    <script is:inline>(()=>{let t;try{t=localStorage.getItem('theme')}catch(e){}document.documentElement.dataset.theme=t==='light'?'light':'dark'})()</script>
     <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless) -->
     <script is:inline>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');setTimeout(()=>document.documentElement.classList.remove('is-loading'),8000)}</script>
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}

@@ -8,18 +8,18 @@ html #cc-main{
   --cc-modal-margin:var(--margin);
   --cc-modal-transition-duration:.45s;
 
-  --cc-bg:#1d1310;
+  --cc-bg:var(--surface);
   --cc-primary-color:var(--fg);
   --cc-secondary-color:var(--muted);
   --cc-link-color:var(--fg);
-  --cc-overlay-bg:rgba(10,6,5,.7);
+  --cc-overlay-bg:color-mix(in srgb,var(--bg) 70%,transparent);
   --cc-separator-border-color:var(--line);
 
   --cc-btn-primary-bg:var(--fg);
-  --cc-btn-primary-color:var(--ink);
+  --cc-btn-primary-color:var(--on-fg);
   --cc-btn-primary-border-color:var(--fg);
   --cc-btn-primary-hover-bg:var(--fg);
-  --cc-btn-primary-hover-color:var(--ink);
+  --cc-btn-primary-hover-color:var(--on-fg);
   --cc-btn-primary-hover-border-color:var(--fg);
   --cc-btn-secondary-bg:transparent;
   --cc-btn-secondary-color:var(--fg);
@@ -41,20 +41,22 @@ html #cc-main{
   --cc-section-category-border:var(--line);
   --cc-cookie-category-block-bg:transparent;
   --cc-cookie-category-block-border:var(--line);
-  --cc-cookie-category-block-hover-bg:rgba(255,255,255,.03);
+  --cc-cookie-category-block-hover-bg:color-mix(in srgb,var(--fg) 3%,transparent);
   --cc-cookie-category-block-hover-border:var(--line-strong);
   --cc-cookie-category-expanded-block-bg:transparent;
-  --cc-cookie-category-expanded-block-hover-bg:rgba(255,255,255,.03);
+  --cc-cookie-category-expanded-block-hover-bg:color-mix(in srgb,var(--fg) 3%,transparent);
 
-  --cc-footer-bg:#1d1310;
+  --cc-footer-bg:var(--surface);
   --cc-footer-color:var(--muted);
   --cc-footer-border-color:var(--line);
   --cc-webkit-scrollbar-bg:var(--line);
   --cc-webkit-scrollbar-hover-bg:var(--line-strong);
 }
+/* light theme: light knobs on the toggles, a softer shadow */
+html[data-theme="light"] #cc-main{--cc-toggle-on-knob-bg:var(--surface);--cc-toggle-off-knob-bg:var(--surface);--cc-shadow:12%}
 @media (min-width:640px){ html #cc-main{--cc-modal-margin:20px} }
 /* type + details in the site's language: label-style titles, 1px lines, buttons that scale down like .btn */
-html #cc-main .cm,html #cc-main .pm{border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+html #cc-main .cm,html #cc-main .pm{border:1px solid var(--line);box-shadow:0 30px 80px color-mix(in srgb,#000 var(--cc-shadow,45%),transparent)}
 html #cc-main .cm__title,html #cc-main .pm__title{font-size:var(--fs-label);font-weight:500;letter-spacing:var(--ls-label);text-transform:uppercase}
 html #cc-main .cm__desc,html #cc-main .pm__section-desc{font-size:15px;line-height:1.45}
 /* .cc--anim variants included: the library's own .cc--anim rule is more specific and would drop the ease */

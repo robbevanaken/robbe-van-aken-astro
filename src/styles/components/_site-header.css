@@ -16,13 +16,12 @@
 .c-site-header__r{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);width:56px;height:56px;transform:translateX(-50%)}
 .c-site-header__r-anchor{display:block;width:100%;height:100%}
 
-.c-site-header__nav{grid-column:-5 / -1}
+.c-site-header__end{grid-column:-5 / -1;grid-row:1;display:flex;justify-content:flex-end;align-items:center;gap:var(--space-m)}
 .c-site-header__nav-list{display:flex;justify-content:flex-end;gap:var(--space-m)}
 .c-site-header__nav-link{position:relative;text-decoration:none;padding-bottom:3px}
 .c-site-header__nav-link::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform var(--hover-dur) var(--ease-punch)}
 .c-site-header__nav-link:hover::after,.c-site-header__nav-link:focus-visible::after{transform:scaleX(1);transform-origin:left}
 
-.c-site-header__toggle{grid-column:-3 / -1;grid-row:1;justify-self:end}
 
 /* full-screen menu (phones) */
 /* items start at the top, just below the header row */

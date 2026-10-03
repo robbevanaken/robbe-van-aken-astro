@@ -8,6 +8,7 @@
 // while the scope is off screen.
 import { R_PATH } from './r-shape.js';
 import { serviceProgress } from '../components/services.js';
+import { theme } from '../global/theme.js';
 
 // The page loader and page swaps (global/pageTransitions.js) borrow the page's R: while `rIntro.t` is 1 the engine with
 // `intro` draws it as the small R on `rIntro.el` (state 5, a copy of stage 2 on its own anchor); as t goes to 0 it
@@ -188,17 +189,18 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     else{const a=A[4];proj(4,a,u,v,z,o);
       if(motion){let x=o[0],y=o[1];const dx=x-mpx,dy=y-mpy,dd=Math.hypot(dx,dy)||1,R=a.S*.24;if(dd<R){const pu=1-dd/R,push=pu*pu*R*.95;x+=dx/dd*push;y+=dy/dd*push}o[0]=x;o[1]=y}}
   }
-  const PAL=['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'];
+  // colours per theme (global/theme.js): light = dark crosses / pixels on the light page
+  const PALS={dark:['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'],light:['#e6ded6','#cfc5bc','#a3978e','#6f6560','#3d302a','#1f1511']};
   const LX=-.35,LY=-.55,LZ=.76;
   const DENS=[.8,.82,1.12,1,1.08,1.12];
   const t0=[0,0],t1=[0,0];let lastIdx=-1;
   // Glyph dither mode (like Unicorn's Glyph Dither): particles are binned into a screen grid and every
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
   let glyph=true,GC=null,GS=null,GN=null,OCC=null,nOcc=0;
-  const G_GAMMA=1.4,G_COLORS=['#6d635d','#efe9e4'],BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+  const G_GAMMA=1.4,G_COLORS={dark:['#6d635d','#efe9e4'],light:['#b3a89f','#1f1511']},BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
   function sprites(cell){
-    const key=cell+'@'+DPR;if(spriteCache.has(key))return spriteCache.get(key);
-    const px=Math.max(2,Math.round(cell*DPR)),out=G_COLORS.map(col=>{
+    const key=cell+'@'+DPR+theme.mode;if(spriteCache.has(key))return spriteCache.get(key);
+    const px=Math.max(2,Math.round(cell*DPR)),out=G_COLORS[theme.mode].map(col=>{
       const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');
       const pad=px*.26;g.strokeStyle=col;g.lineWidth=Math.max(1,px*.27);g.lineCap=px<6?'butt':'round';
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c});
@@ -310,7 +312,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const c=Math.max(size,.6),cut=c+40,cSide=c*1.25;
     for(const [from,to,cz] of [[NC,N,cSide],[0,NC,c]]){
       for(let lv=0;lv<6;lv++){
-        ctx.fillStyle=PAL[lv];ctx.beginPath();let any=false;
+        ctx.fillStyle=PALS[theme.mode][lv];ctx.beginPath();let any=false;
         for(let p=from;p<to;p++){if(LV[p]!==lv)continue;const x=X[p],y=Y[p];if(x<-cut||x>W+cut||y<-cut||y>H+cut)continue;ctx.rect(x,y,cz,cz);any=true}
         if(any)ctx.fill();
       }

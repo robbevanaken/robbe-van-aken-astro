@@ -1,6 +1,6 @@
 /* Design tokens. Figma frame is 1440 wide: fluid values hit their Figma size at 1440. */
 :root{
-  /* colour */
+  /* colour: dark is the default theme; light below ([data-theme="light"] on <html>, global/theme.js) */
   --bg:#170e0b;
   --fg:#ffffff;       /* primary text (Figma: white) */
   --muted:#b2b2b2;    /* secondary text (Figma: #B2B2B2) */
@@ -9,7 +9,11 @@
   --line-strong:#6e625b;
   --accent:#ff4a00;
   --card:#d8d2cc;
-  --ink:#170e0b;
+  --ink:#170e0b;      /* dark text on orange (marquee, selection): the same in both themes */
+  --on-fg:#170e0b;    /* text on an --fg background (buttons) */
+  --surface:#1d1310;  /* panels above the page (cookie banner) */
+  --paper:#ffffff;    /* the filling marquee before the orange comes in */
+  --logo-filter:brightness(1); /* client logos are white SVGs */
 
   /* layout grid: 12 columns, 60px margin, 20px gutter @1440 */
   --cols:12;
@@ -52,6 +56,21 @@
   --marquee-h:48px;
 
   color-scheme:dark;
+}
+
+/* light theme: dark text on warm off-white; the accent stays */
+:root[data-theme="light"]{
+  --bg:#f3eee8;
+  --fg:#170e0b;
+  --muted:#6f6560;
+  --subtle:#8c827c;
+  --line:#ddd4cc;
+  --line-strong:#a99d95;
+  --card:#e3dcd4;
+  --on-fg:#f3eee8;
+  --surface:#fbf8f5;
+  --logo-filter:brightness(0);
+  color-scheme:light;
 }
 
 /* tablet: 6 columns */

@@ -1,5 +1,5 @@
 // Script entry for every page (loaded from layouts/Base.astro).
-// Once: eases, Lenis, cookie consent and the page transitions (global/pageTransitions.js: loader + swup).
+// Once: eases, theme (light/dark), Lenis, cookie consent and the page transitions (global/pageTransitions.js: loader + swup).
 // Per page: mount() below, run on the first load and again after every swup page swap; every init returns a cleanup
 // (or nothing), and each does nothing when its element isn't on the page. unmount() runs the cleanups just before swup
 // replaces the page.
@@ -10,6 +10,7 @@ import { initSmoothScroll } from './global/lenis.js';
 import { initSiteHeader } from './global/siteHeader.js';
 import { initReveal } from './global/reveal.js';
 import { initCookieConsent } from './global/cookieConsent.js';
+import { initTheme, syncThemeMeta } from './global/theme.js';
 import { initDebugGrid } from './global/debugGrid.js';
 import { initPageTransitions } from './global/pageTransitions.js';
 import { initFeaturedProjects } from './components/featuredProjects.js';
@@ -25,6 +26,7 @@ let cleanups = [], page = 0;
 // every init only looks inside the page's own container (root)
 function mount() {
   const id = ++page, root = document.getElementById('swup');
+  syncThemeMeta();
   cleanups = [
     initSiteHeader(root),
     initFeaturedProjects(root),
@@ -52,6 +54,7 @@ function unmount() {
   cleanups = [];
 }
 
+initTheme();
 initSmoothScroll();
 initCookieConsent();
 initPageTransitions({ mount, unmount });

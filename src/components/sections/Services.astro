@@ -1,8 +1,9 @@
 ---
 // Services. Styles: styles/components/_services.css, script: scripts/components/services.js.
-// The head scrolls by, then the stage (one screen, stage 3) is pinned while [data-services-pin] scrolls on, one screen per
-// service: the R becomes service 0's icon in [data-service-slot] and morphs into the next one's on scroll (engine.js),
-// the text in the stage switches along with it (halfway through each morph).
+// The head (title + intro, centred) scrolls by, then the stage (one screen, stage 3) is pinned while
+// [data-services-pin] scrolls on, one screen per service. The R becomes service 0's icon in
+// [data-service-slot] and morphs into the next one's on scroll (engine.js); the text in the stage switches along with
+// it (halfway through each morph).
 import Corners from '../ui/Corners.astro';
 import { servicesIntro } from '../../data/site';
 import { services } from '../../data/services';

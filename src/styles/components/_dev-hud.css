@@ -1,7 +1,7 @@
 /* Dev only (never in the build): R state, Glyph/Pixels (G) and grid overlay (L) toggles. */
-.c-dev-hud{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;font-size:11px;background:rgba(23,14,11,.8);border:1px solid var(--line);padding:8px 10px;color:var(--muted);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.c-dev-hud{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;font-size:11px;background:color-mix(in srgb,var(--bg) 80%,transparent);border:1px solid var(--line);padding:8px 10px;color:var(--muted);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .c-dev-hud__state{color:var(--fg);font-weight:500}
-.c-dev-hud__button{font:inherit;font-size:11px;background:var(--fg);color:var(--ink);border:1px solid var(--fg);padding:2px 7px;margin-right:4px;cursor:pointer}
+.c-dev-hud__button{font:inherit;font-size:11px;background:var(--fg);color:var(--on-fg);border:1px solid var(--fg);padding:2px 7px;margin-right:4px;cursor:pointer}
 .c-dev-hud__button.is-off{background:none;color:var(--fg);border-color:var(--line-strong)}
 .c-dev-hud__bar{height:2px;background:var(--line);margin-top:6px;position:relative}
 .c-dev-hud__bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);width:0}

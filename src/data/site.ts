@@ -23,6 +23,8 @@ export const nav = {
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ],
+  // light/dark toggle (screen readers; the button itself is an icon)
+  theme: { toLight: 'Switch to light mode', toDark: 'Switch to dark mode' },
 };
 
 export const hero = {
