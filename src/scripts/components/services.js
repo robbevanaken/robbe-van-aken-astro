@@ -1,7 +1,8 @@
 // Services (sections/Services.astro): the stage is pinned while [data-services-pin] scrolls on, one screen per service.
 // serviceProgress() turns that scroll into 0 … n-1: whole numbers hold a service, fractions are the eased morph to the
 // next one. The R engine reads it for the icon, initServices() for the text (it switches halfway through a morph).
-// Hooks: [data-services] on the section, [data-services-pin] on the tall pin track, [data-service] on each item.
+// Hooks: [data-services] on the section, [data-services-pin] on the tall pin track, [data-service] on each item,
+// [data-services-bar] on each progress segment (below 1024px; its --fill goes 0 → 1 as its service comes in).
 const HOLD = .3; // part of each screen at the start and at the end where the shape holds still (the morph: the 40% between)
 
 export function serviceProgress(el) {
@@ -16,11 +17,12 @@ export function serviceProgress(el) {
 export function initServices(root = document) {
   const el = root.querySelector('[data-services]');
   if (!el) return null;
-  const items = [...el.querySelectorAll('[data-service]')];
+  const items = [...el.querySelectorAll('[data-service]')], bars = [...el.querySelectorAll('[data-services-bar]')];
   const ac = new AbortController();
   let active = -1;
   const update = () => {
-    const a = Math.round(serviceProgress(el));
+    const v = serviceProgress(el), a = Math.round(v);
+    bars.forEach((b, i) => b.style.setProperty('--fill', Math.min(1, Math.max(0, v - i + 1)).toFixed(3)));
     if (a === active) return;
     active = a;
     items.forEach((it, i) => { it.classList.toggle('is-active', i === a); it.classList.toggle('is-past', i < a); });

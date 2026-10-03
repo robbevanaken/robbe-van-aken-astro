@@ -57,7 +57,7 @@ html[data-theme="light"] #cc-main{--cc-toggle-on-knob-bg:var(--surface);--cc-tog
 @media (min-width:640px){ html #cc-main{--cc-modal-margin:20px} }
 /* type + details in the site's language: label-style titles, 1px lines, buttons that scale down like .btn */
 html #cc-main .cm,html #cc-main .pm{border:1px solid var(--line);box-shadow:0 30px 80px color-mix(in srgb,#000 var(--cc-shadow,45%),transparent)}
-html #cc-main .cm__title,html #cc-main .pm__title{font-size:var(--fs-label);font-weight:500;letter-spacing:var(--ls-label);text-transform:uppercase}
+html #cc-main .cm__title,html #cc-main .pm__title{font-size:var(--fs-label);font-weight:500}
 html #cc-main .cm__desc,html #cc-main .pm__section-desc{font-size:15px;line-height:1.45}
 /* .cc--anim variants included: the library's own .cc--anim rule is more specific and would drop the ease */
 html #cc-main .cm__btn,html #cc-main .pm__btn,html #cc-main .cc--anim .cm__btn,html #cc-main .cc--anim .pm__btn{font-size:var(--fs-ui);font-weight:400;padding:12px 18px;

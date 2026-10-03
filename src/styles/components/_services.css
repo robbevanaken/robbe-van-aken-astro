@@ -2,7 +2,8 @@
    stage: one screen, pinned while the pin track scrolls on (one screen per service, --services set inline): the icon in
    the middle (slot, cols 5–8), the active service's count + name on the left (cols 1–4) and its text on the right
    (cols 10–12). All items share one grid cell; only the active one shows. The engine rebuilds the R into the active
-   icon inside [data-service-slot]. Below 1024px: icon in the upper half, text at the bottom. */
+   icon inside [data-service-slot]. Below 1024px: one centred column (icon, then count, name and text), the group
+   centred on the screen, a progress line (one segment per service) at the bottom. */
 .c-services{padding-top:var(--space-section)}
 .c-services__head{row-gap:var(--space-s);padding-bottom:var(--space-l);text-align:center}
 .c-services__title{grid-column:4 / span 6}
@@ -16,6 +17,7 @@
 .c-services__count{grid-column:1 / span 4;grid-row:1;align-self:end}
 .c-services__name{grid-column:1 / span 4;grid-row:2}
 .c-services__text{grid-column:10 / span 3;grid-row:2}
+.c-services__progress{display:none}
 
 /* switching: the old service leaves upwards, the next comes up from below (and the other way round scrolling back) */
 .c-services__item>*{opacity:0;transform:translateY(24px);transition:opacity .35s var(--ease-out),transform .9s var(--ease-punch)}
@@ -25,15 +27,25 @@
 .c-services__item.is-active>:nth-child(3){transition-delay:.12s}
 
 @media (max-width:1023px){
-  .c-services__head{row-gap:var(--space-xs)}
-  .c-services__title{grid-column:1 / -1}
+  .c-services{padding-top:calc(var(--space-section) * 1.25);padding-bottom:var(--space-xl)}
+  .c-services__head{row-gap:var(--space-s);padding-bottom:var(--space-xl)}
+  .c-services__title{grid-column:1 / -1;font-size:clamp(40px,10.5vw,72px);line-height:var(--lh-tight)}
   .c-services__intro{grid-column:2 / span 4}
-  /* icon in the upper half, the text at the bottom */
-  .c-services__slot{align-self:start;grid-column:1 / -1;margin-top:max(96px,14svh);width:min(64vw,38svh)}
-  .c-services__item{grid-template-rows:1fr auto auto;row-gap:var(--space-xs);padding-bottom:var(--space-l)}
-  .c-services__count,.c-services__name{grid-column:1 / -1}
-  .c-services__text{grid-column:1 / -1;grid-row:3}
+  /* one centred column: icon, count, name, text; spacer rows above and below keep the group in the middle, with more
+     room below it than above (the progress line sits at the bottom) */
+  .c-services__stage{grid-template-rows:1fr auto auto 1.5fr auto;align-items:start;
+    padding-top:calc(env(safe-area-inset-top,0px) + 64px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--space-m))}
+  .c-services__slot{grid-column:1 / -1;grid-row:2;width:min(72vw,38svh);--corner-offset:var(--space-s)}
+  .c-services__list{grid-row:3;margin-top:calc(var(--space-l) + var(--space-s))}
+  .c-services__item{grid-template-rows:auto auto auto;row-gap:var(--space-xs);justify-items:center;text-align:center}
+  .c-services__count,.c-services__name,.c-services__text{grid-column:1 / -1;align-self:start}
+  .c-services__count{grid-row:1}
+  .c-services__name{grid-row:2;font-size:clamp(32px,8.5vw,48px);line-height:var(--lh-heading)}
+  .c-services__text{grid-row:3;max-width:30ch;margin-top:var(--space-2xs)}
+  /* progress: one segment per service, the line fills as its service comes in */
+  .c-services__progress{grid-column:1 / -1;grid-row:5;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:var(--space-2xs);width:min(100%,280px);justify-self:center}
+  .c-services__bar{position:relative;height:1px;background:var(--line);overflow:hidden}
+  .c-services__bar::after{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleX(var(--fill,0));transform-origin:left}
 }
 @media (max-width:639px){.c-services__intro{grid-column:1 / -1}}
-@media (max-width:639px){.c-services__name{font-size:var(--fs-lead)}}
 @media (prefers-reduced-motion:reduce){.c-services__item>*{transition:none!important;transform:none!important}}

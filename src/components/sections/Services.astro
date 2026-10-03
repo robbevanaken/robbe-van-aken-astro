@@ -26,6 +26,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </li>
         ))}
       </ol>
+      <!-- below 1024px: one segment per service, filled as the services pass (components/services.js) -->
+      <div class="c-services__progress" aria-hidden="true">{services.map(() => <i class="c-services__bar" data-services-bar></i>)}</div>
     </div>
   </div>
 </section>

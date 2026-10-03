@@ -31,13 +31,12 @@
   --fs-body-l:clamp(17px,1.3889vw,24px);   /* 20  intro copy, service text */
   --fs-body:16px;                          /*     default body, marquee */
   --fs-ui:15px;                            /*     nav, buttons */
-  --fs-label:12px;                         /*     uppercase labels, captions */
+  --fs-label:13px;                         /*     labels, counters */
 
   --lh-tight:1.05;
   --lh-heading:1.1;
   --lh-text:1.35;
   --ls-tight:-.02em;
-  --ls-label:.08em;
 
   /* spacing (size @1440 in comments) */
   --space-2xs:8px;

@@ -27,8 +27,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
                 : <span class="c-featured-projects__img c-featured-projects__placeholder" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`}>{p.label}</span>}
             </span>
             <span class="c-featured-projects__caption">
-              <span class="c-featured-projects__caption-title u-text-label">{pad(i + 1)} — {p.title}</span>
-              <span class="c-featured-projects__caption-text u-text-body-l">{p.description}</span>
+              <span class="c-featured-projects__caption-title u-text-body-l">{pad(i + 1)} — {p.title}</span>
+              <span class="c-featured-projects__caption-text u-text-ui">{p.description}</span>
             </span>
           </a>
         </li>
