@@ -3,7 +3,8 @@
 // (the period P), so the same view shows and the list never ends. The DOM stays the same size. With Lenis the jump
 // shifts its whole state (target, animated value, the running animation) so a smooth scroll goes on through it.
 // Copies are aria-hidden with unfocusable links (screen readers and the keyboard get the list once) but clickable.
-// Filtering (components/workFilter.js) dispatches "work:filter" on the list before it changes the cards (the copies go)
+// Only while "All" is chosen: with a filter active the list just ends and the footer follows (with the loop it sits
+// below the copies, which the jump never reaches). Filtering (components/workFilter.js) dispatches "work:filter" on the list before it changes the cards (the copies go)
 // and "work:filtered" after (they're rebuilt). Hooks: [data-fp-item] (the originals), [data-fp-clone].
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getLenis } from '../global/lenis.js';
@@ -18,6 +19,8 @@ export function initWorkLoop(root = document) {
   const clear = () => { clones.forEach((c) => c.remove()); clones = []; period = 0; };
   const build = () => {
     clear();
+    // only with "All": a filtered list simply ends
+    if (!root.querySelector('[data-work-filter="all"][aria-pressed="true"]')) { ScrollTrigger.refresh(); return; }
     const visible = items.filter((it) => !it.classList.contains('is-hidden'));
     if (!visible.length) return;
     // measure one list: from the first card to the first copy

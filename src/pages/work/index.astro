@@ -1,5 +1,6 @@
 ---
-// /work (no footer: the list never ends, components/workLoop.js): the title (sticky: the projects scroll over it), then all projects (sections/ProjectGlobe.astro, layout "grid":
+// /work: the footer is only reached with a filter active (with "All" the list never ends, components/workLoop.js:
+// the footer sits below the copies, the loop jumps back before it). The title (sticky: the projects scroll over it), then all projects (sections/ProjectGlobe.astro, layout "grid":
 // staggered, in a repeating pattern of aspect ratios), with the filter menu floating beside the title (ui/Filter.astro).
 import Page from '../../layouts/Page.astro';
 import WorkIntro from '../../components/sections/WorkIntro.astro';
@@ -12,7 +13,7 @@ const counts = new Map<string, number>();
 projects.forEach((pr) => projectTags(pr).forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
 const filters = [{ key: 'all', label: p.filters.all, n: projects.length }, ...[...counts].sort((a, b) => b[1] - a[1]).map(([t, n]) => ({ key: t, label: t, n }))];
 ---
-<Page title="Work" footer={false}>
+<Page title="Work">
   <!-- the filter floats beside the sticky title (above the projects), and leaves with it at the end of the list -->
   <div class="c-work-float o-container o-grid"><Filter class="c-work-float__filter" filters={filters} label={p.filters.label} toggle={p.filters.toggle} /></div>
   <WorkIntro />
