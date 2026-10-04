@@ -10,7 +10,8 @@
 // step to screen readers (data-template "Question {n} of {total}").
 // Validation: on submit (the form has novalidate), then live per field once it has been flagged; the first invalid
 // field gets focus, errors are tied to their input (aria-invalid + aria-describedby).
-// Sending: with an action (contactPage.form.action) the form data is POSTed (JSON answer expected, e.g. Formspree);
+// Sending: with an action (contactPage.form.action: public/api/contact.php) the form data is POSTed (JSON answer,
+// {"ok":true}, shows the thank-you message; anything else the error message);
 // without one the visitor's email app opens with the message filled in. A filled-in spam trap ("website") fakes success.
 import gsap from 'gsap';
 
@@ -163,7 +164,8 @@ export function initContactForm(root = document) {
     sending(true);
     try {
       const res = await fetch(action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-      if (!res.ok) throw new Error(res.status);
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.ok === false) throw new Error(res.status);
       form.reset();
       show('sent');
     } catch {

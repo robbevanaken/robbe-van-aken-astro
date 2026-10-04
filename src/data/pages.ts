@@ -29,9 +29,9 @@ export const contactPage = {
   ],
   socialsLabel: 'Socials',
   form: {
-    // POST endpoint that accepts form data and answers JSON (e.g. Formspree, or your own). Empty: sending opens the
-    // visitor's email app with the message filled in, to the address in `meta.email`.
-    action: '',
+    // POST endpoint that accepts form data and answers JSON: public/api/contact.php mails it to you (PHP mail() on the
+    // host, uploaded with the site). Empty: sending opens the visitor's email app instead.
+    action: '/api/contact.php',
     questions: {
       name: 'What\'s your name?',
       email: 'What\'s your email?',
