@@ -51,9 +51,11 @@ export const pitch = {
 };
 
 export const work = {
-  label: 'Some recent projects',
-  title: 'Made with technical expertise, and a well trained eye for design',
+  // like the services head: a section title (h2) and a muted intro below it
+  title: 'Recent work',
+  intro: 'Made with technical expertise, and a well trained eye for design.',
   cta: { label: 'View all projects', href: '/work' },
+  cursor: 'View project', // on the cursor over a project card (home + /work)
   featured: 3, // how many projects home shows (the first ones in projects.ts)
 };
 

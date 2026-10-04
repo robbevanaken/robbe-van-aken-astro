@@ -1,0 +1,6 @@
+/* "View project" on the cursor over a project card (components/cardCursor.js): positioned by the script (x/y on the
+   outer element), the inner part centred on the pointer and popping in on the punch ease. Like a small button. */
+.c-card-cursor{position:fixed;top:0;left:0;z-index:95;pointer-events:none}
+.c-card-cursor__inner{position:absolute;left:0;top:0;display:block;padding:10px 14px;background:var(--fg);color:var(--on-fg);white-space:nowrap;
+  transform:translate(-50%,-50%) scale(0);transition:transform var(--hover-dur) var(--ease-punch)}
+.c-card-cursor.is-on .c-card-cursor__inner{transform:translate(-50%,-50%) scale(1)}

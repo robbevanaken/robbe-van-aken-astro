@@ -4,7 +4,6 @@
 // The small R stays at the top of the screen while they pass (stage 2 from the sticky head down to the end marker).
 // Styles: styles/components/_projects-intro.css + _featured-projects.css
 import Button from '../ui/Button.astro';
-import Icon from '../ui/Icon.astro';
 import ProjectGlobe from './ProjectGlobe.astro';
 import { work } from '../../data/site';
 import { projects } from '../../data/projects';
@@ -12,8 +11,8 @@ import { projects } from '../../data/projects';
 <ProjectGlobe projects={projects.slice(0, work.featured)} label="Featured projects">
   <div class="c-featured-projects__head" slot="head" data-stage="2"><div class="c-featured-projects__r" id="a-craft"></div></div>
   <div class="c-projects-intro" id="work" slot="intro">
-    <p class="c-projects-intro__label u-text-label"><Icon name="arrow" class="c-projects-intro__arrow" />{work.label}</p>
-    <h2 class="c-projects-intro__title u-text-lead" data-highlight-text>{work.title}</h2>
+    <h2 class="c-projects-intro__title u-text-h2">{work.title}</h2>
+    <p class="c-projects-intro__text u-text-body-l u-text-muted" data-highlight-text>{work.intro}</p>
   </div>
   <div class="c-featured-projects__foot o-container o-grid"><Button href={work.cta.href} class="c-featured-projects__all">{work.cta.label}</Button></div>
   <!-- the R stays in stage 2 down to here -->

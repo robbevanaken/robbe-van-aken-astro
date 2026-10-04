@@ -2,7 +2,9 @@
    move apart to the cell edges, then the logo fades in. */
 .c-trusted-by{padding-top:var(--space-section)}
 .c-trusted-by__label{text-align:center;color:var(--muted);margin-bottom:var(--space-l)}
-.c-trusted-by__list{display:grid;grid-template-columns:subgrid;row-gap:var(--gutter)}
+.c-trusted-by__viewport{display:contents} /* phones: the band's window */
+.c-trusted-by__list{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;row-gap:var(--gutter)} /* full width set here: the viewport in between (display:contents) hides it from .o-grid > * */
+.c-trusted-by__item--copy{display:none} /* phones only: the second half of the endless band */
 .c-trusted-by__item{grid-column:span 3}
 .c-trusted-by__cell{
   position:relative;display:grid;place-items:center;height:clamp(110px,11.1111vw,200px);text-decoration:none;
@@ -18,7 +20,17 @@
 .c-trusted-by__list.is-in .c-trusted-by__cell{--pull-x:0px;--pull-y:0px;--corner-opacity:1}
 .c-trusted-by__list.is-in .c-trusted-by__logo{opacity:1;filter:blur(0) var(--logo-filter);transform:none}
 
+/* phones: an endless band, edge to edge, sliding left; the list is in twice, so moving it by half loops seamlessly
+   (spacing as padding on each item, not gap, so half is exact). Reduced motion: still, scrollable by hand. */
 @media (max-width:639px){
-  .c-trusted-by__item{grid-column:span 2}
+  .c-trusted-by__viewport{display:block;grid-column:1 / -1;margin-inline:calc(-1 * var(--margin));overflow:hidden}
+  .c-trusted-by__list{display:flex;width:max-content;animation:c-trusted-by-loop 22s linear infinite}
+  .c-trusted-by__item,.c-trusted-by__item--copy{display:block;flex:none;width:44vw;padding-right:var(--gutter)}
   .c-trusted-by__cell{height:120px}
+}
+@keyframes c-trusted-by-loop{to{transform:translateX(-50%)}}
+@media (max-width:639px) and (prefers-reduced-motion:reduce){
+  .c-trusted-by__viewport{overflow-x:auto}
+  .c-trusted-by__list{animation:none;padding-left:var(--margin)}
+  .c-trusted-by__item--copy{display:none}
 }

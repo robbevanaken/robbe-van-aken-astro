@@ -15,6 +15,8 @@
 //                  isn't painted (html.is-covered).
 //   next project   ([data-scroll-next-link], components/scrollNext.js) the next project's visual already sits where
 //                  the new page shows it, so it's carried over and only the rest fades in
+//   open project   (a project card, [data-fp-card], components/openProject.js) the card's image is lifted out, the
+//                  page fades around it, then it grows onto the project page's visual while the new page fades in
 // mount() starts every page script, unmount() runs their cleanups just before the content is replaced.
 // prefers-reduced-motion: no loader, instant swaps.
 import Swup from 'swup';
@@ -24,6 +26,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getLenis } from './lenis.js';
 import { handOff, arrive } from '../components/scrollNext.js';
+import { openProject } from '../components/openProject.js';
 import { rIntro } from '../r-journey/engine.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -218,7 +221,8 @@ async function uncover(f) {
 export function initPageTransitions({ mount, unmount }) {
   const overlay = document.querySelector('[data-transition]');
   const f = overlay && !reducedMotion ? createFrame(overlay) : null;
-  const covers = (visit) => f && visit.animation.name !== 'next-project';
+  const shared = (visit) => visit.animation.name === 'next-project' || visit.animation.name === 'open-project';
+  const covers = (visit) => f && !shared(visit);
 
   mount();
   if (f && document.documentElement.classList.contains('is-loading')) runLoader(f);
@@ -235,16 +239,18 @@ export function initPageTransitions({ mount, unmount }) {
     plugins: [new SwupHeadPlugin({ awaitAssets: true }), new SwupPreloadPlugin()],
   });
 
-  let carried = null;
+  let carried = null, card = null;
 
   swup.hooks.on('visit:start', (visit) => {
     if (visit.trigger.el?.closest('[data-scroll-next-link]')) visit.animation.name = 'next-project';
+    else if (f && (card = visit.trigger.el?.closest('[data-fp-card]'))) visit.animation.name = 'open-project'; // f: not with reduced motion
     // no scrolling while a transition runs
     getLenis()?.stop();
   });
 
   swup.hooks.replace('animation:out:await', async (visit) => {
     if (visit.animation.name === 'next-project') { carried = handOff(); return; }
+    if (visit.animation.name === 'open-project') { carried = await openProject.leave(card); card = null; return; }
     if (covers(visit)) await cover(f);
   });
 
@@ -263,6 +269,7 @@ export function initPageTransitions({ mount, unmount }) {
     mount();
     // hide what fades in before the first paint
     if (visit.animation.name === 'next-project') arrive.prepare();
+    if (visit.animation.name === 'open-project') openProject.prepare();
   });
   // links to an anchor on the current page: let Lenis scroll there smoothly
   swup.hooks.replace('scroll:anchor', (visit, { hash }) => {
@@ -276,6 +283,7 @@ export function initPageTransitions({ mount, unmount }) {
 
   swup.hooks.replace('animation:in:await', async (visit) => {
     if (visit.animation.name === 'next-project') { await arrive.play(carried); carried = null; return; }
+    if (visit.animation.name === 'open-project') { await openProject.enter(carried); carried = null; return; }
     if (covers(visit)) await uncover(f);
   });
 

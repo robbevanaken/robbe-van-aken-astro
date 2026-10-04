@@ -1,22 +1,27 @@
 ---
-// Client logos with the corner reveal. Styles: styles/components/_trusted-by.css
+// Client logos with the corner reveal. Desktop / tablet: a row (grid) of cells. Phones: an endless band that slides
+// slowly to the left (the list is in twice, the copy aria-hidden and unfocusable; CSS only).
+// Styles: styles/components/_trusted-by.css
 import Corners from '../ui/Corners.astro';
 import { trustedBy } from '../../data/site';
 import { clients } from '../../data/clients';
+const rows = [...clients.map((c, i) => ({ c, i, copy: false })), ...clients.map((c, i) => ({ c, i, copy: true }))];
 ---
 <section class="c-trusted-by o-container o-grid" aria-labelledby="trusted-label">
   <p class="c-trusted-by__label u-text-label" id="trusted-label">{trustedBy.label}</p>
-  <ul class="c-trusted-by__list" data-reveal>
-    {clients.map((c, i) => {
-      const Tag = c.url ? 'a' : 'div';
-      return (
-        <li class="c-trusted-by__item" style={`--i:${i};--w:${c.width}`}>
-          <Tag class="c-trusted-by__cell" href={c.url} target={c.url ? '_blank' : undefined} rel={c.url ? 'noopener' : undefined}>
-            <Corners />
-            <img class="c-trusted-by__logo" src={c.logo} alt={c.name} loading="lazy" decoding="async" />
-          </Tag>
-        </li>
-      );
-    })}
-  </ul>
+  <div class="c-trusted-by__viewport">
+    <ul class="c-trusted-by__list" data-reveal>
+      {rows.map(({ c, i, copy }) => {
+        const Tag = c.url ? 'a' : 'div';
+        return (
+          <li class:list={['c-trusted-by__item', { 'c-trusted-by__item--copy': copy }]} style={`--i:${i};--w:${c.width}`} aria-hidden={copy ? 'true' : undefined}>
+            <Tag class="c-trusted-by__cell" href={c.url} target={c.url ? '_blank' : undefined} rel={c.url ? 'noopener' : undefined} tabindex={copy && c.url ? -1 : undefined}>
+              <Corners />
+              <img class="c-trusted-by__logo" src={c.logo} alt={copy ? '' : c.name} loading="lazy" decoding="async" />
+            </Tag>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
 </section>

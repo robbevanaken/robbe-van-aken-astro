@@ -8,11 +8,12 @@
 import Corners from '../ui/Corners.astro';
 import Icon from '../ui/Icon.astro';
 import { projectTags, type Project } from '../../data/projects';
+import { work } from '../../data/site';
 interface Props { projects: Project[]; label: string; layout?: 'spread' | 'grid' }
 const { projects, label, layout = 'spread' } = Astro.props;
 const spread = layout === 'spread';
 ---
-<section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects>
+<section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects data-cursor-label={work.cursor}>
   <slot name="head" />
   <div class="c-featured-projects__grid o-container o-grid">
     <slot name="intro" />
@@ -22,8 +23,8 @@ const spread = layout === 'spread';
           <a class="c-featured-projects__card" href={`/work/${p.slug}`} data-fp-card>
             <Corners />
             <span class="c-featured-projects__media" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-media>
-                {p.thumb
-                  ? <img class="c-featured-projects__shot" src={p.thumb} alt="" loading="lazy" decoding="async" />
+                {p.image
+                  ? <img class="c-featured-projects__img" src={p.image} alt="" loading="lazy" decoding="async" />
                   : <span class="c-featured-projects__placeholder">{p.label}</span>}
                 <span class="c-featured-projects__tag u-text-label">{p.service}</span>
                 <span class="c-featured-projects__tag c-featured-projects__tag--year u-text-label">{p.year}</span>

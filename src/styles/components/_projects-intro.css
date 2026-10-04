@@ -1,8 +1,6 @@
-/* Intro of the featured projects on home: label + title, on the globe's grid next to the first project (cols 1–5,
-   first row; above the projects below 1024px). */
-.c-projects-intro{grid-column:1 / span 5;grid-row:1;position:relative;z-index:1;align-self:start}
-.c-projects-intro__label{display:flex;gap:var(--space-xs);align-items:center;color:var(--muted);margin-bottom:var(--space-m)}
-.c-projects-intro__arrow{color:var(--accent);font-size:14px}
-.c-projects-intro__title{line-height:var(--lh-heading)}
+/* Intro of the featured projects on home: a section title (h2) and a muted intro below it, like the services head;
+   on the grid next to the first project (cols 1–5, first row; above the projects below 1024px). */
+.c-projects-intro{grid-column:1 / span 5;grid-row:1;position:relative;z-index:1;align-self:start;display:grid;row-gap:var(--space-s)}
+.c-projects-intro__text{max-width:24em}
 
 @media (max-width:1023px){ .c-projects-intro{grid-column:1 / -1} }
