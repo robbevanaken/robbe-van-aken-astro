@@ -16,8 +16,8 @@ export interface Project {
 export const projectTags = (p: Project) => p.service.split('&').map((s) => s.trim()).filter(Boolean).map((s) => s[0].toUpperCase() + s.slice(1));
 
 export const projects: Project[] = [
-  { slug: 'woonpact-gent', title: 'Woonpact Gent', label: 'Woonpact', image: '/projects/woonpact-gent.jpg', description: 'A unique design and a structured CMS behind the website, for the city of Ghent.', service: 'Development & design', year: 2026, colors: { a: '#3f5a2c', b: '#cfd8b4', t: '#f3efe2' } },
-  { slug: 'toran', title: 'Toran', label: 'Toran', image: '/projects/toran.jpg', description: 'Planning and admin tooling in Laravel for an aviation company.', service: 'Development', year: 2026, colors: { a: '#12233d', b: '#6f93c2', t: '#e8eef7' } },
-  { slug: 'portaal', title: 'Portaal', label: 'Portaal', image: '/projects/portaal.jpg', description: 'A multi-tenant client portal with AI-assisted content.', service: 'Development & AI', year: 2026, colors: { a: '#2d2238', b: '#b69ad6', t: '#f1eaf8' } },
-  { slug: 'imagoo', title: 'Imagoo', label: 'Imagoo', image: '/projects/imagoo.jpg', description: 'Brand and website for a videography and photography studio.', service: 'Branding & design', year: 2026, colors: { a: '#1c1a19', b: '#c9744a', t: '#f4e7dd' } },
+  { slug: 'woonpact-gent', title: 'Woonpact Gent', label: 'Woonpact', image: '/projects/woonpact-gent.jpg', description: 'A distinctive design on top of a well-structured CMS, for the City of Ghent.', service: 'Development & design', year: 2026, colors: { a: '#3f5a2c', b: '#cfd8b4', t: '#f3efe2' } },
+  { slug: 'toran', title: 'Toran', label: 'Toran', image: '/projects/toran.jpg', description: 'Planning and admin tooling in Laravel, for an aviation company.', service: 'Development', year: 2026, colors: { a: '#12233d', b: '#6f93c2', t: '#e8eef7' } },
+  { slug: 'portaal', title: 'Portaal', label: 'Portaal', image: '/projects/portaal.jpg', description: 'A client portal for several brands at once, with AI that helps write the content.', service: 'Development & AI', year: 2026, colors: { a: '#2d2238', b: '#b69ad6', t: '#f1eaf8' } },
+  { slug: 'imagoo', title: 'Imagoo', label: 'Imagoo', image: '/projects/imagoo.jpg', description: 'A brand and website for a video and photography studio.', service: 'Branding & design', year: 2026, colors: { a: '#1c1a19', b: '#c9744a', t: '#f4e7dd' } },
 ];

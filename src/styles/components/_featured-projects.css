@@ -62,7 +62,9 @@
 .c-featured-projects__caption-title{font-size:clamp(19px,1.6667vw,28px);line-height:1.2;letter-spacing:-.01em;color:var(--fg)} /* 24 @1440 */
 
 
-.c-featured-projects__foot{margin-top:var(--space-xl)}
+/* "View all projects" sits exactly in the middle between the last project and the services title: the same room above
+   and below (the services section adds none on top, styles/components/_services.css) */
+.c-featured-projects__foot{--mid:calc(var(--space-section) * 1.25);margin-block:var(--mid)}
 .c-featured-projects__all{grid-column:1 / -1;justify-self:center}
 .c-featured-projects__end{height:1px}
 
@@ -78,6 +80,7 @@
 .c-featured-projects--grid .c-featured-projects__item.is-slot-3{grid-column:9 / span 4;--ratio:.75}
 
 @media (max-width:1023px){
+  .c-featured-projects__foot{--mid:calc(var(--space-section) * 1.75)}
   .c-featured-projects:has(.c-projects-intro){padding-top:calc(var(--space-section) * 1.5)}
   /* tablet: two columns of three */
   .c-featured-projects--grid .c-featured-projects__item.is-slot-0{grid-column:1 / span 4}
@@ -111,6 +114,5 @@
   .c-featured-projects--spread .c-featured-projects__item:first-child{margin-top:0}
   .c-featured-projects__item + .c-featured-projects__item{margin-top:var(--space-xl)}
   .c-featured-projects__card{--corner-size:12px;--corner-offset:18px;--pull-x:5px;--pull-y:5px}
-  /* "View all projects": more room above (after the last project) and below (before the services) */
-  .c-featured-projects__foot{margin-top:calc(var(--space-xl) * 2);margin-bottom:var(--space-xl)}
+  .c-featured-projects__foot{--mid:calc(var(--space-section) * 1.9)}
 }

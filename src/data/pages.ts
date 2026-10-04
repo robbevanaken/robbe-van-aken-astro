@@ -8,8 +8,8 @@ export const workPage = {
 
 export const aboutPage = {
   label: 'About',
-  title: "Developer with a designer's eye",
-  intro: 'More about me and how I work is coming soon.',
+  title: 'The person behind the code',
+  intro: 'A designer who learned to code, and never stopped caring about both. The full story is on its way.',
 };
 
 export const contactPage = {
@@ -18,7 +18,7 @@ export const contactPage = {
     { text: 'Have a project in mind?', muted: true },
     { text: " Let's talk.", muted: false },
   ],
-  intro: "Tell me about your project. I'll get back to you personally, usually within a day.", // meta description
+  intro: "Tell me what you're working on. I'll get back to you personally, usually within a day.", // meta description
   portrait: { image: '', alt: 'Robbe Van Aken', placeholder: 'Portrait' },
   // left column (below the form on phones); an item with href is a link
   details: [
@@ -58,7 +58,7 @@ export const contactPage = {
     wizard: { next: 'Next', back: 'Back', status: 'Question {n} of {total}' }, // one question at a time
     sending: 'Sending…',
     privacy: { text: 'I only use your details to reply to you.', link: { label: 'Privacy notice', href: '/privacy' } },
-    sent: { title: 'Thanks, your message is on its way.', text: "I'll get back to you personally, usually within a day." },
+    sent: { title: 'Thanks, your message is on its way.', text: "I'll read it properly and get back to you within a day or so." },
     mailto: { title: 'Your email app should open now.', text: 'The message is filled in, you only need to press send. Nothing opened? Email me at' },
     failed: 'Something went wrong while sending. Please try again, or email me directly at',
     subject: 'New project enquiry', // email subject (mailto) and form subject (endpoint)

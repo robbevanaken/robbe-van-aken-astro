@@ -3,7 +3,7 @@
 
 export const meta = {
   title: "Robbe Van Aken, developer with a designer's eye",
-  description: 'Freelance developer in Ghent. Websites, custom software and AI workflows.',
+  description: 'Freelance developer in Ghent, building Craft CMS sites, Laravel software and AI workflows with a designer\'s eye.',
   email: 'robbe.vanaken@gmail.com',
   image: '/og.png', // social preview (1200×630), in /public
 };
@@ -53,7 +53,7 @@ export const pitch = {
 export const work = {
   // like the services head: a section title (h2) and a muted intro below it
   title: 'Recent work',
-  intro: 'Made with technical expertise, and a well trained eye for design.',
+  intro: 'Each one started with a good conversation and ended as something people enjoy using, and teams find easy to keep up to date.',
   cta: { label: 'View all projects', href: '/work' },
   cursor: 'View project', // on the cursor over a project card (home + /work)
   featured: 3, // how many projects home shows (the first ones in projects.ts)
@@ -61,14 +61,14 @@ export const work = {
 
 export const servicesIntro = {
   title: 'What I build',
-  text: 'Development leads, design runs through all of it. For bigger projects I bring in the right people.',
+  text: 'Development leads, design runs through all of it. For bigger projects I bring in people I trust, so the right skills are at the table.',
 };
 
 export const footer = {
   // Each part in order; `muted` parts are shown in the grey (like "Freelance Dev" in the hero).
   title: [
     { text: "Let's build", muted: true },
-    { text: " something we're both proud of.", muted: false },
+    { text: ' what comes next.', muted: false },
   ],
   company: 'Robbe Van Aken BV',
   location: 'Ghent, Belgium',
