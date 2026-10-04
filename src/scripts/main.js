@@ -4,7 +4,7 @@
 // (or nothing), and each does nothing when its element isn't on the page. unmount() runs the cleanups just before swup
 // replaces the page.
 // Order matters: the pinned projects before the R engine (the pin changes where the R anchors sit),
-// text effects once the fonts are in (they split text into lines).
+// text effects once the fonts are in (they split text into lines) and the page is visible (whenUncovered).
 import './global/eases.js';
 import { initSmoothScroll } from './global/lenis.js';
 import { initSiteHeader } from './global/siteHeader.js';
@@ -27,6 +27,18 @@ import { initTextHover } from './components/textHover.js';
 import { initREngine } from './r-journey/engine.js';
 
 let cleanups = [], page = 0;
+
+// resolves once the page isn't covered by a page swap (html.is-covered hides #swup with visibility:hidden). Text
+// effects start after it: GSAP reads an element under visibility:hidden as opacity 0, so a highlight set up then would
+// fade its letters out instead of in.
+function whenUncovered() {
+  const html = document.documentElement;
+  if (!html.classList.contains('is-covered')) return Promise.resolve();
+  return new Promise((resolve) => {
+    const mo = new MutationObserver(() => { if (!html.classList.contains('is-covered')) { mo.disconnect(); resolve(); } });
+    mo.observe(html, { attributes: true, attributeFilter: ['class'] });
+  });
+}
 
 // every init only looks inside the page's own container (root)
 function mount() {
@@ -52,7 +64,7 @@ function mount() {
     initReveal(root),
     initDebugGrid(root),
   ];
-  document.fonts.ready.then(() => {
+  Promise.all([document.fonts.ready, whenUncovered()]).then(() => {
     if (id !== page) return; // swapped away in the meantime
     cleanups.push(initHighlight(root), initTextHover(root));
   });

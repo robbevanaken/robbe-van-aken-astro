@@ -56,7 +56,7 @@ Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) 
 ## Motion
 - Text scramble: not used anywhere at the moment (it was on the featured projects' caption; removed everywhere else on purpose).
 - Project cards (home + /work) are flat: no bend and no 3D hover (both tried and dropped: they didn't fit the feel of the site). Hover: the screenshot zooms a touch and the corner brackets appear around the card (see Project cards).
-- Highlight text on scroll (Osmo Supply resource, kept as delivered, `scripts/components/highlightText.js`): `data-highlight-text` on longer texts (pitch quote, projects title, services intro + descriptions, footer title); letters go from 0.2 to full opacity, scrubbed with scroll.
+- Highlight text on scroll (Osmo Supply resource, kept as delivered, `scripts/components/highlightText.js`; started from `mount()` once the fonts are in and the page is no longer covered by a swap, `whenUncovered()`: GSAP reads text under `visibility:hidden` as opacity 0 and would fade the letters out): `data-highlight-text` on longer texts (pitch quote, projects title, services intro + descriptions, footer title); letters go from 0.2 to full opacity, scrubbed with scroll.
 - Hovers use the "punch" ease (`--ease-punch` in CSS, `CustomEase 'punch'` in GSAP via `scripts/global/eases.js`, same curve).
 - Button hover: scales down slightly, the brand arrow (at 45°) flies out to the top right while a new one comes in from the bottom left (as on the project cards), four corner brackets slide out of the button's corners.
 - Footer: title spans 5 columns, "Let's build" in the muted grey (title parts in `site.ts`); the footer is one screen + the marquee tall, so at the very bottom the marquee sits just above the fold.
