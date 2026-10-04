@@ -7,6 +7,7 @@
 /* soft fade behind the header once the page has scrolled, so it stays readable over content */
 .c-site-header__body::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--bg) 35%,transparent);opacity:0;transition:opacity .5s}
 .is-scrolled .c-site-header__body::before,.is-open .c-site-header__body::before{opacity:1}
+.is-open .c-site-header__body::before{background:var(--panel)} /* over the open menu: the menu's own colour */
 
 .c-site-header__brand{grid-column:1 / span 3;grid-row:1;justify-self:start;width:fit-content;text-decoration:none;line-height:1.3} /* hover area = the text */
 .c-site-header__name,.c-site-header__role{display:block}
@@ -28,7 +29,7 @@
    global/siteHeader.js classes: .is-in (open: background fades in, rows slide up out of their masks one by one, lines
    draw from the left, the foot fades up), .is-out (closing / leaving: rows slide on up and out, quick, then it fades).
    A link to another page plays .is-out and the page transition starts while it runs (same background colour). */
-.c-site-header__menu{position:fixed;inset:0;z-index:-2;display:flex;flex-direction:column;background:var(--bg);
+.c-site-header__menu{position:fixed;inset:0;z-index:-2;display:flex;flex-direction:column;background:var(--panel);
   padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 96px);padding-bottom:calc(var(--space-l) + env(safe-area-inset-bottom,0px));
   opacity:0;transition:opacity .55s cubic-bezier(.65,0,.35,1)}
 .c-site-header__menu[hidden]{display:none}

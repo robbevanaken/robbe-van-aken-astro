@@ -25,6 +25,7 @@
   --on-fg:#170e0b;    /* text on an --fg background (buttons) */
   --surface:#1d1310;  /* panels above the page (cookie banner) */
   --paper:#ffffff;    /* the filling marquee before the orange comes in */
+  --panel:color-mix(in srgb,var(--fg) 4%,var(--bg)); /* quiet panels a step off the page: the contact wizard, the mobile menu (follows the theme) */
   --logo-filter:brightness(1); /* client logos are white SVGs */
 
   /* layout grid: 12 columns, 60px margin, 20px gutter @1440 */

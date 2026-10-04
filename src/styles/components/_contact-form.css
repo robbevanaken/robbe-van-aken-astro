@@ -5,7 +5,7 @@
 .c-contact-form{--num:3.5em;grid-column:6 / -1;grid-row:1}
 /* the wizard (and the thank-you that replaces it) on a quiet panel: a step lighter than the page (darker in the light
    theme), generous padding */
-.c-contact-form:has(.is-wizard){background:color-mix(in srgb,var(--fg) 4%,var(--bg));padding:var(--space-l) var(--space-l) var(--space-xl)}
+.c-contact-form:has(.is-wizard){background:var(--panel);padding:var(--space-l) var(--space-l) var(--space-xl)}
 .c-contact-form:has(.is-wizard) .c-contact-form__input{background-image:linear-gradient(var(--u),var(--u)),linear-gradient(color-mix(in srgb,var(--fg) 22%,transparent),color-mix(in srgb,var(--fg) 22%,transparent))}
 .c-contact-form:has(.is-wizard) .c-contact-form__done{border-top:0;padding-top:0}
 .c-contact-form__form{position:relative;display:grid}
