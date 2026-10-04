@@ -35,7 +35,6 @@ export const hero = {
   ],
   intro: "A one-person studio for full-cycle product development. Pairing a designer's eye with a developer's craft.",
   cta: { label: 'Get in touch', href: '/contact' },
-  scrollHint: 'Scroll down',
 };
 
 export const marquee = {

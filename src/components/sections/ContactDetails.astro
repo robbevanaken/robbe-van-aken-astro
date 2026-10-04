@@ -1,0 +1,25 @@
+---
+// Contact page, left column: portrait, contact + business details, socials. Sticky on desktop, below the form on
+// phones. Styles: styles/components/_contact.css. Copy: contactPage in src/data/pages.ts.
+import Socials from '../ui/Socials.astro';
+import { contactPage as p } from '../../data/pages';
+---
+<aside class="c-contact__details" aria-label="Contact details">
+  <figure class="c-contact__portrait">
+    {p.portrait.image
+      ? <img class="c-contact__portrait-img" src={p.portrait.image} alt={p.portrait.alt} loading="lazy" decoding="async" />
+      : <figcaption class="u-text-label">{p.portrait.placeholder}</figcaption>}
+  </figure>
+  {p.details.map((group) => (
+    <div class="c-contact__group">
+      <h2 class="c-contact__group-label u-text-label">{group.label}</h2>
+      <ul class="c-contact__list u-text-body-l">
+        {group.items.map((item) => <li>{item.href ? <a class="c-contact__link" href={item.href}>{item.text}</a> : item.text}</li>)}
+      </ul>
+    </div>
+  ))}
+  <div class="c-contact__group">
+    <h2 class="c-contact__group-label u-text-label">{p.socialsLabel}</h2>
+    <Socials class="c-contact__socials" />
+  </div>
+</aside>

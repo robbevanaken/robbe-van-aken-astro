@@ -1,0 +1,65 @@
+/* Contact form (sections/ContactForm.astro, components/contactForm.js): numbered questions, one row each between thin
+   lines. Each row: the number (a narrow first column), the question (lead size) and its field(s) below it. Fields
+   are underlined only: the line fills in from the left when focused (--u: the fill colour, orange when invalid).
+   Budget: square choice chips (radio buttons). The sent / mailto message replaces the form. */
+.c-contact-form{--num:3.5em;grid-column:6 / -1;grid-row:1}
+.c-contact-form__form{position:relative;display:grid}
+/* the hidden attribute wins over the display above (the form / done messages swap with it) */
+.c-contact-form [hidden]{display:none}
+.c-contact-form__trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+.c-contact-form__row{display:grid;grid-template-columns:var(--num) minmax(0,1fr);column-gap:var(--gutter);row-gap:var(--space-s);padding-block:var(--space-m) var(--space-l);border-top:1px solid var(--line)}
+/* the number sits level with the question's first line */
+.c-contact-form__num{grid-column:1;grid-row:1;align-self:start;margin-top:calc((var(--fs-lead) * 1.35 - var(--fs-label) * 1.3) / 2);color:var(--subtle)}
+.c-contact-form__question{grid-column:2;grid-row:1;color:var(--fg)}
+.c-contact-form__fields{grid-column:2;grid-row:2}
+.c-contact-form__fields--pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter)}
+
+.c-contact-form__input{--u:var(--fg);display:block;width:100%;margin:0;padding:.55em 0;border:0;border-radius:0;color:var(--fg);font-family:inherit;
+  -webkit-appearance:none;appearance:none;background-color:transparent;
+  background-image:linear-gradient(var(--u),var(--u)),linear-gradient(var(--line-strong),var(--line-strong));
+  background-repeat:no-repeat;background-position:left bottom;background-size:0 1px,100% 1px;
+  transition:background-size var(--hover-dur) var(--ease-punch)}
+.c-contact-form__input::placeholder{color:var(--subtle);opacity:1}
+.c-contact-form__input:focus{outline:none;background-size:100% 1px,100% 1px}
+.c-contact-form__input--area{resize:none;overflow:hidden;min-height:calc(3 * 1.35em + 1.1em)}
+/* browser autofill: keep the site's colours instead of the yellow/blue fill */
+.c-contact-form__input:-webkit-autofill{-webkit-text-fill-color:var(--fg);caret-color:var(--fg);transition:background-color 9999s 0s}
+.c-contact-form__field.is-invalid .c-contact-form__input{--u:var(--accent);background-size:100% 1px,100% 1px}
+.c-contact-form__error{display:block;margin-top:var(--space-2xs);color:var(--accent)}
+
+/* budget: square chips; the chosen one fills */
+.c-contact-form__choices{display:flex;flex-wrap:wrap;gap:var(--space-2xs);padding-top:var(--space-2xs)}
+.c-contact-form__choice{cursor:pointer}
+.c-contact-form__choice span{display:inline-block;padding:10px 16px;border:1px solid var(--line-strong);color:var(--muted);
+  transition:background-color var(--hover-dur) var(--ease-punch),color var(--hover-dur) var(--ease-punch),border-color var(--hover-dur) var(--ease-punch),transform var(--hover-dur) var(--ease-punch)}
+.c-contact-form__choice:hover span{border-color:var(--fg);color:var(--fg)}
+.c-contact-form__choice:active span{transform:scale(.96)}
+.c-contact-form__choice input:checked + span{background-color:var(--fg);border-color:var(--fg);color:var(--on-fg)}
+.c-contact-form__choice input:focus-visible + span{outline:2px solid var(--accent);outline-offset:3px}
+
+/* submit: the button and a short privacy note, lined up with the fields */
+.c-contact-form__submit{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-s) var(--space-m);padding:var(--space-l) 0 0 calc(var(--num) + var(--gutter));border-top:1px solid var(--line)}
+.c-contact-form__privacy,.c-contact-form__failed{color:var(--muted)}
+.c-contact-form__privacy a,.c-contact-form__failed a,.c-contact-form__done-text a{color:var(--fg)}
+.c-contact-form__failed{margin-top:var(--space-s);padding-left:calc(var(--num) + var(--gutter));color:var(--accent)}
+.c-contact-form__form.is-sending .c-contact-form__button{opacity:.6;pointer-events:none}
+
+/* sent / handed to the email app: replaces the form, comes up softly */
+.c-contact-form__done{display:grid;gap:var(--space-m);padding-top:var(--space-l);border-top:1px solid var(--line);outline:none}
+.c-contact-form__done:not([hidden]){animation:c-contact-form-in 1s var(--ease-punch) both}
+.c-contact-form__done-text{color:var(--muted);max-width:32em}
+@keyframes c-contact-form-in{from{opacity:0;transform:translateY(16px)}}
+
+@media (max-width:1023px){ .c-contact-form{grid-column:1 / -1} }
+/* phones: more air everywhere (rows, question to field, the chips, the submit area) */
+@media (max-width:639px){
+  .c-contact-form{--num:2em}
+  .c-contact-form__row{padding-block:var(--space-l) calc(var(--space-l) + var(--space-xs));row-gap:var(--space-m)}
+  .c-contact-form__fields--pair{row-gap:var(--space-s)}
+  .c-contact-form__choices{gap:var(--space-xs)}
+  .c-contact-form__submit{padding:var(--space-l) 0 0;row-gap:var(--space-m)}
+  .c-contact-form__failed{padding-left:0}
+  .c-contact-form__choice span{padding:9px 14px}
+}
+@media (max-width:379px){ .c-contact-form__fields--pair{grid-template-columns:1fr} }

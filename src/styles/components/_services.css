@@ -1,7 +1,8 @@
 /* Services: the head (title + intro) centred, scrolling by as usual (cols 4–9, the intro narrower: cols 5–8). Then the
    stage: one screen, pinned while the pin track scrolls on (one screen per service, --services set inline): the icon in
    the middle (slot, cols 5–8), the active service's count + name on the left (cols 1–4) and its text on the right
-   (cols 10–12). All items share one grid cell; only the active one shows. The engine rebuilds the R into the active
+   (cols 10–12), a progress line at the bottom (one segment per service). All items share one grid cell; only the
+   active one shows. The engine rebuilds the R into the active
    icon inside [data-service-slot]. Below 1024px: one centred column (icon, then count, name and text), the group
    centred on the screen, a progress line (one segment per service) at the bottom. */
 .c-services{padding-top:var(--space-section)}
@@ -17,7 +18,13 @@
 .c-services__count{grid-column:1 / span 4;grid-row:1;align-self:end}
 .c-services__name{grid-column:1 / span 4;grid-row:2}
 .c-services__text{grid-column:10 / span 3;grid-row:2}
-.c-services__progress{display:none}
+/* progress: one segment per service at the bottom of the stage, the line fills as its service comes in */
+.c-services__progress{grid-column:1 / -1;grid-row:1;align-self:end;justify-self:center;margin-bottom:var(--space-l);display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:var(--space-2xs);width:min(100%,280px)}
+.c-services__bar{position:relative;height:1px;background:var(--line);overflow:hidden}
+.c-services__bar::after{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleX(var(--fill,0));transform-origin:left}
+/* only while the stage is pinned: fades in as the pin starts, out once the services are scrolled through */
+.c-services__progress{transition:opacity .6s var(--ease-out),translate .8s var(--ease-punch)}
+.c-services__progress.is-hidden{opacity:0;translate:0 10px}
 
 /* switching: the old service leaves upwards, the next comes up from below (and the other way round scrolling back) */
 .c-services__item>*{opacity:0;transform:translateY(24px);transition:opacity .35s var(--ease-out),transform .9s var(--ease-punch)}
@@ -42,10 +49,7 @@
   .c-services__count{grid-row:1}
   .c-services__name{grid-row:2;font-size:clamp(32px,8.5vw,48px);line-height:var(--lh-heading)}
   .c-services__text{grid-row:3;max-width:30ch;margin-top:var(--space-2xs)}
-  /* progress: one segment per service, the line fills as its service comes in */
-  .c-services__progress{grid-column:1 / -1;grid-row:5;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:var(--space-2xs);width:min(100%,280px);justify-self:center}
-  .c-services__bar{position:relative;height:1px;background:var(--line);overflow:hidden}
-  .c-services__bar::after{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleX(var(--fill,0));transform-origin:left}
+  .c-services__progress{grid-row:5;margin-bottom:0}
 }
 @media (max-width:639px){.c-services__intro{grid-column:1 / -1}}
 @media (prefers-reduced-motion:reduce){.c-services__item>*{transition:none!important;transform:none!important}}

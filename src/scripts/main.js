@@ -17,6 +17,7 @@ import { initFeaturedProjects } from './components/featuredProjects.js';
 import { initScrollNext } from './components/scrollNext.js';
 import { initMarquee } from './components/marquee.js';
 import { initServices } from './components/services.js';
+import { initContactForm } from './components/contactForm.js';
 import { initHighlight } from './components/highlightText.js';
 import { initTextHover } from './components/textHover.js';
 import { initREngine } from './r-journey/engine.js';
@@ -38,6 +39,7 @@ function mount() {
     }),
     initScrollNext(root),
     initServices(root),
+    initContactForm(root),
     initMarquee(root),
     initReveal(root),
     initDebugGrid(root),

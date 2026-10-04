@@ -1,11 +1,16 @@
 ---
+// Contact: the intro, then the details (portrait, contact + business details, socials; left, sticky) and the form
+// (right). Phones: form first, details below. Styles: styles/components/_contact.css + _contact-form.css.
 import Page from '../layouts/Page.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
+import ContactDetails from '../components/sections/ContactDetails.astro';
+import ContactForm from '../components/sections/ContactForm.astro';
 import { contactPage as p } from '../data/pages';
-import { meta } from '../data/site';
 ---
-<Page title="Contact">
-  <PageIntro label={p.label} title={p.title} intro={p.intro}>
-    <a class="c-link-mail u-text-lead" href={`mailto:${meta.email}`}>{meta.email}</a>
-  </PageIntro>
+<Page title="Contact" description={p.intro}>
+  <PageIntro label={p.label} title={p.title} intro={p.intro} />
+  <section class="c-contact o-container o-grid">
+    <ContactDetails />
+    <ContactForm />
+  </section>
 </Page>

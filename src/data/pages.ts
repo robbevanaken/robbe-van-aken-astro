@@ -16,7 +16,51 @@ export const aboutPage = {
 export const contactPage = {
   label: 'Contact',
   title: "Let's build something we're both proud of.",
-  intro: 'Tell me about your project, or just say hi.',
+  intro: "Tell me about your project. I'll get back to you personally, usually within a day.",
+  portrait: { image: '', alt: 'Robbe Van Aken', placeholder: 'Portrait' },
+  // left column (below the form on phones); an item with href is a link
+  details: [
+    { label: 'Contact details', items: [
+      { text: 'robbe.vanaken@gmail.com', href: 'mailto:robbe.vanaken@gmail.com' },
+      { text: '+32 494 48 77 62', href: 'tel:+32494487762' },
+    ] },
+    { label: 'Business details', items: [{ text: 'Robbe Van Aken BV' }, { text: 'Ghent, Belgium' }] },
+  ],
+  socialsLabel: 'Socials',
+  form: {
+    // POST endpoint that accepts form data and answers JSON (e.g. Formspree, or your own). Empty: sending opens the
+    // visitor's email app with the message filled in, to the address in `meta.email`.
+    action: '',
+    questions: {
+      name: 'What\'s your name?',
+      email: 'What\'s your email?',
+      company: 'What company are you with?',
+      budget: 'What\'s your budget?',
+      message: 'Tell me about your project',
+    },
+    placeholders: {
+      firstName: 'First name *',
+      lastName: 'Last name *',
+      email: 'name@company.com *',
+      company: 'Company (optional)',
+      message: 'What are you building, and where can I help? *',
+    },
+    labels: { firstName: 'First name', lastName: 'Last name' }, // for screen readers (the question covers the rest)
+    budgets: ['€2k – €5k', '€5k – €10k', '€10k – €15k', '€15k – €25k', '€25k +', 'Not sure yet'],
+    errors: {
+      firstName: 'Please fill in your first name.',
+      lastName: 'Please fill in your last name.',
+      email: 'Please fill in a valid email address.',
+      message: 'Please tell me a little about your project.',
+    },
+    submit: 'Send message',
+    sending: 'Sending…',
+    privacy: { text: 'I only use your details to reply to you.', link: { label: 'Privacy notice', href: '/privacy' } },
+    sent: { title: 'Thanks, your message is on its way.', text: "I'll get back to you personally, usually within a day." },
+    mailto: { title: 'Your email app should open now.', text: 'The message is filled in, you only need to press send. Nothing opened? Email me at' },
+    failed: 'Something went wrong while sending. Please try again, or email me directly at',
+    subject: 'New project enquiry', // email subject (mailto) and form subject (endpoint)
+  },
 };
 
 export const privacyPage = {

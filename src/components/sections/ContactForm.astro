@@ -1,0 +1,90 @@
+---
+// Contact page, right column: the form as numbered questions with underlined fields (name, email, company, budget,
+// message). Behaviour: scripts/components/contactForm.js (validation, sending, the sent / failed states).
+// Styles: styles/components/_contact-form.css. Copy + endpoint: contactPage.form in src/data/pages.ts.
+import Button from '../ui/Button.astro';
+import { contactPage } from '../../data/pages';
+import { meta } from '../../data/site';
+const f = contactPage.form;
+const q = f.questions, ph = f.placeholders, err = f.errors;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<div class="c-contact-form" data-contact>
+  <form class="c-contact-form__form" action={f.action || undefined} method="post" novalidate
+    data-contact-form data-email={meta.email} data-subject={f.subject} data-sending={f.sending}>
+    <!-- spam trap: hidden from people, bots fill it in -->
+    <div class="c-contact-form__trap" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+    <input type="hidden" name="_subject" value={f.subject} />
+
+    <div class="c-contact-form__row">
+      <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(1)}</span>
+      <p class="c-contact-form__question u-text-lead" id="q-name">{q.name}</p>
+      <div class="c-contact-form__fields c-contact-form__fields--pair">
+        <div class="c-contact-form__field" data-contact-field>
+          <label class="u-sr-only" for="cf-first">{f.labels.firstName}</label>
+          <input class="c-contact-form__input u-text-body-l" id="cf-first" name="first_name" type="text" autocomplete="given-name" required placeholder={ph.firstName} aria-describedby="q-name" data-error={err.firstName} />
+        </div>
+        <div class="c-contact-form__field" data-contact-field>
+          <label class="u-sr-only" for="cf-last">{f.labels.lastName}</label>
+          <input class="c-contact-form__input u-text-body-l" id="cf-last" name="last_name" type="text" autocomplete="family-name" required placeholder={ph.lastName} aria-describedby="q-name" data-error={err.lastName} />
+        </div>
+      </div>
+    </div>
+
+    <div class="c-contact-form__row">
+      <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(2)}</span>
+      <label class="c-contact-form__question u-text-lead" for="cf-email">{q.email}</label>
+      <div class="c-contact-form__fields">
+        <div class="c-contact-form__field" data-contact-field>
+          <input class="c-contact-form__input u-text-body-l" id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" required placeholder={ph.email} data-error={err.email} />
+        </div>
+      </div>
+    </div>
+
+    <div class="c-contact-form__row">
+      <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(3)}</span>
+      <label class="c-contact-form__question u-text-lead" for="cf-company">{q.company}</label>
+      <div class="c-contact-form__fields">
+        <div class="c-contact-form__field">
+          <input class="c-contact-form__input u-text-body-l" id="cf-company" name="company" type="text" autocomplete="organization" placeholder={ph.company} />
+        </div>
+      </div>
+    </div>
+
+    <div class="c-contact-form__row">
+      <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(4)}</span>
+      <p class="c-contact-form__question u-text-lead" id="q-budget">{q.budget}</p>
+      <div class="c-contact-form__fields c-contact-form__choices" role="radiogroup" aria-labelledby="q-budget">
+        {f.budgets.map((b) => (
+          <label class="c-contact-form__choice u-text-ui"><input class="u-sr-only" type="radio" name="budget" value={b} /><span>{b}</span></label>
+        ))}
+      </div>
+    </div>
+
+    <div class="c-contact-form__row">
+      <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(5)}</span>
+      <label class="c-contact-form__question u-text-lead" for="cf-message">{q.message}</label>
+      <div class="c-contact-form__fields">
+        <div class="c-contact-form__field" data-contact-field>
+          <textarea class="c-contact-form__input c-contact-form__input--area u-text-body-l" id="cf-message" name="message" rows="3" required placeholder={ph.message} data-error={err.message} data-contact-grow></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="c-contact-form__submit">
+      <Button type="submit" class="c-contact-form__button" data-contact-submit>{f.submit}</Button>
+      <p class="c-contact-form__privacy u-text-ui">{f.privacy.text} <a href={f.privacy.link.href}>{f.privacy.link.label}</a></p>
+    </div>
+    <p class="c-contact-form__failed u-text-ui" role="alert" hidden data-contact-failed>{f.failed} <a href={`mailto:${meta.email}`}>{meta.email}</a>.</p>
+  </form>
+
+  <!-- shown instead of the form once it is sent (endpoint) or handed to the email app (no endpoint) -->
+  <div class="c-contact-form__done" tabindex="-1" hidden data-contact-done="sent">
+    <p class="c-contact-form__done-title u-text-h2">{f.sent.title}</p>
+    <p class="c-contact-form__done-text u-text-body-l">{f.sent.text}</p>
+  </div>
+  <div class="c-contact-form__done" tabindex="-1" hidden data-contact-done="mailto">
+    <p class="c-contact-form__done-title u-text-h2">{f.mailto.title}</p>
+    <p class="c-contact-form__done-text u-text-body-l">{f.mailto.text} <a href={`mailto:${meta.email}`}>{meta.email}</a>.</p>
+  </div>
+</div>
