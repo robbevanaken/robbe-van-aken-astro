@@ -5,8 +5,8 @@
    active one shows. The engine rebuilds the R into the active
    icon inside [data-service-slot]. Below 1024px: one centred column (icon, then count, name and text), the group
    centred on the screen, a progress line (one segment per service) at the bottom. */
-.c-services{padding-top:var(--space-section)}
-.c-services__head{row-gap:var(--space-s);padding-bottom:var(--space-l);text-align:center}
+.c-services{padding-top:calc(var(--space-section) * 1.75)}
+.c-services__head{row-gap:var(--space-s);padding-bottom:calc(var(--space-xl) * 1.5);text-align:center}
 .c-services__title{grid-column:4 / span 6}
 .c-services__intro{grid-column:5 / span 4}
 
@@ -34,8 +34,8 @@
 .c-services__item.is-active>:nth-child(3){transition-delay:.12s}
 
 @media (max-width:1023px){
-  .c-services{padding-top:calc(var(--space-section) * 1.25);padding-bottom:var(--space-xl)}
-  .c-services__head{row-gap:var(--space-s);padding-bottom:var(--space-xl)}
+  .c-services{padding-top:calc(var(--space-section) * 1.8);padding-bottom:var(--space-xl)}
+  .c-services__head{row-gap:var(--space-s);padding-bottom:calc(var(--space-xl) * 1.6)}
   .c-services__title{grid-column:1 / -1;font-size:clamp(40px,10.5vw,72px);line-height:var(--lh-tight)}
   .c-services__intro{grid-column:2 / span 4}
   /* one centred column: icon, count, name, text; spacer rows above and below keep the group in the middle, with more
@@ -51,5 +51,5 @@
   .c-services__text{grid-row:3;max-width:30ch;margin-top:var(--space-2xs)}
   .c-services__progress{grid-row:5;margin-bottom:0}
 }
-@media (max-width:639px){.c-services__intro{grid-column:1 / -1}}
+@media (max-width:639px){.c-services__intro{grid-column:1 / -1;max-width:28ch;justify-self:center}} /* a narrower column, centred */
 @media (prefers-reduced-motion:reduce){.c-services__item>*{transition:none!important;transform:none!important}}
