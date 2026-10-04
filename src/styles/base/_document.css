@@ -22,11 +22,13 @@ main:focus{outline:none} /* focused by the skip link (tabindex -1), no ring arou
 .c-r-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:35}
 html.is-menu-open .c-r-canvas{visibility:hidden}
 
-/* theme switch (global/theme.js): the page cross-fades to the new colours (view transition); without view transitions
-   every colour eases instead. Same duration as FADE in theme.js. */
+/* theme switch (global/theme.js): the toggle cross-fades the page (view transition); the home theme zone (and browsers
+   without view transitions) ease the colour tokens themselves: they're registered (@property in base/_tokens.css), so
+   one transition on <html> animates every colour on the page. (A transition on every element instead made scrolling
+   through the zone stutter: hundreds of split letters.) Same duration as FADE in theme.js. */
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.6s;animation-timing-function:var(--ease-out)}
-html.is-theming,html.is-theming *,html.is-theming *::before,html.is-theming *::after{
-  transition:background-color .6s var(--ease-out),color .6s var(--ease-out),border-color .6s var(--ease-out),fill .6s var(--ease-out),stroke .6s var(--ease-out),text-shadow .6s var(--ease-out),filter .6s var(--ease-out) !important}
+html.is-theming{transition:--bg .6s var(--ease-out),--fg .6s var(--ease-out),--muted .6s var(--ease-out),--subtle .6s var(--ease-out),
+  --line .6s var(--ease-out),--line-strong .6s var(--ease-out),--card .6s var(--ease-out),--on-fg .6s var(--ease-out),--surface .6s var(--ease-out)}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition-duration:0s !important;animation-duration:0s !important}

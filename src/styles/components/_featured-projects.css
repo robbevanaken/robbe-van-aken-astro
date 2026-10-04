@@ -87,7 +87,7 @@
   .c-featured-projects--grid .c-featured-projects__item.is-slot-1{grid-column:3 / span 4}
   .c-featured-projects--grid .c-featured-projects__item.is-slot-2{grid-column:2 / span 3}
   .c-featured-projects--grid .c-featured-projects__item.is-slot-3{grid-column:4 / span 3}
-  .c-projects-intro + .c-featured-projects__list{grid-row:2;margin-top:var(--space-l)}
+  .c-projects-intro + .c-featured-projects__list{grid-row:2;margin-top:calc(var(--space-xl) * 1.25)}
   .c-featured-projects__item{grid-column:3 / span 4}
   .c-featured-projects__item:nth-child(even){grid-column:1 / span 4}
   .c-featured-projects--spread .c-featured-projects__item:nth-child(3n+1){grid-column:3 / span 4}
@@ -96,6 +96,7 @@
   .c-featured-projects--spread .c-featured-projects__item:not(:first-child){margin-top:calc(var(--space-xl) * 1.4)}
 }
 @media (max-width:639px){
+  .c-projects-intro + .c-featured-projects__list{margin-top:calc(var(--space-xl) * 1.5)} /* more room under the "Recent work" intro */
   .c-featured-projects__tag{top:var(--space-xs);left:var(--space-xs)}
   .c-featured-projects__tag--year{left:auto;right:var(--space-xs)}
   .c-featured-projects__arrow{width:18px;height:15px}

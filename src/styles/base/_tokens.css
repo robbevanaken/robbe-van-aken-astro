@@ -1,3 +1,15 @@
+/* the colour tokens are registered, so they can be transitioned (the theme switch eases them on <html>,
+   base/_document.css); initial values = the dark theme */
+@property --bg{syntax:"<color>";inherits:true;initial-value:#170e0b}
+@property --fg{syntax:"<color>";inherits:true;initial-value:#ffffff}
+@property --muted{syntax:"<color>";inherits:true;initial-value:#b2b2b2}
+@property --subtle{syntax:"<color>";inherits:true;initial-value:#8c827c}
+@property --line{syntax:"<color>";inherits:true;initial-value:#3a2f2a}
+@property --line-strong{syntax:"<color>";inherits:true;initial-value:#6e625b}
+@property --card{syntax:"<color>";inherits:true;initial-value:#d8d2cc}
+@property --on-fg{syntax:"<color>";inherits:true;initial-value:#170e0b}
+@property --surface{syntax:"<color>";inherits:true;initial-value:#1d1310}
+
 /* Design tokens. Figma frame is 1440 wide: fluid values hit their Figma size at 1440. */
 :root{
   /* colour: dark is the default theme; light below ([data-theme="light"] on <html>, global/theme.js) */

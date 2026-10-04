@@ -2,7 +2,7 @@
 // paint (the saved choice, else dark); this module keeps it in sync. The toggle ([data-theme-toggle], delegated, so it
 // survives page swaps) switches and saves the choice.
 // The switch fades: the page cross-fades from the old colours to the new ones in a view transition (the R canvas too);
-// browsers without view transitions ease every colour instead (html.is-theming). Reduced motion: instant.
+// browsers without view transitions ease the colour tokens instead (html.is-theming). Reduced motion: instant.
 const KEY = 'theme';
 const FADE = .6; // s, same as the ::view-transition rule and html.is-theming in styles/base/_document.css
 const META = { dark: '#170e0b', light: '#f3eee8' }; // --bg of each theme, for the browser UI
