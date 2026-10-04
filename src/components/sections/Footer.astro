@@ -7,7 +7,7 @@ import Socials from '../ui/Socials.astro';
 import { footer, meta } from '../../data/site';
 ---
 <footer class="c-site-footer" id="contact" data-stage="4" data-site-footer>
-  <Marquee />
+  <Marquee text={footer.marquee} icon="together" />
   <div class="c-site-footer__main o-container o-grid">
     <div class="c-site-footer__cta">
       <h2 class="c-site-footer__title u-text-display" data-highlight-text>{footer.title.map((p) => <span class:list={{ 'u-text-muted': p.muted }}>{p.text}</span>)}</h2>

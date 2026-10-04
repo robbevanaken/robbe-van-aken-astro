@@ -3,7 +3,7 @@
 // fill: starts white and fills with orange from the left, driven by a script through [data-marquee-fill] (scroll next).
 import Icon from './Icon.astro';
 import { marquee } from '../../data/site';
-interface Props { text?: string; icon?: 'globe' | 'arrow'; fill?: boolean }
+interface Props { text?: string; icon?: 'globe' | 'arrow' | 'together'; fill?: boolean }
 const { text = marquee.text, icon = 'globe', fill = false } = Astro.props;
 const items = Array.from({ length: 12 });
 ---

@@ -70,6 +70,7 @@ export const footer = {
     { text: "Let's build", muted: true },
     { text: ' what comes next.', muted: false },
   ],
+  marquee: "Let's work together", // the orange band above the footer (with two overlapping circles)
   company: 'Robbe Van Aken BV',
   location: 'Ghent, Belgium',
   legal: [

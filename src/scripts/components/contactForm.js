@@ -4,8 +4,8 @@
 // [data-contact-done="sent" | "mailto"] (shown instead of the form).
 // Wizard: one question at a time ([data-contact-step]; .is-wizard / .is-first / .is-last on the form, .is-current on
 // the step), [data-contact-count] + [data-contact-bar] on top, [data-contact-back] / [data-contact-next] below (the send
-// button on the last step). Next checks the step's required fields first; Enter in a field = Next; choosing a budget
-// moves on by itself; Cmd/Ctrl+Enter in the message sends. The old question leaves upwards, the new one comes up from
+// button on the last step). Next checks the step's required fields first; Enter in a field = Next (choosing a budget
+// doesn't move on: only Next does); Cmd/Ctrl+Enter in the message sends. The old question leaves upwards, the new one comes up from
 // below. A failed send-time check jumps to the step with the first invalid field. [data-contact-status] announces the
 // step to screen readers (data-template "Question {n} of {total}").
 // Validation: on submit (the form has novalidate), then live per field once it has been flagged; the first invalid
@@ -99,8 +99,6 @@ export function initContactForm(root = document) {
       if (area || e.target.closest('button')) return;
       if (!form.classList.contains('is-last')) { e.preventDefault(); goNext(); }
     }, on);
-    // a budget choice moves on by itself
-    form.querySelectorAll('input[type="radio"]').forEach((r) => r.addEventListener('change', () => setTimeout(goNext, 280), on));
   }
 
   // once a submit has been tried, fields re-check as you type (and clear their error as soon as they're right)

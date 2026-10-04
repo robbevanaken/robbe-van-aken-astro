@@ -1,6 +1,6 @@
 ---
 // Line icons, drawn with currentColor. Size them from the parent. Styles: styles/components/_icon.css
-interface Props { name: 'arrow' | 'globe'; class?: string }
+interface Props { name: 'arrow' | 'globe' | 'together'; class?: string }
 const { name, class: cls } = Astro.props;
 const box = name === 'arrow' ? '0 0 24 20' : '0 0 23 23';
 ---
@@ -12,5 +12,9 @@ const box = name === 'arrow' ? '0 0 24 20' : '0 0 23 23';
     <path d="M1.91699 11.5H21.0837" />
     <path d="M19.1673 17.2502C16.743 16.2315 14.1294 15.7414 11.5006 15.8127C8.87196 15.7414 6.25829 16.2315 3.83398 17.2502" />
     <path d="M3.83398 5.75C6.25829 6.76873 8.87196 7.25879 11.5006 7.1875C14.1294 7.25879 16.743 6.76873 19.1673 5.75" />
+  </g>}
+  {name === 'together' && <g stroke="currentColor">
+    <circle cx="8.25" cy="11.5" r="6.25" />
+    <circle cx="14.75" cy="11.5" r="6.25" />
   </g>}
 </svg>
