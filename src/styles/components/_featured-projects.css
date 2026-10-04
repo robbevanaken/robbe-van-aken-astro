@@ -1,7 +1,6 @@
-/* The projects on a globe (sections/ProjectGlobe.astro, components/featuredProjects.js): home's featured projects and
+/* The project cards (sections/ProjectGlobe.astro): home's featured projects and
    /work. Spread right (cols 8–11, the first one) and left (cols 2–5) down the page, one grid row each, every next one starting a
-   little before the previous one ends. The script moves the corner brackets (one frame) onto the project nearest the
-   middle. Home: the head keeps the small R at the top of the screen while the projects pass. Phones: one column. */
+   little before the previous one ends. Hover: the corner brackets slide out around the card. Home: the head keeps the small R at the top of the screen while the projects pass. Phones: one column. */
 .c-featured-projects{position:relative;padding-bottom:var(--space-section)}
 /* home: the pitch ends on its R anchor (with room around the R in it), so a smaller step to the head (the small R);
    below 1024px the pitch ends on the portrait: the full section spacing */
@@ -26,7 +25,14 @@
    towards you, a card's near edge grows) */
 .c-featured-projects__item + .c-featured-projects__item{margin-top:-4vw}
 
-.c-featured-projects__card{display:block;text-decoration:none;color:inherit;transform-origin:50% 50%;will-change:transform}
+.c-featured-projects__card{position:relative;display:block;text-decoration:none;color:inherit}
+/* hover (only this and the image's zoom): the four corner brackets (ui/Corners.astro) fade in around the card (image and
+   caption), sliding the last bit outwards. offset − pull − size = 4px at every width: even where they start they are
+   outside the card, so they never cross the image or the text */
+.c-featured-projects__card{--corner-offset:calc(var(--gutter) + 10px);--corner-color:var(--fg);--corner-size:16px;--corner-opacity:0;--pull-x:max(0px,calc(var(--gutter) - 10px));--pull-y:max(0px,calc(var(--gutter) - 10px));
+  --corner-dur:var(--hover-dur);--corner-ease:var(--ease-punch)}
+.c-featured-projects__card:hover,.c-featured-projects__card:focus-visible{--corner-opacity:1;--pull-x:0px;--pull-y:0px}
+.c-featured-projects__card .c-corners{z-index:1}
 /* /work filters: hidden projects (components/workFilter.js) */
 .c-featured-projects__item.is-hidden{display:none}
 /* the visual: a panel in the project colours (--a dark, --b light) with a flat screenshot of the site on it, centred
@@ -47,13 +53,15 @@
 .c-featured-projects__caption{display:grid;gap:6px;margin-top:var(--space-s)}
 .c-featured-projects__caption-row{display:flex;justify-content:space-between;align-items:center;gap:var(--space-s)}
 .c-featured-projects__caption-text{color:var(--muted);max-width:34em}
-.c-featured-projects__arrow{flex:none;width:18px;height:15px;color:var(--fg);transform:rotate(-45deg);transition:transform var(--hover-dur) var(--ease-punch),color var(--hover-dur) var(--ease-punch)}
-.c-featured-projects__card:hover .c-featured-projects__arrow,.c-featured-projects__card:focus-visible .c-featured-projects__arrow{transform:rotate(0);color:var(--accent)}
-.c-featured-projects__caption-title{font-size:clamp(19px,1.6667vw,28px);line-height:1.2;letter-spacing:-.01em;color:var(--fg);transition:color var(--hover-dur) var(--ease-punch)} /* 24 @1440 */
-.c-featured-projects__card:hover .c-featured-projects__caption-title,.c-featured-projects__card:focus-visible .c-featured-projects__caption-title{color:var(--accent)}
+.c-featured-projects__arrow{flex:none;width:18px;height:15px;color:var(--fg);transform:rotate(-45deg)}
+/* the arrow on hover: it flies out to the top right and a new one comes in from the bottom left (clipped by its box) */
+.c-featured-projects__arrows{position:relative;flex:none;display:grid;width:22px;height:22px;overflow:hidden;clip-path:inset(0)}
+.c-featured-projects__arrows .c-featured-projects__arrow{grid-area:1 / 1;place-self:center;transition:translate var(--hover-dur) var(--ease-punch)}
+.c-featured-projects__arrow--next{translate:-28px 28px} /* fully outside the 22px box */
+.c-featured-projects__card:hover .c-featured-projects__arrow,.c-featured-projects__card:focus-visible .c-featured-projects__arrow{translate:28px -28px}
+.c-featured-projects__card:hover .c-featured-projects__arrow--next,.c-featured-projects__card:focus-visible .c-featured-projects__arrow--next{translate:0 0}
+.c-featured-projects__caption-title{font-size:clamp(19px,1.6667vw,28px);line-height:1.2;letter-spacing:-.01em;color:var(--fg)} /* 24 @1440 */
 
-/* the corner brackets: one frame, placed by the script around the project nearest the middle (image and caption) */
-.c-featured-projects__frame{position:absolute;top:0;left:0;z-index:1;pointer-events:none;--corner-offset:var(--gutter);--corner-color:var(--fg);--corner-size:18px;--corner-dur:0s}
 
 .c-featured-projects__foot{margin-top:var(--space-xl)}
 .c-featured-projects__all{grid-column:1 / -1;justify-self:center}
@@ -92,6 +100,7 @@
   .c-featured-projects__tag--year{left:auto;right:var(--space-xs)}
   .c-featured-projects__arrow{width:18px;height:15px}
   /* phones: one column, each its own row; the narrower slots step in from the left */
+  .c-featured-projects--grid .c-featured-projects__list{row-gap:calc(var(--space-xl) * 3)}
   .c-featured-projects--grid .c-featured-projects__item{grid-row:auto}
   .c-featured-projects--grid .c-featured-projects__item.is-slot-0,.c-featured-projects--grid .c-featured-projects__item.is-slot-2{grid-column:1 / -1;margin-top:0}
   .c-featured-projects--grid .c-featured-projects__item.is-slot-1{grid-column:2 / -1;margin-top:0}
@@ -100,9 +109,11 @@
   .c-featured-projects__r{width:40px;height:40px}
   .c-featured-projects__item,.c-featured-projects__item:nth-child(even){grid-column:1 / -1}
   /* phones: one column; the narrower ones step in from a side */
-  .c-featured-projects--spread .c-featured-projects__item:nth-child(3n+1),.c-featured-projects--spread .c-featured-projects__item:nth-child(3n+2){grid-column:1 / -1;margin-top:calc(var(--space-xl) * 1.5)}
-  .c-featured-projects--spread .c-featured-projects__item:nth-child(3n+3){grid-column:2 / -1;margin-top:calc(var(--space-xl) * 1.5)}
+  .c-featured-projects--spread .c-featured-projects__item:nth-child(3n+1),.c-featured-projects--spread .c-featured-projects__item:nth-child(3n+2){grid-column:1 / -1;margin-top:calc(var(--space-xl) * 3)}
+  .c-featured-projects--spread .c-featured-projects__item:nth-child(3n+3){grid-column:2 / -1;margin-top:calc(var(--space-xl) * 3)}
   .c-featured-projects--spread .c-featured-projects__item:first-child{margin-top:0}
   .c-featured-projects__item + .c-featured-projects__item{margin-top:var(--space-xl)}
-  .c-featured-projects__frame{--corner-size:12px;--corner-offset:8px}
+  .c-featured-projects__card{--corner-size:12px;--corner-offset:18px;--pull-x:5px;--pull-y:5px}
+  /* "View all projects": more room above (after the last project) and below (before the services) */
+  .c-featured-projects__foot{margin-top:calc(var(--space-xl) * 2);margin-bottom:var(--space-xl)}
 }

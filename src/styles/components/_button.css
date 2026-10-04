@@ -1,5 +1,6 @@
 /* Button. Hover: turns orange, scales down, the label swaps for a copy that slides up from below,
-   the arrow turns 45° and four corner brackets slide out of the button's corners.
+   the arrow flies out to the top right while a new one comes in from the bottom left (as on the project cards), and
+   four corner brackets slide out of the button's corners.
    Label swap after Osmo Supply "Button 016": the copy is a text-shadow one duplicate-distance below the text,
    the label clips it, and on hover the text moves up by that distance. */
 .c-button{
@@ -11,9 +12,11 @@
 }
 .c-button__label{padding:12px 16px;min-width:112px;white-space:nowrap;overflow:hidden;contain:paint} /* contain: keeps Chrome clipping the sliding text while the button scales */
 .c-button__text{display:inline-block;text-shadow:0 var(--button-text-duplicate-distance) 0 currentColor;transition:translate var(--hover-dur) var(--ease-punch)}
-.c-button__icon{display:grid;place-items:center;padding:0 13px;border-left:1px solid color-mix(in srgb,currentColor 15%,transparent)}
-.c-button__icon .c-icon{width:14px;height:12px;transform:rotate(-45deg);transition:transform var(--hover-dur) var(--ease-punch)}
+.c-button__icon{display:grid;place-items:center;width:40px;overflow:hidden;clip-path:inset(0);border-left:1px solid color-mix(in srgb,currentColor 15%,transparent)}
+.c-button__icon .c-icon{grid-area:1 / 1;width:14px;height:12px;transform:rotate(-45deg);transition:translate var(--hover-dur) var(--ease-punch)}
+.c-button__arrow--next{translate:-32px 32px} /* fully outside the 40px cell (the arrow is ~18px across at 45°) */
 
 .c-button:hover,.c-button:focus-visible{transform:scale(.96);background-color:var(--accent);color:var(--ink);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px}
 .c-button:hover .c-button__text,.c-button:focus-visible .c-button__text{translate:0 calc(var(--button-text-duplicate-distance) * -1) 0}
-.c-button:hover .c-button__icon .c-icon,.c-button:focus-visible .c-button__icon .c-icon{transform:rotate(0deg)}
+.c-button:hover .c-button__arrow,.c-button:focus-visible .c-button__arrow{translate:32px -32px}
+.c-button:hover .c-button__arrow--next,.c-button:focus-visible .c-button__arrow--next{translate:0 0}

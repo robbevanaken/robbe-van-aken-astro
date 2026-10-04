@@ -13,7 +13,6 @@ import { initCookieConsent } from './global/cookieConsent.js';
 import { initTheme, syncThemeMeta } from './global/theme.js';
 import { initDebugGrid } from './global/debugGrid.js';
 import { initPageTransitions } from './global/pageTransitions.js';
-import { initFeaturedProjects } from './components/featuredProjects.js';
 import { initScrollNext } from './components/scrollNext.js';
 import { initMarquee } from './components/marquee.js';
 import { initServices } from './components/services.js';
@@ -34,7 +33,6 @@ function mount() {
   syncThemeMeta();
   cleanups = [
     initSiteHeader(root),
-    initFeaturedProjects(root),
     // one R per <canvas data-r-canvas>; data-r-scope limits it to part of the page (subpages: header + footer).
     // data-r-intro (home: the R, subpages: the header's) also plays the R in the page loader and page swaps.
     ...[...root.querySelectorAll('[data-r-canvas]')].map((canvas) => {
