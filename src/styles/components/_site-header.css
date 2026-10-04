@@ -6,8 +6,11 @@
 .c-site-header__body{position:relative;align-items:start;padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top));padding-bottom:var(--space-m)}
 /* soft fade behind the header once the page has scrolled, so it stays readable over content */
 .c-site-header__body::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--bg) 35%,transparent);opacity:0;transition:opacity .5s}
-.is-scrolled .c-site-header__body::before,.is-open .c-site-header__body::before{opacity:1}
-.is-open .c-site-header__body::before{background:var(--panel)} /* over the open menu: the menu's own colour */
+.is-scrolled .c-site-header__body::before{opacity:1}
+/* menu open: the header's backdrop goes, so the header shows the menu's own panel behind it; both fade on the same curve
+   and duration, so the header and the menu change tint together */
+.c-site-header.is-open .c-site-header__body::before{opacity:0;transition:opacity .55s cubic-bezier(.65,0,.35,1)}
+.c-site-header.is-closing .c-site-header__body::before{transition:opacity .45s cubic-bezier(.65,0,.35,1) .2s} /* back with the menu's fade out */
 
 .c-site-header__brand{grid-column:1 / span 3;grid-row:1;justify-self:start;width:fit-content;text-decoration:none;line-height:1.3} /* hover area = the text */
 .c-site-header__name,.c-site-header__role{display:block}

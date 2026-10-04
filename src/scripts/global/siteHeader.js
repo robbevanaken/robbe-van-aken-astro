@@ -55,8 +55,8 @@ export function initSiteHeader(root = document) {
     toggle.setAttribute('aria-expanded', String(v));
     header.classList.toggle('is-open', v);
     clearTimeout(hideTimer);
-    if (v) { menu.classList.remove('is-out'); menu.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-in'))); }
-    else { menu.classList.remove('is-in'); menu.classList.add('is-out'); hideTimer = setTimeout(() => { if (!open) { menu.hidden = true; menu.classList.remove('is-out'); } }, OUT); }
+    if (v) { header.classList.remove('is-closing'); menu.classList.remove('is-out'); menu.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-in'))); }
+    else { menu.classList.remove('is-in'); menu.classList.add('is-out'); header.classList.add('is-closing'); hideTimer = setTimeout(() => { if (!open) { menu.hidden = true; menu.classList.remove('is-out'); header.classList.remove('is-closing'); } }, OUT); }
     document.documentElement.classList.toggle('is-menu-open', v);
     flyR(v);
     const lenis = getLenis(); if (lenis) v ? lenis.stop() : lenis.start();
