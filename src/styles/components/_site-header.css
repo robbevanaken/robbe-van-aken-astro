@@ -30,22 +30,24 @@
    A link to another page plays .is-out and the page transition starts while it runs (same background colour). */
 .c-site-header__menu{position:fixed;inset:0;z-index:-2;display:flex;flex-direction:column;background:var(--bg);
   padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 96px);padding-bottom:calc(var(--space-l) + env(safe-area-inset-bottom,0px));
-  opacity:0;transition:opacity .45s var(--ease-out)}
+  opacity:0;transition:opacity .55s cubic-bezier(.65,0,.35,1)}
 .c-site-header__menu[hidden]{display:none}
+/* the page beneath doesn't scroll while the menu is open: no pan gestures on the menu or the header, no scroll chaining */
+.c-site-header.is-open,.c-site-header__menu{touch-action:none;overscroll-behavior:contain}
 .c-site-header__menu.is-in{opacity:1}
-.c-site-header__menu.is-out{opacity:0;transition:opacity .35s var(--ease-out) .25s}
+.c-site-header__menu.is-out{opacity:0;transition:opacity .45s cubic-bezier(.65,0,.35,1) .2s}
 /* leaving for another page: only the rows go, the background stays (the transition overlay takes over from it) */
 .c-site-header__menu.is-out.is-leaving{opacity:1}
 .c-site-header__menu-list{display:grid}
 .c-site-header__menu-item{position:relative;overflow:hidden}
 /* the line above each row draws in from the left */
 .c-site-header__menu-item::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--line);transform:scaleX(0);transform-origin:left;
-  transition:transform .9s var(--ease-punch);transition-delay:calc(var(--i) * .06s + .05s)}
+  transition:transform .9s var(--ease-punch);transition-delay:calc(var(--i) * .06s + .17s)}
 .c-site-header__menu-item:last-child::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line);transform:scaleX(0);transform-origin:left;
   transition:transform .9s var(--ease-punch) .3s}
 .c-site-header__menu.is-in .c-site-header__menu-item::before,.c-site-header__menu.is-in .c-site-header__menu-item:last-child::after{transform:none}
 .c-site-header__menu-link{display:block;padding-block:var(--space-xs) var(--space-s);text-decoration:none;color:var(--fg);
-  transform:translateY(105%);transition:transform .8s var(--ease-punch);transition-delay:calc(var(--i) * .06s + .1s)}
+  transform:translateY(105%);transition:transform .8s var(--ease-punch);transition-delay:calc(var(--i) * .06s + .22s)} /* after the R has mostly left them */
 .c-site-header__menu.is-in .c-site-header__menu-link{transform:none}
 .c-site-header__menu.is-out .c-site-header__menu-link{transform:translateY(-105%);transition:transform .38s cubic-bezier(.55,0,.75,.2);transition-delay:calc(var(--i) * .035s)}
 /* hover / tap: the others dim, the active one shifts right */
@@ -56,6 +58,7 @@
 .c-site-header__menu-foot{margin-top:auto;display:grid;gap:var(--space-s);opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease-out),transform .8s var(--ease-punch);transition-delay:0s}
 .c-site-header__menu.is-in .c-site-header__menu-foot{opacity:1;transform:none;transition-delay:.35s}
 .c-site-header__menu.is-out .c-site-header__menu-foot{opacity:0;transition-delay:0s;transition-duration:.25s}
+.c-site-header__menu-r{position:absolute;right:var(--margin);bottom:calc(var(--space-l) + env(safe-area-inset-bottom,0px));width:40px;height:40px} /* the loader R's size on phones */
 .c-site-header__menu-mail{justify-self:start;color:var(--fg);text-decoration:none;padding-bottom:4px;background:linear-gradient(var(--line-strong),var(--line-strong)) left bottom / 100% 1px no-repeat}
 
 @media (max-width:639px){

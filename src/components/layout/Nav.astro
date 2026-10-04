@@ -41,5 +41,7 @@ const { withR = false } = Astro.props;
       <a class="c-site-header__menu-mail u-text-body-l" href={`mailto:${meta.email}`}>{meta.email}</a>
       <Socials class="c-site-header__menu-socials" />
     </div>
+    <!-- the R's spot while the menu is open (scripts/global/siteHeader.js flies the page's R here) -->
+    <span class="c-site-header__menu-r" aria-hidden="true" data-menu-r></span>
   </div>
 </header>

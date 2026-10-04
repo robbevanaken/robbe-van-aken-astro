@@ -1,7 +1,9 @@
 /* Reset, element defaults, selection and the fixed R canvas. */
 *,*::before,*::after{box-sizing:border-box}
 html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-tap-highlight-color:transparent} /* no grey tap flash on phones: links have their own :active / focus styles */
-html.is-menu-open{overflow:hidden}
+/* menu open: no overflow:hidden on <html> (it switches position:sticky off, so sticky anchors like the projects'
+   small R would jump); scrolling is stopped by Lenis, and the menu and header take no pan gestures
+   (styles/components/_site-header.css) */
 body{
   margin:0;background:var(--bg);color:var(--fg);
   font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-text);
@@ -20,7 +22,10 @@ main:focus{outline:none} /* focused by the skip link (tabindex -1), no ring arou
 /* the R canvases ([data-r-canvas], one per R) sit above the header (z 30) so the header background never covers them;
    hidden behind the open mobile menu */
 .c-r-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:35}
-html.is-menu-open .c-r-canvas{visibility:hidden}
+/* menu open: the page's R (data-r-intro) flies into the menu's corner and stays visible (global/siteHeader.js); other R's
+   (the footer's own on subpages) fade out */
+.c-r-canvas:not([data-r-intro]){transition:opacity .4s var(--ease-out)}
+html.is-menu-open .c-r-canvas:not([data-r-intro]){opacity:0}
 
 /* theme switch (global/theme.js): the toggle cross-fades the page (view transition); the home theme zone (and browsers
    without view transitions) ease the colour tokens themselves: they're registered (@property in base/_tokens.css), so

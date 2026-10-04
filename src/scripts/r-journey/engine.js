@@ -15,7 +15,8 @@ import { theme } from '../global/theme.js';
 // blends, with a full turn, into wherever the page has it (home: the hero, subpages: the header). Page swaps first take
 // it from 0 to 1. onDraw: called once after the next frame drawn in intro (a page swap then drops its still of the old R).
 // drift: how far (px, average) the intro R's particles still are from where they're heading; ~0 = at rest.
-export const rIntro = { el: null, t: 0, onDraw: null, drift: 0 };
+// turn: an extra turn (radians) on the intro R, e.g. while a page swap moves it from the menu's corner to the middle.
+export const rIntro = { el: null, t: 0, onDraw: null, drift: 0, turn: 0 };
 // the smoothed mouse, kept across page swaps: the next page's R starts turned exactly like the old one
 const mouse = { mx: 0, my: 0, smx: 0, smy: 0 };
 // page swaps: the R's static particle data is built once per size (geo) and reused by every next engine, and the intro
@@ -250,7 +251,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const s=computeS();let i0=Math.min(Math.floor(s),4),i1=Math.min(i0+1,4),f=s-i0;f=f*f*(3-2*f);
     spin=i1!==i0?[1,-1,0,1][i0]*f*TAU*motion:0;
     // loader: from the intro R to the page's own state (rounded: the page sits at its top), with a full turn
-    if(inIntro){i1=Math.round(s);i0=5;f=1-rIntro.t;spin=f*TAU*motion}
+    if(inIntro){i1=Math.round(s);i0=5;f=1-rIntro.t;spin=(f*TAU+rIntro.turn)*motion}
     for(let i=0;i<6;i++){mat(RY[i]+(i===3?0:spin),RX[i],RZ[i],M[i]);SG[i]=M[i][8]>=0?1:-1}
     mat((RY[i0]*(1-f)+RY[i1]*f)+spin*(i0===3||i1===3?(1-Math.abs(i1-3)*(1-f)-Math.abs(i0-3)*f):1),RX[i0]*(1-f)+RX[i1]*f,RZ[i0]*(1-f)+RZ[i1]*f,MB);
 

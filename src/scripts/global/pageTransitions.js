@@ -36,6 +36,7 @@ const LOADER_MAX = 6;   // never wait longer than this for fonts and images
 const COVER = .6;       // page swaps: seconds for the counter's first half (while the next page loads)
 const SWAP_MIN = .4;    // page swaps: seconds at least for the counter's second half
 const REST_MAX = .5;    // page swaps: wait at most this long for the R to come to rest before the old page goes
+const TRAVEL = .75;     // page swaps from the mobile menu: seconds for the R's way from the menu's corner to the middle
 
 const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -172,7 +173,10 @@ async function cover(f) {
   root.classList.add('is-transitioning');
   // the style recalculation of showing the overlay lands in this frame, before anything moves
   await nextFrame();
-  rIntro.el = f.anchor;
+  // the R already sits small in the mobile menu's corner (t is 1): it travels from there to the middle on a moving anchor
+  // (a stand-in box gliding between the two), turning a full turn on the way, the same way round as into the menu
+  if (rIntro.t > .99 && rIntro.el?.isConnected && !reducedMotion) travelR(rIntro.el, f.anchor, TRAVEL);
+  else rIntro.el = f.anchor;
   const c = swapCounter = startCounter(f, false, .2), t0 = performance.now();
   c.goal = () => .5 * Math.min(1, (performance.now() - t0) / 1000 / COVER);
   await gsap.timeline()
@@ -183,6 +187,18 @@ async function cover(f) {
   // the swap comes next and is heavy: only once the R is at rest
   const t1 = performance.now();
   while (rIntro.drift > 1.5 && performance.now() - t1 < REST_MAX * 1000) await nextFrame();
+}
+
+// the R from one anchor to another along the way: a fixed stand-in box glides from the first to the second (rIntro.el
+// follows it, the springs on top keep it soft) while the R makes a full turn; then the real anchor takes over
+function travelR(from, to, dur) {
+  const a = from.getBoundingClientRect(), b = to.getBoundingClientRect(), box = document.createElement('div');
+  Object.assign(box.style, { position: 'fixed', left: `${a.left}px`, top: `${a.top}px`, width: `${a.width}px`, height: `${a.height}px`, pointerEvents: 'none', visibility: 'hidden' });
+  document.body.append(box);
+  rIntro.el = box;
+  gsap.fromTo(rIntro, { turn: Math.PI * 2 }, { turn: 0, duration: dur, ease: 'power2.inOut' });
+  gsap.to(box, { left: b.left, top: b.top, width: b.width, height: b.height, duration: dur, ease: 'power2.inOut',
+    onComplete: () => { if (rIntro.el === box) rIntro.el = to; box.remove(); } });
 }
 
 // at the swap: a still of the old R stands in until the new page's R has drawn (its engine builds first)
