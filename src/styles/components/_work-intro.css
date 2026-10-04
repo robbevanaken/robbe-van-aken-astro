@@ -1,7 +1,10 @@
 /* /work hero (sections/WorkIntro.astro): the title, centred (a step below the hero size: 86px @1440), sticky in the
    middle of the screen: it starts there (margin-top) and stays there (top) while the projects (z 1,
-   styles/components/_featured-projects.css) scroll over it, until the end of the page. --h: the title's height. */
-.c-work-intro{--h:clamp(44px,6vw,108px);position:sticky;top:calc(50svh - var(--h) / 2);z-index:0;margin:calc(50svh - var(--h) / 2) 0 var(--space-xl)}
+   styles/components/_featured-projects.css) scroll over it, until the end of the page. --h: the title's height,
+   --at: where it sits (the middle on desktop; below 1024px near the top, under the header). */
+.c-work-intro{--h:clamp(44px,6vw,108px);--at:calc(50svh - var(--h) / 2);position:sticky;top:var(--at);z-index:0;margin:var(--at) 0 var(--space-xl)}
+@media (max-width:1023px){ .c-work-intro{--at:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 150px);margin-bottom:calc(var(--space-xl) * 1.5)} }
+@media (min-width:640px) and (max-width:1023px){ .c-work-intro{margin-bottom:calc(var(--space-xl) * 1.5 + 64px)} } /* room for the filter under the title */
 .c-work-intro__title.c-work-intro__title{grid-column:1 / -1;justify-self:center;text-align:center;font-size:var(--h);line-height:1;white-space:nowrap} /* doubled: .u-text-hero is imported later */
 
 /* the filter (ui/Filter.astro) floats level with the title, above the projects: a zero-height sticky layer at the top of
@@ -10,7 +13,7 @@
 .c-work-float{position:sticky;top:calc(50svh - 22px);z-index:3;height:0}
 .c-work-float__filter{grid-column:1 / span 2}
 @media (max-width:1023px){
-  .c-work-float{top:calc(50svh + clamp(44px,6vw,108px) / 2 + 16px)}
+  .c-work-float{top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 150px + clamp(44px,6vw,108px) + 20px)} /* just under the title */
   .c-work-float__filter{grid-column:1 / -1;justify-self:start}
 }
 @media (max-width:639px){
