@@ -1,0 +1,37 @@
+/* Filter menu (ui/Filter.astro, components/filter.js). Closed: a button like the site's buttons (filled --fg, the label
+   and an icon cell with a plus). Open: the box grows (size set by the script, punch ease) into a panel with the options,
+   which come in one by one; the plus turns into a cross and the corner brackets slide out of the corners (as on the
+   button hover). The box holds the brackets, the clip inside it hides what doesn't fit yet. */
+.c-filter{width:max-content}
+.c-filter__box{position:relative;width:var(--fw,128px);height:var(--fh,44px);
+  --corner-opacity:0;--corner-color:var(--fg);--corner-size:8px;--corner-dur:var(--hover-dur);--corner-ease:var(--ease-punch)}
+.c-filter.is-open .c-filter__box{--corner-opacity:1;--pull-x:-7px;--pull-y:-7px}
+.c-filter__clip{position:absolute;inset:0;overflow:hidden;background:var(--fg);color:var(--on-fg)}
+.c-filter__inner{position:absolute;top:0;left:0;width:max-content} /* its natural size: the open size */
+
+.c-filter__toggle{display:flex;align-items:stretch;width:100%;min-width:176px;min-height:44px;padding:0 44px 0 0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;text-align:left;
+  -webkit-appearance:none;appearance:none;border-radius:0}
+.c-filter__label{flex:1;padding:12px 16px;white-space:nowrap}
+.c-filter__current{color:color-mix(in srgb,currentColor 55%,transparent)}
+.c-filter__icon{position:absolute;top:0;right:0;width:44px;height:44px;border-left:1px solid color-mix(in srgb,currentColor 15%,transparent);pointer-events:none}
+.c-filter__icon i{position:absolute;left:50%;top:50%;width:12px;height:1px;margin:-.5px 0 0 -6px;background:currentColor;transition:transform var(--hover-dur) var(--ease-punch)}
+.c-filter__icon i:last-child{transform:rotate(90deg)}
+.c-filter.is-open .c-filter__icon i:first-child{transform:rotate(45deg)}
+.c-filter.is-open .c-filter__icon i:last-child{transform:rotate(135deg)}
+
+.c-filter__list{padding:6px 0 12px;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent)}
+.c-filter__item{opacity:0} /* the script fades them in */
+.c-filter__option{position:relative;display:flex;align-items:flex-start;gap:3px;width:100%;padding:8px 44px 8px 16px;border:0;background:none;font:inherit;text-align:left;cursor:pointer;
+  color:color-mix(in srgb,var(--on-fg) 55%,transparent);-webkit-appearance:none;appearance:none;border-radius:0;white-space:nowrap;
+  transition:color var(--hover-dur) var(--ease-punch)}
+.c-filter__option-label{transition:transform var(--hover-dur) var(--ease-punch)}
+.c-filter__count{font-size:.68em;line-height:1;margin-top:-.1em;opacity:.7;font-variant-numeric:tabular-nums;transition:transform var(--hover-dur) var(--ease-punch)}
+/* the active option: full colour, with a small orange square in front */
+.c-filter__option::before{content:"";position:absolute;left:16px;top:50%;width:6px;height:6px;margin-top:-3px;background:var(--accent);transform:scale(0);transition:transform var(--hover-dur) var(--ease-punch)}
+.c-filter__option[aria-pressed="true"]{color:var(--on-fg)}
+.c-filter__option[aria-pressed="true"]::before{transform:scale(1)}
+.c-filter__option[aria-pressed="true"] .c-filter__option-label,.c-filter__option[aria-pressed="true"] .c-filter__count{transform:translateX(14px)}
+/* hover: full colour, shifts right (as the mobile menu items) */
+.c-filter__option:hover,.c-filter__option:focus-visible{color:var(--on-fg)}
+.c-filter__option:hover .c-filter__option-label,.c-filter__option:hover .c-filter__count{transform:translateX(14px)}
+.c-filter__option:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}

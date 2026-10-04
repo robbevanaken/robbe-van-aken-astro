@@ -1,21 +1,15 @@
-// Featured projects: the projects spread left and right down the page, bent over a globe as they pass.
-//   - cards: each one tilts according to where it is on the screen, as if it lay on a sphere in front of you: flat in
-//     the middle, turning away towards the top/bottom (around the horizontal axis) and the left/right (around the
-//     vertical axis), a little smaller towards the edges. Measured on the untransformed list item, so the bend never
-//     feeds back into itself.
+// Featured projects (home): the corner brackets on the project nearest the middle of the screen.
 //   - focus: the project nearest the middle eases down a little (FOCUS), as if the brackets hold it
-//   - frame: the corner brackets follow the project nearest the middle of the screen on a spring (its bent box, image
+//   - frame: the corner brackets follow the project nearest the middle of the screen on a spring (image
 //     and caption together); when
 //     another project becomes the nearest they glide over to it, with a little overshoot, and lock on.
-// Without a frame (/work's grid) only the bend runs. Only runs while the section is on screen. prefers-reduced-motion: no bend, the brackets jump.
+// Without a frame (/work's grid) it does nothing. Only runs while the section is on screen. prefers-reduced-motion: no
+// focus, the brackets jump.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TILT = 26;    // degrees at the screen's edge
-const SHRINK = .1;  // scale lost at the screen's edge
-const LENS = 1400;  // perspective (px) of each card
 const FOCUS = .04;  // scale the project in the brackets loses
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
@@ -26,7 +20,7 @@ export function initFeaturedProjects(root = document) {
   const frame = wrap.querySelector('[data-fp-frame]');
   const items = [...wrap.querySelectorAll('[data-fp-item]')];
   const cards = items.map((it) => it.querySelector('[data-fp-card]'));
-  const media = cards.map((c) => c.firstElementChild);
+  const media = cards.map((c) => c.querySelector('[data-fp-media]'));
   if (!items.length) return null;
 
   // the frame spring (section coordinates)
@@ -47,16 +41,12 @@ export function initFeaturedProjects(root = document) {
       const dist = Math.hypot(nx * .6, ny);
       if (dist < best) { best = dist; near = i; }
     });
-    if (!reduce) items.forEach((it, i) => {
-      focus[i] += ((frame && i === near ? 1 : 0) - focus[i]) * .08;
-      if (!pos[i]) return;
-      // on a sphere: the right side faces right, the bottom faces down; the one in the brackets a touch smaller
-      const { nx, ny } = pos[i], s = (1 - SHRINK * Math.min(nx * nx + ny * ny, 2)) * (1 - FOCUS * focus[i]);
-      cards[i].style.transform = `perspective(${LENS}px) rotateX(${(-ny * TILT).toFixed(2)}deg) rotateY(${(nx * TILT).toFixed(2)}deg) scale(${s.toFixed(4)})`;
-    });
-
-    // the brackets: a spring towards the nearest project, image and caption (its bent box); /work has none
+    // the brackets: a spring towards the nearest project, image and caption; the one in the brackets a touch smaller
     if (!frame) return;
+    if (!reduce) items.forEach((it, i) => {
+      focus[i] += ((i === near ? 1 : 0) - focus[i]) * .08;
+      cards[i].style.transform = focus[i] > .001 ? `scale(${(1 - FOCUS * focus[i]).toFixed(4)})` : '';
+    });
     const b = cards[near].getBoundingClientRect(), w0 = wrap.getBoundingClientRect();
     const t = { x: b.left - w0.left, y: b.top - w0.top, w: b.width, h: b.height };
     if (reduce || !fr.on) { Object.assign(fr, t, { vx: 0, vy: 0, vw: 0, vh: 0, on: true }); }

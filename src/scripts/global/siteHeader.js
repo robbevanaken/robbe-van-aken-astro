@@ -18,7 +18,8 @@ export function initSiteHeader(root = document) {
   addEventListener('scroll', () => {
     const y = scrollY, dy = y - lastY;
     if (Math.abs(dy) < 4) return;
-    header.classList.toggle('is-hidden', !open && dy > 0 && y > 120);
+    // a jump of more than a screen is not the visitor scrolling (e.g. the endless list on /work looping back): keep the state
+    if (Math.abs(dy) < innerHeight) header.classList.toggle('is-hidden', !open && dy > 0 && y > 120);
     header.classList.toggle('is-scrolled', y > 40);
     lastY = y;
   }, { passive: true, signal });

@@ -1,0 +1,8 @@
+---
+// Contact page hero: a large title (first part muted, like the footer title), each part on its own line.
+// Styles: styles/components/_contact-intro.css. Copy: contactPage in src/data/pages.ts.
+import { contactPage as p } from '../../data/pages';
+---
+<header class="c-contact-intro o-container o-grid">
+  <h1 class="c-contact-intro__title u-text-hero">{p.title.map((t) => <span class:list={{ 'u-text-muted': t.muted }}>{t.text}</span>)}</h1>
+</header>

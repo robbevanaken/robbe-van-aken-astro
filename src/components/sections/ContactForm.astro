@@ -1,6 +1,8 @@
 ---
 // Contact page, right column: the form as numbered questions with underlined fields (name, email, company, budget,
-// message). Behaviour: scripts/components/contactForm.js (validation, sending, the sent / failed states).
+// message). With JavaScript it is a wizard: one question at a time ([data-contact-step]), the count and a progress line
+// on top, Back / Next below, the send button on the last step. Without, all questions show at once.
+// Behaviour: scripts/components/contactForm.js (wizard, validation, sending, the sent / failed states).
 // Styles: styles/components/_contact-form.css. Copy + endpoint: contactPage.form in src/data/pages.ts.
 import Button from '../ui/Button.astro';
 import { contactPage } from '../../data/pages';
@@ -16,7 +18,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <div class="c-contact-form__trap" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
     <input type="hidden" name="_subject" value={f.subject} />
 
-    <div class="c-contact-form__row">
+    <!-- wizard only: the count and one segment per question -->
+    <div class="c-contact-form__head" aria-hidden="true">
+      <span class="c-contact-form__count u-text-label" data-contact-count>01 / 05</span>
+      <span class="c-contact-form__progress">{[1, 2, 3, 4, 5].map(() => <i class="c-contact-form__bar" data-contact-bar></i>)}</span>
+    </div>
+    <p class="u-sr-only" aria-live="polite" data-contact-status data-template={f.wizard.status}></p>
+
+    <div class="c-contact-form__row" data-contact-step>
       <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(1)}</span>
       <p class="c-contact-form__question u-text-lead" id="q-name">{q.name}</p>
       <div class="c-contact-form__fields c-contact-form__fields--pair">
@@ -31,7 +40,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </div>
 
-    <div class="c-contact-form__row">
+    <div class="c-contact-form__row" data-contact-step>
       <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(2)}</span>
       <label class="c-contact-form__question u-text-lead" for="cf-email">{q.email}</label>
       <div class="c-contact-form__fields">
@@ -41,7 +50,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </div>
 
-    <div class="c-contact-form__row">
+    <div class="c-contact-form__row" data-contact-step>
       <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(3)}</span>
       <label class="c-contact-form__question u-text-lead" for="cf-company">{q.company}</label>
       <div class="c-contact-form__fields">
@@ -51,7 +60,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </div>
 
-    <div class="c-contact-form__row">
+    <div class="c-contact-form__row" data-contact-step>
       <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(4)}</span>
       <p class="c-contact-form__question u-text-lead" id="q-budget">{q.budget}</p>
       <div class="c-contact-form__fields c-contact-form__choices" role="radiogroup" aria-labelledby="q-budget">
@@ -61,7 +70,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </div>
 
-    <div class="c-contact-form__row">
+    <div class="c-contact-form__row" data-contact-step>
       <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(5)}</span>
       <label class="c-contact-form__question u-text-lead" for="cf-message">{q.message}</label>
       <div class="c-contact-form__fields">
@@ -72,6 +81,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </div>
 
     <div class="c-contact-form__submit">
+      <button class="c-contact-form__back u-text-ui" type="button" data-contact-back>{f.wizard.back}</button>
+      <Button type="button" class="c-contact-form__next" data-contact-next>{f.wizard.next}</Button>
       <Button type="submit" class="c-contact-form__button" data-contact-submit>{f.submit}</Button>
       <p class="c-contact-form__privacy u-text-ui">{f.privacy.text} <a href={f.privacy.link.href}>{f.privacy.link.label}</a></p>
     </div>

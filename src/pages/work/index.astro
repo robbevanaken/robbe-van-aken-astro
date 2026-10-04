@@ -1,13 +1,20 @@
 ---
-// /work: the page intro, then all projects on the globe in a grid, two per row (sections/ProjectGlobe.astro, as on home
-// but without the corner brackets).
+// /work (no footer: the list never ends, components/workLoop.js): the title (sticky: the projects scroll over it), then all projects (sections/ProjectGlobe.astro, layout "grid":
+// staggered, in a repeating pattern of aspect ratios), with the filter menu floating beside the title (ui/Filter.astro).
 import Page from '../../layouts/Page.astro';
-import PageIntro from '../../components/sections/PageIntro.astro';
+import WorkIntro from '../../components/sections/WorkIntro.astro';
 import ProjectGlobe from '../../components/sections/ProjectGlobe.astro';
+import Filter from '../../components/ui/Filter.astro';
 import { workPage as p } from '../../data/pages';
-import { projects } from '../../data/projects';
+import { projects, projectTags } from '../../data/projects';
+// filters: All + one per category (the parts of the services), most projects first
+const counts = new Map<string, number>();
+projects.forEach((pr) => projectTags(pr).forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
+const filters = [{ key: 'all', label: p.filters.all, n: projects.length }, ...[...counts].sort((a, b) => b[1] - a[1]).map(([t, n]) => ({ key: t, label: t, n }))];
 ---
-<Page title="Work">
-  <PageIntro label={p.label} title={p.title} intro={p.intro} />
+<Page title="Work" footer={false}>
+  <!-- the filter floats beside the sticky title (above the projects), and leaves with it at the end of the list -->
+  <div class="c-work-float o-container o-grid"><Filter class="c-work-float__filter" filters={filters} label={p.filters.label} toggle={p.filters.toggle} /></div>
+  <WorkIntro />
   <ProjectGlobe projects={projects} label={p.title} layout="grid" />
 </Page>

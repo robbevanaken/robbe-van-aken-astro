@@ -45,6 +45,34 @@
 .c-contact-form__failed{margin-top:var(--space-s);padding-left:calc(var(--num) + var(--gutter));color:var(--accent)}
 .c-contact-form__form.is-sending .c-contact-form__button{opacity:.6;pointer-events:none}
 
+/* wizard (components/contactForm.js adds .is-wizard, .is-first, .is-last): one question at a time (.is-current), the
+   count and a progress line (one segment per question, filled up to the current one) on top, Back / Next below; on the
+   last question the send button and the privacy note instead of Next. Without JavaScript all of this stays hidden and
+   every question shows. */
+.c-contact-form__head,.c-contact-form__back,.c-contact-form__next{display:none}
+.c-contact-form__form.is-wizard .c-contact-form__head{display:flex;align-items:center;gap:var(--space-s);padding-bottom:var(--space-s)}
+.c-contact-form__count{color:var(--muted);font-variant-numeric:tabular-nums}
+.c-contact-form__progress{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:var(--space-2xs);flex:1;max-width:280px}
+.c-contact-form__bar{position:relative;height:1px;background:var(--line);overflow:hidden}
+.c-contact-form__bar::after{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease-punch)}
+.c-contact-form__bar.is-on::after{transform:scaleX(1)}
+.c-contact-form__form.is-wizard .c-contact-form__row:not(.is-current){display:none}
+.c-contact-form__form.is-wizard .c-contact-form__row{padding-block:var(--space-l) var(--space-m);border-top:0}
+/* calmer as a wizard: no number per question (the count on top says it), no lines between the parts */
+.c-contact-form__form.is-wizard .c-contact-form__num{display:none}
+.c-contact-form__form.is-wizard .c-contact-form__question,.c-contact-form__form.is-wizard .c-contact-form__fields{grid-column:1 / -1}
+.c-contact-form__form.is-wizard .c-contact-form__submit{border-top:0;padding-left:0;padding-top:var(--space-s)}
+.c-contact-form__form.is-wizard .c-contact-form__failed{padding-left:0}
+.c-contact-form__form.is-wizard .c-contact-form__next{display:inline-flex}
+.c-contact-form__form.is-wizard.is-last .c-contact-form__next,
+.c-contact-form__form.is-wizard:not(.is-last) .c-contact-form__button,
+.c-contact-form__form.is-wizard:not(.is-last) .c-contact-form__privacy{display:none}
+.c-contact-form__form.is-wizard .c-contact-form__back{display:inline-block;padding:12px 0;margin-right:var(--space-xs);border:0;background:none;color:var(--muted);font:inherit;cursor:pointer;
+  text-decoration:none;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left calc(100% - 10px);background-size:0 1px;
+  transition:color var(--hover-dur) var(--ease-punch),background-size var(--hover-dur) var(--ease-punch)}
+.c-contact-form__back:hover,.c-contact-form__back:focus-visible{color:var(--fg);background-size:100% 1px}
+.c-contact-form__form.is-wizard.is-first .c-contact-form__back{display:none}
+
 /* sent / handed to the email app: replaces the form, comes up softly */
 .c-contact-form__done{display:grid;gap:var(--space-m);padding-top:var(--space-l);border-top:1px solid var(--line);outline:none}
 .c-contact-form__done:not([hidden]){animation:c-contact-form-in 1s var(--ease-punch) both}
@@ -63,3 +91,9 @@
   .c-contact-form__choice span{padding:9px 14px}
 }
 @media (max-width:379px){ .c-contact-form__fields--pair{grid-template-columns:1fr} }
+/* phones, wizard: one field per line and more air between the parts */
+@media (max-width:639px){
+  .c-contact-form__form.is-wizard .c-contact-form__fields--pair{grid-template-columns:1fr;row-gap:var(--space-s)}
+  .c-contact-form__form.is-wizard .c-contact-form__row{padding-block:var(--space-l);row-gap:var(--space-l)}
+  .c-contact-form__form.is-wizard .c-contact-form__submit{padding-top:var(--space-m)}
+}

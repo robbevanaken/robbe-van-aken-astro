@@ -1,0 +1,22 @@
+/* /work hero (sections/WorkIntro.astro): the title, centred (a step below the hero size: 86px @1440), sticky in the
+   middle of the screen: it starts there (margin-top) and stays there (top) while the projects (z 1,
+   styles/components/_featured-projects.css) scroll over it, until the end of the page. --h: the title's height. */
+.c-work-intro{--h:clamp(44px,6vw,108px);position:sticky;top:calc(50svh - var(--h) / 2);z-index:0;margin:calc(50svh - var(--h) / 2) 0 var(--space-xl)}
+.c-work-intro__title.c-work-intro__title{grid-column:1 / -1;justify-self:center;text-align:center;font-size:var(--h);line-height:1;white-space:nowrap} /* doubled: .u-text-hero is imported later */
+
+/* the filter (ui/Filter.astro) floats level with the title, above the projects: a zero-height sticky layer at the top of
+   the page, held in the middle of the screen (like the title) until the end of the list. Below 1024px the title takes
+   the full width: the filter floats just below it, on the left. Phones: fixed at the bottom centre, opening upwards. */
+.c-work-float{position:sticky;top:calc(50svh - 22px);z-index:3;height:0}
+.c-work-float__filter{grid-column:1 / span 2}
+@media (max-width:1023px){
+  .c-work-float{top:calc(50svh + clamp(44px,6vw,108px) / 2 + 16px)}
+  .c-work-float__filter{grid-column:1 / -1;justify-self:start}
+}
+@media (max-width:639px){
+  .c-work-float{top:calc(100svh - var(--space-m) - env(safe-area-inset-bottom,0px))}
+  .c-work-float__filter{position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
+  .c-work-float .c-filter__inner{top:auto;bottom:0;display:flex;flex-direction:column-reverse}
+  .c-work-float .c-filter__icon{top:auto;bottom:0}
+  .c-work-float .c-filter__list{border-top:0;border-bottom:1px solid color-mix(in srgb,currentColor 12%,transparent);padding:12px 0 6px}
+}

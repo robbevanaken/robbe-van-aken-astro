@@ -1,0 +1,32 @@
+---
+// Filter menu (/work): a button "Filter" (like the site's buttons: label + an icon cell) that grows open into a panel
+// with the options, each with its count; the corner brackets slide out as it opens. Opens on hover (fine pointers) and
+// on click / focus, Escape closes it. Behaviour: scripts/components/filter.js (open / close), the options
+// ([data-work-filter]) are handled by scripts/components/workFilter.js. Styles: styles/components/_filter.css.
+import Corners from './Corners.astro';
+interface Props { filters: { key: string; label: string; n: number }[]; label: string; toggle: string; class?: string }
+const { filters, label, toggle, class: cls } = Astro.props;
+---
+<div class:list={['c-filter', cls]} data-filter>
+  <div class="c-filter__box" data-filter-box>
+    <Corners />
+    <div class="c-filter__clip">
+    <div class="c-filter__inner" data-filter-inner>
+      <button class="c-filter__toggle u-text-ui" type="button" aria-expanded="false" aria-controls="work-filter-list" data-filter-toggle>
+        <span class="c-filter__label">{toggle}<span class="c-filter__current" data-filter-current></span></span>
+      </button>
+      <ul class="c-filter__list" id="work-filter-list" role="group" aria-label={label} data-filter-list inert>
+        {filters.map((f, i) => (
+          <li class="c-filter__item">
+            <button class="c-filter__option u-text-ui" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-work-filter={f.key} data-label={f.label}>
+              <span class="c-filter__option-label">{f.label}</span><sup class="c-filter__count">{f.n}</sup>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <!-- the plus / cross sits on the box's right edge (not in the toggle, which stretches across the open panel) -->
+    <span class="c-filter__icon" aria-hidden="true"><i></i><i></i></span>
+    </div>
+  </div>
+</div>

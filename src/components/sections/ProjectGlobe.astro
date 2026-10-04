@@ -1,16 +1,17 @@
 ---
-// The projects spread left and right down the page, bent over a globe as they pass, with the corner brackets on the
+// The projects, staggered down the page (flat: no bend, no tilt), with the corner brackets on the
 // one nearest the middle of the screen (home: the featured ones, /work: all of them). Every card links to its project;
 // the images are square. layout "spread" (home): alternately right/left, one row each, with the corner brackets on the
-// project in the middle; layout "grid" (/work): two per row (6 columns each), no brackets. Slots: "head" (before the list, e.g. the home's sticky R), "intro" (text on the grid's first
+// project in the middle; layout "grid" (/work): one per row, staggered in a repeating pattern of four slots (columns and
+// aspect ratios: .is-slot-0…3, row in --row; workFilter.js keeps them right while filtering), no brackets. Slots: "head" (before the list, e.g. the home's sticky R), "intro" (text on the grid's first
 // row, next to the first project, which starts on the right) and the default slot (after the list, e.g. a button).
 // Styles: styles/components/_featured-projects.css, behaviour: scripts/components/featuredProjects.js
 import Corners from '../ui/Corners.astro';
-import type { Project } from '../../data/projects';
+import Icon from '../ui/Icon.astro';
+import { projectTags, type Project } from '../../data/projects';
 interface Props { projects: Project[]; label: string; layout?: 'spread' | 'grid' }
 const { projects, label, layout = 'spread' } = Astro.props;
 const spread = layout === 'spread';
-const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects>
   <slot name="head" />
@@ -19,17 +20,19 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <slot name="intro" />
     <ol class="c-featured-projects__list">
       {projects.map((p, i) => (
-        <li class="c-featured-projects__item" style={spread ? `grid-row:${i + 1}` : undefined} data-fp-item>
+        <li class:list={['c-featured-projects__item', !spread && `is-slot-${i % 4}`]} style={spread ? `grid-row:${i + 1}` : `--row:${i + 1}`} data-fp-item data-tags={projectTags(p).join('|')}>
           <a class="c-featured-projects__card" href={`/work/${p.slug}`} data-fp-card>
-            <span class="c-featured-projects__media">
-              {p.image
-                ? <img class="c-featured-projects__img" src={p.image} alt="" loading="lazy" decoding="async" />
-                : <span class="c-featured-projects__img c-featured-projects__placeholder" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`}>{p.label}</span>}
-            </span>
-            <span class="c-featured-projects__caption">
-              <span class="c-featured-projects__caption-title u-text-body-l">{pad(i + 1)} — {p.title}</span>
-              <span class="c-featured-projects__caption-text u-text-ui">{p.description}</span>
-            </span>
+            <span class="c-featured-projects__media" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-media>
+                {p.thumb
+                  ? <img class="c-featured-projects__shot" src={p.thumb} alt="" loading="lazy" decoding="async" />
+                  : <span class="c-featured-projects__placeholder">{p.label}</span>}
+                <span class="c-featured-projects__tag u-text-label">{p.service}</span>
+                <span class="c-featured-projects__tag c-featured-projects__tag--year u-text-label">{p.year}</span>
+              </span>
+              <span class="c-featured-projects__caption">
+                <span class="c-featured-projects__caption-row"><span class="c-featured-projects__caption-title">{p.title}</span><Icon name="arrow" class="c-featured-projects__arrow" /></span>
+                <span class="c-featured-projects__caption-text u-text-ui">{p.description}</span>
+              </span>
           </a>
         </li>
       ))}

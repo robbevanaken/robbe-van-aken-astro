@@ -1,0 +1,9 @@
+---
+// /work: the title, centred. It stays put (sticky) while the projects scroll over it, and leaves with the end of the
+// page; as they come over it, it fades back to a soft background title (components/workIntro.js), so the project
+// texts stay readable on top of it. Styles: styles/components/_work-intro.css. Copy: workPage in src/data/pages.ts.
+import { workPage as p } from '../../data/pages';
+---
+<header class="c-work-intro o-container o-grid">
+  <h1 class="c-work-intro__title u-text-hero" data-work-intro>{p.title}</h1>
+</header>

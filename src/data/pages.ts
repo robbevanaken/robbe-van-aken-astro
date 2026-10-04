@@ -2,9 +2,8 @@
 // Project detail pages (/work/<slug>) take their copy from projects.ts.
 
 export const workPage = {
-  label: 'Work',
-  title: 'Selected projects',
-  intro: 'Websites, platforms and tools, built with care from first sketch to final deploy.',
+  title: 'The project archive',
+  filters: { label: 'Filter projects', toggle: 'Filter', all: 'All' }, // the other filters come from the projects' services (projectTags)
 };
 
 export const aboutPage = {
@@ -14,9 +13,12 @@ export const aboutPage = {
 };
 
 export const contactPage = {
-  label: 'Contact',
-  title: "Let's build something we're both proud of.",
-  intro: "Tell me about your project. I'll get back to you personally, usually within a day.",
+  // each part in order; `muted` parts in the grey (like the footer title)
+  title: [
+    { text: 'Have a project in mind?', muted: true },
+    { text: " Let's talk.", muted: false },
+  ],
+  intro: "Tell me about your project. I'll get back to you personally, usually within a day.", // meta description
   portrait: { image: '', alt: 'Robbe Van Aken', placeholder: 'Portrait' },
   // left column (below the form on phones); an item with href is a link
   details: [
@@ -24,7 +26,6 @@ export const contactPage = {
       { text: 'robbe.vanaken@gmail.com', href: 'mailto:robbe.vanaken@gmail.com' },
       { text: '+32 494 48 77 62', href: 'tel:+32494487762' },
     ] },
-    { label: 'Business details', items: [{ text: 'Robbe Van Aken BV' }, { text: 'Ghent, Belgium' }] },
   ],
   socialsLabel: 'Socials',
   form: {
@@ -54,6 +55,7 @@ export const contactPage = {
       message: 'Please tell me a little about your project.',
     },
     submit: 'Send message',
+    wizard: { next: 'Next', back: 'Back', status: 'Question {n} of {total}' }, // one question at a time
     sending: 'Sending…',
     privacy: { text: 'I only use your details to reply to you.', link: { label: 'Privacy notice', href: '/privacy' } },
     sent: { title: 'Thanks, your message is on its way.', text: "I'll get back to you personally, usually within a day." },

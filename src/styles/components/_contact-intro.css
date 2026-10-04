@@ -1,0 +1,7 @@
+/* Contact hero (sections/ContactIntro.astro): a large title over the full width, first part muted, each part on its
+   own line. */
+.c-contact-intro{padding-top:calc(var(--space-section) + var(--nav-top) + 40px)}
+.c-contact-intro__title{grid-column:1 / span 11}
+/* each part on its own line (no lone word on the second line) */
+.c-contact-intro__title span{display:block}
+@media (max-width:1023px){ .c-contact-intro__title{grid-column:1 / -1} }
