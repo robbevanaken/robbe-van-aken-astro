@@ -272,6 +272,7 @@ export function initPageTransitions({ mount, unmount }) {
 
   swup.hooks.before('content:replace', (visit) => {
     if (covers(visit)) snapR(f);
+    if (visit.animation.name === 'open-project') openProject.snap();
     unmount();
     ScrollTrigger.getAll().forEach((t) => t.kill());
   });

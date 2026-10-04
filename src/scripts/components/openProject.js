@@ -6,19 +6,50 @@
 //   enter(copy)  new page (at the top): the copy grows onto the visual ([data-project-media]), then crossfades into
 //                it (the same image, cover-cropped to each box) while the header, the intro (staggered) and the rest
 //                fade in. Snappy: .3s out, .85s grow (expo.inOut), .2s hand-over, .9s intro
+// The R is never lost and doesn't move: it already sits small at the top centre (the projects' sticky head on home,
+// the header on /work), exactly where the project page's header shows it. leave() holds it there (rIntro on a fixed
+// stand-in box at that spot, so it stays put while the page fades; html.is-opening keeps its canvas above the image
+// copy); snap() covers the swap with a still until the new page's R has drawn (it carries on from the same particles);
+// enter() hands it to the new header (same spot: no movement, no turn).
 // Only transforms, opacity and the copy's box are animated; the copy is removed at the end.
 import gsap from 'gsap';
+import { rIntro } from '../r-journey/engine.js';
 
 const swupEl = () => document.getElementById('swup');
+// the page's R stays: everything else fades
 const fadeTargets = () => [
-  ...document.querySelectorAll('[data-site-header], #swup [data-r-canvas], [data-page-intro] > *'),
+  ...document.querySelectorAll('[data-site-header], #swup [data-r-canvas]:not([data-r-intro]), [data-page-intro] > *'),
   ...document.querySelectorAll('[data-project-visual] ~ *'),
 ];
+const pageParts = () => [...swupEl().children].filter((el) => !el.matches('[data-r-intro]'));
+
+// the R held at its spot: a fixed stand-in box on its anchor (#a-craft: the projects' head on home, the header on /work;
+// a hidden header's offset is taken out, so it's the resting spot), rIntro on it at t 1 (state 5: the same small R)
+let holder = null;
+function holdR() {
+  const a = document.querySelector('#swup #a-craft');
+  if (!a) return;
+  const r = a.getBoundingClientRect(), header = a.closest('[data-site-header]');
+  const dy = header ? header.getBoundingClientRect().top : 0;
+  holder = document.createElement('div');
+  Object.assign(holder.style, { position: 'fixed', left: `${r.left}px`, top: `${r.top - dy}px`, width: `${r.width}px`, height: `${r.height}px`, pointerEvents: 'none', visibility: 'hidden' });
+  document.body.append(holder);
+  gsap.killTweensOf(rIntro);
+  rIntro.el = holder; rIntro.t = 1; rIntro.turn = 0;
+}
+function releaseR() {
+  if (rIntro.el === holder) { rIntro.t = 0; rIntro.el = null; }
+  rIntro.onDraw = null;
+  holder?.remove(); holder = null;
+  document.documentElement.classList.remove('is-opening');
+}
 
 export const openProject = {
   async leave(card) {
+    document.documentElement.classList.add('is-opening');
+    holdR();
     const media = card?.querySelector('[data-fp-media]');
-    if (!media) { await gsap.to(swupEl(), { autoAlpha: 0, duration: .4 }); return null; }
+    if (!media) { await gsap.to(pageParts(), { autoAlpha: 0, duration: .4 }); return null; }
     const r = media.getBoundingClientRect(), copy = media.cloneNode(true);
     copy.removeAttribute('data-fp-media');
     copy.classList.add('c-featured-projects__media--carried');
@@ -29,10 +60,24 @@ export const openProject = {
     if (img && cimg) { cimg.style.transform = getComputedStyle(img).transform; cimg.style.transition = 'none'; }
     document.body.append(copy);
     await Promise.all([
-      gsap.to(swupEl(), { autoAlpha: 0, duration: .3, ease: 'power2.out' }),
+      gsap.to(pageParts(), { autoAlpha: 0, duration: .3, ease: 'power2.out' }),
       gsap.to(copy.querySelectorAll('.c-featured-projects__tag'), { autoAlpha: 0, duration: .2 }),
     ]);
     return copy;
+  },
+  // just before the swap: a still of the R on top until the new page's R has drawn (its engine starts from the same
+  // particles, so nothing jumps)
+  snap() {
+    const old = document.querySelector('#swup [data-r-intro]');
+    if (!old?.width) return;
+    const still = document.createElement('canvas');
+    still.width = old.width; still.height = old.height;
+    still.getContext('2d').drawImage(old, 0, 0);
+    Object.assign(still.style, { position: 'fixed', inset: '0', width: '100vw', height: '100vh', zIndex: 96, pointerEvents: 'none' });
+    still.setAttribute('aria-hidden', 'true');
+    document.body.append(still);
+    rIntro.onDraw = () => still.remove();
+    setTimeout(() => still.remove(), 1500); // never left behind
   },
   prepare() {
     gsap.set([...fadeTargets(), ...document.querySelectorAll('[data-project-visual]')], { autoAlpha: 0 });
@@ -41,6 +86,8 @@ export const openProject = {
   async enter(copy) {
     const visual = document.querySelector('[data-project-visual]'), media = document.querySelector('[data-project-media]');
     const targets = fadeTargets();
+    // the R: the new header's R sits on the same spot, so it simply takes over (no flight, no turn)
+    releaseR();
     if (copy && media) {
       const r = media.getBoundingClientRect();
       await Promise.all([

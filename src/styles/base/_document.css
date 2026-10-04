@@ -26,6 +26,8 @@ main:focus{outline:none} /* focused by the skip link (tabindex -1), no ring arou
    (the footer's own on subpages) fade out */
 .c-r-canvas:not([data-r-intro]){transition:opacity .4s var(--ease-out)}
 html.is-menu-open .c-r-canvas:not([data-r-intro]){opacity:0}
+/* opening a project (components/openProject.js): the R floats in the middle above the growing image (z 90) */
+html.is-opening .c-r-canvas[data-r-intro]{z-index:95}
 
 /* theme switch (global/theme.js): the toggle cross-fades the page (view transition); the home theme zone (and browsers
    without view transitions) ease the colour tokens themselves: they're registered (@property in base/_tokens.css), so
