@@ -125,6 +125,10 @@ function initScrollToNextPage(root) {
   // a slow settle of the image inside its box (ends at 1, as on the next page)
   if (bg) tl.fromTo(bg, { scale: 1.15 }, { scale: 1, duration: 1 }, 0);
   if (word) tl.fromTo(word, { autoAlpha: 0 }, { autoAlpha: 1, duration: .25 }, .75);
+  // page furniture just above the section (the "All projects" button): gone early, so it doesn't travel up past the
+  // next project's visual
+  const fades = root.querySelectorAll('[data-scroll-next-fade]');
+  if (fades.length) tl.fromTo(fades, { autoAlpha: 1 }, { autoAlpha: 0, duration: .12 }, 0);
 
   return () => { ac.abort(); clearTimeout(rest); tl.scrollTrigger?.kill(); };
 }

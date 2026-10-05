@@ -4,7 +4,7 @@
 // 6 how I work "Point" (the R as an arrow on [data-r-pointer], pointing at the row in the middle of the screen).
 // (5 is the loader's copy of stage 2, see rIntro.)
 // Pipeline per frame: scroll -> state blend -> 3D targets per particle (springs) -> lighting -> draw
-// (glyph dither by default, raw pixels as fallback; toggle with the dev HUD or the G key).
+// (fine glyph dither by default; the dev HUD / G key cycles through the other looks to compare).
 // Instances: every <canvas data-r-canvas> runs its own R. `scope` limits which [data-stage] elements and anchors it
 // uses (home: the whole page; subpages: one R in the header, a separate one in the footer). `cull` skips all work
 // while the scope is off screen.
@@ -220,7 +220,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const t0=[0,0],t1=[0,0];let lastIdx=-1;
   // Glyph dither mode (like Unicorn's Glyph Dither): particles are binned into a screen grid and every
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
-  let glyph=true,GC=null,GS=null,GN=null,OCC=null,nOcc=0;
+  let render=3,GC=null,GS=null,GN=null,OCC=null,nOcc=0;
   // glyph look per theme. gamma > 1 pushes cells towards the bright cross (a heavier, more present R); colors: [dim,
   // bright]; line / pad: cross stroke width and inset, as a share of the cell. Light needs more: dark on light reads
   // thinner and greyer than white on dark, so more full crosses, heavier strokes, and a paler dim tone so the shaded
@@ -234,8 +234,24 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c});
     spriteCache.set(key,out);return out;
   }
+  // fine: the same screen grid, but about one cell per particle and four tones; faces are crosses, side walls squares
+  // cell size per stage, in particle pitches: about one particle per cell; the two biggest R's (pitch, footer) a step
+  // coarser, so their crosses still read as crosses
+  const FCELL=[1.12,1.3,1.12,1.12,1.3,1.12,1.12];
+  const FINE={dark:['#5a4f49','#8d817a','#cbc2bc','#ffffff'],light:['#d9d0c8','#ab9f96','#5f514a','#140b08']};
+  function spritesFine(cell,mode){
+    const key='f'+cell+'@'+DPR+mode;if(spriteCache.has(key))return spriteCache.get(key);
+    const gs=G[mode],px=Math.max(2,Math.round(cell*DPR)),mk=(col,sq)=>{
+      const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');
+      if(sq){const q=Math.max(1,Math.round(px*.58)),o=Math.round((px-q)/2);g.fillStyle=col;g.fillRect(o,o,q,q);return c}
+      const pad=px*(gs.pad-.06);g.strokeStyle=col;g.lineWidth=Math.max(1,px*gs.line);g.lineCap=px<6?'butt':'round';
+      g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c};
+    const out={x:FINE[mode].map(c=>mk(c,false)),q:FINE[mode].map(c=>mk(c,true))};
+    spriteCache.set(key,out);return out;
+  }
   const modeBtn=cull?null:scope.querySelector('#mode');
-  if(modeBtn)modeBtn.onclick=()=>{glyph=!glyph;modeBtn.textContent=glyph?'Glyph':'Pixels';modeBtn.classList.toggle('is-off',!glyph)};
+  // dev HUD / G key: Fine (the look) → Glyph (the coarser grid it came from) → Pixels → Mix (crosses per particle), to compare
+  if(modeBtn){modeBtn.textContent='Fine';modeBtn.onclick=()=>{render=[1,2,3,0][render];modeBtn.textContent=['Glyph','Pixels','Mix','Fine'][render];modeBtn.classList.toggle('is-off',render!==3)}}
   addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.shiftKey&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()},{signal}); // Shift+G: the grid overlay
 
   // Slow devices: when a frame's own work stays above ~10 ms, render every other frame (springs take a double step, so
@@ -319,13 +335,15 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
     const mode=theme.mode;
     ctx.clearRect(0,0,W,H);
-    if(glyph){
+    if(render===0||render===3){
+      const fine=render===3;
       // small shapes (the small R in the header / projects): finer cells so there is enough detail (~36 glyphs tall);
       // big shapes keep the density-based size
       const rh=(i0===3?Sh:A[i0].S)*(1-f)+(i1===3?Sh:A[i1].S)*f,baseCell=size<1.1?3:clamp(Math.round(size*1.35),4,7);
       const small=clamp((140-rh)/60,0,1); // white boost for the small R, so it reads white instead of grey
       const minCell=3/DPR; // glyphs of at least 3 device px (1.5 css px on retina): smaller and the crosses blur to grey
-      const CELL=rh<140?Math.min(baseCell,Math.max(minCell,Math.round(rh/36*2)/2)):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
+      const pitchF=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f;
+      const CELL=rh<140?Math.min(baseCell,Math.max(minCell,Math.round(rh/36*2)/2)):fine?Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*DPR)/DPR):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
       if(!grid.GC||grid.GC.length<NN)Object.assign(grid,{GC:new Float32Array(NN),GS:new Float32Array(NN),GN:new Uint16Array(NN),OCC:new Uint32Array(NN)});
       ({GC,GS,GN,OCC}=grid);nOcc=0;
       GC.fill(0,0,NN);GS.fill(0,0,NN);GN.fill(0,0,NN);
@@ -336,6 +354,19 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
         if(p<NC){if(b>GC[ci])GC[ci]=b}else if(b>GS[ci])GS[ci]=b;
         if(GN[ci]===0)OCC[nOcc++]=ci;if(GN[ci]<65000)GN[ci]++;
       }
+      if(fine&&rh>=140){
+        const sf=spritesFine(CELL,mode);
+        // a face cell the particles skipped (the turned lattice against the screen grid) between two face cells: filled in
+        for(let o=0,n0=nOcc;o<n0;o++){
+          const ci=OCC[o];if(!(GC[ci]>0))continue;
+          for(const d of [1,cols]){const m=ci+d,e=ci+2*d;if(e<NN&&!(GC[m]>0)&&GC[e]>0){GC[m]=(GC[ci]+GC[e])/2;if(GN[m]===0)OCC[nOcc++]=m;GN[m]=1}}
+        }
+        for(let o=0;o<nOcc;o++){
+          const ci=OCC[o],r=(ci/cols)|0,q=ci-r*cols,cap=GC[ci]>0,v=clamp(cap?GC[ci]:GS[ci],0,1);
+          const lv=clamp(Math.round((cap?v*4+.22:v*4.2+.9)+((BAYER4[(r&3)*4+(q&3)]+.5)/16-.5)*.9),1,4);
+          ctx.drawImage((cap?sf.x:sf.q)[lv-1],q*CELL,r*CELL,CELL,CELL);
+        }
+      }else{
       const spr=sprites(CELL,mode),gamma=G[mode].gamma;
       for(let o=0;o<nOcc;o++){
         const ci=OCC[o],n=GN[ci],r=(ci/cols)|0,q=ci-r*cols;
@@ -343,6 +374,28 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
         if(small>0)v+=(1-v)*.75*small; // small R: mostly bright crosses, so it reads white instead of grey
         const lv=clamp(Math.round(v*2+((BAYER4[(r&3)*4+(q&3)]+.5)/16-.5)*.9),0,2);if(!lv)continue;
         ctx.drawImage(spr[lv-1],q*CELL,r*CELL,CELL,CELL);
+      }
+      }
+    }else if(render===2){
+      // mix: the pixels' geometry with the glyphs' texture. Every particle is drawn where it is (no screen grid), so the
+      // outline and the depth stay sharp: the faces as crosses in the six tones, the side walls behind them as small
+      // squares; the faces' footprints are cut out of the walls first, so nothing shows through the crosses.
+      const pitch=Math.max((sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f,.6),hc=size/2,cut=pitch+40,gs=G[mode],pal=PALS[mode];
+      const q=pitch*.56,qh=q/2,a=pitch*(.5-gs.pad),ph=pitch/2;
+      for(let lv=0;lv<6;lv++){
+        ctx.fillStyle=pal[lv];ctx.beginPath();let any=false;
+        for(let p=NC;p<N;p++){if(LV[p]!==lv)continue;const x=X[p]+hc,y=Y[p]+hc;if(x<-cut||x>W+cut||y<-cut||y>H+cut)continue;ctx.rect(x-qh,y-qh,q,q);any=true}
+        if(any)ctx.fill();
+      }
+      ctx.globalCompositeOperation='destination-out';ctx.beginPath();
+      for(let p=0;p<NC;p++){if(LV[p]===255)continue;const x=X[p]+hc,y=Y[p]+hc;if(x<-cut||x>W+cut||y<-cut||y>H+cut)continue;ctx.rect(x-ph,y-ph,pitch,pitch)}
+      ctx.fill();ctx.globalCompositeOperation='source-over';
+      ctx.lineWidth=Math.max(1/DPR,pitch*gs.line);ctx.lineCap=pitch*DPR<6?'butt':'round';
+      for(let lv=0;lv<6;lv++){
+        ctx.strokeStyle=pal[lv];ctx.beginPath();let any=false;
+        for(let p=0;p<NC;p++){if(LV[p]!==lv)continue;const x=X[p]+hc,y=Y[p]+hc;if(x<-cut||x>W+cut||y<-cut||y>H+cut)continue;
+          ctx.moveTo(x-a,y-a);ctx.lineTo(x+a,y+a);ctx.moveTo(x+a,y-a);ctx.lineTo(x-a,y+a);any=true}
+        if(any)ctx.stroke();
       }
     }else{
 

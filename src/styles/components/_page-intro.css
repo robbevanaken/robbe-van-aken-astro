@@ -20,8 +20,10 @@
   .c-page-intro__meta{grid-column:4 / span 2}
   .c-page-intro__meta--year{grid-column:6}
 }
-/* phones: only the title (too narrow for both side by side) */
+/* phones: the title over the full width, the year on the same row at the right, on the title's last line (project
+   names are short: there's room beside them); no service (too narrow for all three) */
 @media (max-width:639px){
-  .c-page-intro--project .c-page-intro__title{grid-column:1 / -1}
+  .c-page-intro--project .c-page-intro__title{grid-column:1 / -1;grid-row:1}
   .c-page-intro__meta{display:none}
+  .c-page-intro__meta--year{display:grid;grid-column:4;grid-row:1;justify-self:end;text-align:right;padding-bottom:4px}
 }

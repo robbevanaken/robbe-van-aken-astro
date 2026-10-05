@@ -20,3 +20,11 @@
 .c-button:hover .c-button__text,.c-button:focus-visible .c-button__text{translate:0 calc(var(--button-text-duplicate-distance) * -1) 0}
 .c-button:hover .c-button__arrow,.c-button:focus-visible .c-button__arrow{translate:32px -32px}
 .c-button:hover .c-button__arrow--next,.c-button:focus-visible .c-button__arrow--next{translate:0 0}
+
+/* back button (Button back): the arrow cell first, the arrow pointing left; hover: it flies out to the left while a new
+   one comes in from the right */
+.c-button--back .c-button__icon{order:-1;border-left:0;border-right:1px solid color-mix(in srgb,currentColor 15%,transparent)}
+.c-button--back .c-button__icon .c-icon{transform:rotate(180deg)}
+.c-button--back .c-button__arrow--next{translate:36px 0}
+.c-button--back:hover .c-button__arrow,.c-button--back:focus-visible .c-button__arrow{translate:-36px 0}
+.c-button--back:hover .c-button__arrow--next,.c-button--back:focus-visible .c-button__arrow--next{translate:0 0}

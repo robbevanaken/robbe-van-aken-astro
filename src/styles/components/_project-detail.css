@@ -4,5 +4,4 @@
 .c-project-detail__placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
   background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
 .c-project-detail__back{margin-top:var(--space-l)}
-.c-project-detail__back-link{grid-column:1 / span 3;color:var(--muted);text-decoration:none;transition:color var(--hover-dur) var(--ease-punch)}
-.c-project-detail__back-link:hover{color:var(--fg)}
+.c-project-detail__back-link{grid-column:1 / -1;justify-self:start} /* ui/Button.astro, back */

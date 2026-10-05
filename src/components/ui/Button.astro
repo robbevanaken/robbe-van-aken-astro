@@ -1,13 +1,14 @@
 ---
 // Button with the brand arrow. Styles: styles/components/_button.css
 // A link with href; without href a <button> (type, default "button"; e.g. "submit" in a form).
+// back: a "back" button: the arrow cell on the left, the arrow pointing left (e.g. "All projects" on a project page).
 import Icon from './Icon.astro';
 import Corners from './Corners.astro';
-interface Props { href?: string; type?: 'button' | 'submit'; class?: string; [attr: string]: unknown }
-const { href, type = 'button', class: cls, ...rest } = Astro.props;
+interface Props { href?: string; type?: 'button' | 'submit'; back?: boolean; class?: string; [attr: string]: unknown }
+const { href, type = 'button', back = false, class: cls, ...rest } = Astro.props;
 const Tag = href ? 'a' : 'button';
 ---
-<Tag class:list={['c-button u-text-ui', cls]} href={href} type={href ? undefined : type} {...rest}>
+<Tag class:list={['c-button u-text-ui', { 'c-button--back': back }, cls]} href={href} type={href ? undefined : type} {...rest}>
   <Corners />
   <span class="c-button__label"><span class="c-button__text"><slot /></span></span>
   <span class="c-button__icon"><Icon name="arrow" class="c-button__arrow" /><Icon name="arrow" class="c-button__arrow c-button__arrow--next" /></span>
