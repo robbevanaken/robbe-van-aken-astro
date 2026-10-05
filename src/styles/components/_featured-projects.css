@@ -5,6 +5,10 @@
 /* home: the pitch ends on its R anchor (with room around the R in it), so a smaller step to the head (the small R);
    below 1024px the pitch ends on the portrait: the full section spacing */
 .c-featured-projects:has(.c-projects-intro){padding-top:calc(var(--space-xl) * 1.5)}
+/* home: the section sits on --panel (the wizard's and mobile menu's tint), fading in from the page colour above and back
+   out below, so there's no hard edge: a little colour change down the page */
+.c-featured-projects:has(.c-projects-intro){--fade:clamp(120px,16vh,160px);
+  background:linear-gradient(var(--bg),var(--panel) var(--fade),var(--panel) calc(100% - var(--fade)),var(--bg))}
 /* home: the button and the services follow on their own spacing */
 .c-featured-projects:has(.c-featured-projects__foot){padding-bottom:0}
 .c-featured-projects__head{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);z-index:2;display:flex;justify-content:center;height:56px;pointer-events:none}
