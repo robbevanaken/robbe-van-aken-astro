@@ -18,10 +18,12 @@ export const nav = {
   name: 'Robbe Van Aken',
   role: 'Freelance developer',
   links: [
-    { label: 'Home', href: '/' },
+    { label: 'Pitch', href: '/' }, // home: the page is the pitch
     { label: 'Work', href: '/work' },
     { label: 'Contact', href: '/contact' },
   ],
+  // light/dark toggle (screen readers; the button itself is an icon)
+  theme: { toLight: 'Switch to light mode', toDark: 'Switch to dark mode' },
 };
 
 export const hero = {

@@ -1,0 +1,45 @@
+---
+// How I work (contact, below the form): the head (title + intro) scrolls by, then a horizontal reel of five cards,
+// driven by scroll only. The pin track ([data-approach-pin]) is one screen + the reel's overflow tall; the stage (at
+// least one screen, the reel and the foot centred in it) sticks while the page scrolls on and the reel
+// ([data-approach-track]) slides left with it. A card: a count, a title, the text. Below: a progress line with one
+// segment per card; the R rides on the head of its fill as an arrow ([data-r-pointer]), facing the way you scroll: its
+// own small R (the canvas below, scoped to this section: two stage-6 markers, so it's always the arrow). The cards
+// light up (35% → full) as the arrow reaches them, and the corner brackets ([data-approach-frame]) glide to the one
+// it is on. Script: scripts/components/approach.js. Styles: styles/components/_approach.css. Copy: approach in
+// src/data/site.ts.
+import Corners from '../ui/Corners.astro';
+import { approach as a } from '../../data/site';
+const pad = (n: number) => String(n).padStart(2, '0');
+const total = pad(a.items.length);
+---
+<section class="c-approach" id="approach" aria-labelledby="approach-title" data-approach>
+  <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-approach]"></canvas>
+  <div class="c-approach__head o-container o-grid">
+    <h2 class="c-approach__title u-text-h2" id="approach-title">{a.title}</h2>
+    <p class="c-approach__intro u-text-body-l u-text-muted">{a.intro}</p>
+  </div>
+  <div class="c-approach__pin" data-approach-pin>
+    <div class="c-approach__stage" data-stage="6" data-approach-stage>
+      <div class="c-approach__viewport o-container" data-approach-viewport>
+        <ol class="c-approach__track" data-approach-track>
+          {a.items.map((it, i) => (
+            <li class="c-approach__item" data-approach-item>
+              <p class="c-approach__count u-text-label u-text-muted" aria-hidden="true">{pad(i + 1)} / {total}</p>
+              <h3 class="c-approach__name u-text-h2">{it.title}</h3>
+              <p class="c-approach__text u-text-body-l u-text-muted">{it.text}</p>
+            </li>
+          ))}
+        </ol>
+        <span class="c-approach__frame" aria-hidden="true" data-approach-frame><Corners /></span>
+      </div>
+      <div class="c-approach__foot o-container is-hidden" aria-hidden="true" data-approach-foot>
+        <div class="c-approach__progress" data-approach-progress>
+          {a.items.map(() => <i class="c-approach__bar" data-approach-bar></i>)}
+          <span class="c-approach__pointer" data-r-pointer></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="c-approach__end" data-stage="6" aria-hidden="true"></span>
+</section>

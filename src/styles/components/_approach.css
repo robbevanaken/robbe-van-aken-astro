@@ -1,0 +1,52 @@
+/* How I work (sections/Approach.astro, components/approach.js; on /contact, below the form): the head (h2 + muted
+   intro, cols 1–6) scrolls by, then a horizontal reel of five cards on a pinned stage, scroll only. The pin is one screen
+   (or the stage, if taller: --stage-h) + --dist (the reel's overflow, set by the script) tall; the stage (at least one
+   screen) keeps the reel and the foot in the middle. Cards: 4 columns wide, one column + two gutters apart, so at rest
+   every card starts on a grid column (--col is worked out from the track's 100%, the container's content width; 100vw
+   would count the scrollbar too and drift a few px per column); one more gap after the last one. Foot: the line, one
+   segment per card (like the services' and the wizard's), with the R riding on it as an arrow. The corner brackets
+   ([data-approach-frame]) glide to the card the arrow is on. Phones: cards 3 of 4 columns, the last one ends centred. */
+.c-approach{--col:calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols));--step:calc(var(--col) + var(--gutter) * 2);
+  position:relative;padding-top:var(--space-section)}
+.c-approach__pin{position:relative;height:calc(max(100svh, var(--stage-h,0px)) + var(--dist,0px))}
+.c-approach__stage{position:sticky;top:0;min-height:100svh;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr);align-content:center;row-gap:var(--space-xl);
+  padding:var(--space-l) 0}
+.c-approach__end{display:block;height:1px}
+
+.c-approach__head{row-gap:var(--space-s)}
+.c-approach__title{grid-column:1 / span 6}
+.c-approach__intro{grid-column:1 / span 5;max-width:30em}
+
+/* the reel */
+.c-approach__viewport{position:relative;display:flex;align-items:center;min-height:0}
+.c-approach__track{--tail:1px;position:relative;flex:none;width:100%;display:flex;align-items:flex-start;gap:var(--step);margin:0;padding:0;list-style:none;will-change:transform}
+.c-approach__track::after{content:"";flex:none;width:var(--tail)} /* one gap of room after the last card */
+.c-approach__item{--w:calc(var(--col) * 4 + var(--gutter) * 3);flex:none;width:var(--w);display:grid;align-content:start;gap:var(--space-xs)} /* dimmed by the script (not without it) */
+.c-approach__item>*{margin:0}
+.c-approach__name{font-weight:400;max-width:12em;color:var(--fg)}
+.c-approach__count{margin-bottom:var(--space-2xs)}
+.c-approach__text{line-height:1.5;max-width:28em}
+.c-approach__frame{position:absolute;top:0;left:0;width:0;height:0;pointer-events:none;--corner-color:var(--fg);--corner-size:14px}
+
+/* the foot: only while the stage is pinned (fades in as the pin starts, out once the cards are through, like the
+   services' line); the line, and the arrow riding on it (its box kept on the line by the script) */
+.c-approach__foot{--ps:112px;padding-top:calc(var(--ps) + 20px);transition:opacity .6s var(--ease-out),translate .8s var(--ease-punch)}
+.c-approach__foot.is-hidden{opacity:0;translate:0 10px}
+.c-approach__progress{position:relative;display:flex;gap:var(--space-2xs)}
+.c-approach__bar{position:relative;flex:1 1 0;height:1px;background:var(--line);overflow:hidden}
+.c-approach__bar::after{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleX(var(--fill,0));transform-origin:left}
+.c-approach__pointer{position:absolute;left:0;bottom:16px;width:var(--ps);height:var(--ps);transform:translateX(calc(var(--x,0px) - 50%))}
+
+@media (max-width:1023px){
+  .c-approach__title,.c-approach__intro{grid-column:1 / -1}
+}
+@media (max-width:639px){
+  .c-approach__stage{row-gap:var(--space-l);padding:var(--space-m) 0}
+  .c-approach__intro{font-size:16px}
+  .c-approach__item{--w:calc(var(--col) * 3 + var(--gutter) * 2)}
+  .c-approach__name{font-size:30px}
+  .c-approach__text{font-size:16px}
+  .c-approach__foot{--ps:60px;padding-top:calc(var(--ps) + 12px)}
+  .c-approach__pointer{bottom:8px}
+}
+@media (prefers-reduced-motion:reduce){ .c-approach__foot{transition:none} }

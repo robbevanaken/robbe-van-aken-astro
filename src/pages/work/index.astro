@@ -13,7 +13,7 @@ const counts = new Map<string, number>();
 projects.forEach((pr) => projectTags(pr).forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
 const filters = [{ key: 'all', label: p.filters.all, n: projects.length }, ...[...counts].sort((a, b) => b[1] - a[1]).map(([t, n]) => ({ key: t, label: t, n }))];
 ---
-<Page title="Work" description={p.description} theme="light">
+<Page title="Work" description={p.description}>
   <!-- the filter floats beside the sticky title (above the projects), and leaves with it at the end of the list -->
   <div class="c-work-float o-container o-grid"><Filter class="c-work-float__filter" filters={filters} label={p.filters.label} toggle={p.filters.toggle} /></div>
   <WorkIntro />

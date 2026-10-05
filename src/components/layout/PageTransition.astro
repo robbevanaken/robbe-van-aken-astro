@@ -9,7 +9,7 @@ import { nav } from '../../data/site';
 // one span per letter, so the name can be spelled out
 const letters = (text: string) => [...text].map((c) => (c === ' ' ? '\u00a0' : c));
 ---
-<div class="c-transition" aria-hidden="true" data-transition data-tone="dark">
+<div class="c-transition" aria-hidden="true" data-transition>
   <div class="c-transition__bg" data-transition-bg></div>
   <!-- hidden ruler: the two middle columns, where the brackets end up -->
   <div class="c-transition__grid o-container o-grid"><div class="c-transition__ruler" data-loader-ruler></div></div>

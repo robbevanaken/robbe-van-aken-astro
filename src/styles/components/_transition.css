@@ -5,7 +5,7 @@
    during a page swap (the script fades the background in; only the R and the counter show then). */
 .c-transition{--brand-fs:var(--fs-ui);position:fixed;inset:0;z-index:100;pointer-events:none;visibility:hidden}
 html.is-loading .c-transition,html.is-transitioning .c-transition{visibility:visible;pointer-events:auto}
-.c-transition__bg{position:absolute;inset:0;background:var(--curtain);opacity:0}
+.c-transition__bg{position:absolute;inset:0;background:var(--bg);opacity:0}
 html.is-loading .c-transition__bg{opacity:1}
 .c-transition__frame{position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);opacity:0;--corner-color:var(--fg);--corner-size:12px;--corner-dur:0s}
 /* before the script runs: the open frame (as edges() in the script: container width, one gutter clear of the name) */

@@ -1,5 +1,5 @@
 // Script entry for every page (loaded from layouts/Base.astro).
-// Once: eases, Lenis, cookie consent and the page transitions (global/pageTransitions.js: loader + swup).
+// Once: eases, theme (light/dark toggle), Lenis, cookie consent and the page transitions (global/pageTransitions.js: loader + swup).
 // Per page: mount() below, run on the first load and again after every swup page swap; every init returns a cleanup
 // (or nothing), and each does nothing when its element isn't on the page. unmount() runs the cleanups just before swup
 // replaces the page.
@@ -10,7 +10,7 @@ import { initSmoothScroll } from './global/lenis.js';
 import { initSiteHeader } from './global/siteHeader.js';
 import { initReveal } from './global/reveal.js';
 import { initCookieConsent } from './global/cookieConsent.js';
-import { setTheme, pageTheme, initThemeZone, syncThemeMeta } from './global/theme.js';
+import { initTheme, syncThemeMeta } from './global/theme.js';
 import { initDebugGrid } from './global/debugGrid.js';
 import { initPageTransitions } from './global/pageTransitions.js';
 import { initScrollNext } from './components/scrollNext.js';
@@ -43,7 +43,6 @@ function whenUncovered() {
 // every init only looks inside the page's own container (root)
 function mount() {
   const id = ++page, root = document.getElementById('swup');
-  setTheme(pageTheme(root), false); // the page's own base, at once: a swap happens under the (always dark) overlay
   syncThemeMeta();
   cleanups = [
     initSiteHeader(root),
@@ -55,7 +54,6 @@ function mount() {
     }),
     initScrollNext(root),
     initServices(root),
-    initThemeZone(root),
     initContactForm(root),
     initWorkFilter(root),
     initWorkLoop(root),
@@ -78,6 +76,7 @@ function unmount() {
   cleanups = [];
 }
 
+initTheme();
 initSmoothScroll();
 initCookieConsent();
 initPageTransitions({ mount, unmount });

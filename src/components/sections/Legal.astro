@@ -1,0 +1,52 @@
+---
+// A legal text page (privacy notice): the date, then numbered sections between thin lines, each with its number and title
+// on the left and its text on the right. Blocks: paragraphs (may hold links), short lists, a small table (name, what
+// it's for, how long it's kept) and the company's details. Dry on purpose, in the site's own lines and labels.
+// Styles: styles/components/_legal.css. Copy: e.g. privacyPage in src/data/pages.ts.
+interface Row { name: string; text: string; kept: string }
+interface Block { p?: string; list?: string[]; rows?: Row[]; company?: boolean }
+interface Props {
+  updated: { label: string; date: string };
+  company: { name: string; address: string; number: string; place: string; email: string };
+  sections: { title: string; blocks: Block[] }[];
+}
+const { updated, company, sections } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<div class="c-legal o-container o-grid">
+  <p class="c-legal__updated u-text-label u-text-muted">{updated.label}: {updated.date}</p>
+  {sections.map((s, i) => (
+    <section class="c-legal__section">
+      <p class="c-legal__num u-text-label u-text-muted" aria-hidden="true">{pad(i + 1)}</p>
+      <h2 class="c-legal__title u-text-body-l">{s.title}</h2>
+      <div class="c-legal__body">
+        {s.blocks.map((b) => (
+          <>
+            {b.p && <p class="c-legal__p" set:html={b.p} />}
+            {b.list && <ul class="c-legal__list">{b.list.map((l) => <li>{l}</li>)}</ul>}
+            {b.rows && (
+              <dl class="c-legal__rows">
+                {b.rows.map((r) => (
+                  <div class="c-legal__row">
+                    <dt class="c-legal__row-name">{r.name}</dt>
+                    <dd class="c-legal__row-text">{r.text}</dd>
+                    <dd class="c-legal__row-kept u-text-label">{r.kept}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {b.company && (
+              <address class="c-legal__company">
+                <span>{company.name}</span>
+                {company.address && <span>{company.address}</span>}
+                <span>{company.place}</span>
+                {company.number && <span>{company.number}</span>}
+                <a href={`mailto:${company.email}`}>{company.email}</a>
+              </address>
+            )}
+          </>
+        ))}
+      </div>
+    </section>
+  ))}
+</div>

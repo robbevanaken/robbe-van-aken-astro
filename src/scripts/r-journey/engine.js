@@ -18,9 +18,7 @@ import { theme } from '../global/theme.js';
 // it from 0 to 1. onDraw: called once after the next frame drawn in intro (a page swap then drops its still of the old R).
 // drift: how far (px, average) the intro R's particles still are from where they're heading; ~0 = at rest.
 // turn: an extra turn (radians) on the intro R, e.g. while a page swap moves it from the menu's corner to the middle.
-// dark: the R is over something that's always dark (the loader / page swap overlay, the mobile menu): while it's on its
-// way there or there (t > .5) it draws in the dark theme's colours, whatever the page's.
-export const rIntro = { el: null, t: 0, onDraw: null, drift: 0, turn: 0, dark: false };
+export const rIntro = { el: null, t: 0, onDraw: null, drift: 0, turn: 0 };
 // the smoothed mouse, kept across page swaps: the next page's R starts turned exactly like the old one
 const mouse = { mx: 0, my: 0, smx: 0, smy: 0 };
 // page swaps: the R's static particle data is built once per size (geo) and reused by every next engine, and the intro
@@ -55,9 +53,10 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // stages include the scope itself when it is a stage (e.g. the footer)
   const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...scope.querySelectorAll('[data-stage]')],SV=stages.map(e=>+e.dataset.stage);
   if(!stages.length)return null;
-  // A scope may have only one anchor (header: #a-craft, footer: #a-foot): every missing anchor falls back to it.
+  // A scope may have only one anchor (header: #a-craft, footer: #a-foot, contact's How I work: the arrow's
+  // [data-r-pointer]): every missing anchor falls back to it.
   const find=(id)=>scope.querySelector?.('#'+id)||null;
-  const main=find('a-craft')||find('a-foot')||find('a-hero');if(!main)return null;
+  const main=find('a-craft')||find('a-foot')||find('a-hero')||scope.querySelector?.('[data-r-pointer]');if(!main)return null;
   const byId=(id)=>find(id)||main;
   const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aCraft=byId('a-craft'),aFoot=byId('a-foot');
   // services: one icon in [data-service-slot], which one (and how far into the morph to the next) follows [data-services]
@@ -318,8 +317,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     if(inIntro)rIntro.drift=drift/Math.ceil(N/16);
 
-    // colours: the page's, or the dark ones while the intro R is over the overlay / menu
-    const mode=inIntro&&rIntro.dark&&rIntro.t>.5?'dark':theme.mode;
+    const mode=theme.mode;
     ctx.clearRect(0,0,W,H);
     if(glyph){
       // small shapes (the small R in the header / projects): finer cells so there is enough detail (~36 glyphs tall);

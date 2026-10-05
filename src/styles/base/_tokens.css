@@ -13,7 +13,7 @@
 
 /* Design tokens. Figma frame is 1440 wide: fluid values hit their Figma size at 1440. */
 :root{
-  /* colour: dark is the default theme; light below ([data-theme="light"] on <html>, global/theme.js) */
+  /* colour: these are the dark theme's; light (the default: html[data-theme="light"], global/theme.js) overrides them below */
   --bg:#170e0b;
   --fg:#ffffff;       /* primary text (Figma: white) */
   --muted:#b2b2b2;    /* secondary text (Figma: #B2B2B2) */
@@ -27,8 +27,6 @@
   --surface:#1d1310;  /* panels above the page (cookie banner) */
   --paper:#ffffff;    /* the filling marquee before the orange comes in */
   --page:var(--bg);   /* the page's background */
-  --backdrop:var(--page); /* the header's fade: worked out here, on <html>, so it keeps the page's colour inside the always-dark menu scope below */
-  --curtain:#170e0b;  /* the page loader and the page swap overlay: always the dark, on light pages too */
   --panel:color-mix(in srgb,var(--fg) 6%,var(--bg)); /* quiet panels a step off the page: the contact wizard, the mobile menu (follows the theme) */
   --logo-filter:brightness(1); /* client logos are white SVGs */
 
@@ -75,10 +73,11 @@
   color-scheme:dark;
 }
 
-/* light theme: dark text on warm off-white; the accent stays */
+/* light theme (the default): warm off-white, the text a soft warm dark rather than near-black (the R keeps the darkest
+   tone on the page for itself, engine.js G.light); the accent stays */
 :root[data-theme="light"]{
   --bg:#f3eee8;
-  --fg:#170e0b;
+  --fg:#2e2420;
   --muted:#6f6560;
   --subtle:#756b65; /* 4.6:1 on the light background */
   --line:#ddd4cc;
@@ -89,15 +88,6 @@
   --logo-filter:brightness(0);
   --panel:color-mix(in srgb,var(--fg) 8%,var(--bg)); /* a stronger step than dark's 6%: small differences in light tones are harder to see */
   color-scheme:light;
-}
-
-/* always dark, whatever the page: the loader / page swap overlay ([data-tone="dark"]), the mobile menu with the header
-   while it's open or closing. The same values as :root; --panel and --page again, since they're inherited as finished
-   values otherwise (worked out on <html> with its colours) */
-[data-tone="dark"],html.is-menu-open .c-site-header,.c-site-header.is-closing{
-  --bg:#170e0b;--fg:#ffffff;--muted:#b2b2b2;--subtle:#8c827c;--line:#3a2f2a;--line-strong:#6e625b;--card:#d8d2cc;--on-fg:#170e0b;--surface:#1d1310;
-  --logo-filter:brightness(1);--panel:color-mix(in srgb,var(--fg) 6%,var(--bg));--page:var(--bg);color-scheme:dark;
-  color:var(--fg); /* text inherits the colour worked out on <body> otherwise */
 }
 
 /* tablet: 6 columns */

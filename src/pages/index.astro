@@ -20,11 +20,8 @@ import Footer from '../components/sections/Footer.astro';
     <Marquee />
     <TrustedBy />
     <Pitch />
-    <!-- the light chapter (proof and offer): the page turns light while it's on screen (global/theme.js) -->
-    <div data-theme-zone="light">
-      <Projects />
-      <Services />
-    </div>
+    <Projects />
+    <Services />
   </main>
   <Footer />
   {import.meta.env.DEV && <><DevHud /><GridOverlay /></>}

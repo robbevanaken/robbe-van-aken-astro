@@ -1,0 +1,45 @@
+/* Legal text (sections/Legal.astro, the privacy notice): dry, in the site's own lines and labels. The date, then the
+   sections between thin lines: the number (col 1) and the title (cols 2–5) on the left, the text on the right
+   (cols 7–12, 16px, muted, an easy line length). Tables inside: rows between thin lines (name, text, how long it's
+   kept). Below 1024px: number + title above the text. */
+.c-legal{padding-top:var(--space-xl);row-gap:0}
+.c-legal__updated{grid-column:1 / -1;margin:0 0 var(--space-s)}
+.c-legal__section{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:start;padding:var(--space-m) 0 var(--space-l);border-top:1px solid var(--line)}
+.c-legal__section:last-child{border-bottom:1px solid var(--line)}
+.c-legal__num{grid-column:1;margin:0;line-height:calc(var(--fs-body-l) * var(--lh-text))} /* on the title's first line */
+.c-legal__title{grid-column:2 / span 4;margin:0;font-weight:400}
+.c-legal__body{grid-column:7 / -1;display:grid;gap:var(--space-s);max-width:40em;font-size:var(--fs-body);line-height:1.6;color:var(--muted)}
+.c-legal__body>*{margin:0}
+.c-legal__list{padding:0;list-style:none;display:grid;gap:var(--space-2xs)}
+.c-legal__list li{position:relative;padding-left:1.4em}
+.c-legal__list li::before{content:"";position:absolute;left:0;top:.8em;width:.7em;height:1px;background:var(--line-strong)}
+
+/* links and the cookie settings button: the text colour, a thin underline that turns orange on hover */
+.c-legal__body a,.c-legal__body button{color:var(--fg);font:inherit;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:.2em;
+  transition:text-decoration-color var(--hover-dur) var(--ease-punch),color var(--hover-dur) var(--ease-punch)}
+.c-legal__body a:hover,.c-legal__body button:hover,.c-legal__body a:focus-visible,.c-legal__body button:focus-visible{color:var(--accent);text-decoration-color:var(--accent)}
+
+/* a small table: name | what it's for | how long */
+.c-legal__rows{display:grid;margin:var(--space-2xs) 0}
+.c-legal__row{display:grid;grid-template-columns:minmax(0,9em) minmax(0,1fr);column-gap:var(--space-s);row-gap:4px;padding:var(--space-xs) 0;border-top:1px solid var(--line)}
+.c-legal__row:last-child{border-bottom:1px solid var(--line)}
+.c-legal__row-name{grid-row:1 / span 2;color:var(--fg)}
+.c-legal__row-text,.c-legal__row-kept{grid-column:2;margin:0}
+.c-legal__row-kept{color:var(--subtle)}
+.c-legal__company{display:grid;font-style:normal;color:var(--fg)}
+.c-legal__company a{justify-self:start}
+
+@media (max-width:1023px){
+  .c-legal__section{row-gap:var(--space-s)}
+  .c-legal__title{grid-column:2 / -1}
+  .c-legal__body{grid-column:2 / -1}
+}
+@media (max-width:639px){
+  .c-legal__num{grid-column:1 / -1;line-height:1.3}
+  .c-legal__title,.c-legal__body{grid-column:1 / -1}
+  .c-legal__section{row-gap:var(--space-xs);padding-bottom:var(--space-m)}
+  .c-legal__body{row-gap:var(--space-s)}
+  .c-legal__row{grid-template-columns:minmax(0,1fr)}
+  .c-legal__row-name{grid-row:auto}
+  .c-legal__row-text,.c-legal__row-kept{grid-column:1}
+}

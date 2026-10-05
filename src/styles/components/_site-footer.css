@@ -1,4 +1,4 @@
-/* Footer: title cols 1–5 (in a 6-column CTA block), R cols 7–12.
+/* Footer: title cols 1–6 (big on desktop), R cols 7–12.
    The footer is one screen tall plus the marquee, so when scrolled all the way down the marquee sits just above the fold.
    Bottom bar (label size, 13px): company and location on the left, privacy and cookie settings on the right, on one
    line; phones: two short rows on the left, tight. */
@@ -6,7 +6,9 @@
 .c-site-footer__main{flex:1;align-items:center;padding-block:var(--space-xl)}
 .c-site-footer__cta{grid-column:1 / span 6;grid-row:1;display:grid;grid-template-columns:subgrid;align-content:start}
 .c-site-footer__cta > *{grid-column:1 / -1;justify-self:start}
-.c-site-footer__title{grid-column:1 / span 5}
+.c-site-footer__title{grid-column:1 / span 6}
+/* the closing statement, big (95 @1440): one of the page's typographic moments; doubled: .u-text-display is imported later */
+@media (min-width:1024px){ .c-site-footer__title.c-site-footer__title{font-size:clamp(60px,6.6vw,120px);line-height:1;letter-spacing:-.03em} }
 .c-site-footer__r-anchor{grid-column:7 / -1;grid-row:1;height:clamp(300px,68vh,820px)}
 .c-site-footer__socials{margin-top:var(--space-l)}
 

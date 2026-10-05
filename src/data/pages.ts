@@ -60,11 +60,80 @@ export const contactPage = {
   },
 };
 
+// Privacy notice (/privacy, sections/Legal.astro). `company`: fill in `address` and `number` (the registered address and
+// the company number of the BV): they only show once they're filled in. Every section: a title and blocks: `p` (a
+// paragraph; may hold links), `list` (short points), `rows` (a small table: name, what it's for, how long it's kept).
+// Keep it in step with what the site really does (cookie consent, the contact form, analytics once there are any).
 export const privacyPage = {
-  label: 'Legal',
   title: 'Privacy notice',
-  intro: 'How this site handles your data. The full notice is coming soon.',
-  description: 'How robbevanaken.be handles your data: cookies, analytics and the contact form.',
+  intro: 'What this site knows about you, why, and for how long. The short version: very little.',
+  description: 'How robbevanaken.be handles your data: the contact form, cookies and your rights.',
+  updated: { label: 'Last updated', date: '5 October 2026' },
+  company: { name: 'Robbe Van Aken BV', address: '', number: '', place: 'Ghent, Belgium', email: 'robbe.vanaken@gmail.com' },
+  sections: [
+    { title: 'Who is responsible',
+      blocks: [
+        { p: 'This site is run by Robbe Van Aken BV, a company based in Ghent, Belgium. It decides what happens with the personal data described here, and it is who you contact with any question about it.' },
+        { company: true },
+      ] },
+    { title: 'What I collect, and why',
+      blocks: [
+        { p: 'Only what you send me yourself, and what a website technically needs to be shown.' },
+        { rows: [
+          { name: 'Contact form', text: 'Your name, email address, message, and your company and budget range if you fill them in. I use them to answer you and, if it comes to that, to prepare a proposal.', kept: 'See "How long I keep it"' },
+          { name: 'Email', text: 'If you email me directly, I keep your message and address for the same purpose.', kept: 'Same as the contact form' },
+          { name: 'Server logs', text: 'Like every website, the server notes your IP address, the page you asked for, the time and your browser. These logs are only used to keep the site safe and working.', kept: 'A limited time, set by the hosting provider' },
+        ] },
+        { p: 'I do not build profiles, I do not sell or rent out data, and nothing here is decided about you automatically.' },
+      ] },
+    { title: 'Why I am allowed to',
+      blocks: [
+        { list: [
+          'Answering your message and preparing a proposal: steps taken at your request before a possible contract.',
+          'Keeping the site safe and working: my legitimate interest in a secure, reliable website.',
+          'Analytics, if they are ever added: only with your consent, which you can withdraw at any time.',
+          'Keeping business records of projects: a legal obligation.',
+        ] },
+      ] },
+    { title: 'Cookies and storage',
+      blocks: [
+        { p: 'This site stores as little as it can in your browser. There are no advertising or tracking cookies.' },
+        { rows: [
+          { name: 'cc_cookie', text: 'Remembers your cookie choice, so the banner does not come back on every page.', kept: '6 months' },
+          { name: 'mode', text: 'Remembers whether you chose the light or the dark theme (local storage, never sent to the server).', kept: 'Until you clear it' },
+          { name: 'loaded', text: 'Notes that the opening animation has played, so it only plays once per visit (session storage).', kept: 'Until you close the tab' },
+        ] },
+        { p: 'No analytics run on this site at the moment. If that changes, they will only load after you allow them, and this notice will name the tool. You can review your choice at any time in the <button type="button" data-cookie-settings>cookie settings</button>.' },
+        { p: 'The fonts are served from this site itself, so no request goes to Google Fonts or any other font service. Links to Instagram and LinkedIn are plain links: those sites only see you once you click through.' },
+      ] },
+    { title: 'Who else sees it',
+      blocks: [
+        { p: 'A small number of service providers, only as far as they need to for their part:' },
+        { list: [
+          'The hosting provider that serves this site and delivers the contact form to my mailbox.',
+          'Google (Gmail), where my mailbox lives. Google may process data outside the European Economic Area; it does so under the EU–US Data Privacy Framework and standard contractual clauses.',
+          'People I bring into a project, when your enquiry concerns them, and only what they need.',
+        ] },
+        { p: 'Beyond that I only share data when the law requires it.' },
+      ] },
+    { title: 'How long I keep it',
+      blocks: [
+        { list: [
+          'An enquiry that does not become a project: deleted within 12 months after our last contact.',
+          'An enquiry that becomes a project: kept with the project file for as long as Belgian law requires business records to be kept.',
+          'Your cookie choice: 6 months, after which the banner asks again.',
+        ] },
+      ] },
+    { title: 'Your rights',
+      blocks: [
+        { p: 'You can ask me to show you the data I hold about you, to correct it, to delete it, to limit what I do with it, or to hand it over in a common format. You can also object to its use, and withdraw a consent you gave. Email me and I will answer within a month. It costs nothing.' },
+        { p: 'Not happy with how I handled it? I would rather hear it first, but you can always complain to the Belgian Data Protection Authority (Gegevensbeschermingsautoriteit), Drukpersstraat 35, 1000 Brussels, <a href="mailto:contact@apd-gba.be">contact@apd-gba.be</a>, <a href="https://www.dataprotectionauthority.be" rel="noopener">dataprotectionauthority.be</a>.' },
+      ] },
+    { title: 'Changes',
+      blocks: [
+        { p: 'When the site changes, this notice changes with it. The date at the top tells you which version you are reading.' },
+      ] },
+  ],
 };
 
 export const notFoundPage = {

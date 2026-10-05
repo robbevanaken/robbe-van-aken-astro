@@ -137,7 +137,6 @@ async function runLoader(f) {
   // the page's own R floats in the middle (its canvas is above the overlay while loading, _transition.css)
   rIntro.el = f.anchor;
   rIntro.t = 1;
-  rIntro.dark = true; // over the (always dark) overlay: dark colours, whatever the page's
   const c = startCounter(f, true);
   c.goal = loadGoal(LOADER_MIN);
   await c.done;
@@ -152,7 +151,6 @@ async function runLoader(f) {
     .to([f.bg, f.brand], { opacity: 0, duration: .7, ease: 'power2.inOut' }, .35)
     .to(f.frame, { autoAlpha: 0, duration: .35, ease: 'power1.in' }, .75);
   rIntro.el = null;
-  rIntro.dark = false;
   try { sessionStorage.setItem('loaded', '1'); } catch {} // the next pages in this visit skip the loader (Base.astro)
   document.documentElement.classList.remove('is-loading');
   gsap.set([f.loader, f.bg, f.brand, f.count], { clearProps: 'all' });
@@ -174,7 +172,6 @@ async function cover(f) {
   gsap.set(f.count, { autoAlpha: 0 });
   f.count.textContent = '000';
   root.classList.add('is-transitioning');
-  rIntro.dark = true; // flying onto the (always dark) overlay
   // the style recalculation of showing the overlay lands in this frame, before anything moves
   await nextFrame();
   // the R already sits small in the mobile menu's corner (t is 1): it travels from there to the middle on a moving anchor
@@ -230,7 +227,6 @@ async function uncover(f) {
     .to(f.bg, { opacity: 0, duration: .45, ease: 'power2.inOut' }, .12);
   rIntro.el = null;
   rIntro.onDraw = null;
-  rIntro.dark = false;
   document.documentElement.classList.remove('is-transitioning', 'is-covered');
   gsap.set([f.loader, f.bg, f.brand, f.count, f.snap, f.frame], { clearProps: 'all' });
 }
