@@ -1,5 +1,6 @@
 ---
-// Light/dark toggle: a disc, half filled, that turns half a turn when the theme changes. Delegated click in
+// Light/dark toggle: a small square, half filled (square like the rest of the site's shapes: the tiles, the brackets,
+// the buttons). When the theme changes it turns half a turn, so the filled half swaps sides. Delegated click in
 // scripts/global/theme.js ([data-theme-toggle]); the screen reader label follows the theme in CSS.
 // Styles: styles/components/_theme-toggle.css
 import { nav } from '../../data/site';
@@ -7,7 +8,7 @@ interface Props { class?: string }
 const { class: cls } = Astro.props;
 ---
 <button class:list={['c-theme-toggle', cls]} type="button" data-theme-toggle>
-  <span class="c-theme-toggle__disc" aria-hidden="true"></span>
+  <span class="c-theme-toggle__square" aria-hidden="true"></span>
   <span class="c-theme-toggle__label c-theme-toggle__label--light u-sr-only">{nav.theme.toLight}</span>
   <span class="c-theme-toggle__label c-theme-toggle__label--dark u-sr-only">{nav.theme.toDark}</span>
 </button>

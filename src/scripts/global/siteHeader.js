@@ -56,7 +56,8 @@ export function initSiteHeader(root = document) {
       l.addEventListener('focus', () => { if (!picked) to(l); }, { signal });
       l.addEventListener('click', () => { picked = l; to(l); }, { signal });
     });
-    list.addEventListener('pointerleave', () => { if (!picked) to(current); }, { signal });
+    // (not while the theme switch cross-fades: its overlay takes the pointer for a moment, which isn't leaving the nav)
+    list.addEventListener('pointerleave', () => { if (!picked && !document.documentElement.classList.contains('is-theme-fading')) to(current); }, { signal });
     list.addEventListener('focusout', (e) => { if (!picked && !list.contains(e.relatedTarget)) to(current); }, { signal });
     addEventListener('resize', () => to(current, true), { signal });
     document.fonts?.ready.then(() => { if (!signal.aborted) to(current, true); });

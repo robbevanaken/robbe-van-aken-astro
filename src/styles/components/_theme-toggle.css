@@ -1,17 +1,20 @@
-/* Light/dark toggle (ui/ThemeToggle.astro): a disc with one half filled. Light theme turns it half a turn, so the
-   filled half swaps sides, while its colour eases to the new one. Hover: scales down (punch), like the buttons. */
-.c-theme-toggle{position:relative;display:grid;place-items:center;width:28px;height:28px;margin:-6px;padding:0;background:none;border:0;color:var(--fg);cursor:pointer;
-  transition:transform var(--hover-dur) var(--ease-punch),color .6s var(--ease-out)}
-.c-theme-toggle__disc{position:relative;width:15px;height:15px;border:1px solid currentColor;border-radius:50%;overflow:hidden;
-  transition:transform .9s var(--ease-punch)}
-.c-theme-toggle__disc::before{content:"";position:absolute;inset:0 50% 0 0;background:currentColor}
-.c-theme-toggle:hover,.c-theme-toggle:focus-visible{transform:scale(.86)}
-:root[data-theme="light"] .c-theme-toggle__disc{transform:rotate(180deg)}
+/* Light/dark toggle (ui/ThemeToggle.astro): a 13px square with one half filled. The dark theme turns it half a turn
+   (punch ease), so the filled half swaps sides; the fill eases its colour along. Hover: the square scales down a touch
+   and its fill grows over the whole square, a hint of what a click does; a 44px tap area. */
+.c-theme-toggle{position:relative;display:grid;place-items:center;width:28px;height:28px;margin:-6px;padding:0;background:none;border:0;color:var(--fg);cursor:pointer}
+.c-theme-toggle::before{content:"";position:absolute;inset:-8px} /* a 44px tap area */
+.c-theme-toggle__square{position:relative;width:13px;height:13px;border:1px solid currentColor;overflow:hidden;
+  transition:transform .9s var(--ease-punch),scale var(--hover-dur) var(--ease-punch)}
+.c-theme-toggle__square::before{content:"";position:absolute;inset:0 50% 0 0;background:currentColor;transition:right var(--hover-dur) var(--ease-punch)}
+.c-theme-toggle:hover .c-theme-toggle__square,.c-theme-toggle:focus-visible .c-theme-toggle__square{scale:.86}
+.c-theme-toggle:hover .c-theme-toggle__square::before,.c-theme-toggle:focus-visible .c-theme-toggle__square::before{right:15%}
+:root[data-theme="dark"] .c-theme-toggle__square{transform:rotate(180deg)}
 /* the theme switch cross-fades the page (global/theme.js); the toggle stays out of it, live on its own layer, so its
-   turn and colour change play in full instead of an old and a new disc fading through each other */
+   turn plays in full */
 html.is-theme-fading .c-theme-toggle{view-transition-name:theme-toggle}
 ::view-transition-group(theme-toggle),::view-transition-new(theme-toggle){animation:none}
 ::view-transition-old(theme-toggle){display:none}
 /* the label says what a click does */
 .c-theme-toggle__label--dark,:root[data-theme="light"] .c-theme-toggle__label--light{display:none}
 :root[data-theme="light"] .c-theme-toggle__label--dark{display:inline}
+@media (prefers-reduced-motion:reduce){ .c-theme-toggle__square,.c-theme-toggle__square::before{transition:none} }
