@@ -152,10 +152,16 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
   const A=[{},{},{},{},{},{}],AS={};
   function rect(el,o){const r=el.getBoundingClientRect();o.cx=r.left+r.width/2;o.cy=r.top+r.height/2;o.w=r.width;o.h=r.height;return o}
+  // jump: two neighbouring stage elements more than one stage apart (e.g. about: the exploded R straight into the footer)
+  // blend those two states directly instead of passing through the ones in between ({a, b, f}; null otherwise)
+  let jump=null;
   function computeS(){
+    jump=null;
     const vc=H/2,cs=stages.map(e=>{const r=e.getBoundingClientRect();return r.top+r.height/2});
     if(vc<=cs[0])return SV[0];
-    for(let i=0;i<cs.length-1;i++){if(vc<=cs[i+1]){const f=cs[i+1]-cs[i]<1?1:(vc-cs[i])/(cs[i+1]-cs[i]);return SV[i]+(SV[i+1]-SV[i])*clamp((f-.18)/.64,0,1)}}
+    for(let i=0;i<cs.length-1;i++){if(vc<=cs[i+1]){const f=cs[i+1]-cs[i]<1?1:(vc-cs[i])/(cs[i+1]-cs[i]),t=clamp((f-.18)/.64,0,1);
+      if(Math.abs(SV[i+1]-SV[i])>1){jump={a:SV[i],b:SV[i+1],f:t};return t<.5?SV[i]:SV[i+1]}
+      return SV[i]+(SV[i+1]-SV[i])*t}}
     return SV[cs.length-1];
   }
   // rotation matrices: Rz * Rx * Ry
@@ -250,6 +256,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
     const s=computeS();let i0=Math.min(Math.floor(s),4),i1=Math.min(i0+1,4),f=s-i0;f=f*f*(3-2*f);
     spin=i1!==i0?[1,-1,0,1][i0]*f*TAU*motion:0;
+    if(jump){i0=jump.a;i1=jump.b;f=jump.f*jump.f*(3-2*jump.f);spin=f*TAU*motion} // straight from one state to the other, with a full turn
     // loader: from the intro R to the page's own state (rounded: the page sits at its top), with a full turn
     if(inIntro){i1=Math.round(s);i0=5;f=1-rIntro.t;spin=(f*TAU+rIntro.turn)*motion}
     for(let i=0;i<6;i++){mat(RY[i]+(i===3?0:spin),RX[i],RZ[i],M[i]);SG[i]=M[i][8]>=0?1:-1}

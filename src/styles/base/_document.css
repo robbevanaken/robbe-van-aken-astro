@@ -1,11 +1,11 @@
 /* Reset, element defaults, selection and the fixed R canvas. */
 *,*::before,*::after{box-sizing:border-box}
-html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-tap-highlight-color:transparent} /* no grey tap flash on phones: links have their own :active / focus styles */
+html{background:var(--page);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-tap-highlight-color:transparent} /* no grey tap flash on phones: links have their own :active / focus styles */
 /* menu open: no overflow:hidden on <html> (it switches position:sticky off, so sticky anchors like the projects'
    small R would jump); scrolling is stopped by Lenis, and the menu and header take no pan gestures
    (styles/components/_site-header.css) */
 body{
-  margin:0;background:var(--bg);color:var(--fg);
+  margin:0;background:var(--page);color:var(--fg);
   font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-text);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
@@ -40,3 +40,8 @@ html.is-theming{transition:--bg .6s var(--ease-out),--fg .6s var(--ease-out),--m
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition-duration:0s !important;animation-duration:0s !important}
 }
+
+/* home's featured projects: the whole page eases to --panel while they're on screen and back after
+   (components/pageTint.js; --page is registered in _tokens.css, so the one transition moves every place that uses it) */
+html.is-tinted{--page:var(--panel)}
+html.is-tint-easing{transition:--page .9s cubic-bezier(.65,0,.35,1)}

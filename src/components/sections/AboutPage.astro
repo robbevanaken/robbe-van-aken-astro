@@ -1,0 +1,23 @@
+---
+// About: one statement, then quiet text. A big two-part title (the first part muted) as the page's one typographic
+// moment, the lead below it, then How I build, Stack and Ship as three calm columns: a small title over a thin line, then
+// titled entries. The page's one R (Page journey) starts right of the title and lead (stage 0, the 3D R that turns with
+// the mouse; phones: centred below the lead) and jumps from there straight into the footer, with a full turn.
+// Styles: styles/components/_about.css. Copy: aboutPage in src/data/pages.ts.
+import { aboutPage as p } from '../../data/pages';
+---
+<article class="c-about o-container o-grid">
+  <h1 class="c-about__title">{p.heading.map((t) => <span class:list={{ 'u-text-muted': t.muted }}>{t.text}</span>)}</h1>
+  <p class="c-about__lead u-text-body-l u-text-muted">{p.lead}</p>
+  <!-- the R's first spot: right of the title and lead -->
+  <div class="c-about__hero-r" data-stage="0" aria-hidden="true"><span class="c-about__hero-r-anchor" id="a-hero"></span></div>
+  <div class="c-about__cols">
+    {p.sections.map((s) => (
+      <section class="c-about__col">
+        <h2 class="c-about__col-title u-text-ui">{s.label}</h2>
+        {s.items?.map((it) => <p class="c-about__entry u-text-ui"><span class="c-about__entry-title">{it.title}</span><span class="c-about__entry-text">{it.text}</span></p>)}
+        {s.groups?.map((g) => <p class="c-about__entry u-text-ui"><span class="c-about__entry-title">{g.label}</span><span class="c-about__entry-text">{g.items.join(', ')}</span></p>)}
+      </section>
+    ))}
+  </div>
+</article>

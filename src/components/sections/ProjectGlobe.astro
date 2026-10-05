@@ -9,11 +9,12 @@ import Corners from '../ui/Corners.astro';
 import Icon from '../ui/Icon.astro';
 import { projectTags, type Project } from '../../data/projects';
 import { work } from '../../data/site';
-interface Props { projects: Project[]; label: string; layout?: 'spread' | 'grid' }
-const { projects, label, layout = 'spread' } = Astro.props;
+interface Props { projects: Project[]; label: string; layout?: 'spread' | 'grid'; tint?: boolean }
+// tint (home): the page's background eases to --panel while this section is on screen (components/pageTint.js)
+const { projects, label, layout = 'spread', tint = false } = Astro.props;
 const spread = layout === 'spread';
 ---
-<section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects data-cursor-label={work.cursor}>
+<section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects data-cursor-label={work.cursor} data-page-tint={tint ? '' : undefined}>
   <slot name="head" />
   <div class="c-featured-projects__grid o-container o-grid">
     <slot name="intro" />

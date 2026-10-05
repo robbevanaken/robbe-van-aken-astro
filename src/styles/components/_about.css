@@ -1,0 +1,35 @@
+/* About (sections/AboutPage.astro): one statement, then quiet text. The title (cols 1–8, two parts, each on its own
+   line, a step below the hero size), the lead below it (cols 1–6), the R right of both (cols 9–12, stage 0: from there
+   it jumps straight into the footer), then How I build, Stack and Ship as three columns of four (a small title over a
+   thin line, titled entries in ui size). Tablet: title + lead cols 1–4, R 5–6, the columns stacked. Phones: the title
+   full width, the R centred below the lead. */
+.c-about{padding-top:calc(var(--space-section) + var(--nav-top) + 40px);row-gap:var(--space-l);align-items:start}
+.c-about__title{grid-column:1 / span 8;grid-row:1;font-size:clamp(40px,6.25vw,100px);line-height:1;letter-spacing:-.03em;font-weight:400}
+.c-about__title span{display:block}
+.c-about__lead{grid-column:1 / span 6;grid-row:2;max-width:36em}
+.c-about__hero-r{grid-column:9 / -1;grid-row:1 / 3;align-self:center;justify-self:end;width:min(100%,clamp(200px,24vw,380px));aspect-ratio:1;pointer-events:none}
+.c-about__hero-r-anchor{display:block;width:100%;height:100%}
+.c-about__cols{grid-column:1 / -1;margin-top:var(--space-l);display:grid;grid-template-columns:subgrid;row-gap:var(--space-xl)}
+.c-about__col{grid-column:span 4;display:grid;align-content:start;gap:var(--space-s)}
+.c-about__col-title{color:var(--fg);padding-bottom:var(--space-2xs);border-bottom:1px solid var(--line)}
+.c-about__entry{display:grid;gap:2px;margin:0}
+.c-about__entry-title{color:var(--fg)}
+.c-about__entry-text{color:var(--muted);line-height:1.45}
+
+@media (max-width:1023px){
+  .c-about__title,.c-about__lead{grid-column:1 / span 4}
+  .c-about__hero-r{grid-column:5 / -1}
+  .c-about__col{grid-column:1 / -1}
+}
+/* phones: the title full width, the R centred below the lead; more room everywhere */
+@media (max-width:639px){
+  .c-about{padding-top:calc(var(--space-section) + var(--nav-top) + 24px);row-gap:var(--space-m)}
+  .c-about__title{grid-column:1 / -1;font-size:clamp(36px,11vw,48px);line-height:1.02}
+  .c-about__lead{grid-column:1 / -1;font-size:17px;line-height:1.55}
+  .c-about__hero-r{grid-column:1 / -1;grid-row:3;justify-self:center;width:min(64vw,260px);margin-top:var(--space-m)}
+  .c-about__cols{margin-top:var(--space-xl);row-gap:var(--space-section)}
+  .c-about__col{gap:var(--space-m)}
+  .c-about__col-title{padding-bottom:var(--space-xs)}
+  .c-about__entry{gap:6px}
+  .c-about__entry-text{line-height:1.55}
+}

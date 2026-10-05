@@ -21,6 +21,7 @@ import { initWorkFilter } from './components/workFilter.js';
 import { initFilter } from './components/filter.js';
 import { initWorkIntro } from './components/workIntro.js';
 import { initWorkLoop } from './components/workLoop.js';
+import { initPageTint } from './components/pageTint.js';
 import { initCardCursor } from './components/cardCursor.js';
 import { initHighlight } from './components/highlightText.js';
 import { initTextHover } from './components/textHover.js';
@@ -57,6 +58,7 @@ function mount() {
     initContactForm(root),
     initWorkFilter(root),
     initWorkLoop(root),
+    initPageTint(root),
     initCardCursor(root),
     initFilter(root),
     initWorkIntro(root),

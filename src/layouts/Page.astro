@@ -5,14 +5,18 @@ import Base from './Base.astro';
 import Nav from '../components/layout/Nav.astro';
 import Footer from '../components/sections/Footer.astro';
 import GridOverlay from '../components/layout/GridOverlay.astro';
-interface Props { title: string; description?: string; footer?: boolean; noindex?: boolean }
-const { title, description, footer = true, noindex = false } = Astro.props;
+// journey: one R for the whole page instead (as on home): it travels through the page's own stage anchors (e.g. about:
+// next to the title, then the exploded R alongside the text) and ends in the footer; no R in the header then
+interface Props { title: string; description?: string; footer?: boolean; noindex?: boolean; journey?: boolean }
+const { title, description, footer = true, noindex = false, journey = false } = Astro.props;
 ---
 <Base title={`${title} · Robbe Van Aken`} description={description} noindex={noindex}>
   <!-- two separate R's on subpages: a small one in the header (also the R in the page loader: data-r-intro) and a big one in the footer -->
-  <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-header]" data-r-intro></canvas>
-  {footer && <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-footer]"></canvas>}
-  <Nav withR />
+  {journey
+    ? <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-intro></canvas>
+    : <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-header]" data-r-intro></canvas>}
+  {footer && !journey && <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-footer]"></canvas>}
+  <Nav withR={!journey} />
   <main id="top" tabindex="-1" class:list={['c-page', { 'c-page--end': !footer }]}>
     <slot />
   </main>

@@ -1,10 +1,9 @@
 ---
+// About: editorial and mostly text (sections/AboutPage.astro). Copy: aboutPage in src/data/pages.ts.
 import Page from '../layouts/Page.astro';
-import PageIntro from '../components/sections/PageIntro.astro';
-import Placeholder from '../components/ui/Placeholder.astro';
+import AboutPage from '../components/sections/AboutPage.astro';
 import { aboutPage as p } from '../data/pages';
 ---
-<Page title={p.title}>
-  <PageIntro label={p.label} title={p.title} intro={p.intro} />
-  <Placeholder />
+<Page title={p.title} description={p.intro} journey>
+  <AboutPage />
 </Page>

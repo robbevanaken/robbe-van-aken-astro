@@ -5,7 +5,7 @@
 
 .c-site-header__body{position:relative;align-items:start;padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top));padding-bottom:var(--space-m)}
 /* soft fade behind the header once the page has scrolled, so it stays readable over content */
-.c-site-header__body::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--bg) 35%,transparent);opacity:0;transition:opacity .5s}
+.c-site-header__body::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--page) 35%,transparent);opacity:0;transition:opacity .5s}
 .is-scrolled .c-site-header__body::before{opacity:1}
 /* menu open: the header's backdrop goes, so the header shows the menu's own panel behind it; both fade on the same curve
    and duration, so the header and the menu change tint together */
