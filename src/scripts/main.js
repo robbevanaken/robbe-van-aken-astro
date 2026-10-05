@@ -43,6 +43,9 @@ function whenUncovered() {
 // every init only looks inside the page's own container (root)
 function mount() {
   const id = ++page, root = document.getElementById('swup');
+  // a page view for Google Tag Manager on every page swap (the first load counts itself; trigger in GTM: custom event
+  // "page_view_swap"); harmless without GTM
+  if (id > 1) (window.dataLayer = window.dataLayer || []).push({ event: 'page_view_swap', page_path: location.pathname, page_title: document.title });
   syncThemeMeta();
   cleanups = [
     initSiteHeader(root),
@@ -78,5 +81,9 @@ function unmount() {
 
 initTheme();
 initSmoothScroll();
-initCookieConsent();
+// the cookie banner waits for the first-visit loader to finish (it would sit on top of it)
+if (document.documentElement.classList.contains('is-loading')) {
+  const mo = new MutationObserver(() => { if (!document.documentElement.classList.contains('is-loading')) { mo.disconnect(); initCookieConsent(); } });
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+} else initCookieConsent();
 initPageTransitions({ mount, unmount });

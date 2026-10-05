@@ -12,6 +12,15 @@ const person = { '@context': 'https://schema.org', '@type': 'Person', name: nav.
 // without a trailing slash, like the site's own links and the sitemap (/about, not /about/)
 const canonical = new URL(Astro.url.pathname.replace(/(.)\/$/, '$1'), Astro.site);
 const image = new URL(meta.image, Astro.site);
+// Google Tag Manager: production builds only (`live`), and it only runs once the visitor allows analytics in the cookie banner
+// (vanilla-cookieconsent runs scripts with type="text/plain" data-category="analytics" on consent). Consent mode v2
+// defaults are set first (everything denied), and global/cookieConsent.js updates them with the visitor's choice.
+const GTM = 'GTM-PHRBR9CS';
+// production builds only (NODE_ENV: import.meta.env in this file trips Vite's dev transform)
+const live = process.env.NODE_ENV === 'production';
+// as strings (set:html): braces written straight inside a conditional <script> would be read as template expressions
+const consentDefaults = "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});";
+const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','" + GTM + "');";
 ---
 <!doctype html>
 <html lang="en" data-theme="light">
@@ -20,6 +29,8 @@ const image = new URL(meta.image, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    {live && <script is:inline set:html={consentDefaults} />}
+    {live && <script is:inline type="text/plain" data-category="analytics" set:html={gtmSnippet} />}
     <!-- theme (scripts/global/theme.js): light, or dark if that's the saved choice, set before the first paint -->
     <script is:inline>try{if(localStorage.getItem('mode')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
     <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless);

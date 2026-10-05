@@ -64,7 +64,9 @@ export const openProject = {
     Object.assign(copy.style, { top: `${r.top}px`, left: `${r.left}px`, width: `${r.width}px`, height: `${r.height}px` });
     // keep the image's hover zoom on the copy (it's outside the card now), it eases back while the copy grows
     const img = media.querySelector('img'), cimg = copy.querySelector('img');
-    if (img && cimg) { cimg.style.transform = getComputedStyle(img).transform; cimg.style.transition = 'none'; }
+    if (img && cimg) { cimg.style.transform = getComputedStyle(img).transform; cimg.style.transition = 'none'; cimg.loading = 'eager'; cimg.src = img.currentSrc || img.src; }
+    // the copy's image ready before it shows (a lazy copy would flash the colour placeholder for a few frames)
+    if (cimg) await Promise.race([cimg.decode().catch(() => {}), new Promise((r) => setTimeout(r, 300))]);
     document.body.append(copy);
     await Promise.all([
       gsap.to(pageParts(), { autoAlpha: 0, duration: .3, ease: 'power2.out' }),

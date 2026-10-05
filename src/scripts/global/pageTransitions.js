@@ -47,6 +47,20 @@ export function navigate(url) {
   if (swup) swup.navigate(url); else location.href = url;
 }
 
+// next project on touch: the link fires while the finger is still moving, and the rest of that native scroll (which
+// Lenis can't stop) would carry on into the new page. While the swap runs, touch moves are blocked; when the finger
+// lifts, the page is put back at the top.
+const blockTouch = (e) => e.preventDefault();
+let touchHeld = false;
+function holdTouch(on) {
+  if (on === touchHeld) return;
+  touchHeld = on;
+  if (on) {
+    addEventListener('touchmove', blockTouch, { passive: false });
+    addEventListener('touchend', () => { if (scrollY > 0) scrollTop(); }, { once: true });
+  } else removeEventListener('touchmove', blockTouch);
+}
+
 function scrollTop() {
   ScrollTrigger.clearScrollMemory(); // or its refresh puts the old page's scroll position back
   const lenis = getLenis();
@@ -266,7 +280,7 @@ export function initPageTransitions({ mount, unmount }) {
   });
 
   swup.hooks.replace('animation:out:await', async (visit) => {
-    if (visit.animation.name === 'next-project') { carried = handOff(); return; }
+    if (visit.animation.name === 'next-project') { holdTouch(true); carried = handOff(); return; }
     if (visit.animation.name === 'open-project') { carried = await openProject.leave(card); card = null; return; }
     if (covers(visit)) await cover(f);
   });
@@ -300,7 +314,7 @@ export function initPageTransitions({ mount, unmount }) {
   });
 
   swup.hooks.replace('animation:in:await', async (visit) => {
-    if (visit.animation.name === 'next-project') { await arrive.play(carried); carried = null; return; }
+    if (visit.animation.name === 'next-project') { await arrive.play(carried); carried = null; holdTouch(false); return; }
     if (visit.animation.name === 'open-project') { await openProject.enter(carried); carried = null; return; }
     if (covers(visit)) await uncover(f);
   });

@@ -91,19 +91,20 @@ export const privacyPage = {
         { list: [
           'Answering your message and preparing a proposal: steps taken at your request before a possible contract.',
           'Keeping the site safe and working: my legitimate interest in a secure, reliable website.',
-          'Analytics, if they are ever added: only with your consent, which you can withdraw at any time.',
+          'Analytics (Google Analytics, through Google Tag Manager): only with your consent, which you can withdraw at any time.',
           'Keeping business records of projects: a legal obligation.',
         ] },
       ] },
     { title: 'Cookies and storage',
       blocks: [
-        { p: 'This site stores as little as it can in your browser. There are no advertising or tracking cookies.' },
+        { p: 'This site stores as little as it can in your browser. There are no advertising cookies.' },
         { rows: [
           { name: 'cc_cookie', text: 'Remembers your cookie choice, so the banner does not come back on every page.', kept: '6 months' },
           { name: 'mode', text: 'Remembers whether you chose the light or the dark theme (local storage, never sent to the server).', kept: 'Until you clear it' },
+          { name: '_ga, _ga_*', text: 'Google Analytics: tells visits apart, so I can see how the site is used. Only set when you allow analytics.', kept: '2 years' },
           { name: 'loaded', text: 'Notes that the opening animation has played, so it only plays once per visit (session storage).', kept: 'Until you close the tab' },
         ] },
-        { p: 'No analytics run on this site at the moment. If that changes, they will only load after you allow them, and this notice will name the tool. You can review your choice at any time in the <button type="button" data-cookie-settings>cookie settings</button>.' },
+        { p: 'With your permission, this site uses Google Tag Manager to load Google Analytics, which tells me how the site is used (pages visited, rough location, device), never who you are. It only runs after you allow analytics. You can change your choice at any time in the <button type="button" data-cookie-settings>cookie settings</button>.' },
         { p: 'The fonts are served from this site itself, so no request goes to Google Fonts or any other font service. Links to Instagram and LinkedIn are plain links: those sites only see you once you click through.' },
       ] },
     { title: 'Who else sees it',
@@ -111,7 +112,7 @@ export const privacyPage = {
         { p: 'A small number of service providers, only as far as they need to for their part:' },
         { list: [
           'The hosting provider that serves this site and delivers the contact form to my mailbox.',
-          'Google (Gmail), where my mailbox lives. Google may process data outside the European Economic Area; it does so under the EU–US Data Privacy Framework and standard contractual clauses.',
+          'Google (Analytics and Tag Manager, only with your consent; Gmail, where my mailbox lives). Google may process data outside the European Economic Area; it does so under the EU–US Data Privacy Framework and standard contractual clauses.',
           'People I bring into a project, when your enquiry concerns them, and only what they need.',
         ] },
         { p: 'Beyond that I only share data when the law requires it.' },

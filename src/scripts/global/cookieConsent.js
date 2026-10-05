@@ -1,20 +1,33 @@
 // Cookie consent (vanilla-cookieconsent v3), themed in styles/vendor/_cookieconsent.css.
-// Categories: "necessary" (always on) and "analytics" (off until accepted). No analytics script exists yet:
-// when you add one, load it with <script type="text/plain" data-category="analytics" ...> so it only runs after consent.
+// Categories: "necessary" (always on) and "analytics" (off until accepted): Google Tag Manager (layouts/Base.astro,
+// production only) is a <script type="text/plain" data-category="analytics">, so it only runs after consent.
 // The footer button [data-cookie-settings] reopens the preferences (delegated, so it keeps working after page swaps).
 import 'vanilla-cookieconsent/dist/cookieconsent.css';
 import * as CookieConsent from 'vanilla-cookieconsent';
 
 export function initCookieConsent() {
   document.addEventListener('click', (e) => { if (e.target.closest('[data-cookie-settings]')) CookieConsent.showPreferences(); });
+  // Google consent mode v2 (the defaults, all denied, are set in layouts/Base.astro): follow the visitor's choice
+  const consent = () => {
+    if (typeof window.gtag !== 'function') return;
+    const yes = CookieConsent.acceptedCategory('analytics') ? 'granted' : 'denied';
+    window.gtag('consent', 'update', { analytics_storage: yes });
+  };
   CookieConsent.run({
+    onConsent: consent,
+    onChange: ({ changedCategories }) => {
+      consent();
+      // analytics switched off again: reload, so the tags that already ran are gone
+      if (changedCategories.includes('analytics') && !CookieConsent.acceptedCategory('analytics')) location.reload();
+    },
     guiOptions: {
       consentModal: { layout: 'box', position: 'bottom left', equalWeightButtons: true, flipButtons: false },
       preferencesModal: { layout: 'box', equalWeightButtons: true, flipButtons: false },
     },
     categories: {
       necessary: { enabled: true, readOnly: true },
-      analytics: {},
+      // Google Tag Manager (production only, layouts/Base.astro); its cookies are cleared when analytics is switched off
+      analytics: { autoClear: { cookies: [{ name: /^_ga/ }, { name: '_gid' }] } },
     },
     language: {
       default: 'en',

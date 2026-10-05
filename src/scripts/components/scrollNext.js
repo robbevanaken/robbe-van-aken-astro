@@ -125,10 +125,19 @@ function initScrollToNextPage(root) {
   // a slow settle of the image inside its box (ends at 1, as on the next page)
   if (bg) tl.fromTo(bg, { scale: 1.15 }, { scale: 1, duration: 1 }, 0);
   if (word) tl.fromTo(word, { autoAlpha: 0 }, { autoAlpha: 1, duration: .25 }, .75);
-  // page furniture just above the section (the "All projects" button): gone early, so it doesn't travel up past the
-  // next project's visual
-  const fades = root.querySelectorAll('[data-scroll-next-fade]');
-  if (fades.length) tl.fromTo(fades, { autoAlpha: 1 }, { autoAlpha: 0, duration: .12 }, 0);
+  // page furniture just above the section (the "All projects" button): fades out as the rising visual comes up to it
+  // (over the last 48px), so it never travels up past the visual, and stays clickable until then
+  const fades = [...root.querySelectorAll('[data-scroll-next-fade]')];
+  const fade = () => {
+    if (!box || !fades.length) return;
+    const top = box.getBoundingClientRect().top;
+    fades.forEach((el) => {
+      const o = Math.min(1, Math.max(0, (top - el.getBoundingClientRect().bottom) / 48));
+      el.style.opacity = o.toFixed(3); el.style.visibility = o < .02 ? 'hidden' : '';
+    });
+  };
+  addEventListener('scroll', fade, { passive: true, signal: ac.signal });
+  fade();
 
   return () => { ac.abort(); clearTimeout(rest); tl.scrollTrigger?.kill(); };
 }

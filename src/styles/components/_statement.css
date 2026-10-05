@@ -16,5 +16,5 @@
   .c-statement__line{column-gap:var(--space-2xs)}
   .c-statement__line--3{padding-left:calc((100% - 3 * var(--gutter)) / 4 * .5)}
   .c-statement__small.c-statement__small{font-size:13px;max-width:7.5em}
-  .c-statement__hold{translate:0 40svh} /* the statement is short here: the R waits a little longer before it heads for the footer */
+  .c-statement__hold{translate:0 -6svh} /* the R heads for the footer as soon as the last line has left the screen */
 }

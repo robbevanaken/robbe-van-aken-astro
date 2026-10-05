@@ -37,9 +37,9 @@
   .c-site-footer__r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(220px,38vh,480px)}
 }
 @media (max-width:639px){
-  /* compact: two short rows on the left (company · location, privacy · cookie settings), tight */
-  .c-site-footer__bottom{display:grid;grid-template-columns:auto auto;justify-content:start;column-gap:var(--space-m);row-gap:6px;
-    padding-block:var(--space-s) calc(var(--space-s) + env(safe-area-inset-bottom,0px))}
+  /* centred and calm: two balanced rows (company · location, privacy · cookie settings), centred */
+  .c-site-footer__bottom{display:grid;grid-template-columns:auto auto;justify-content:center;justify-items:center;column-gap:var(--space-m);row-gap:var(--space-2xs);text-align:center;
+    padding-block:var(--space-m) calc(var(--space-m) + env(safe-area-inset-bottom,0px))}
   .c-site-footer__bottom > *{grid-column:auto} /* not the full width .o-grid > * gives them */
   .c-site-footer__legal:not(.c-site-footer__legal--cookies){margin-left:0}
 }
