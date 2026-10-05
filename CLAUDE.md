@@ -2,6 +2,8 @@
 
 Personal site for Robbe Van Aken, a freelance developer (Craft CMS, Laravel) with a background in design, based in Ghent. It replaces the old Booold brand. Goal: an Awwwards Site of the Day. Development leads the positioning, branding is offered more quietly, and copy should never suggest he works strictly alone (he brings in people on bigger projects).
 
+Hosting and deploy (Combell, `.htaccess`, mail, caching, GTM setup, go-live checklist): see `HOSTING.md`.
+
 ## Stack
 Astro (static), plain JS modules, GSAP (ScrollTrigger, ScrambleText, SplitText) + Lenis, swup (page transitions, + head and preload plugins). No framework components. `npm run dev` / `npm run build`.
 
