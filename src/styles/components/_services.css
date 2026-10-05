@@ -9,6 +9,7 @@
 .c-services__head{row-gap:var(--space-s);padding-bottom:calc(var(--space-xl) * 1.5);text-align:center}
 .c-services__title{grid-column:4 / span 6}
 .c-services__intro{grid-column:5 / span 4}
+.c-services__hold{grid-column:1 / -1;height:0}
 
 .c-services__pin{height:calc(var(--services,4) * 100svh)}
 .c-services__stage{position:sticky;top:0;height:100svh;grid-template-rows:1fr;align-items:center}

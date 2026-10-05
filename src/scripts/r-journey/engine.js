@@ -1,6 +1,8 @@
 // The R journey: one set of particles that travels through the page.
 // States (see data-stage in the markup): 0 hero "Pixel", 1 pitch "Fragment", 2 projects "Craft",
-// 3 services "Parts" (the R rebuilds into one big icon per service, morphing on scroll), 4 footer "Play".
+// 3 services "Parts" (the R rebuilds into one big icon per service, morphing on scroll), 4 footer "Play",
+// 6 how I work "Point" (the R as an arrow on [data-r-pointer], pointing at the row in the middle of the screen).
+// (5 is the loader's copy of stage 2, see rIntro.)
 // Pipeline per frame: scroll -> state blend -> 3D targets per particle (springs) -> lighting -> draw
 // (glyph dither by default, raw pixels as fallback; toggle with the dev HUD or the G key).
 // Instances: every <canvas data-r-canvas> runs its own R. `scope` limits which [data-stage] elements and anchors it
@@ -16,7 +18,9 @@ import { theme } from '../global/theme.js';
 // it from 0 to 1. onDraw: called once after the next frame drawn in intro (a page swap then drops its still of the old R).
 // drift: how far (px, average) the intro R's particles still are from where they're heading; ~0 = at rest.
 // turn: an extra turn (radians) on the intro R, e.g. while a page swap moves it from the menu's corner to the middle.
-export const rIntro = { el: null, t: 0, onDraw: null, drift: 0, turn: 0 };
+// dark: the R is over something that's always dark (the loader / page swap overlay, the mobile menu): while it's on its
+// way there or there (t > .5) it draws in the dark theme's colours, whatever the page's.
+export const rIntro = { el: null, t: 0, onDraw: null, drift: 0, turn: 0, dark: false };
 // the smoothed mouse, kept across page swaps: the next page's R starts turned exactly like the old one
 const mouse = { mx: 0, my: 0, smx: 0, smy: 0 };
 // page swaps: the R's static particle data is built once per size (geo) and reused by every next engine, and the intro
@@ -36,7 +40,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   let W=0,H=0,DPR=1;
   // the CSS size follows innerWidth/innerHeight exactly (100vh is taller than the visible area on iOS while the toolbar shows,
   // which would stretch the drawing)
-  function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cvs.width=W*DPR;cvs.height=H*DPR;cvs.style.width=W+'px';cvs.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0)}
+  // at most 2 device pixels per css pixel, 1.5 on touch screens (phones: 3 is a lot of glyphs per frame)
+  function resize(){DPR=Math.min(window.devicePixelRatio||1,matchMedia('(pointer: coarse)').matches?1.5:2);W=innerWidth;H=innerHeight;cvs.width=W*DPR;cvs.height=H*DPR;cvs.style.width=W+'px';cvs.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0)}
   addEventListener('resize',resize,{signal});resize();
 
   let {mx,my,smx,smy}=mouse,mpx=-9999,mpy=-9999;
@@ -57,7 +62,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aCraft=byId('a-craft'),aFoot=byId('a-foot');
   // services: one icon in [data-service-slot], which one (and how far into the morph to the next) follows [data-services]
   const svcSlot=scope.querySelector?.('[data-service-slot]')||main,svcEl=scope.querySelector?.('[data-services]')||null;
-  const NAMES=['Pixel','Fragment','Craft','Parts','Play'];
+  // how I work: the arrow (the last icon) on [data-r-pointer], moved from row to row by components/approach.js
+  const aPoint=scope.querySelector?.('[data-r-pointer]')||main;
+  const NAMES=['Pixel','Fragment','Craft','Parts','Play','Intro','Point'];
   const hudName=cull?null:scope.querySelector('#hud-name'),hudBar=cull?null:scope.querySelector('#hud-bar');
   function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   const clamp=(v,a,b)=>v<a?a:v>b?b:v;
@@ -119,7 +126,11 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       g=>{g.beginPath();g.moveTo(12,3);g.quadraticCurveTo(13,16,23,17);g.quadraticCurveTo(13,18,12,29);g.quadraticCurveTo(11,18,1,17);g.quadraticCurveTo(11,16,12,3);g.fill();P(g,[24,2,26.5,6.5,24,11,21.5,6.5])},
       // Branding: a shield with a chevron cut out
       g=>{g.beginPath();g.moveTo(4,3);g.lineTo(26,3);g.lineTo(26,13);g.quadraticCurveTo(26,23,15,29);g.quadraticCurveTo(4,23,4,13);g.closePath();g.fill();
-        CUT(g,()=>P(g,[8,19,15,11,22,19,22,23,15,15.5,8,23]))}
+        CUT(g,()=>P(g,[8,19,15,11,22,19,22,23,15,15.5,8,23]))},
+      // not a service: the arrow of stage 6 (how I work), pointing right, in the icons' gothic hand: a pointed-arch head
+      // with a pointed arch cut out of it (like the window) on a broad shaft. Always the last one (index NI-1)
+      g=>{g.beginPath();g.moveTo(11,2);g.quadraticCurveTo(21,5,29.5,15);g.quadraticCurveTo(21,25,11,28);g.quadraticCurveTo(16,15,11,2);g.fill();g.fillRect(1.5,12.4,13,5.2);
+        CUT(g,()=>{g.beginPath();g.moveTo(17,9);g.quadraticCurveTo(21.5,11,24.5,15);g.quadraticCurveTo(21.5,19,17,21);g.quadraticCurveTo(19,15,17,9);g.fill()})}
     ];
     const icons=drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=IG;const g=c.getContext('2d');g.scale(IG/30,IG/30);g.fillStyle='#fff';fn(g);
       const id=g.getImageData(0,0,IG,IG).data,ins=(x,y)=>x>=0&&y>=0&&x<IG&&y<IG&&id[(y*IG+x)*4+3]>120,cap=[],bd=[];
@@ -150,9 +161,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     inited=true;
   }
 
-  const A=[{},{},{},{},{},{}],AS={};
+  const A=[{},{},{},{},{},{},{}],AS={};
   function rect(el,o){const r=el.getBoundingClientRect();o.cx=r.left+r.width/2;o.cy=r.top+r.height/2;o.w=r.width;o.h=r.height;return o}
-  // jump: two neighbouring stage elements more than one stage apart (e.g. about: the exploded R straight into the footer)
+  // jump: two neighbouring stage elements more than one stage apart (e.g. the services' icon straight into the arrow)
   // blend those two states directly instead of passing through the ones in between ({a, b, f}; null otherwise)
   let jump=null;
   function computeS(){
@@ -175,7 +186,10 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   }
   // services: MS turns the icon (a full turn per morph), SS = which cap faces us; icon sq0 morphs into sq1 by sg
   const MS=new Float32Array(9);let SS=1,sq0=0,sq1=0,sg=0;
-  const RY=new Float32Array(6),RX=new Float32Array(6),RZ=new Float32Array(6),M=[0,1,2,3,4,5].map(()=>new Float32Array(9)),MB=new Float32Array(9),SG=new Float32Array(6);
+  // how I work: MA sways the arrow (pointing right, turned a little so its depth shows), SA = which cap faces us; flip
+  // turns it round (half a turn about Y, eased) when the pointer's data-dir says the reel is scrolled back
+  const MA=new Float32Array(9);let SA=1,flip=0,SB=.98; // SB: the service icon's size in its slot
+  const RY=new Float32Array(7),RX=new Float32Array(7),RZ=new Float32Array(7),M=[0,1,2,3,4,5,6].map(()=>new Float32Array(9)),MB=new Float32Array(9),SG=new Float32Array(7);
   let spin=0,time=0;const TAU=Math.PI*2;
   function proj(i,a,lx,ly,lz,o){
     const m=M[i],x=m[0]*lx+m[1]*ly+m[2]*lz,y=m[3]*lx+m[4]*ly+m[5]*lz,z=m[6]*lx+m[7]*ly+m[8]*lz,k=1/(1-z*.55);
@@ -188,18 +202,22 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     else if(i===2||i===5)proj(i,A[i],u,v,z,o);
     else if(i===3){
       // mid-morph the shape comes apart in its fragments (the pitch's exploded view) and closes again as the next icon
-      const a=AS,box=a.h*.98,m=MS,j0=sq0*N+p,j1=sq1*N+p,g=sg,c=CH[p],e=Math.sin(Math.PI*g)*.45*motion,
+      const a=AS,box=a.h*SB,m=MS,j0=sq0*N+p,j1=sq1*N+p,g=sg,c=CH[p],e=Math.sin(Math.PI*g)*.45*motion,
         z0=IZ[j0]===2?SS:IZ[j0],z1=IZ[j1]===2?SS:IZ[j1],
         lx=IU[j0]+(IU[j1]-IU[j0])*g+OX[c]*e,ly=IV[j0]+(IV[j1]-IV[j0])*g+OY[c]*e,lz=(z0+(z1-z0)*g)*.1+OZ[c]*e*.3,
         x=m[0]*lx+m[1]*ly+m[2]*lz,y=m[3]*lx+m[4]*ly+m[5]*lz,z=m[6]*lx+m[7]*ly+m[8]*lz,k=1/(1-z*.6),fl=Math.sin(time*1.1)*a.h*.012*motion;
       o[0]=a.cx+x*k*box;o[1]=a.cy+y*k*box+fl}
+    else if(i===6){
+      const a=A[6],box=a.h*.98,m=MA,j=(NI-1)*N+p,lx=IU[j],ly=IV[j],lz=(IZ[j]===2?SA:IZ[j])*.1,
+        x=m[0]*lx+m[1]*ly+m[2]*lz,y=m[3]*lx+m[4]*ly+m[5]*lz,z=m[6]*lx+m[7]*ly+m[8]*lz,k=1/(1-z*.6);
+      o[0]=a.cx+x*k*box;o[1]=a.cy+y*k*box}
     else{const a=A[4];proj(4,a,u,v,z,o);
       if(motion){let x=o[0],y=o[1];const dx=x-mpx,dy=y-mpy,dd=Math.hypot(dx,dy)||1,R=a.S*.24;if(dd<R){const pu=1-dd/R,push=pu*pu*R*.95;x+=dx/dd*push;y+=dy/dd*push}o[0]=x;o[1]=y}}
   }
   // colours per theme (global/theme.js): light = dark crosses / pixels on the light page
   const PALS={dark:['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'],light:['#e6ded6','#cfc5bc','#a3978e','#6f6560','#3d302a','#1f1511']};
   const LX=-.35,LY=-.55,LZ=.76;
-  const DENS=[.8,.82,1.12,1,1.08,1.12];
+  const DENS=[.8,.82,1.12,1,1.08,1.12,1];
   const t0=[0,0],t1=[0,0];let lastIdx=-1;
   // Glyph dither mode (like Unicorn's Glyph Dither): particles are binned into a screen grid and every
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
@@ -209,9 +227,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // thinner and greyer than white on dark, so more full crosses, heavier strokes, and a paler dim tone so the shaded
   // sides fall back and the front face (the shape) stands out.
   const G={dark:{gamma:2,colors:['#8d817a','#ffffff'],line:.32,pad:.23},light:{gamma:3,colors:['#c2b8af','#140b08'],line:.37,pad:.21}},BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
-  function sprites(cell){
-    const key=cell+'@'+DPR+theme.mode;if(spriteCache.has(key))return spriteCache.get(key);
-    const gs=G[theme.mode],px=Math.max(2,Math.round(cell*DPR)),out=gs.colors.map(col=>{
+  function sprites(cell,mode){
+    const key=cell+'@'+DPR+mode;if(spriteCache.has(key))return spriteCache.get(key);
+    const gs=G[mode],px=Math.max(2,Math.round(cell*DPR)),out=gs.colors.map(col=>{
       const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');
       const pad=px*gs.pad;g.strokeStyle=col;g.lineWidth=Math.max(1,px*gs.line);g.lineCap=px<6?'butt':'round';
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c});
@@ -244,6 +262,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     rect(svcSlot,AS);
     rect(aFoot,A[4]);A[4].S=Math.min(A[4].h,A[4].w*1.05)*.9;
     const inIntro=intro&&rIntro.el&&rIntro.t>0;
+    rect(aPoint,A[6]);A[6].S=A[6].h;
     if(inIntro){rect(rIntro.el,A[5]);A[5].S=A[5].h*.9}
 
     RY[0]=(smx*1.7+Math.sin(tm*.4)*.55)*motion;RX[0]=(smy*1.1+Math.sin(tm*.29)*.3)*motion;RZ[0]=(Math.sin(tm*.23)*.3+smx*.25)*motion;
@@ -254,20 +273,26 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     RY[4]=(smx*1.3+Math.sin(tm*.35)*.3)*motion;RX[4]=(smy*.8)*motion;RZ[4]=Math.sin(tm*.2)*.12*motion;
     RY[5]=RY[2];RX[5]=RX[2];RZ[5]=RZ[2];
 
-    const s=computeS();let i0=Math.min(Math.floor(s),4),i1=Math.min(i0+1,4),f=s-i0;f=f*f*(3-2*f);
+    // stage 6 is only ever reached whole (its markers hold it, jump blends it with its neighbours)
+    const s=computeS(),s6=s===6;let i0=s6?6:Math.min(Math.floor(s),4),i1=s6?6:Math.min(i0+1,4),f=s6?0:s-i0;f=f*f*(3-2*f);
     spin=i1!==i0?[1,-1,0,1][i0]*f*TAU*motion:0;
     if(jump){i0=jump.a;i1=jump.b;f=jump.f*jump.f*(3-2*jump.f);spin=f*TAU*motion} // straight from one state to the other, with a full turn
     // loader: from the intro R to the page's own state (rounded: the page sits at its top), with a full turn
     if(inIntro){i1=Math.round(s);i0=5;f=1-rIntro.t;spin=(f*TAU+rIntro.turn)*motion}
-    for(let i=0;i<6;i++){mat(RY[i]+(i===3?0:spin),RX[i],RZ[i],M[i]);SG[i]=M[i][8]>=0?1:-1}
+    for(let i=0;i<7;i++){mat(RY[i]+(i===3?0:spin),RX[i],RZ[i],M[i]);SG[i]=M[i][8]>=0?1:-1}
     mat((RY[i0]*(1-f)+RY[i1]*f)+spin*(i0===3||i1===3?(1-Math.abs(i1-3)*(1-f)-Math.abs(i0-3)*f):1),RX[i0]*(1-f)+RX[i1]*f,RZ[i0]*(1-f)+RZ[i1]*f,MB);
 
-    if(svcEl){const v=Math.min(serviceProgress(svcEl),NI-1);sq0=Math.floor(v);sq1=Math.min(sq0+1,NI-1);sg=v-sq0}
+    if(svcEl){const v=Math.min(serviceProgress(svcEl),NI-2);sq0=Math.floor(v);sq1=Math.min(sq0+1,NI-1);sg=v-sq0}
     // a slow sway (and a little of the mouse), plus a full turn per morph
     mat(-.4+(Math.sin(tm*.5)*.2+smx*.35+sg*TAU)*motion,.22+(Math.sin(tm*.4)*.08+smy*.15)*motion,-.05,MS);SS=MS[8]>=0?1:-1;
+    const fT=aPoint.dataset?.dir==='-1'?Math.PI:0;flip=motion?flip+(fT-flip)*(slow?.17:.09):fT;
+    mat(-.35+flip+(Math.sin(tm*.8)*.25+smx*.2)*motion,.15+(Math.sin(tm*.6)*.08+smy*.12)*motion,0,MA);SA=MA[8]>=0?1:-1;
     const Sh=AS.h;
-    const sz=i=>i===3?Sh*.98/ICON_G*DENS[3]:A[i].S/GH*DENS[i];
-    const size=sz(i0)*(1-f)+sz(i1)*f,flat=Math.abs(s-3)<.5&&!(inIntro&&f<.5),jn=(sg<.5?sq0:sq1)*N;
+    SB=W<640?.86:.98; // phones: a little smaller, so it stays inside the brackets as it turns
+    const sz=i=>i===3?Sh*SB/ICON_G*DENS[3]:i===6?A[6].h*.98/ICON_G*DENS[6]:A[i].S/GH*DENS[i];
+    // flat: lit as an icon (the services' icon, or the arrow: fm / fs / jn pick which one)
+    const size=sz(i0)*(1-f)+sz(i1)*f,flat=(Math.abs(s-3)<.5||s6)&&!(inIntro&&f<.5),
+      fm=s6?MA:MS,fs=s6?SA:SS,jn=s6?(NI-1)*N:(sg<.5?sq0:sq1)*N;
 
     // lighting
     const cs=MB[8]>=0?1:-1,cnx=MB[2]*cs,cny=MB[5]*cs,cnz=MB[8]*cs;
@@ -282,10 +307,10 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       if(inIntro&&!(p&15))drift+=Math.abs(tx-X[p])+Math.abs(ty-Y[p]);
       let b;
       if(p<NC){
-        if(flat)b=.1+.62*Math.max(0,(MS[2]*LX+MS[5]*LY+MS[8]*LZ)*SS)+(IE[jn+p]?.2:0);
+        if(flat)b=.1+.62*Math.max(0,(fm[2]*LX+fm[5]*LY+fm[8]*LZ)*fs)+(IE[jn+p]?.2:0);
         else b=.2+.8*capL+(EDGE[p]?.32:0);
       }else{
-        const mm=flat?MS:MB,nx=flat?INX[jn+p]:NX[p],ny=flat?INY[jn+p]:NY[p],rx=mm[0]*nx+mm[1]*ny,ry=mm[3]*nx+mm[4]*ny,rz=mm[6]*nx+mm[7]*ny;
+        const mm=flat?fm:MB,nx=flat?INX[jn+p]:NX[p],ny=flat?INY[jn+p]:NY[p],rx=mm[0]*nx+mm[1]*ny,ry=mm[3]*nx+mm[4]*ny,rz=mm[6]*nx+mm[7]*ny;
         if(rz<=.02){LV[p]=255;continue}
         b=(flat?.05:.08)+(flat?.5:.7)*Math.max(0,rx*LX+ry*LY+rz*LZ);
       }
@@ -293,6 +318,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     if(inIntro)rIntro.drift=drift/Math.ceil(N/16);
 
+    // colours: the page's, or the dark ones while the intro R is over the overlay / menu
+    const mode=inIntro&&rIntro.dark&&rIntro.t>.5?'dark':theme.mode;
     ctx.clearRect(0,0,W,H);
     if(glyph){
       // small shapes (the small R in the header / projects): finer cells so there is enough detail (~36 glyphs tall);
@@ -311,7 +338,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
         if(p<NC){if(b>GC[ci])GC[ci]=b}else if(b>GS[ci])GS[ci]=b;
         if(GN[ci]===0)OCC[nOcc++]=ci;if(GN[ci]<65000)GN[ci]++;
       }
-      const spr=sprites(CELL),gamma=G[theme.mode].gamma;
+      const spr=sprites(CELL,mode),gamma=G[mode].gamma;
       for(let o=0;o<nOcc;o++){
         const ci=OCC[o],n=GN[ci],r=(ci/cols)|0,q=ci-r*cols;
         const base=GC[ci]>0?GC[ci]:GS[ci];let v=Math.pow(clamp(base*Math.min(1,.35+.65*n/expect),0,1),1/gamma);
@@ -324,7 +351,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const c=Math.max(size,.6),cut=c+40,cSide=c*1.25;
     for(const [from,to,cz] of [[NC,N,cSide],[0,NC,c]]){
       for(let lv=0;lv<6;lv++){
-        ctx.fillStyle=PALS[theme.mode][lv];ctx.beginPath();let any=false;
+        ctx.fillStyle=PALS[mode][lv];ctx.beginPath();let any=false;
         for(let p=from;p<to;p++){if(LV[p]!==lv)continue;const x=X[p],y=Y[p];if(x<-cut||x>W+cut||y<-cut||y>H+cut)continue;ctx.rect(x,y,cz,cz);any=true}
         if(any)ctx.fill();
       }

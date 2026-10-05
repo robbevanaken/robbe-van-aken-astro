@@ -3,7 +3,7 @@
    next to the details (cols 3–6). Phones: form, portrait, details stacked. */
 .c-contact{margin-top:var(--space-xl);align-items:start;row-gap:var(--space-xl)}
 .c-contact__details{grid-column:1 / span 4;grid-row:1;display:grid;align-content:start;gap:var(--space-l)}
-.c-contact__portrait{margin:0;width:75%;aspect-ratio:4 / 5;background:var(--card);color:#5f5752;display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}
+.c-contact__portrait{margin:0;width:75%;aspect-ratio:4 / 5;background:var(--panel);color:var(--muted);display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}
 .c-contact__portrait-img{width:100%;height:100%;object-fit:cover;margin:calc(-1 * var(--space-xs))}
 .c-contact__group{display:grid;gap:var(--space-xs)}
 .c-contact__group-label{color:var(--muted)}

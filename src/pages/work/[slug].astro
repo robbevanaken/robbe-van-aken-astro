@@ -15,7 +15,7 @@ interface Props { project: Project; index: number }
 const { project, index } = Astro.props;
 const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
 ---
-<Page title={project.title} description={project.description} footer={false}>
+<Page title={project.title} description={project.description} footer={false} theme="light">
   <PageIntro title={project.title} modifier="project">
     <dl class="c-page-intro__meta">
       <dt class="c-page-intro__meta-label u-text-label">{projectPage.service}</dt>
@@ -28,7 +28,7 @@ const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
   </PageIntro>
   <div class="c-project-detail__visual o-container o-grid" data-project-visual>
     {project.image
-      ? <img class="c-project-detail__media" src={project.image} alt="" fetchpriority="high" decoding="async" data-project-media />
+      ? <img class="c-project-detail__media" src={project.image} alt={`${project.title}: ${project.description}`} fetchpriority="high" decoding="async" data-project-media />
       : <div class="c-project-detail__media c-project-detail__placeholder" data-project-media style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}>{project.label}</div>}
   </div>
   <Placeholder text={projectPage.placeholder} />

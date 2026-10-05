@@ -1,26 +1,30 @@
 ---
 // HTML shell for every page: styles, font preloads and the single script entry (scripts/main.js).
 import '../styles/main.css';
-import { meta } from '../data/site';
+import { meta, nav, socials } from '../data/site';
 import PageTransition from '../components/layout/PageTransition.astro';
-// noindex: pages search engines should skip (404)
-interface Props { title?: string; description?: string; noindex?: boolean }
-const { title = meta.title, description = meta.description, noindex = false } = Astro.props;
+// noindex: pages search engines should skip (404). theme: the page's colours (no toggle: every page picks one; home's
+// light section switches it on scroll, scripts/global/theme.js)
+interface Props { title?: string; description?: string; noindex?: boolean; theme?: 'dark' | 'light' }
+const { title = meta.title, description = meta.description, noindex = false, theme = 'dark' } = Astro.props;
+const themeColor = { dark: '#170e0b', light: '#f3eee8' }[theme];
+// structured data: who this site is about (search engines)
+const person = { '@context': 'https://schema.org', '@type': 'Person', name: nav.name, jobTitle: nav.role, url: Astro.site?.href, email: `mailto:${meta.email}`,
+  address: { '@type': 'PostalAddress', addressLocality: 'Ghent', addressCountry: 'BE' }, sameAs: socials.map((s) => s.href) };
 // without a trailing slash, like the site's own links and the sitemap (/about, not /about/)
 const canonical = new URL(Astro.url.pathname.replace(/(.)\/$/, '$1'), Astro.site);
 const image = new URL(meta.image, Astro.site);
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme={theme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <!-- theme (scripts/global/theme.js): the saved choice, else dark, set before the first paint -->
-    <script is:inline>(()=>{let t;try{t=localStorage.getItem('theme')}catch(e){}document.documentElement.dataset.theme=t==='light'?'light':'dark'})()</script>
-    <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless) -->
-    <script is:inline>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');setTimeout(()=>document.documentElement.classList.remove('is-loading'),8000)}</script>
+    <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless);
+         once per visit (a reload or a link opened in the same tab later skips it) -->
+    <script is:inline>let seen;try{seen=sessionStorage.getItem('loaded')}catch(e){}if(!seen&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');setTimeout(()=>document.documentElement.classList.remove('is-loading'),8000)}</script>
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <!-- social previews (LinkedIn, Slack, X, ...) -->
     <meta property="og:type" content="website" />
@@ -34,12 +38,13 @@ const image = new URL(meta.image, Astro.site);
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="The blackletter R of Robbe Van Aken" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <!-- favicons: .ico for older browsers, SVG for modern ones, PNG for the iOS home screen, manifest for Android -->
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#170e0b" />
+    <meta name="theme-color" content={themeColor} />
     <!-- self-hosted Inter Tight (styles/base/_fonts.css): preload the two files every page needs -->
     <link rel="preload" href="/fonts/inter-tight-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-tight-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -48,6 +53,8 @@ const image = new URL(meta.image, Astro.site);
     <a class="c-skip-link u-text-ui" href="#top" data-skip-link>Skip to content</a>
     <!-- swup swaps (and fades) everything inside #swup -->
     <div id="swup">
+      <!-- the page's theme, read again after every page swap (html[data-theme] itself isn't swapped) -->
+      <span hidden data-page-theme={theme}></span>
       <slot />
     </div>
     <PageTransition />

@@ -23,7 +23,8 @@
   background:linear-gradient(var(--line),var(--line)) center top / calc(100% - 2 * var(--margin)) 1px no-repeat}
 .c-site-footer__legal:not(.c-site-footer__legal--cookies){margin-left:auto} /* the legal links to the right */
 .c-site-footer__legal{color:inherit;text-decoration:none;-webkit-appearance:none;appearance:none;background:none;border:0;border-radius:0;padding:0;font:inherit;cursor:pointer;text-align:left}
-.c-site-footer__legal{transition:color var(--hover-dur) var(--ease-punch)}
+.c-site-footer__legal{position:relative;transition:color var(--hover-dur) var(--ease-punch)}
+.c-site-footer__legal::before{content:"";position:absolute;inset:-14px -8px} /* a 44px tap area */
 .c-site-footer__legal:hover,.c-site-footer__legal:focus-visible{color:var(--fg)}
 
 

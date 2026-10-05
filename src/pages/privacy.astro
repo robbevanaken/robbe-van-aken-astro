@@ -4,7 +4,7 @@ import PageIntro from '../components/sections/PageIntro.astro';
 import Placeholder from '../components/ui/Placeholder.astro';
 import { privacyPage as p } from '../data/pages';
 ---
-<Page title={p.title}>
+<Page title={p.title} description={p.description}>
   <PageIntro label={p.label} title={p.title} intro={p.intro} />
   <Placeholder />
 </Page>

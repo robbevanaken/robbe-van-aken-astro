@@ -1,5 +1,5 @@
 /* Type styles: use these instead of one-off font sizes. Sizes in base/_tokens.css. */
-.u-text-hero{font-size:var(--fs-hero);line-height:1;letter-spacing:-.03em}
+.u-text-hero{font-size:var(--fs-hero);line-height:1;letter-spacing:-.03em;text-wrap:balance}
 .u-text-display{font-size:var(--fs-display);line-height:var(--lh-tight);letter-spacing:var(--ls-tight)}
 .u-text-h2{font-size:var(--fs-h2);line-height:var(--lh-heading);letter-spacing:var(--ls-tight)}
 .u-text-lead{font-size:var(--fs-lead);line-height:var(--lh-text);letter-spacing:-.01em}

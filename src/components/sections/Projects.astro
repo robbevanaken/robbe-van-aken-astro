@@ -8,7 +8,7 @@ import ProjectGlobe from './ProjectGlobe.astro';
 import { work } from '../../data/site';
 import { projects } from '../../data/projects';
 ---
-<ProjectGlobe projects={projects.slice(0, work.featured)} label="Featured projects" tint>
+<ProjectGlobe projects={projects.slice(0, work.featured)} label="Featured projects">
   <div class="c-featured-projects__head" slot="head" data-stage="2"><div class="c-featured-projects__r" id="a-craft"></div></div>
   <div class="c-projects-intro" id="work" slot="intro">
     <h2 class="c-projects-intro__title u-text-h2">{work.title}</h2>

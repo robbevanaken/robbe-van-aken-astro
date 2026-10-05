@@ -1,0 +1,9 @@
+# Apache. The pages are built as files (astro.config.mjs: build.format 'file'): /work → work.html, /work/<slug> →
+# work/<slug>.html. Serve them without .html and without a trailing slash (every link, canonical and the sitemap use
+# /work, not /work/); no slash added to folders that are also pages (work/).
+DirectorySlash Off
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+ErrorDocument 404 /404.html

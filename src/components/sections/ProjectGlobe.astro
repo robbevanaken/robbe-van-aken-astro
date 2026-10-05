@@ -9,19 +9,20 @@ import Corners from '../ui/Corners.astro';
 import Icon from '../ui/Icon.astro';
 import { projectTags, type Project } from '../../data/projects';
 import { work } from '../../data/site';
-interface Props { projects: Project[]; label: string; layout?: 'spread' | 'grid'; tint?: boolean }
-// tint (home): the page's background eases to --panel while this section is on screen (components/pageTint.js)
-const { projects, label, layout = 'spread', tint = false } = Astro.props;
+interface Props { projects: Project[]; label: string; layout?: 'spread' | 'grid' }
+const { projects, label, layout = 'spread' } = Astro.props;
+// the card titles are headings (home: under the section's h2; /work: right under the page's h1)
+const Title = layout === 'grid' ? 'h2' : 'h3';
 const spread = layout === 'spread';
 ---
-<section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects data-cursor-label={work.cursor} data-page-tint={tint ? '' : undefined}>
+<section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects data-cursor-label={work.cursor}>
   <slot name="head" />
   <div class="c-featured-projects__grid o-container o-grid">
     <slot name="intro" />
     <ol class="c-featured-projects__list">
       {projects.map((p, i) => (
         <li class:list={['c-featured-projects__item', !spread && `is-slot-${i % 4}`]} style={spread ? `grid-row:${i + 1}` : `--row:${i + 1}`} data-fp-item data-tags={projectTags(p).join('|')}>
-          <a class="c-featured-projects__card" href={`/work/${p.slug}`} data-fp-card>
+          <a class="c-featured-projects__card" href={`/work/${p.slug}`} aria-label={`${p.title}: ${p.description}`} data-fp-card>
             <Corners />
             <span class="c-featured-projects__media" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-media>
                 {p.image
@@ -31,7 +32,7 @@ const spread = layout === 'spread';
                 <span class="c-featured-projects__tag c-featured-projects__tag--year u-text-label">{p.year}</span>
               </span>
               <span class="c-featured-projects__caption">
-                <span class="c-featured-projects__caption-row"><span class="c-featured-projects__caption-title">{p.title}</span><span class="c-featured-projects__arrows" aria-hidden="true"><Icon name="arrow" class="c-featured-projects__arrow" /><Icon name="arrow" class="c-featured-projects__arrow c-featured-projects__arrow--next" /></span></span>
+                <span class="c-featured-projects__caption-row"><Title class="c-featured-projects__caption-title">{p.title}</Title><span class="c-featured-projects__arrows" aria-hidden="true"><Icon name="arrow" class="c-featured-projects__arrow" /><Icon name="arrow" class="c-featured-projects__arrow c-featured-projects__arrow--next" /></span></span>
                 <span class="c-featured-projects__caption-text u-text-ui">{p.description}</span>
               </span>
           </a>

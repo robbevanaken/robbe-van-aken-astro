@@ -1,44 +1,55 @@
-// Light/dark theme. Dark is the default: the inline script in layouts/Base.astro sets html[data-theme] before the first
-// paint (the saved choice, else dark); this module keeps it in sync. The toggle ([data-theme-toggle], delegated, so it
-// survives page swaps) switches and saves the choice.
-// The switch fades: the page cross-fades from the old colours to the new ones in a view transition (the R canvas too);
-// browsers without view transitions ease the colour tokens instead (html.is-theming). Reduced motion: instant.
-const KEY = 'theme';
-const FADE = .6; // s, same as the ::view-transition rule and html.is-theming in styles/base/_document.css
+// The page's colours. No toggle: colour follows the content. Every page has a base (`theme` on layouts/Base.astro:
+// html[data-theme] in the built page, and [data-page-theme] inside #swup, so a page swap can read the next page's), and
+// a zone ([data-theme-zone="light"|"dark"]) turns the whole page while it's on screen: home's light chapter (projects,
+// services, how I work), the footer (dark on every page). Scrolling into or out of a zone eases (the colour tokens are
+// registered, @property in base/_tokens.css, so one transition on <html> moves every colour: html.is-theming); a page
+// swap switches at once, under the overlay, which is always dark (--curtain), so colour never morphs during a transition.
+// Reduced motion: instant.
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const FADE = .6; // s, same as html.is-theming in styles/base/_document.css
 const META = { dark: '#170e0b', light: '#f3eee8' }; // --bg of each theme, for the browser UI
+const html = document.documentElement;
+let timer = 0;
 
 // read by the R engine every frame (glyph colours)
-export const theme = { mode: document.documentElement.dataset.theme === 'light' ? 'light' : 'dark' };
+export const theme = { mode: html.dataset.theme === 'light' ? 'light' : 'dark' };
 
 // the browser UI colour; swup's head plugin puts the page's own <meta> back on every swap, so mount() calls this again
 export function syncThemeMeta() {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', META[theme.mode]);
 }
 
-function apply(mode) {
-  theme.mode = mode;
-  document.documentElement.dataset.theme = mode;
-  syncThemeMeta();
-}
-
-function setTheme(mode) {
-  try { localStorage.setItem(KEY, mode); } catch {}
+export function setTheme(mode, ease = true) {
   if (mode === theme.mode) return;
-  const html = document.documentElement;
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return apply(mode);
-  if (document.startViewTransition) {
-    html.classList.add('is-theme-fading');
-    document.startViewTransition(() => apply(mode)).finished.finally(() => html.classList.remove('is-theme-fading'));
-    return;
+  if (ease && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    html.classList.add('is-theming');
+    clearTimeout(timer);
+    timer = setTimeout(() => html.classList.remove('is-theming'), FADE * 1000 + 50);
   }
-  html.classList.add('is-theming');
-  apply(mode);
-  setTimeout(() => html.classList.remove('is-theming'), FADE * 1000 + 50);
+  theme.mode = mode;
+  html.dataset.theme = mode;
+  syncThemeMeta();
 }
 
-export function initTheme() {
-  syncThemeMeta();
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('[data-theme-toggle]')) setTheme(theme.mode === 'light' ? 'dark' : 'light');
-  });
+// the theme a page asks for (root: the page's #swup)
+export const pageTheme = (root = document) => (root.querySelector('[data-page-theme]')?.dataset.pageTheme === 'light' ? 'light' : 'dark');
+
+// zones: the last one (in page order) whose top has passed 60% of the screen and whose bottom hasn't passed the middle
+// wins; none: the page's base. Loading or landing inside one switches without easing.
+export function initThemeZone(root = document) {
+  const els = [...root.querySelectorAll('[data-theme-zone]')];
+  if (!els.length) return null;
+  const base = pageTheme(root);
+  const sts = [];
+  let ready = false;
+  const pick = (ease) => {
+    if (!ready) return; // onToggle can fire while the triggers are still being made
+    const on = sts.filter((st) => st.isActive).pop();
+    setTheme(on ? on.vars.trigger.dataset.themeZone : base, ease);
+  };
+  els.forEach((el) => sts.push(ScrollTrigger.create({ trigger: el, start: 'top 60%', end: 'bottom 50%', onToggle: () => pick(true) })));
+  ready = true;
+  pick(false);
+  return () => sts.forEach((st) => st.kill());
 }

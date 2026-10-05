@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
-const FADE = .18; // opacity once the projects are over it
+const FADE = .3; // opacity once the projects are over it (still readable as the page's heading)
 
 export function initWorkIntro(root = document) {
   const title = root.querySelector('[data-work-intro]');

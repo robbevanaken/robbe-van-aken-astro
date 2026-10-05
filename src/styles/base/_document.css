@@ -29,19 +29,13 @@ html.is-menu-open .c-r-canvas:not([data-r-intro]){opacity:0}
 /* opening a project (components/openProject.js): the R floats in the middle above the growing image (z 90) */
 html.is-opening .c-r-canvas[data-r-intro]{z-index:95}
 
-/* theme switch (global/theme.js): the toggle cross-fades the page (view transition); the home theme zone (and browsers
-   without view transitions) ease the colour tokens themselves: they're registered (@property in base/_tokens.css), so
-   one transition on <html> animates every colour on the page. (A transition on every element instead made scrolling
-   through the zone stutter: hundreds of split letters.) Same duration as FADE in theme.js. */
-::view-transition-old(root),::view-transition-new(root){animation-duration:.6s;animation-timing-function:var(--ease-out)}
-html.is-theming{transition:--bg .6s var(--ease-out),--fg .6s var(--ease-out),--muted .6s var(--ease-out),--subtle .6s var(--ease-out),
-  --line .6s var(--ease-out),--line-strong .6s var(--ease-out),--card .6s var(--ease-out),--on-fg .6s var(--ease-out),--surface .6s var(--ease-out)}
-
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition-duration:0s !important;animation-duration:0s !important}
 }
 
-/* home's featured projects: the whole page eases to --panel while they're on screen and back after
-   (components/pageTint.js; --page is registered in _tokens.css, so the one transition moves every place that uses it) */
-html.is-tinted{--page:var(--panel)}
-html.is-tint-easing{transition:--page .9s cubic-bezier(.65,0,.35,1)}
+/* theme switch (global/theme.js: a page swap to a page in the other theme, home's light section): the colour tokens are
+   registered (@property in base/_tokens.css), so one transition on <html> eases every colour on the page. (A transition
+   on every element instead made scrolling stutter: hundreds of split letters.) Same duration as FADE in theme.js. */
+html.is-theming{transition:--bg .6s cubic-bezier(.7,0,.2,1),--fg .6s cubic-bezier(.7,0,.2,1),--muted .6s cubic-bezier(.7,0,.2,1),--subtle .6s cubic-bezier(.7,0,.2,1),
+  --line .6s cubic-bezier(.7,0,.2,1),--line-strong .6s cubic-bezier(.7,0,.2,1),--card .6s cubic-bezier(.7,0,.2,1),--on-fg .6s cubic-bezier(.7,0,.2,1),--surface .6s cubic-bezier(.7,0,.2,1),--page .6s cubic-bezier(.7,0,.2,1)}
+

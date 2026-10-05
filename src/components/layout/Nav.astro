@@ -2,7 +2,6 @@
 // Site header. Styles: styles/components/_site-header.css + _button-menu.css, behaviour: scripts/global/siteHeader.js
 // withR: subpages show the animated R centred in the header (it is the only R stage there).
 import Socials from '../ui/Socials.astro';
-import ThemeToggle from '../ui/ThemeToggle.astro';
 import { nav, meta } from '../../data/site';
 const here = Astro.url.pathname.replace(/(.)\/$/, '$1');
 const current = (href: string) => (href === '/' ? here === '/' : here === href || here.startsWith(href + '/'));
@@ -19,7 +18,6 @@ const { withR = false } = Astro.props;
           {nav.links.map((l) => <li class="c-site-header__nav-item"><a class="c-site-header__nav-link" href={l.href}>{l.label}</a></li>)}
         </ul>
       </nav>
-      <ThemeToggle class="c-site-header__theme" />
       <button class="c-button-menu c-site-header__toggle u-text-ui" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-toggle>
         <span class="c-button-menu__label"><span class="c-button-menu__text c-button-menu__open">Menu</span><span class="c-button-menu__text c-button-menu__close">Close</span></span>
         <span class="c-button-menu__lines" aria-hidden="true"><i class="c-button-menu__line"></i><i class="c-button-menu__line"></i></span>

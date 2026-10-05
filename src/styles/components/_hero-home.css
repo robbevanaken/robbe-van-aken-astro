@@ -2,6 +2,9 @@
    The hero leaves room for the marquee, so the orange banner sits just above the fold. */
 .c-hero-home{position:relative;min-height:calc(100svh - var(--marquee-h));align-content:center;grid-template-rows:auto;padding-block:calc(var(--space-xl) + var(--nav-top)) var(--space-xl)}
 .c-hero-home__title{grid-column:1 / span 4;grid-row:1}
+/* two lines, each on one line: at most the display size, smaller when the longest line ("Freelance developer", ~8.4em)
+   would run out of its four columns into the R; doubled: .u-text-display is imported later */
+.c-hero-home__title.c-hero-home__title{font-size:min(var(--fs-display),calc(((100vw - 2 * var(--margin) - 11 * var(--gutter)) / 12 * 4 + 3 * var(--gutter)) / 8.4))}
 .c-hero-home__line{display:block;white-space:nowrap}
 .c-hero-home__r{grid-column:5 / span 4;grid-row:1;position:relative}
 .c-hero-home__r-anchor{position:absolute;left:7%;right:7%;top:50%;height:clamp(240px,55vh,680px);transform:translateY(-50%)} /* a little inside cols 5–8: the R is bound by this width at most sizes */
@@ -11,6 +14,7 @@
 @media (max-width:1023px){
   .c-hero-home{grid-template-rows:auto clamp(220px,40vh,520px) auto;row-gap:var(--space-l)}
   .c-hero-home__title{grid-column:1 / -1}
+  .c-hero-home__title.c-hero-home__title{font-size:var(--fs-display)} /* the full width here: room enough */
   .c-hero-home__r{grid-column:1 / -1;grid-row:2}
   .c-hero-home__r-anchor{left:0;right:0;height:86%} /* a size smaller than the row, so the R's tail stays on screen */
   .c-hero-home__side{grid-column:1 / span 4;grid-row:3}
@@ -23,5 +27,5 @@
   /* centred: title, R, intro and button on one axis, like a cover */
   .c-hero-home__title,.c-hero-home__side{text-align:center}
   .c-hero-home__side{grid-column:1 / -1;align-items:center}
-  .c-hero-home__title.c-hero-home__title{font-size:clamp(42px,12.3vw,56px)} /* bigger than the display size here (48 on a 390 phone); doubled: .u-text-display is imported later */
+  .c-hero-home__title.c-hero-home__title{font-size:clamp(34px,10.8vw,56px)} /* the display size here (42 on a 390 phone), each line on one line; doubled: .u-text-display is imported later */
 }

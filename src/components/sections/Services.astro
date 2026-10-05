@@ -13,6 +13,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <div class="c-services__head o-container o-grid">
     <h2 class="c-services__title u-text-h2">{servicesIntro.title}</h2>
     <p class="c-services__intro u-text-body-l u-text-muted" data-highlight-text>{servicesIntro.text}</p>
+    <!-- holds the R as it was (stage 2) until the head is past, so it doesn't fly through the title on its way to the icon -->
+    <span class="c-services__hold" data-stage="2" aria-hidden="true"></span>
   </div>
   <div class="c-services__pin" data-services-pin>
     <div class="c-services__stage o-container o-grid" data-stage="3">

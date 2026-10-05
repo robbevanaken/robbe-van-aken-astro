@@ -1,11 +1,11 @@
 /* Fixed header: slides away when scrolling down, comes back when scrolling up (global/siteHeader.js).
    Below 640px the links move into a full-screen menu. */
-.c-site-header{position:fixed;top:0;left:0;right:0;z-index:30;transition:transform .7s var(--ease-out)}
+.c-site-header{position:fixed;top:0;left:0;right:0;z-index:30;color:var(--fg);transition:transform .7s var(--ease-out),--fg .5s var(--ease-out),--muted .5s var(--ease-out)} /* the colours: on a light page the open menu (and the header with it) is dark, base/_tokens.css */
 .c-site-header.is-hidden{transform:translateY(-100%)}
 
 .c-site-header__body{position:relative;align-items:start;padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top));padding-bottom:var(--space-m)}
 /* soft fade behind the header once the page has scrolled, so it stays readable over content */
-.c-site-header__body::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--page) 35%,transparent);opacity:0;transition:opacity .5s}
+.c-site-header__body::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--backdrop) 35%,transparent);opacity:0;transition:opacity .5s}
 .is-scrolled .c-site-header__body::before{opacity:1}
 /* menu open: the header's backdrop goes, so the header shows the menu's own panel behind it; both fade on the same curve
    and duration, so the header and the menu change tint together */

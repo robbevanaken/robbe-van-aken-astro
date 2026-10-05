@@ -28,11 +28,11 @@ export function initSiteHeader(root = document) {
   // the R to the menu's corner (true) or back to its place on the page (false)
   const flyR = (toMenu) => {
     if (!menuR) return;
-    if (toMenu) rIntro.el = menuR;
+    if (toMenu) { rIntro.el = menuR; rIntro.dark = true; } // the menu is always dark
     else if (rIntro.el !== menuR) return; // a page transition has taken it over
     // in: shrinks away fast (it's big over the menu otherwise); out: the usual in-out flight back
     gsap.to(rIntro, { t: toMenu ? 1 : 0, duration: reduce ? 0 : FLY, ease: toMenu ? 'power4.out' : 'expo.inOut', overwrite: true,
-      onComplete: () => { if (!toMenu && rIntro.el === menuR) rIntro.el = null; } });
+      onComplete: () => { if (!toMenu && rIntro.el === menuR) { rIntro.el = null; rIntro.dark = false; } } });
   };
   const ac = new AbortController(), signal = ac.signal;
 

@@ -59,7 +59,7 @@
 .c-featured-projects__arrow--next{translate:-28px 28px} /* fully outside the 22px box */
 .c-featured-projects__card:hover .c-featured-projects__arrow,.c-featured-projects__card:focus-visible .c-featured-projects__arrow{translate:28px -28px}
 .c-featured-projects__card:hover .c-featured-projects__arrow--next,.c-featured-projects__card:focus-visible .c-featured-projects__arrow--next{translate:0 0}
-.c-featured-projects__caption-title{font-size:clamp(19px,1.6667vw,28px);line-height:1.2;letter-spacing:-.01em;color:var(--fg)} /* 24 @1440 */
+.c-featured-projects__caption-title{margin:0;font-weight:400;font-size:clamp(19px,1.6667vw,28px);line-height:1.2;letter-spacing:-.01em;color:var(--fg)} /* 24 @1440 */
 
 
 /* "View all projects" sits exactly in the middle between the last project and the services title: the same room above
@@ -73,6 +73,7 @@
    each with its own columns and aspect ratio (.is-slot-0…3, kept right by components/workFilter.js while filtering) */
 .c-featured-projects--grid{z-index:1}
 .c-featured-projects--grid .c-featured-projects__list{row-gap:var(--space-xl)}
+@media (max-width:639px){.c-featured-projects--grid .c-featured-projects__list{padding-bottom:96px}} /* clear of the fixed filter */
 .c-featured-projects--grid .c-featured-projects__item{grid-row:var(--row,auto);margin-top:0}
 .c-featured-projects--grid .c-featured-projects__item.is-slot-0{grid-column:3 / span 5;--ratio:.8}
 .c-featured-projects--grid .c-featured-projects__item.is-slot-1{grid-column:8 / span 5;--ratio:1.3}

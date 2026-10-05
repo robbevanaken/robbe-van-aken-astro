@@ -31,10 +31,10 @@ import { rIntro } from '../r-journey/engine.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LOADER_MIN = 1.4; // seconds the loader stays at least, so the name can be spelled out
+const LOADER_MIN = 1.1; // seconds the loader stays at least, so the name can be spelled out
 const LOADER_MAX = 6;   // never wait longer than this for fonts and images
-const COVER = .6;       // page swaps: seconds for the counter's first half (while the next page loads)
-const SWAP_MIN = .4;    // page swaps: seconds at least for the counter's second half
+const COVER = .4;       // page swaps: seconds for the counter's first half (while the next page loads)
+const SWAP_MIN = .15;   // page swaps: seconds at least for the counter's second half
 const REST_MAX = .5;    // page swaps: wait at most this long for the R to come to rest before the old page goes
 const TRAVEL = .75;     // page swaps from the mobile menu: seconds for the R's way from the menu's corner to the middle
 
@@ -137,6 +137,7 @@ async function runLoader(f) {
   // the page's own R floats in the middle (its canvas is above the overlay while loading, _transition.css)
   rIntro.el = f.anchor;
   rIntro.t = 1;
+  rIntro.dark = true; // over the (always dark) overlay: dark colours, whatever the page's
   const c = startCounter(f, true);
   c.goal = loadGoal(LOADER_MIN);
   await c.done;
@@ -151,6 +152,8 @@ async function runLoader(f) {
     .to([f.bg, f.brand], { opacity: 0, duration: .7, ease: 'power2.inOut' }, .35)
     .to(f.frame, { autoAlpha: 0, duration: .35, ease: 'power1.in' }, .75);
   rIntro.el = null;
+  rIntro.dark = false;
+  try { sessionStorage.setItem('loaded', '1'); } catch {} // the next pages in this visit skip the loader (Base.astro)
   document.documentElement.classList.remove('is-loading');
   gsap.set([f.loader, f.bg, f.brand, f.count], { clearProps: 'all' });
   getLenis()?.start();
@@ -171,6 +174,7 @@ async function cover(f) {
   gsap.set(f.count, { autoAlpha: 0 });
   f.count.textContent = '000';
   root.classList.add('is-transitioning');
+  rIntro.dark = true; // flying onto the (always dark) overlay
   // the style recalculation of showing the overlay lands in this frame, before anything moves
   await nextFrame();
   // the R already sits small in the mobile menu's corner (t is 1): it travels from there to the middle on a moving anchor
@@ -181,9 +185,9 @@ async function cover(f) {
   c.goal = () => .5 * Math.min(1, (performance.now() - t0) / 1000 / COVER);
   await gsap.timeline()
     .to(f.bg, { opacity: 1, duration: .4, ease: 'power2.inOut' })
-    .to(rIntro, { t: 1, duration: .7, ease: 'expo.inOut' }, 0)
+    .to(rIntro, { t: 1, duration: .55, ease: 'expo.inOut' }, 0)
     .to(f.count, { autoAlpha: 1, duration: .25, ease: 'power1.out' }, .1)
-    .add(() => root.classList.add('is-covered'), .45);
+    .add(() => root.classList.add('is-covered'), .4);
   // the swap comes next and is heavy: only once the R is at rest
   const t1 = performance.now();
   while (rIntro.drift > 1.5 && performance.now() - t1 < REST_MAX * 1000) await nextFrame();
@@ -222,10 +226,11 @@ async function uncover(f) {
   document.documentElement.classList.remove('is-covered');
   await gsap.timeline({ delay: .05 })
     .to([f.count, f.snap], { autoAlpha: 0, duration: .2, ease: 'power1.in' })
-    .to(rIntro, { t: 0, duration: .9, ease: 'expo.inOut' }, .05)
-    .to(f.bg, { opacity: 0, duration: .5, ease: 'power2.inOut' }, .2);
+    .to(rIntro, { t: 0, duration: .75, ease: 'expo.inOut' }, .05)
+    .to(f.bg, { opacity: 0, duration: .45, ease: 'power2.inOut' }, .12);
   rIntro.el = null;
   rIntro.onDraw = null;
+  rIntro.dark = false;
   document.documentElement.classList.remove('is-transitioning', 'is-covered');
   gsap.set([f.loader, f.bg, f.brand, f.count, f.snap, f.frame], { clearProps: 'all' });
 }
