@@ -15,10 +15,11 @@
 .c-services__stage{position:sticky;top:0;height:100svh;grid-template-rows:1fr;align-items:center}
 .c-services__slot{grid-column:5 / span 4;grid-row:1;justify-self:center;position:relative;aspect-ratio:1;width:min(100%,52svh);--corner-offset:var(--gutter)}
 .c-services__list{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-self:stretch}
-.c-services__item{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;grid-template-rows:1fr auto 1fr;row-gap:var(--space-s);align-items:center}
+/* the middle row has a fixed height (two lines of the name), so the count above it stays put from service to service */
+.c-services__item{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;grid-template-rows:1fr calc(2 * var(--lh-heading) * var(--fs-h2)) 1fr;row-gap:var(--space-s);align-items:center}
 .c-services__count{grid-column:1 / span 4;grid-row:1;align-self:end}
-.c-services__name{grid-column:1 / span 4;grid-row:2}
-.c-services__text{grid-column:10 / span 3;grid-row:2}
+.c-services__name{grid-column:1 / span 4;grid-row:2;align-self:start}
+.c-services__text{grid-column:10 / span 3;grid-row:2;align-self:start}
 /* progress: one segment per service at the bottom of the stage, the line fills as its service comes in */
 .c-services__progress{grid-column:1 / -1;grid-row:1;align-self:end;justify-self:center;margin-bottom:var(--space-l);display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:var(--space-2xs);width:min(100%,280px)}
 .c-services__bar{position:relative;height:1px;background:var(--line);overflow:hidden}
@@ -33,6 +34,12 @@
 .c-services__item.is-active>*{opacity:1;transform:none;transition-duration:.6s,.9s}
 .c-services__item.is-active>:nth-child(2){transition-delay:.05s}
 .c-services__item.is-active>:nth-child(3){transition-delay:.12s}
+/* the count stays put (no fade, no slide): only its number rolls to the next one. Every item's count rolls the same
+   column (--svc on the section, components/services.js), so the one that shows up starts where the last one was */
+.c-services__item>.c-services__count,.c-services__item.is-past>.c-services__count,.c-services__item.is-active>.c-services__count{transform:none;transition:none}
+.c-services__count.c-services__count{font-variant-numeric:tabular-nums;display:flex;align-items:flex-start;line-height:1.3;white-space:pre} /* the roll and " / 04" top-aligned on one line */
+.c-services__roll{display:block;height:1.3em;overflow:hidden}
+.c-services__roll-list{display:grid;transform:translateY(calc(var(--svc,0) * -1.3em));transition:transform .8s var(--ease-punch)}
 
 @media (max-width:1023px){
   .c-services{padding-bottom:var(--space-xl)}
@@ -45,12 +52,12 @@
     padding-top:calc(env(safe-area-inset-top,0px) + 64px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--space-m))}
   .c-services__slot{grid-column:1 / -1;grid-row:2;width:min(72vw,38svh);--corner-offset:var(--space-s)}
   .c-services__list{grid-row:3;margin-top:calc(var(--space-l) + var(--space-s))}
-  .c-services__item{grid-template-rows:auto auto auto;row-gap:var(--space-xs);justify-items:center;text-align:center}
+  .c-services__item{grid-template-rows:auto auto auto;align-content:start;row-gap:var(--space-xs);justify-items:center;text-align:center}
   .c-services__count,.c-services__name,.c-services__text{grid-column:1 / -1;align-self:start}
-  .c-services__count{grid-row:1}
+  .c-services__count{grid-row:1;justify-content:center}
   .c-services__name{grid-row:2;font-size:clamp(32px,8.5vw,48px);line-height:var(--lh-heading)}
   .c-services__text{grid-row:3;max-width:30ch;margin-top:var(--space-2xs)}
   .c-services__progress{grid-row:5;margin-bottom:0}
 }
 @media (max-width:639px){.c-services__intro{grid-column:1 / -1;max-width:28ch;justify-self:center}} /* a narrower column, centred */
-@media (prefers-reduced-motion:reduce){.c-services__item>*{transition:none!important;transform:none!important}}
+@media (prefers-reduced-motion:reduce){.c-services__item>*,.c-services__roll-list{transition:none!important}.c-services__item>*{transform:none!important}}

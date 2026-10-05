@@ -1,0 +1,20 @@
+/* Statement (sections/Statement.astro): three lines of big words in sentence case (~140px @1440, two-tone like the
+   page's other titles: the first line in the grey), staggered so the block spans the width (line 1 from col 1, line 2
+   against the right margin, line 3 from col 3); small muted words (body-l) hung beside them on their baseline.
+   Generous room above and below: the breath between the pinned services and the footer. Phones: the same composition,
+   scaled down (the big words in vw, a touch larger relative to the width so it doesn't feel small). */
+.c-statement{--big:clamp(48px,9.6vw,176px);padding-block:var(--space-section) calc(var(--space-section) * 1.25);row-gap:0}
+.c-statement__line{grid-column:1 / -1;display:flex;align-items:baseline;column-gap:var(--space-s);margin:0}
+.c-statement__line--2{justify-content:flex-end}
+.c-statement__line--3{padding-left:calc((100% - 11 * var(--gutter)) / 12 * 2 + 2 * var(--gutter))}
+.c-statement__big{font-size:var(--big);line-height:1;letter-spacing:-.045em;white-space:nowrap}
+.c-statement__small{max-width:11em;line-height:1.3}
+.c-statement__hold{display:block;height:0}
+@media (max-width:1023px){ .c-statement__line--3{padding-left:calc((100% - 5 * var(--gutter)) / 6 + var(--gutter))} }
+@media (max-width:639px){
+  .c-statement{--big:12.6vw;padding-top:var(--space-l)} /* the services above already end on room of their own */
+  .c-statement__line{column-gap:var(--space-2xs)}
+  .c-statement__line--3{padding-left:calc((100% - 3 * var(--gutter)) / 4 * .5)}
+  .c-statement__small.c-statement__small{font-size:13px;max-width:7.5em}
+  .c-statement__hold{translate:0 40svh} /* the statement is short here: the R waits a little longer before it heads for the footer */
+}

@@ -25,12 +25,17 @@ const mouse = { mx: 0, my: 0, smx: 0, smy: 0 };
 // page swaps: the R's static particle data is built once per size (geo) and reused by every next engine, and the intro
 // R hands its particle positions over (carry), so the next page's R is ready at once and goes on mid-flight
 let geo = null, carry = null;
+// `char` engines (a typed character instead of the R, e.g. the 404's 4s): their particle data per character and size
+const charGeo = new Map();
 // shared by all engines (nothing is rebuilt after a page swap): glyph sprites per cell size, the glyph grid buffers
 const spriteCache = new Map(), grid = { GC: null, GS: null, GN: null, OCC: null };
 
 // `follow`: the small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R.
 
-export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false, look = LOOK } = {}) {
+// `char`: draw this character (Inter Tight, as the page's type) instead of the R, with the same particles, looks and
+// stages (the 404's 4s); its own particle data, never the shared R's (`geo`), and never the loader's R. `turn`: how
+// much the footer state (stage 4) turns with the mouse (1 = as the footer; the 404's characters less, so they stay legible).
+export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false, look = LOOK, char = '', turn = 1 } = {}) {
   if (!canvas || !scope) return null;
   // page swaps: every window listener goes through this signal, destroy() stops the frame loop
   const ac=new AbortController(),signal=ac.signal;let alive=true,raf=0;
@@ -53,7 +58,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   addEventListener('touchend',()=>{mpx=mpy=-9999},{passive:true,signal});
 
   // stages include the scope itself when it is a stage (e.g. the footer)
-  const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...scope.querySelectorAll('[data-stage]')],SV=stages.map(e=>+e.dataset.stage);
+  // a section with its own R ([data-r-own], e.g. the statement's R on home) keeps its stage to itself: the page's R skips it
+  const own=(e)=>e.closest('[data-r-own]')&&!scope.closest?.('[data-r-own]');
+  const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...[...scope.querySelectorAll('[data-stage]')].filter((e)=>!own(e))],SV=stages.map(e=>+e.dataset.stage);
   if(!stages.length)return null;
   // A scope may have only one anchor (header: #a-craft, footer: #a-foot, contact's How I work: the arrow's
   // [data-r-pointer]): every missing anchor falls back to it.
@@ -77,11 +84,24 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
   async function build(){
     const gh=innerWidth<760?84:112;
-    if(geo&&geo.GH===gh){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI}=geo);return ready()}
-    GH=gh;const GW=Math.round(GH*103/99);
-    const oc=document.createElement('canvas');oc.width=GW;oc.height=GH;const o=oc.getContext('2d');
-    const sc=Math.min(GW*.96/103,GH*.96/99);
-    o.setTransform(sc,0,0,sc,(GW-103*sc)/2,(GH-99*sc)/2);o.fillStyle='#fff';o.fill(new Path2D(R_PATH));
+    if(char){const g=charGeo.get(char+gh);if(g){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI}=g);return ready()}}
+    else if(geo&&geo.GH===gh){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI}=geo);return ready()}
+    GH=gh;let GW=Math.round(GH*103/99),o,oc;
+    if(char){
+      // the character's ink box fills the grid's height, like the R's
+      const font=getComputedStyle(document.documentElement).getPropertyValue('--font')||'sans-serif';
+      try{await document.fonts.load(`400 100px ${font}`)}catch{}
+      const m=document.createElement('canvas').getContext('2d');m.font=`400 ${GH*2}px ${font}`;const t=m.measureText(char);
+      const iw=t.actualBoundingBoxLeft+t.actualBoundingBoxRight,ih=t.actualBoundingBoxAscent+t.actualBoundingBoxDescent,sc=GH*.96/ih;
+      GW=Math.max(8,Math.round(iw*sc/.96));
+      oc=document.createElement('canvas');oc.width=GW;oc.height=GH;o=oc.getContext('2d');o.fillStyle='#fff';
+      o.setTransform(sc,0,0,sc,(GW-iw*sc)/2+t.actualBoundingBoxLeft*sc,(GH-ih*sc)/2+t.actualBoundingBoxAscent*sc);
+      o.font=`400 ${GH*2}px ${font}`;o.fillText(char,0,0);
+    }else{
+      oc=document.createElement('canvas');oc.width=GW;oc.height=GH;o=oc.getContext('2d');
+      const sc=Math.min(GW*.96/103,GH*.96/99);
+      o.setTransform(sc,0,0,sc,(GW-103*sc)/2,(GH-99*sc)/2);o.fillStyle='#fff';o.fill(new Path2D(R_PATH));
+    }
     const d=o.getImageData(0,0,GW,GH).data;
     const inside=(x,y)=>x>=0&&y>=0&&x<GW&&y<GH&&d[(y*GW+x)*4+3]>110;
     const bayer=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
@@ -152,7 +172,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     for(let i=0;i<N;i++)K[i]=motion?(.055+r()*.09+CH[i]*.004):1;
     K2=new Float32Array(N);for(let i=0;i<N;i++)K2[i]=1-(1-K[i])**2; // the same spring over two frames (half-rate mode)
-    geo={GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI};
+    const g={GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI};
+    if(char)charGeo.set(char+GH,g);else geo=g;
     ready();
   }
   // per-engine particle state; the intro R takes over the previous page's positions during a page swap
@@ -289,7 +310,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     rect(aPitch,A[1]);A[1].S=Math.min(A[1].h*.8,A[1].w*1.15);A[1].cx-=A[1].w*.1;
     rect(aCraft,A[2]);A[2].S=A[2].h*.9;
     rect(svcSlot,AS);
-    rect(aFoot,A[4]);A[4].S=Math.min(A[4].h,A[4].w*1.05)*.9;
+    rect(aFoot,A[4]);A[4].S=char?A[4].h*.83:Math.min(A[4].h,A[4].w*1.05)*.9; // a character: sized by its box's height, to the same scale as the R beside it on the 404 (its box: .92 × 1.05em → .87em), so both have the same particle size
     const inIntro=intro&&rIntro.el&&rIntro.t>0;
     rect(aPoint,A[6]);A[6].S=A[6].h;
     if(inIntro){rect(rIntro.el,A[5]);A[5].S=A[5].h*.9}
@@ -299,7 +320,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     // follow: the hero's mouse turn at 45% strength (max ~60° turn), so the small R stays readable at the extremes
     if(follow){const FS=.45;RY[2]=RY[0]*FS;RX[2]=RX[0]*FS;RZ[2]=RZ[0]*FS}else{RY[2]=Math.sin(tm*.6)*.35*motion;RX[2]=0;RZ[2]=0}
     RY[3]=0;RX[3]=0;RZ[3]=0;
-    RY[4]=(smx*1.3+Math.sin(tm*.35)*.3)*motion;RX[4]=(smy*.8)*motion;RZ[4]=Math.sin(tm*.2)*.12*motion;
+    RY[4]=(smx*1.3+Math.sin(tm*.35)*.3)*motion*turn;RX[4]=(smy*.8)*motion*turn;RZ[4]=Math.sin(tm*.2)*.12*motion;
     RY[5]=RY[2];RX[5]=RX[2];RZ[5]=RZ[2];
 
     // stage 6 is only ever reached whole (its markers hold it, jump blends it with its neighbours)

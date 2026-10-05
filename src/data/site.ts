@@ -76,6 +76,14 @@ export const approach = {
   ],
 };
 
+// home, after the services: the closing statement before the footer. Lines of big words (`muted`: in the grey) and small
+// ones hung beside them (`lead` before, `small` after)
+export const statement = [
+  { big: 'Built to last,', small: 'not just to launch', muted: true },
+  { lead: 'made with', big: 'care' },
+  { big: 'Ready', small: 'when you are.' },
+];
+
 export const footer = {
   // Each part in order; `muted` parts are shown in the grey (like "Freelance Dev" in the hero).
   title: [

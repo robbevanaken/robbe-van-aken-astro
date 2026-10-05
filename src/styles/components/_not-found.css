@@ -1,11 +1,14 @@
-/* 404 (pages/404.astro): one screen. The code in big type, centred, with the R (drawn by the section's own engine on
-   [data-r-anchor], as big as the digits) as its 0; below it the title, the intro and the button, centred. */
-.c-not-found{min-height:100svh;align-content:center;row-gap:var(--space-l);padding-block:calc(var(--nav-top) + 96px) var(--space-xl);text-align:center}
-.c-not-found__code{grid-column:1 / -1;display:flex;justify-content:center;align-items:center;gap:.04em;margin:0;
-  font-size:clamp(120px,24vw,420px);line-height:.8;letter-spacing:-.06em;font-weight:400;color:var(--fg)}
-.c-not-found__r{display:block;width:.92em;height:1.05em;margin-inline:.02em}
+/* 404 (pages/404.astro): one screen. The code, centred: three boxes, each a character drawn in particles by its own
+   engine on [data-r-anchor] (4, the R as the 0, 4; --fs sets their size); below it the title, the intro and the button. */
+.c-not-found{min-height:100svh;align-content:center;row-gap:var(--space-m);padding-block:calc(var(--nav-top) + 72px) var(--space-l);text-align:center} /* everything fits one screen, the button included */
+.c-not-found__code{grid-column:1 / -1;display:flex;justify-content:center;align-items:center;gap:.1em;margin:0;
+  font-size:clamp(88px,min(19vw,30svh),340px);line-height:.8;letter-spacing:-.06em;font-weight:400;color:var(--fg)}
+.c-not-found__char{position:relative;display:block;width:.62em;height:1.05em}
+.c-not-found__char--r{width:.92em}
+.c-not-found__anchor{position:absolute;inset:0}
 .c-not-found__body{grid-column:3 / span 8;display:grid;justify-items:center;gap:var(--space-s)}
 .c-not-found__title,.c-not-found__intro{margin:0}
+.c-not-found__title.c-not-found__title{font-size:clamp(28px,2.7778vw,52px)} /* a step below h2 (40 @1440) */
 .c-not-found__intro{max-width:30em;margin-bottom:var(--space-xs)}
 @media (max-width:1023px){ .c-not-found__body{grid-column:1 / -1} }
-@media (max-width:639px){ .c-not-found{row-gap:var(--space-m)} .c-not-found__code{font-size:34vw} }
+@media (max-width:639px){ .c-not-found{row-gap:var(--space-s)} .c-not-found__code{font-size:min(30vw,24svh)} }

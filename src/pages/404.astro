@@ -1,17 +1,26 @@
 ---
 // Not found. Astro builds this as /404.html; the host serves it for unknown URLs (public/.htaccess: ErrorDocument).
-// The code in big type with the page's own R as the 0: a canvas scoped to the section (stage 4, the footer's state: it
-// turns with the mouse and its pixels move away from the cursor or a finger), then the title, the intro and the way home.
-// No footer: the page is one screen. Styles: styles/components/_not-found.css. Copy: notFoundPage in src/data/pages.ts.
+// The code in big type, every character made of the R's particles: three engines, each scoped to its own character
+// (stage 4, the footer's state: they turn with the mouse and their pixels move away from the cursor or a finger). The
+// 4s are typed characters (`data-r-char`); the 0 is the R itself, the page's R (data-r-intro: the loader's and the page
+// swaps' R flies into it). Then the title, the intro and the way home. No footer (the page is one screen) and no R in the
+// header. Styles: styles/components/_not-found.css. Copy: notFoundPage in src/data/pages.ts.
 import Page from '../layouts/Page.astro';
 import Button from '../components/ui/Button.astro';
 import { notFoundPage as p } from '../data/pages';
+const parts = [{ key: 'a', char: '4' }, { key: 'r', char: '' }, { key: 'b', char: '4' }];
 ---
-<Page title={p.title} noindex footer={false}>
-  <section class="c-not-found o-container o-grid" data-not-found data-stage="4">
-    <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-not-found]"></canvas>
+<Page title={p.title} noindex footer={false} headerR={false}>
+  <section class="c-not-found o-container o-grid">
     <p class="u-sr-only">{p.label}</p>
-    <p class="c-not-found__code" aria-hidden="true"><span>4</span><span class="c-not-found__r" data-r-anchor></span><span>4</span></p>
+    <p class="c-not-found__code" aria-hidden="true">
+      {parts.map((c) => (
+        <span class:list={['c-not-found__char', { 'c-not-found__char--r': !c.char }]} data-not-found={c.key} data-stage="4">
+          <canvas class="c-r-canvas" data-r-canvas data-r-scope={`[data-not-found="${c.key}"]`} data-r-char={c.char || undefined} data-r-turn=".4" data-r-intro={c.char ? undefined : ''}></canvas>
+          <span class="c-not-found__anchor" data-r-anchor></span>
+        </span>
+      ))}
+    </p>
     <div class="c-not-found__body">
       <h1 class="c-not-found__title u-text-h2">{p.title}</h1>
       <p class="c-not-found__intro u-text-body-l u-text-muted">{p.intro}</p>

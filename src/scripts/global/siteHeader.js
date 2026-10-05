@@ -36,6 +36,32 @@ export function initSiteHeader(root = document) {
   };
   const ac = new AbortController(), signal = ac.signal;
 
+  // the nav's tile: on the current page's link; glides to the hovered / focused link, back when the pointer leaves
+  const list = header.querySelector('[data-nav-list]'), tile = list?.querySelector('[data-nav-tile]');
+  if (tile) {
+    document.documentElement.classList.add('js-nav');
+    const links = [...list.querySelectorAll('a')], current = links.find((l) => l.getAttribute('aria-current') === 'page');
+    const to = (link, instant) => {
+      tile.classList.toggle('is-instant', !!instant);
+      tile.classList.toggle('is-on', !!link);
+      if (link) { tile.style.setProperty('--x', `${link.offsetLeft}px`); tile.style.setProperty('--w', `${link.offsetWidth}px`); }
+      if (instant) requestAnimationFrame(() => tile.classList.remove('is-instant'));
+    };
+    to(current, true);
+    // clicked: the tile stays on the link we're going to (the page transition covers the nav, which would otherwise
+    // count as leaving it and send the tile back)
+    let picked = null;
+    links.forEach((l) => {
+      l.addEventListener('pointerenter', () => { if (!picked) to(l); }, { signal });
+      l.addEventListener('focus', () => { if (!picked) to(l); }, { signal });
+      l.addEventListener('click', () => { picked = l; to(l); }, { signal });
+    });
+    list.addEventListener('pointerleave', () => { if (!picked) to(current); }, { signal });
+    list.addEventListener('focusout', (e) => { if (!picked && !list.contains(e.relatedTarget)) to(current); }, { signal });
+    addEventListener('resize', () => to(current, true), { signal });
+    document.fonts?.ready.then(() => { if (!signal.aborted) to(current, true); });
+  }
+
   // hide on scroll down, show on scroll up (always shown near the top or while the menu is open)
   addEventListener('scroll', () => {
     const y = scrollY, dy = y - lastY;

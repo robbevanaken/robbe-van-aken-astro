@@ -22,7 +22,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <ol class="c-services__list">
         {services.map((s, i) => (
           <li class:list={['c-services__item', { 'is-active': i === 0 }]} data-service={i}>
-            <p class="c-services__count u-text-label u-text-muted">{pad(i + 1)} / {pad(services.length)}</p>
+            <p class="c-services__count u-text-label u-text-muted"><span class="u-sr-only">{pad(i + 1)}</span><span class="c-services__roll" aria-hidden="true"><span class="c-services__roll-list">{services.map((_, j) => <span>{pad(j + 1)}</span>)}</span></span> / {pad(services.length)}</p>
             <h3 class="c-services__name u-text-h2">{s.title}</h3>
             <p class="c-services__text u-text-body-l u-text-muted">{s.description}</p>
           </li>

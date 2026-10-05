@@ -21,10 +21,16 @@
 .c-site-header__r-anchor{display:block;width:100%;height:100%}
 
 .c-site-header__end{grid-column:-5 / -1;grid-row:1;display:flex;justify-content:flex-end;align-items:center;gap:var(--space-m)}
-.c-site-header__nav-list{display:flex;justify-content:flex-end;gap:var(--space-m)}
-.c-site-header__nav-link{position:relative;text-decoration:none;padding-bottom:3px}
-.c-site-header__nav-link::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform var(--hover-dur) var(--ease-punch)}
-.c-site-header__nav-link:hover::after,.c-site-header__nav-link:focus-visible::after{transform:scaleX(1);transform-origin:left}
+.c-site-header__nav-list{position:relative;display:flex;justify-content:flex-end;gap:var(--space-m)}
+.c-site-header__nav-link{position:relative;display:block;text-decoration:none;padding-block:1px 3px}
+/* one quiet tile (--panel, square like the rest of the site) behind the current page's link; it glides to the hovered or
+   focused link and back (positioned by global/siteHeader.js: --x, --w; .is-on when there's a link to sit on). Without
+   JS: a tile behind the current link. */
+.c-site-header__nav-tile{position:absolute;top:-5px;bottom:-3px;left:0;width:calc(var(--w,0px) + 18px);z-index:-1;background:var(--panel);pointer-events:none;
+  transform:translateX(calc(var(--x,0px) - 9px));opacity:0;transition:transform .6s var(--ease-punch),width .6s var(--ease-punch),opacity .35s var(--ease-out)}
+.c-site-header__nav-tile.is-on{opacity:1}
+.c-site-header__nav-tile.is-instant{transition:none}
+html:not(.js-nav) .c-site-header__nav-link[aria-current="page"]{background:var(--panel);box-shadow:0 0 0 5px var(--panel)}
 
 
 /* full-screen menu (phones): rows between thin lines (like the services and the contact wizard), the email and
@@ -43,7 +49,7 @@
 /* leaving for another page: only the rows go, the background stays (the transition overlay takes over from it) */
 .c-site-header__menu.is-out.is-leaving{opacity:1}
 .c-site-header__menu-list{display:grid}
-.c-site-header__menu-item{position:relative;overflow:hidden}
+.c-site-header__menu-item{position:relative;clip-path:inset(0 -1em)} /* the rows' masks (they slide up out of them), open at the sides for the current page's tile */
 /* the line above each row draws in from the left */
 .c-site-header__menu-item::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--line);transform:scaleX(0);transform-origin:left;
   transition:transform .9s var(--ease-punch);transition-delay:calc(var(--i) * .06s + .17s)}
@@ -58,6 +64,9 @@
 .c-site-header__menu-label{display:inline-block;transition:transform var(--hover-dur) var(--ease-punch),color var(--hover-dur) var(--ease-punch)}
 .c-site-header__menu-list:hover .c-site-header__menu-label,.c-site-header__menu-list:focus-within .c-site-header__menu-label{color:var(--muted)}
 .c-site-header__menu-link:hover .c-site-header__menu-label,.c-site-header__menu-link:focus-visible .c-site-header__menu-label,.c-site-header__menu-link:active .c-site-header__menu-label{color:var(--fg);transform:translateX(12px)}
+/* the current page's row: its label on a quiet tile (a step off the menu's own panel), like the desktop nav */
+.c-site-header__menu-label{position:relative}
+.c-site-header__menu-link[aria-current="page"] .c-site-header__menu-label::before{content:"";position:absolute;inset:.02em -.16em -.04em;z-index:-1;background:color-mix(in srgb,var(--fg) 8%,var(--panel))} /* with room around the word, like the desktop tile */
 /* the foot: email and socials at the bottom */
 .c-site-header__menu-foot{margin-top:auto;display:grid;gap:var(--space-s);opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease-out),transform .8s var(--ease-punch);transition-delay:0s}
 .c-site-header__menu.is-in .c-site-header__menu-foot{opacity:1;transform:none;transition-delay:.35s}

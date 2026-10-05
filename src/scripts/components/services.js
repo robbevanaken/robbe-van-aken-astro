@@ -30,6 +30,7 @@ export function initServices(root = document) {
     progress?.classList.toggle('is-hidden', !(r.top <= 1 && r.bottom >= innerHeight - 1));
     if (a === active) return;
     active = a;
+    el.style.setProperty('--svc', a); // the count's number rolls (_services.css)
     items.forEach((it, i) => { it.classList.toggle('is-active', i === a); it.classList.toggle('is-past', i < a); });
   };
   addEventListener('scroll', update, { passive: true, signal: ac.signal });

@@ -3,7 +3,7 @@
    next to the details (cols 3–6). Phones: form, portrait, details stacked. */
 .c-contact{margin-top:var(--space-xl);align-items:start;row-gap:var(--space-xl)}
 .c-contact__details{grid-column:1 / span 4;grid-row:1;display:grid;align-content:start;gap:var(--space-l)}
-.c-contact__portrait{margin:0;width:75%;aspect-ratio:4 / 5;background:var(--panel);color:var(--muted);display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}
+.c-contact__portrait{margin:0;width:calc(50% - var(--gutter) / 2);aspect-ratio:4 / 5;background:var(--panel);color:var(--muted);display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}
 .c-contact__portrait-img{width:100%;height:100%;object-fit:cover;margin:calc(-1 * var(--space-xs))}
 .c-contact__group{display:grid;gap:var(--space-xs)}
 .c-contact__group-label{color:var(--muted)}
@@ -15,14 +15,14 @@
 
 @media (max-width:1023px){
   .c-contact__details{grid-column:1 / -1;grid-row:2;grid-template-columns:subgrid;column-gap:var(--gutter);row-gap:var(--space-m)}
-  .c-contact__portrait{grid-column:1 / span 2;grid-row:1 / span 3;width:100%}
-  .c-contact__group{grid-column:3 / -1}
+  .c-contact__portrait{grid-column:1 / span 2;width:100%}
+  .c-contact__group{grid-column:1 / -1}
 }
 /* phones: more air everywhere (between form and details, the groups, label and items) */
 @media (max-width:639px){
   .c-contact{margin-top:var(--space-xl);row-gap:calc(var(--space-section) * .9)}
   .c-contact__details{grid-template-columns:none;row-gap:var(--space-l)}
-  .c-contact__portrait{grid-column:auto;grid-row:auto;width:62%;margin-bottom:var(--space-2xs)}
+  .c-contact__portrait{grid-column:auto;grid-row:auto;width:calc(50% - var(--gutter) / 2);margin-bottom:var(--space-2xs)}
   .c-contact__group{grid-column:auto;gap:var(--space-s)}
   .c-contact__list{gap:var(--space-2xs)}
 }

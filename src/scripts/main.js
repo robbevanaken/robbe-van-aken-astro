@@ -50,7 +50,7 @@ function mount() {
     // data-r-intro (home: the R, subpages: the header's) also plays the R in the page loader and page swaps.
     ...[...root.querySelectorAll('[data-r-canvas]')].map((canvas) => {
       const sel = canvas.dataset.rScope;
-      return initREngine({ canvas, scope: sel ? root.querySelector(sel) : root, cull: !!sel, intro: canvas.hasAttribute('data-r-intro') });
+      return initREngine({ canvas, scope: sel ? root.querySelector(sel) : root, cull: !!sel, intro: canvas.hasAttribute('data-r-intro'), char: canvas.dataset.rChar || '', turn: +(canvas.dataset.rTurn || 1) });
     }),
     initScrollNext(root),
     initServices(root),

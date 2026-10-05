@@ -15,8 +15,10 @@ const { withR = false } = Astro.props;
     {withR && <a class="c-site-header__r" href="/" aria-label="Home" data-stage="2"><span class="c-site-header__r-anchor" id="a-craft"></span></a>}
     <div class="c-site-header__end">
       <nav class="c-site-header__nav u-text-ui" aria-label="Main">
-        <ul class="c-site-header__nav-list">
-          {nav.links.map((l) => <li class="c-site-header__nav-item"><a class="c-site-header__nav-link" href={l.href}>{l.label}</a></li>)}
+        <ul class="c-site-header__nav-list" data-nav-list>
+          <!-- one tile for the whole nav: on the current page's link, glides to the hovered one (global/siteHeader.js) -->
+          <li class="c-site-header__nav-tile" aria-hidden="true" data-nav-tile></li>
+          {nav.links.map((l) => <li class="c-site-header__nav-item"><a class="c-site-header__nav-link" href={l.href} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a></li>)}
         </ul>
       </nav>
       <ThemeToggle class="c-site-header__theme" />
