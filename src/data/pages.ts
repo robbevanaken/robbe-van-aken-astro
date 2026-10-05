@@ -9,13 +9,16 @@ export const workPage = {
 export const aboutPage = {
   title: 'About', // page <title>
   intro: 'Freelance developer in Ghent, with an eye for design.', // meta description
-  // one statement: a big title in two parts (the first muted), the lead below it, then three columns
+  // one statement: a big title in two parts (the first muted), the lead below it, then a spec sheet: the portrait
+  // (sticky, left) with its caption, the three sections on the right. Portrait: set image (e.g. '/about/portrait.jpg'
+  // in public/) to replace the placeholder
+  portrait: { image: '', alt: 'Robbe Van Aken', placeholder: 'Portrait', caption: ['Robbe Van Aken', 'Developer, Ghent'] },
   heading: [
     { text: 'Freelance developer,', muted: true },
     { text: 'with an eye for design.', muted: false },
   ],
   lead: "I build websites, platforms and apps from Ghent, in whatever stack the project asks for. Development is what I do every day; a good eye for design is what makes the difference in the details. For bigger projects I bring in people I trust, so the right skills are always at the table.",
-  // the three columns: a small title (label), then titled entries (items) or lists (groups)
+  // the three sections: a title (label), then rows: titled entries (items) or lists (groups)
   sections: [
     { label: 'How I build',
       items: [
