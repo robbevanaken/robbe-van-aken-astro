@@ -20,7 +20,6 @@ export const nav = {
   links: [
     { label: 'Home', href: '/' },
     { label: 'Work', href: '/work' },
-    { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ],
   // light/dark toggle (screen readers; the button itself is an icon)
@@ -62,6 +61,36 @@ export const work = {
 export const servicesIntro = {
   title: 'What I build',
   text: 'Development leads, design runs through all of it. For bigger projects I bring in people I trust, so the right skills are at the table.',
+};
+
+// home, below the services: how I work, as three lists (a title, then rows: titled entries (items) or lists (groups));
+// the R turns into an arrow that points at the row in the middle of the screen
+export const approach = {
+  title: 'How I work',
+  intro: 'What I care about on every project, what I build with, and what happens after launch.',
+  sections: [
+    { label: 'How I build',
+      items: [
+        { title: 'Built the way it was designed', text: "I read a design the way it was meant and build it that way. The details that matter survive the build, and technical limits are on the table early, not late." },
+        { title: 'Built to be handed over', text: "A site is only finished when your team can run it without me. Clear content structures, a CMS that's pleasant to use, and code someone else can pick up." },
+        { title: 'AI where it actually helps', text: "I use AI where it saves real time, for you or for me, and leave it out where it doesn't. No gimmicks, just less tedious work." },
+        { title: 'The right people at the table', text: "For bigger projects I bring in specialists I trust, from copywriting to illustration, so you get the right skills without managing a crowd." },
+      ] },
+    // no favourites: what I can work with, the project decides
+    { label: 'Stack',
+      groups: [
+        { label: 'Web', items: ['Craft CMS', 'Laravel', 'PHP', 'Next.js', 'Astro', 'JavaScript', 'TypeScript'] },
+        { label: 'Apps & motion', items: ['Flutter', 'GSAP', 'WebGL'] },
+        { label: 'Design', items: ['Figma', 'Typography', 'Brand identity', 'Motion'] },
+      ] },
+    { label: 'Ship',
+      items: [
+        { title: 'Hosting & deploys', text: 'A reliable setup, automated deploys, and backups you never have to think about.' },
+        { title: 'Performance', text: 'Fast on a slow connection, light on the device in your pocket.' },
+        { title: 'Accessibility', text: 'Usable with a keyboard and a screen reader, readable for everyone.' },
+        { title: 'Maintenance', text: 'Updates, small changes and a hand when you need one, long after launch.' },
+      ] },
+  ],
 };
 
 export const footer = {

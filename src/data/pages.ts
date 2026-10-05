@@ -6,44 +6,6 @@ export const workPage = {
   filters: { label: 'Filter projects', toggle: 'Filter', all: 'All' }, // the other filters come from the projects' services (projectTags)
 };
 
-export const aboutPage = {
-  title: 'About', // page <title>
-  intro: 'Freelance developer in Ghent, with an eye for design.', // meta description
-  // one statement: a big title in two parts (the first muted), the lead below it, then a spec sheet: the portrait
-  // (sticky, left) with its caption, the three sections on the right. Portrait: set image (e.g. '/about/portrait.jpg'
-  // in public/) to replace the placeholder
-  portrait: { image: '', alt: 'Robbe Van Aken', placeholder: 'Portrait', caption: ['Robbe Van Aken', 'Developer, Ghent'] },
-  heading: [
-    { text: 'Freelance developer,', muted: true },
-    { text: 'with an eye for design.', muted: false },
-  ],
-  lead: "I build websites, platforms and apps from Ghent, in whatever stack the project asks for. Development is what I do every day; a good eye for design is what makes the difference in the details. For bigger projects I bring in people I trust, so the right skills are always at the table.",
-  // the three sections: a title (label), then rows: titled entries (items) or lists (groups)
-  sections: [
-    { label: 'How I build',
-      items: [
-        { title: 'Built the way it was designed', text: "I read a design the way it was meant and build it that way. The details that matter survive the build, and technical limits are on the table early, not late." },
-        { title: 'Built to be handed over', text: "A site is only finished when your team can run it without me. Clear content structures, a CMS that's pleasant to use, and code someone else can pick up." },
-        { title: 'AI where it actually helps', text: "I use AI where it saves real time, for you or for me, and leave it out where it doesn't. No gimmicks, just less tedious work." },
-        { title: 'The right people at the table', text: "For bigger projects I bring in specialists I trust, from copywriting to illustration, so you get the right skills without managing a crowd." },
-      ] },
-    // no favourites: what I can work with, the project decides
-    { label: 'Stack',
-      groups: [
-        { label: 'Web', items: ['Craft CMS', 'Laravel', 'PHP', 'Next.js', 'Astro', 'JavaScript', 'TypeScript'] },
-        { label: 'Apps & motion', items: ['Flutter', 'GSAP', 'WebGL'] },
-        { label: 'Design', items: ['Figma', 'Typography', 'Brand identity', 'Motion'] },
-      ] },
-    { label: 'Ship',
-      items: [
-        { title: 'Hosting & deploys', text: 'A reliable setup, automated deploys, and backups you never have to think about.' },
-        { title: 'Performance', text: 'Fast on a slow connection, light on the device in your pocket.' },
-        { title: 'Accessibility', text: 'Usable with a keyboard and a screen reader, readable for everyone.' },
-        { title: 'Maintenance', text: 'Updates, small changes and a hand when you need one, long after launch.' },
-      ] },
-  ],
-};
-
 export const contactPage = {
   // each part in order; `muted` parts in the grey (like the footer title)
   title: [
