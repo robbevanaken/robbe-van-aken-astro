@@ -1,12 +1,21 @@
 ---
-// Not found. Astro builds this as /404.html; the host serves it for unknown URLs. Copy in src/data/pages.ts.
+// Not found. Astro builds this as /404.html; the host serves it for unknown URLs (public/.htaccess: ErrorDocument).
+// The code in big type with the page's own R as the 0: a canvas scoped to the section (stage 4, the footer's state: it
+// turns with the mouse and its pixels move away from the cursor or a finger), then the title, the intro and the way home.
+// No footer: the page is one screen. Styles: styles/components/_not-found.css. Copy: notFoundPage in src/data/pages.ts.
 import Page from '../layouts/Page.astro';
-import PageIntro from '../components/sections/PageIntro.astro';
 import Button from '../components/ui/Button.astro';
 import { notFoundPage as p } from '../data/pages';
 ---
-<Page title={p.title} noindex>
-  <PageIntro label={p.label} title={p.title} intro={p.intro}>
-    <div class="c-page-intro__action"><Button href={p.cta.href}>{p.cta.label}</Button></div>
-  </PageIntro>
+<Page title={p.title} noindex footer={false}>
+  <section class="c-not-found o-container o-grid" data-not-found data-stage="4">
+    <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-not-found]"></canvas>
+    <p class="u-sr-only">{p.label}</p>
+    <p class="c-not-found__code" aria-hidden="true"><span>4</span><span class="c-not-found__r" data-r-anchor></span><span>4</span></p>
+    <div class="c-not-found__body">
+      <h1 class="c-not-found__title u-text-h2">{p.title}</h1>
+      <p class="c-not-found__intro u-text-body-l u-text-muted">{p.intro}</p>
+      <Button href={p.cta.href}>{p.cta.label}</Button>
+    </div>
+  </section>
 </Page>

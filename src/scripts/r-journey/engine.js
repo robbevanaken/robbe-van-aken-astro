@@ -9,6 +9,7 @@
 // uses (home: the whole page; subpages: one R in the header, a separate one in the footer). `cull` skips all work
 // while the scope is off screen.
 import { R_PATH } from './r-shape.js';
+import { LOOKS, LOOK } from './looks.js';
 import { serviceProgress } from '../components/services.js';
 import { theme } from '../global/theme.js';
 
@@ -28,7 +29,8 @@ let geo = null, carry = null;
 const spriteCache = new Map(), grid = { GC: null, GS: null, GN: null, OCC: null };
 
 // `follow`: the small R (stage 2: projects on home, header on subpages) turns with the mouse like the hero R.
-export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false } = {}) {
+
+export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false, look = LOOK } = {}) {
   if (!canvas || !scope) return null;
   // page swaps: every window listener goes through this signal, destroy() stops the frame loop
   const ac=new AbortController(),signal=ac.signal;let alive=true,raf=0;
@@ -56,7 +58,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // A scope may have only one anchor (header: #a-craft, footer: #a-foot, contact's How I work: the arrow's
   // [data-r-pointer]): every missing anchor falls back to it.
   const find=(id)=>scope.querySelector?.('#'+id)||null;
-  const main=find('a-craft')||find('a-foot')||find('a-hero')||scope.querySelector?.('[data-r-pointer]');if(!main)return null;
+  const main=find('a-craft')||find('a-foot')||find('a-hero')||find('a-pitch')||scope.querySelector?.('[data-r-pointer]')||scope.querySelector?.('[data-r-anchor]');if(!main)return null;
   const byId=(id)=>find(id)||main;
   const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aCraft=byId('a-craft'),aFoot=byId('a-foot');
   // services: one icon in [data-service-slot], which one (and how far into the morph to the next) follows [data-services]
@@ -220,7 +222,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const t0=[0,0],t1=[0,0];let lastIdx=-1;
   // Glyph dither mode (like Unicorn's Glyph Dither): particles are binned into a screen grid and every
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
-  let render=3,GC=null,GS=null,GN=null,OCC=null,nOcc=0;
+  const LK=LOOKS[look]||LOOKS[LOOK];
+  let render=LK.render??3,GC=null,GS=null,GN=null,OCC=null,nOcc=0;
   // glyph look per theme. gamma > 1 pushes cells towards the bright cross (a heavier, more present R); colors: [dim,
   // bright]; line / pad: cross stroke width and inset, as a share of the cell. Light needs more: dark on light reads
   // thinner and greyer than white on dark, so more full crosses, heavier strokes, and a paler dim tone so the shaded
@@ -237,7 +240,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // fine: the same screen grid, but about one cell per particle and four tones; faces are crosses, side walls squares
   // cell size per stage, in particle pitches: about one particle per cell; the two biggest R's (pitch, footer) a step
   // coarser, so their crosses still read as crosses
-  const FCELL=[1.12,1.3,1.12,1.12,1.3,1.12,1.12];
+  const FCELL=LK.cell?[0,1,2,3,4,5,6].map(i=>i===1||i===4?LK.cell[1]:LK.cell[0]):[1.12,1.3,1.12,1.12,1.3,1.12,1.12];
   const FINE={dark:['#5a4f49','#8d817a','#cbc2bc','#ffffff'],light:['#d9d0c8','#ab9f96','#5f514a','#140b08']};
   function spritesFine(cell,mode){
     const key='f'+cell+'@'+DPR+mode;if(spriteCache.has(key))return spriteCache.get(key);
@@ -249,9 +252,20 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const out={x:FINE[mode].map(c=>mk(c,false)),q:FINE[mode].map(c=>mk(c,true))};
     spriteCache.set(key,out);return out;
   }
+  // a look's sprites: one per tone (and per size for the halftone)
+  function spritesLook(cell,mode,shape){
+    const key='L'+shape+cell+'@'+DPR+mode;if(spriteCache.has(key))return spriteCache.get(key);
+    const gs=G[mode],px=Math.max(2,Math.round(cell*DPR));
+    const sq=(col,fr)=>{const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');const q=Math.max(1,Math.round(px*fr)),o=Math.round((px-q)/2);g.fillStyle=col;g.fillRect(o,o,q,q);return c};
+    const x=(col)=>{const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');const pad=px*(gs.pad-.06);g.strokeStyle=col;g.lineWidth=Math.max(1,px*gs.line);g.lineCap=px<6?'butt':'round';
+      g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c};
+    const out=shape==='x'?FINE[mode].map(x):shape==='sq'?FINE[mode].map(c=>sq(c,.58)):shape==='dot'?FINE[mode].map(c=>sq(c,.42)):
+      (mode==='light'?[.44,.56,.68,.8]:[.3,.42,.54,.66]).map(fr=>sq(FINE[mode][3],fr)); // half: the darkest tone, four sizes (bigger on light: dark ink on paper reads thinner)
+    spriteCache.set(key,out);return out;
+  }
   const modeBtn=cull?null:scope.querySelector('#mode');
   // dev HUD / G key: Fine (the look) → Glyph (the coarser grid it came from) → Pixels → Mix (crosses per particle), to compare
-  if(modeBtn){modeBtn.textContent='Fine';modeBtn.onclick=()=>{render=[1,2,3,0][render];modeBtn.textContent=['Glyph','Pixels','Mix','Fine'][render];modeBtn.classList.toggle('is-off',render!==3)}}
+  if(modeBtn){modeBtn.textContent=look==='halftone'?'Halftone':'Fine';modeBtn.onclick=()=>{render=[1,2,3,0][render];modeBtn.textContent=['Glyph','Pixels','Mix','Fine'][render];modeBtn.classList.toggle('is-off',render!==3)}}
   addEventListener('keydown',e=>{if((e.key==='g'||e.key==='G')&&!e.shiftKey&&!e.target.closest('input,textarea'))modeBtn&&modeBtn.click()},{signal}); // Shift+G: the grid overlay
 
   // Slow devices: when a frame's own work stays above ~10 ms, render every other frame (springs take a double step, so
@@ -361,6 +375,18 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
           const ci=OCC[o];if(!(GC[ci]>0))continue;
           for(const d of [1,cols]){const m=ci+d,e=ci+2*d;if(e<NN&&!(GC[m]>0)&&GC[e]>0){GC[m]=(GC[ci]+GC[e])/2;if(GN[m]===0)OCC[nOcc++]=m;GN[m]=1}}
         }
+        if(LK.face&&look!=='fine'){
+          const X_=spritesLook(CELL,mode,'x'),FA=LK.face==='alt'?null:spritesLook(CELL,mode,LK.face),WA=spritesLook(CELL,mode,LK.wall),DO=LK.face==='alt'?spritesLook(CELL,mode,'dot'):null,dz=LK.dither||0,lb=mode==='light'?.8:0; // lb: light needs more ink to read
+          for(let o=0;o<nOcc;o++){
+            const ci=OCC[o],r=(ci/cols)|0,q=ci-r*cols,cap=GC[ci]>0,v=clamp(cap?GC[ci]:GS[ci],0,1),bay=((BAYER4[(r&3)*4+(q&3)]+.5)/16-.5)*dz;
+            if(!cap){ctx.drawImage(WA[clamp(Math.round(v*4.2+.9+lb+bay),1,4)-1],q*CELL,r*CELL,CELL,CELL);continue}
+            const isEdge=LK.edge&&(!(GC[ci-1]>0)||!(GC[ci+1]>0)||!(GC[ci-cols]>0)||!(GC[ci+cols]>0));
+            if(isEdge){ctx.drawImage(X_[3],q*CELL,r*CELL,CELL,CELL);continue}
+            let lv=LK.two?(v+bay>.5?4:3):clamp(Math.round(v*4+.22+lb+bay),1,4);
+            const spr=LK.face==='alt'?((r+q)&1?X_:DO):FA;
+            ctx.drawImage(spr[lv-1],q*CELL,r*CELL,CELL,CELL);
+          }
+        }else
         for(let o=0;o<nOcc;o++){
           const ci=OCC[o],r=(ci/cols)|0,q=ci-r*cols,cap=GC[ci]>0,v=clamp(cap?GC[ci]:GS[ci],0,1);
           const lv=clamp(Math.round((cap?v*4+.22:v*4.2+.9)+((BAYER4[(r&3)*4+(q&3)]+.5)/16-.5)*.9),1,4);

@@ -136,8 +136,10 @@ export const privacyPage = {
   ],
 };
 
+// 404: the code in big type with the R as its 0 (it turns with the mouse and its pixels move away from the cursor, like
+// the footer's), then the title, the intro and the way home
 export const notFoundPage = {
-  label: '404',
+  label: 'Error 404', // for screen readers (the big 404 is decorative)
   title: "This page doesn't exist.",
   intro: 'It may have moved, or the link is off. The home page is a good place to start again.',
   cta: { label: 'Back to home', href: '/' },
