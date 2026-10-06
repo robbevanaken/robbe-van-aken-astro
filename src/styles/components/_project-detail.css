@@ -1,6 +1,6 @@
 /* Project detail page (/work/<slug>). */
 .c-project-detail__visual{margin-top:var(--gutter)} /* 20 @1440 below the title */
-.c-project-detail__media{grid-column:1 / -1;aspect-ratio:16 / 9;width:100%;object-fit:cover}
+.c-project-detail__media{grid-column:1 / -1;aspect-ratio:16 / 9;width:100%;height:auto;object-fit:cover} /* height:auto: the img's height attribute (ProjectImage) would override the ratio */
 .c-project-detail__placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
   background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
 .c-project-detail__back{margin-top:var(--space-l)}

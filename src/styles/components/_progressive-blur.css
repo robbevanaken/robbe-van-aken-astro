@@ -68,5 +68,5 @@
    Shown once the page has scrolled (the hero's orange band at the fold stays sharp), gone while the footer or the
    next project's visual is on screen and while the mobile menu is open (.is-on, global/siteHeader.js). */
 .progressive-blur.is--bottom { z-index: 28; height: 10em; font-size: 16px; opacity: 0; transition: opacity .5s; }
-.progressive-blur.is--bottom::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, color-mix(in srgb, var(--page) 78%, transparent), transparent); }
+.progressive-blur.is--bottom::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--scrim)); }
 .progressive-blur.is--bottom.is-on { opacity: 1; }

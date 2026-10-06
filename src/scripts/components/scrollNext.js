@@ -44,6 +44,9 @@ function initScrollToNextPage(root) {
   const bg = wrap.querySelector("[data-scroll-next-bg]");
   const word = wrap.querySelector("[data-scroll-next-word]");
   const slot = wrap.querySelector("[data-scroll-next-slot]");
+  const hud = wrap.querySelector("[data-scroll-next-hud]");
+  const count = wrap.querySelector("[data-scroll-next-count]");
+  const fill = wrap.querySelector("[data-scroll-next-fill]");
   const stage = slot?.parentElement;
 
   if (!link) return null;
@@ -73,7 +76,17 @@ function initScrollToNextPage(root) {
       scrollToY(self.end, .6 + (1 - self.progress) * 1.4, easeInOut);
     }, 180);
   };
+  // the progress on the visual: the counter (000–100) and its line
+  let shown = -1;
+  const progress = (p) => {
+    const n = Math.round(p * 100);
+    if (n === shown) return;
+    shown = n;
+    if (count) count.textContent = String(n).padStart(3, '0');
+    if (fill) fill.style.transform = `scaleX(${n / 100})`;
+  };
   const onUpdate = (self) => {
+    progress(self.progress);
     if (self.direction > 0 && performance.now() - input < 1500) armed = true;
     if (armed && self.progress >= 0.99) go();
     else magnet(self);
@@ -125,12 +138,15 @@ function initScrollToNextPage(root) {
   // a slow settle of the image inside its box (ends at 1, as on the next page)
   if (bg) tl.fromTo(bg, { scale: 1.15 }, { scale: 1, duration: 1 }, 0);
   if (word) tl.fromTo(word, { autoAlpha: 0 }, { autoAlpha: 1, duration: .25 }, .75);
+  // the labels on the visual go just before the end (the visual lands bare, as on the next page)
+  if (hud) tl.fromTo(hud, { autoAlpha: 1 }, { autoAlpha: 0, duration: .07 }, .9);
   // page furniture just above the section (the "All projects" button): fades out as the rising visual comes up to it
   // (over the last 48px), so it never travels up past the visual, and stays clickable until then
   const fades = [...root.querySelectorAll('[data-scroll-next-fade]')];
   const fade = () => {
     if (!box || !fades.length) return;
-    const top = box.getBoundingClientRect().top;
+    // the visual's top, or the labels' above it (phones: they sit above the visual)
+    const top = Math.min(box.getBoundingClientRect().top, hud && getComputedStyle(hud).visibility !== 'hidden' ? hud.getBoundingClientRect().top : Infinity);
     fades.forEach((el) => {
       const o = Math.min(1, Math.max(0, (top - el.getBoundingClientRect().bottom) / 48));
       el.style.opacity = o.toFixed(3); el.style.visibility = o < .02 ? 'hidden' : '';
@@ -160,6 +176,7 @@ export function handOff() {
   if (!box) return null;
   const r = box.getBoundingClientRect(), copy = box.cloneNode(true);
   copy.removeAttribute('data-scroll-next-box');
+  copy.querySelector('[data-scroll-next-hud]')?.remove();
   copy.classList.add('c-scroll-next__bg--carried');
   Object.assign(copy.style, { top: r.top + 'px', left: r.left + 'px', width: r.width + 'px', height: r.height + 'px' });
   document.body.append(copy);

@@ -22,6 +22,13 @@ const { project, label } = Astro.props; // label: for the link's accessible name
           ? <ProjectImage src={project.image} data-scroll-next-bg class="c-scroll-next__bg-img" />
           : <div data-scroll-next-bg class="c-scroll-next__bg-img c-scroll-next__bg-img--placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}><span class="c-scroll-next__word" data-scroll-next-word>{project.label}</span></div>}
       </div>
+      <!-- on the visual, like the project cards' labels: what's coming (top left) and how far the scroll to it is
+           (top right: a counter 000–100 and a line, like the page loader's); they fade out just before the end, so the
+           visual lands bare, as on the next page -->
+      <div class="c-scroll-next__hud" aria-hidden="true" data-scroll-next-hud>
+        <span class="c-scroll-next__tag u-text-label"><span class="c-scroll-next__tag-label">{label}</span><span class="c-scroll-next__tag-title">{project.title}</span></span>
+        <span class="c-scroll-next__tag c-scroll-next__tag--count u-text-label"><span class="c-scroll-next__count" data-scroll-next-count>000</span><i class="c-scroll-next__line"><i class="c-scroll-next__fill" data-scroll-next-fill></i></i></span>
+      </div>
     </div>
   </a>
 </section>
