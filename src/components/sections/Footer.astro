@@ -17,7 +17,7 @@ import { footer, meta } from '../../data/site';
     <div class="c-site-footer__r-anchor" id="a-foot"></div>
   </div>
   <div class="c-site-footer__bottom o-container o-grid">
-    <span class="c-site-footer__company">{footer.company}</span>
+    <span class="c-site-footer__company">© {new Date().getFullYear()} {footer.company}</span>
     <span class="c-site-footer__location">{footer.location}</span>
     {footer.legal.map((l) => <a class="c-site-footer__legal" href={l.href}>{l.label}</a>)}
     <button class="c-site-footer__legal c-site-footer__legal--cookies" type="button" data-cookie-settings>{footer.cookieSettings}</button>

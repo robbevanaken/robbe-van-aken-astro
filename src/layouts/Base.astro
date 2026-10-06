@@ -2,6 +2,7 @@
 // HTML shell for every page: styles, font preloads and the single script entry (scripts/main.js).
 import '../styles/main.css';
 import { meta, nav, socials } from '../data/site';
+import ThemeToggle from '../components/ui/ThemeToggle.astro';
 import PageTransition from '../components/layout/PageTransition.astro';
 // noindex: pages search engines should skip (404)
 interface Props { title?: string; description?: string; noindex?: boolean }
@@ -10,7 +11,8 @@ const { title = meta.title, description = meta.description, noindex = false } = 
 const person = { '@context': 'https://schema.org', '@type': 'Person', name: nav.name, jobTitle: nav.role, url: Astro.site?.href, email: `mailto:${meta.email}`,
   address: { '@type': 'PostalAddress', addressLocality: 'Ghent', addressCountry: 'BE' }, sameAs: socials.map((s) => s.href) };
 // without a trailing slash, like the site's own links and the sitemap (/about, not /about/)
-const canonical = new URL(Astro.url.pathname.replace(/(.)\/$/, '$1'), Astro.site);
+// without the .html of the build's file format and without a trailing slash, as the links and the sitemap
+const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/').replace(/(.)\/$/, '$1'), Astro.site);
 const image = new URL(meta.image, Astro.site);
 // Google Tag Manager: production builds only (`live`), and it only runs once the visitor allows analytics in the cookie banner
 // (vanilla-cookieconsent runs scripts with type="text/plain" data-category="analytics" on consent). Consent mode v2
@@ -67,6 +69,8 @@ const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':ne
       <slot />
     </div>
     <PageTransition />
+    <!-- the light/dark toggle, fixed bottom right on desktop (outside #swup: it stays through page swaps) -->
+    <ThemeToggle float />
     <script>
       import '../scripts/main.js';
     </script>

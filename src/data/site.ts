@@ -22,8 +22,8 @@ export const nav = {
     { label: 'Work', href: '/work' },
     { label: 'Contact', href: '/contact' },
   ],
-  // light/dark toggle (screen readers; the button itself is an icon)
-  theme: { toLight: 'Switch to light mode', toDark: 'Switch to dark mode' },
+  // light/dark toggle (footer bottom row + mobile menu foot): worded for what a click does
+  theme: { dark: 'Dark mode', light: 'Light mode' },
 };
 
 export const hero = {

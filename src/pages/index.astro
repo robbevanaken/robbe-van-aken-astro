@@ -2,7 +2,6 @@
 // Home. Page order below; copy lives in src/data/, scripts start from src/scripts/main.js.
 import Base from '../layouts/Base.astro';
 import Nav from '../components/layout/Nav.astro';
-import DevHud from '../components/layout/DevHud.astro';
 import GridOverlay from '../components/layout/GridOverlay.astro';
 import Marquee from '../components/ui/Marquee.astro';
 import Hero from '../components/sections/Hero.astro';
@@ -26,5 +25,5 @@ import Footer from '../components/sections/Footer.astro';
     <Statement />
   </main>
   <Footer />
-  {import.meta.env.DEV && <><DevHud /><GridOverlay /></>}
+  {import.meta.env.DEV && <GridOverlay />}{/* the dev HUD (layout/DevHud.astro) is off: render <DevHud /> here to bring it back */}
 </Base>

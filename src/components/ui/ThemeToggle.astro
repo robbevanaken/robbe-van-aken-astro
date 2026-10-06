@@ -1,14 +1,25 @@
 ---
-// Light/dark toggle: a small square, half filled (square like the rest of the site's shapes: the tiles, the brackets,
-// the buttons). When the theme changes it turns half a turn, so the filled half swaps sides. Delegated click in
-// scripts/global/theme.js ([data-theme-toggle]); the screen reader label follows the theme in CSS.
+// Light/dark toggle, two forms (delegated click in scripts/global/theme.js: [data-theme-toggle]):
+// - default: a quiet text button worded for what a click does ("Dark mode" / "Light mode"), for a text context
+//   (not in use now);
+// - `float`: a small square with one half filled, fixed bottom right inside the grid (where the loader's counter sits),
+//   on every page and every screen; it turns half a turn on the switch, so the filled half swaps sides. Out of the way during the
+//   loader, page swaps and with the menu open. The screen reader label says what a click does.
 // Styles: styles/components/_theme-toggle.css
 import { nav } from '../../data/site';
-interface Props { class?: string }
-const { class: cls } = Astro.props;
+interface Props { class?: string; float?: boolean }
+const { class: cls, float = false } = Astro.props;
 ---
-<button class:list={['c-theme-toggle', cls]} type="button" data-theme-toggle>
-  <span class="c-theme-toggle__square" aria-hidden="true"></span>
-  <span class="c-theme-toggle__label c-theme-toggle__label--light u-sr-only">{nav.theme.toLight}</span>
-  <span class="c-theme-toggle__label c-theme-toggle__label--dark u-sr-only">{nav.theme.toDark}</span>
-</button>
+{float
+  ? <button class:list={['c-theme-toggle c-theme-toggle--float', cls]} type="button" data-theme-toggle>
+      <span class="c-theme-toggle__square" aria-hidden="true"></span>
+      <!-- the label, as a tooltip on hover / keyboard focus (and for screen readers): what a click does -->
+      <span class="c-theme-toggle__tip u-text-label">
+        <span class="c-theme-toggle__label c-theme-toggle__label--to-dark">{nav.theme.dark}</span>
+        <span class="c-theme-toggle__label c-theme-toggle__label--to-light">{nav.theme.light}</span>
+      </span>
+    </button>
+  : <button class:list={['c-theme-toggle', cls]} type="button" data-theme-toggle>
+      <span class="c-theme-toggle__label c-theme-toggle__label--to-dark">{nav.theme.dark}</span>
+      <span class="c-theme-toggle__label c-theme-toggle__label--to-light">{nav.theme.light}</span>
+    </button>}

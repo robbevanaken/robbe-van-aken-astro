@@ -43,3 +43,6 @@
   .c-site-footer__bottom > *{grid-column:auto} /* not the full width .o-grid > * gives them */
   .c-site-footer__legal:not(.c-site-footer__legal--cookies){margin-left:0}
 }
+/* desktop: room at the end of the bottom row for the fixed light/dark toggle (ui/ThemeToggle.astro, float) */
+@media (min-width:1024px){ .c-site-footer__bottom{padding-right:calc(var(--margin) + 36px + var(--space-m))} }
+@media (max-width:1023px){ .c-site-footer__bottom{padding-bottom:calc(36px + var(--space-m))} } /* phones/tablet: room under the row for it */
