@@ -1,7 +1,7 @@
 /* Project detail page (/work/<slug>). */
-.c-project-detail__visual{position:relative;margin-top:var(--space-m)} /* under the title, a step apart */
+.c-project-detail__visual{position:relative;margin-top:var(--space-xl)} /* under the title, with room */
 .c-project-detail__media{grid-column:3 / -1;aspect-ratio:16 / 9;width:100%} /* ui/ProjectVisual.astro (tried: bleeding to the screen's edge) */
-@media (max-width:1023px){ .c-project-detail__visual{margin-top:var(--space-s)} .c-project-detail__media{grid-column:1 / -1} }
+@media (max-width:1023px){ .c-project-detail__visual{margin-top:var(--space-l)} .c-project-detail__media{grid-column:1 / -1} }
 .c-project-detail__placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
   background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
 .c-project-detail__back{margin-top:var(--space-l)}

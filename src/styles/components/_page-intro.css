@@ -16,7 +16,7 @@
 .c-page-intro--project{--fs:min(var(--fs-hero),calc((100vw - 2 * var(--margin)) / var(--len,10) * 1.7));position:relative;row-gap:0}
 .c-page-intro--project .c-page-intro__title{grid-column:1 / -1;grid-row:1;font-size:var(--fs);line-height:1;letter-spacing:-.03em;white-space:nowrap}
 .c-page-intro__aside{position:absolute;grid-column:1 / span 2;grid-row:1;top:100%;left:0;width:100%; /* absolute in its grid area: cols 1–2, under the title's row */
-  display:grid;gap:var(--space-m);padding-top:var(--space-m)} /* level with the visual's top */
+  display:grid;gap:var(--space-m);padding-top:var(--space-xl)} /* level with the visual's top (_project-detail.css) */
 .c-page-intro__aside--below{display:none}
 .c-page-intro__desc{margin:0;color:var(--muted);line-height:1.5}
 .c-page-intro__facts{margin:0;display:grid;gap:var(--space-xs)}
@@ -35,4 +35,6 @@
 }
 @media (max-width:639px){
   .c-page-intro__desc{font-size:15px}
+  /* phones: a long name wraps at the full size instead of shrinking to fit one line */
+  .c-page-intro--project .c-page-intro__title{white-space:normal;font-size:var(--fs-hero);text-wrap:balance}
 }

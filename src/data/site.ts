@@ -16,7 +16,7 @@ export const socials = [
 
 export const nav = {
   name: 'Robbe Van Aken',
-  role: 'Freelance developer', // header + loader + JSON-LD; the hero says "Digital craftsman"
+  role: 'Freelancer', // header + loader + JSON-LD; the hero says "Digital craftsman"
   links: [
     { label: 'Pitch', href: '/' }, // home: the page is the pitch
     { label: 'Work', href: '/work' },

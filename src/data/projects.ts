@@ -96,7 +96,7 @@ export const projects: Project[] = [
     screens: screens('dewilde-braems'),
   },
   {
-    slug: 'toran', title: 'Toran', label: 'Toran', image: '/projects/toran/mockup.jpg', position: '42% 44%',
+    slug: 'toran', title: 'Toran Heli-Academy', label: 'Toran', image: '/projects/toran/mockup.jpg', position: '42% 44%',
     description: 'The Toran Suite: planning software and a mobile app for a helicopter operator and flight school.', service: 'Development', year: 2026,
     colors: { a: '#12233d', b: '#6f93c2', t: '#e8eef7' }, client: 'Toran Heli Services & Academy', stack: ['Laravel', 'React Native', 'Craft CMS'], status: 'In progress',
     story: {
