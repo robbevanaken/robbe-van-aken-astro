@@ -47,9 +47,9 @@ whoever does the deploy, a person or Claude.
 5. **Clean URLs**: `/work`, `/work/toran`, `/contact` must answer **200 without a redirect** and without a trailing
    slash (`.htaccess`: `DirectorySlash Off` + the `.html` rewrite). `/nope` must answer **404** with the 404 page.
 
-## Performance: add to `public/.htaccess`
+## Performance: in `public/.htaccess`
 
-Not in the repo yet; add these, rebuild, upload:
+Already in the repo (compression, caching, security headers). For reference:
 
 ```apache
 # Compression
@@ -82,12 +82,13 @@ Not in the repo yet; add these, rebuild, upload:
 </IfModule>
 ```
 
-Other performance notes (from the jury review, still open):
-- **Images**: the project visuals are single large JPEGs. With the real work, use Astro `<Image>` / `<Picture>` (AVIF +
-  WebP, `srcset`, width/height) on the project cards and the detail visual.
-- **JS**: one bundle for every page (~106 KB gzipped). Possible later: load Flip / the work filter and the contact form
-  only on their pages (`import()`).
-- The fonts are self-hosted and the two that every page needs are preloaded: nothing to add.
+Other performance notes (done):
+- **Images**: project visuals go through `ui/ProjectImage.astro` (AVIF + WebP, `srcset`), sources in `src/assets/projects/`.
+- **JS**: page-specific scripts (contact form, work filter) are lazy chunks; the cookie banner loads when the browser is idle.
+- **CSS** is inlined in every page (no render-blocking stylesheet).
+- The fonts are self-hosted and the two that every page needs are preloaded.
+- Lighthouse locally (mobile): 97–100 on every category, every page.
+- The repo's `.htaccess` leaves `Strict-Transport-Security` out on purpose: add it (as above) once HTTPS works on the domain.
 
 ## Analytics (Google Tag Manager)
 

@@ -7,3 +7,32 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+?)/?$ $1.html [L]
 ErrorDocument 404 /404.html
+
+# Compression (Brotli where the host has it, else gzip)
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript text/javascript application/json image/svg+xml text/plain application/xml
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript application/json image/svg+xml text/plain application/xml
+</IfModule>
+
+# Caching: Astro's built files have a hash in their name (/_astro/*): a year, immutable. Fonts, images: a month.
+# HTML and the other text files: always revalidate (a new deploy shows at once). The contact endpoint: never.
+<IfModule mod_headers.c>
+  <If "%{REQUEST_URI} =~ m#^/_astro/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  <Else>
+    <FilesMatch "\.(woff2|jpg|jpeg|png|webp|avif|svg|ico)$">
+      Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+    <FilesMatch "\.(html|xml|txt|webmanifest)$">
+      Header set Cache-Control "public, max-age=0, must-revalidate"
+    </FilesMatch>
+    <FilesMatch "\.php$">
+      Header set Cache-Control "no-store"
+    </FilesMatch>
+  </Else>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

@@ -78,8 +78,8 @@
 :root[data-theme="light"]{
   --bg:#f3eee8;
   --fg:#2e2420;
-  --muted:#6f6560;
-  --subtle:#756b65; /* 4.6:1 on the light background */
+  --muted:#625853; /* 4.9:1 on the panel, 6:1 on the background */
+  --subtle:#6a605a; /* 5.3:1 on the light background */
   --line:#ddd4cc;
   --line-strong:#a99d95;
   --card:#e3dcd4;

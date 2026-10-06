@@ -7,7 +7,7 @@ export interface Project {
   description: string;
   service: string;     // shown next to the title on the detail page, e.g. "Development & design"
   year: number;        // shown next to the service on the detail page
-  image?: string;      // the project's visual, e.g. '/projects/woonpact.jpg' (in /public): on its card (home, /work) and its
+  image?: string;      // the project's visual, e.g. '/projects/woonpact.jpg' (the file in src/assets/projects/, optimised by ui/ProjectImage.astro): on its card (home, /work) and its
                        // detail page alike (cover-cropped to each box), so the card → page transition is seamless
   colors: { a: string; b: string; t: string }; // placeholder gradient + text colour
 }

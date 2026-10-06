@@ -3,7 +3,7 @@
 
 export const workPage = {
   title: 'The project archive',
-  description: 'Websites and software by Robbe Van Aken, freelance developer in Ghent: Craft CMS, Laravel and more.',
+  description: 'Websites and software by Robbe Van Aken, developer and digital craftsman in Ghent: Craft CMS, Laravel and more.',
   filters: { label: 'Filter projects', toggle: 'Filter', all: 'All' }, // the other filters come from the projects' services (projectTags)
 };
 

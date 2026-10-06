@@ -2,9 +2,9 @@
    The hero leaves room for the marquee, so the orange banner sits just above the fold. */
 .c-hero-home{position:relative;min-height:calc(100svh - var(--marquee-h));align-content:center;grid-template-rows:auto;padding-block:calc(var(--space-xl) + var(--nav-top)) var(--space-xl)}
 .c-hero-home__title{grid-column:1 / span 4;grid-row:1}
-/* two lines, each on one line: at most the display size, smaller when the longest line ("Freelance developer", ~8.4em)
+/* two lines, each on one line: at most the display size, smaller when the longest line ("Digital craftsman", ~6.9em)
    would run out of its four columns into the R; doubled: .u-text-display is imported later */
-.c-hero-home__title.c-hero-home__title{font-size:min(var(--fs-display),calc(((100vw - 2 * var(--margin) - 11 * var(--gutter)) / 12 * 4 + 3 * var(--gutter)) / 8.4))}
+.c-hero-home__title.c-hero-home__title{font-size:min(var(--fs-display),calc(((100vw - 2 * var(--margin) - 11 * var(--gutter)) / 12 * 4 + 3 * var(--gutter)) / 7))}
 .c-hero-home__line{display:block;white-space:nowrap}
 .c-hero-home__r{grid-column:5 / span 4;grid-row:1;position:relative}
 .c-hero-home__r-anchor{position:absolute;left:7%;right:7%;top:50%;height:clamp(240px,55vh,680px);transform:translateY(-50%)} /* a little inside cols 5–8: the R is bound by this width at most sizes */

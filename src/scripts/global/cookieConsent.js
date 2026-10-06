@@ -2,11 +2,24 @@
 // Categories: "necessary" (always on) and "analytics" (off until accepted): Google Tag Manager (layouts/Base.astro,
 // production only) is a <script type="text/plain" data-category="analytics">, so it only runs after consent.
 // The footer button [data-cookie-settings] reopens the preferences (delegated, so it keeps working after page swaps).
-import 'vanilla-cookieconsent/dist/cookieconsent.css';
-import * as CookieConsent from 'vanilla-cookieconsent';
+// The library and its CSS load on their own, once the browser is idle (they're not needed for the first paint).
+let lib = null;
+// its CSS: a copy in public/vendor (CSS is inlined in the pages, which a lazily imported stylesheet can't be); update the
+// copy with the library (node_modules/vanilla-cookieconsent/dist/cookieconsent.css)
+const css = () => new Promise((resolve) => {
+  if (document.querySelector('link[data-cc-css]')) return resolve();
+  const l = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: '/vendor/cookieconsent.css', onload: resolve, onerror: resolve });
+  l.dataset.ccCss = ''; document.head.append(l);
+});
+const load = () => (lib ??= Promise.all([import('vanilla-cookieconsent'), css()]).then(([m]) => m));
 
 export function initCookieConsent() {
-  document.addEventListener('click', (e) => { if (e.target.closest('[data-cookie-settings]')) CookieConsent.showPreferences(); });
+  document.addEventListener('click', async (e) => { if (e.target.closest('[data-cookie-settings]')) (await load()).showPreferences(); });
+  const start = () => load().then(run);
+  if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 2500 }); else setTimeout(start, 1200);
+}
+
+function run(CookieConsent) {
   // Google consent mode v2 (the defaults, all denied, are set in layouts/Base.astro): follow the visitor's choice
   const consent = () => {
     if (typeof window.gtag !== 'function') return;

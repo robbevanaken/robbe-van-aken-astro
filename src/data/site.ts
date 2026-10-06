@@ -3,7 +3,7 @@
 
 export const meta = {
   title: "Robbe Van Aken, developer with a designer's eye",
-  description: 'Freelance developer in Ghent, building Craft CMS sites, Laravel software and AI workflows with a designer\'s eye.',
+  description: 'Digital craftsman in Ghent: Craft CMS sites, Laravel software and AI workflows, developed with a designer\'s eye.',
   email: 'robbe.vanaken@gmail.com',
   image: '/og.png', // social preview (1200×630), in /public
 };
@@ -16,7 +16,7 @@ export const socials = [
 
 export const nav = {
   name: 'Robbe Van Aken',
-  role: 'Freelance developer',
+  role: 'Freelance developer', // header + loader + JSON-LD; the hero says "Digital craftsman"
   links: [
     { label: 'Pitch', href: '/' }, // home: the page is the pitch
     { label: 'Work', href: '/work' },
@@ -29,7 +29,7 @@ export const nav = {
 export const hero = {
   // Each entry is one line; `muted` lines are shown in the softer colour.
   title: [
-    { text: 'Freelance developer', muted: true },
+    { text: 'Digital craftsman', muted: true },
     { text: 'Based in Ghent', muted: false },
   ],
   intro: "An independent studio for full-cycle product development. Pairing a designer's eye with a developer's craft.",

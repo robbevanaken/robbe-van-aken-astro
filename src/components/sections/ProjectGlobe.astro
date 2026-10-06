@@ -14,6 +14,7 @@ const { projects, label, layout = 'spread' } = Astro.props;
 // the card titles are headings (home: under the section's h2; /work: right under the page's h1)
 const Title = layout === 'grid' ? 'h2' : 'h3';
 const spread = layout === 'spread';
+import ProjectImage from '../ui/ProjectImage.astro';
 ---
 <section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects data-cursor-label={work.cursor}>
   <slot name="head" />
@@ -22,11 +23,11 @@ const spread = layout === 'spread';
     <ol class="c-featured-projects__list">
       {projects.map((p, i) => (
         <li class:list={['c-featured-projects__item', !spread && `is-slot-${i % 4}`]} style={spread ? `grid-row:${i + 1}` : `--row:${i + 1}`} data-fp-item data-tags={projectTags(p).join('|')}>
-          <a class="c-featured-projects__card" href={`/work/${p.slug}`} aria-label={`${p.title}: ${p.description}`} data-fp-card>
+          <a class="c-featured-projects__card" href={`/work/${p.slug}`} data-fp-card>
             <Corners />
             <span class="c-featured-projects__media" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-media>
                 {p.image
-                  ? <img class="c-featured-projects__img" src={p.image} alt="" loading="lazy" decoding="async" />
+                  ? <ProjectImage class="c-featured-projects__img" src={p.image} sizes="(max-width: 639px) 92vw, (max-width: 1023px) 66vw, 50vw" eager={!spread && i === 0} />
                   : <span class="c-featured-projects__placeholder">{p.label}</span>}
                 <span class="c-featured-projects__tag u-text-label">{p.service}</span>
                 <span class="c-featured-projects__tag c-featured-projects__tag--year u-text-label">{p.year}</span>

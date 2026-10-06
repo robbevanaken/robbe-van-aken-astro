@@ -12,7 +12,9 @@ const q = f.questions, ph = f.placeholders, err = f.errors;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <div class="c-contact-form" data-contact>
-  <form class="c-contact-form__form" action={f.action || undefined} method="post" novalidate
+  <!-- the wizard's first state is in the HTML (no shift when the script starts); without JavaScript every question shows -->
+  <noscript><style>.c-contact-form__form.is-wizard .c-contact-form__row:not(.is-current){display:grid}</style></noscript>
+  <form class="c-contact-form__form is-wizard is-first" action={f.action || undefined} method="post" novalidate
     data-contact-form data-email={meta.email} data-subject={f.subject} data-sending={f.sending}>
     <!-- spam trap: hidden from people, bots fill it in -->
     <div class="c-contact-form__trap" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
@@ -25,7 +27,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </div>
     <p class="u-sr-only" aria-live="polite" data-contact-status data-template={f.wizard.status}></p>
 
-    <div class="c-contact-form__row" data-contact-step>
+    <div class="c-contact-form__row is-current" data-contact-step>
       <span class="c-contact-form__num u-text-label" aria-hidden="true">{pad(1)}</span>
       <p class="c-contact-form__question u-text-lead" id="q-name">{q.name}</p>
       <div class="c-contact-form__fields c-contact-form__fields--pair">

@@ -5,6 +5,9 @@
 import Corners from '../ui/Corners.astro';
 import { trustedBy } from '../../data/site';
 import { clients } from '../../data/clients';
+// each logo's own width / height (from its SVG), so the browser reserves its box before it loads
+import fs from 'node:fs';
+const size = (logo: string) => { const m = fs.readFileSync(`public${logo}`, 'utf8').match(/width="([\d.]+)"\s+height="([\d.]+)"/); return m ? { width: +m[1], height: +m[2] } : {}; };
 const rows = [...clients.map((c, i) => ({ c, i, copy: false })), ...clients.map((c, i) => ({ c, i, copy: true }))];
 ---
 <section class="c-trusted-by o-container o-grid" aria-labelledby="trusted-label">
@@ -17,7 +20,7 @@ const rows = [...clients.map((c, i) => ({ c, i, copy: false })), ...clients.map(
           <li class:list={['c-trusted-by__item', { 'c-trusted-by__item--copy': copy }]} style={`--i:${i};--w:${c.width}`} aria-hidden={copy ? 'true' : undefined}>
             <Tag class="c-trusted-by__cell" href={c.url} target={c.url ? '_blank' : undefined} rel={c.url ? 'noopener' : undefined} tabindex={copy && c.url ? -1 : undefined}>
               <Corners />
-              <img class="c-trusted-by__logo" src={c.logo} alt={copy ? '' : c.name} loading="lazy" decoding="async" />
+              <img class="c-trusted-by__logo" src={c.logo} alt={copy ? '' : c.name} {...size(c.logo)} loading="lazy" decoding="async" />
             </Tag>
           </li>
         );
