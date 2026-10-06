@@ -63,13 +63,6 @@ export function initSiteHeader(root = document) {
     document.fonts?.ready.then(() => { if (!signal.aborted) to(current, true); });
   }
 
-  // TEST: the progressive blur at the bottom of the screen (Base.astro): on once scrolled, off while the footer or the
-  // next project's visual is on screen and while the menu is open
-  const blur = document.querySelector('[data-bottom-blur]');
-  const ends = [...root.querySelectorAll('[data-site-footer], [data-scroll-next-wrap]')];
-  const bottomBlur = () => blur?.classList.toggle('is-on', !open && scrollY > 40 && !ends.some((el) => el.getBoundingClientRect().top < innerHeight));
-  bottomBlur();
-
   // hide on scroll down, show on scroll up (always shown near the top or while the menu is open)
   addEventListener('scroll', () => {
     const y = scrollY, dy = y - lastY;
@@ -78,7 +71,6 @@ export function initSiteHeader(root = document) {
     if (Math.abs(dy) < innerHeight) header.classList.toggle('is-hidden', !open && dy > 0 && y > 120);
     header.classList.toggle('is-scrolled', y > 40);
     lastY = y;
-    bottomBlur();
   }, { passive: true, signal });
 
   // everything on the page next to the header (main, footer, canvases) and the skip link
@@ -86,7 +78,6 @@ export function initSiteHeader(root = document) {
   const setMenu = (v) => {
     if (leaving || v === open) return;
     open = v;
-    bottomBlur();
     rest().forEach((el) => { el.inert = v; });
     toggle.setAttribute('aria-expanded', String(v));
     header.classList.toggle('is-open', v);

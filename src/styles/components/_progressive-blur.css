@@ -63,10 +63,3 @@
 .progressive-blur.is--top .is--4 { -webkit-mask: linear-gradient(to top, #0000 82%, #000 92% 100%); mask: linear-gradient(to top, #0000 82%, #000 92% 100%); }
 .progressive-blur.is--top .is--5 { -webkit-mask: linear-gradient(to top, #0000 88%, #000 100%); mask: linear-gradient(to top, #0000 88%, #000 100%); }
 
-/* TEST: at the bottom of the screen (Base.astro, [data-bottom-blur]), as delivered but 10em tall, with a light tint in
-   the page colour (like the header's), below the header (30) and above the page, under the phones' /work filter (29).
-   Shown once the page has scrolled (the hero's orange band at the fold stays sharp), gone while the footer or the
-   next project's visual is on screen and while the mobile menu is open (.is-on, global/siteHeader.js). */
-.progressive-blur.is--bottom { z-index: 28; height: 10em; font-size: 16px; opacity: 0; transition: opacity .5s; }
-.progressive-blur.is--bottom::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--scrim)); }
-.progressive-blur.is--bottom.is-on { opacity: 1; }
