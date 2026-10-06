@@ -2,7 +2,7 @@
 // R becomes icon 0 and morphs from icon to icon on scroll. Four services, four icons.
 export const services = [
   { title: 'Websites', description: 'Craft CMS sites your team actually likes updating, from the first sketch to launch, and looked after once they\'re live.' },
-  { title: 'Custom software', description: 'Laravel platforms, portals and internal tools, built around the way your team already works.' },
+  { title: 'Custom software', description: 'Digital platforms, portals and internal tools, built around the way your team already works.' },
   { title: 'AI workflows', description: 'Small automations that take the tedious work off your plate, inside the tools you already use.' },
   { title: 'Branding', description: 'A clear identity, so the website has something solid to stand on.' },
 ];
