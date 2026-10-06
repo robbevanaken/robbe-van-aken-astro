@@ -27,7 +27,7 @@ import ProjectImage from '../ui/ProjectImage.astro';
             <Corners />
             <span class="c-featured-projects__media" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-media>
                 {p.image
-                  ? <ProjectImage class="c-featured-projects__img" src={p.image} sizes="(max-width: 639px) 92vw, (max-width: 1023px) 66vw, 50vw" eager={!spread && i === 0} />
+                  ? <ProjectImage class="c-featured-projects__img" src={p.image} eager={!spread && i === 0} />
                   : <span class="c-featured-projects__placeholder">{p.label}</span>}
                 <span class="c-featured-projects__tag u-text-label">{p.service}</span>
                 <span class="c-featured-projects__tag c-featured-projects__tag--year u-text-label">{p.year}</span>

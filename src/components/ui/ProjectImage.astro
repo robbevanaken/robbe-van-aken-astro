@@ -1,14 +1,15 @@
 ---
-// A project's visual, optimised at build time: AVIF + WebP in several widths with a JPEG fallback, width / height set
-// (no layout shift). `src` is the path from src/data/projects.ts ('/projects/x.jpg'); the file lives in
-// src/assets/projects/. `sizes`: how wide it's shown. `eager`: above the fold (the project page's visual, its LCP).
-// The <picture> is display: contents, so the <img> is laid out as before (classes and data- attributes go on the img).
-import { Picture } from 'astro:assets';
+// A project's visual, optimised at build time: one WebP at the source's size, width / height set (no layout shift).
+// One file per project, the same URL on its card, its detail page and the scroll-next section, so the card → page
+// and next-project transitions hand over to an image that's already loaded (a srcset per place would pick different
+// files and flash). A plain <img>, as before: classes and data- attributes go on it.
+// `src` is the path from src/data/projects.ts ('/projects/x.jpg'); the file lives in src/assets/projects/.
+// `eager`: above the fold (the project page's visual, the first card on /work: their LCP).
+import { Image } from 'astro:assets';
 const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/projects/*.{jpg,jpeg,png,webp}', { eager: true });
-interface Props { src: string; alt?: string; sizes: string; eager?: boolean; class?: string; [attr: string]: unknown }
-const { src, alt = '', sizes, eager = false, class: cls, ...rest } = Astro.props;
+interface Props { src: string; alt?: string; eager?: boolean; class?: string; [attr: string]: unknown }
+const { src, alt = '', eager = false, class: cls, ...rest } = Astro.props;
 const file = files[`/src/assets${src}`]?.default;
 if (!file) throw new Error(`ProjectImage: no file for ${src} in src/assets/projects/`);
 ---
-<Picture src={file} alt={alt} formats={['avif', 'webp']} widths={[480, 800, 1200, 1600, 2200].filter((w) => w <= file.width)} sizes={sizes}
-  class={cls} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} decoding="async" pictureAttributes={{ style: 'display:contents' }} {...rest} />
+<Image src={file} alt={alt} format="webp" quality={82} class={cls} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} decoding="async" {...rest} />

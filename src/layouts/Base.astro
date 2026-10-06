@@ -23,7 +23,7 @@ const consentDefaults = "window.dataLayer=window.dataLayer||[];function gtag(){d
 const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','" + GTM + "');";
 ---
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" class="no-js" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -32,7 +32,7 @@ const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':ne
     {live && <script is:inline set:html={consentDefaults} />}
     {live && <script is:inline type="text/plain" data-category="analytics" set:html={gtmSnippet} />}
     <!-- theme (scripts/global/theme.js): light, or dark if that's the saved choice, set before the first paint -->
-    <script is:inline>try{if(localStorage.getItem('mode')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+    <script is:inline>document.documentElement.classList.remove('no-js');try{if(localStorage.getItem('mode')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
     <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless);
          once per visit (a reload or a link opened in the same tab later skips it) -->
     <script is:inline>let seen;try{seen=sessionStorage.getItem('loaded')}catch(e){}if(!seen&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');setTimeout(()=>document.documentElement.classList.remove('is-loading'),8000)}</script>

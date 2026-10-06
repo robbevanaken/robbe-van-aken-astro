@@ -62,6 +62,7 @@
 .c-contact-form__bar::after{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease-punch)}
 .c-contact-form__bar.is-on::after{transform:scaleX(1)}
 .c-contact-form__form.is-wizard .c-contact-form__row:not(.is-current){display:none}
+.no-js .c-contact-form__form.is-wizard .c-contact-form__row:not(.is-current){display:grid} /* without JavaScript: every question */
 .c-contact-form__form.is-wizard .c-contact-form__row{padding-block:var(--space-l) var(--space-m);border-top:0}
 /* calmer as a wizard: no number per question (the count on top says it), no lines between the parts */
 .c-contact-form__form.is-wizard .c-contact-form__num{display:none}

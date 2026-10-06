@@ -12,8 +12,8 @@ const q = f.questions, ph = f.placeholders, err = f.errors;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <div class="c-contact-form" data-contact>
-  <!-- the wizard's first state is in the HTML (no shift when the script starts); without JavaScript every question shows -->
-  <noscript><style>.c-contact-form__form.is-wizard .c-contact-form__row:not(.is-current){display:grid}</style></noscript>
+  <!-- the wizard's first state is in the HTML (no shift when the script starts); without JavaScript every question shows
+       (html.no-js, _contact-form.css; not a <noscript> style: swup parses fetched pages without scripting, so it would apply) -->
   <form class="c-contact-form__form is-wizard is-first" action={f.action || undefined} method="post" novalidate
     data-contact-form data-email={meta.email} data-subject={f.subject} data-sending={f.sending}>
     <!-- spam trap: hidden from people, bots fill it in -->

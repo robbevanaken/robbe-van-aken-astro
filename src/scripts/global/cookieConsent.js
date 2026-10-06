@@ -9,7 +9,7 @@ let lib = null;
 const css = () => new Promise((resolve) => {
   if (document.querySelector('link[data-cc-css]')) return resolve();
   const l = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: '/vendor/cookieconsent.css', onload: resolve, onerror: resolve });
-  l.dataset.ccCss = ''; document.head.append(l);
+  l.dataset.ccCss = ''; l.dataset.swupTheme = ''; document.head.append(l); // data-swup-theme: swup's head plugin keeps it on page swaps
 });
 const load = () => (lib ??= Promise.all([import('vanilla-cookieconsent'), css()]).then(([m]) => m));
 

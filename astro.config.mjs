@@ -6,4 +6,5 @@ export default defineConfig({
   // pages as files (/work.html, /work/<slug>.html), served without .html and without a trailing slash by
   // public/.htaccess, so /work (as in every link, canonical and the sitemap) answers directly, no redirect to /work/
   build: { format: 'file', inlineStylesheets: 'always' }, // CSS inlined in each page: no render-blocking stylesheet request
+  devToolbar: { enabled: false }, // the dev HUD (Glyph/Grid) is the site's own dev tool
 });

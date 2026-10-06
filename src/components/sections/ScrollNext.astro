@@ -19,7 +19,7 @@ const { project, label } = Astro.props; // label: for the link's accessible name
     <div class="c-scroll-next__bg" data-scroll-next-box>
       <div class="c-scroll-next__clip">
         {project.image
-          ? <ProjectImage src={project.image} sizes="100vw" data-scroll-next-bg class="c-scroll-next__bg-img" />
+          ? <ProjectImage src={project.image} data-scroll-next-bg class="c-scroll-next__bg-img" />
           : <div data-scroll-next-bg class="c-scroll-next__bg-img c-scroll-next__bg-img--placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}><span class="c-scroll-next__word" data-scroll-next-word>{project.label}</span></div>}
       </div>
     </div>

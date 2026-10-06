@@ -83,8 +83,8 @@ Already in the repo (compression, caching, security headers). For reference:
 ```
 
 Other performance notes (done):
-- **Images**: project visuals go through `ui/ProjectImage.astro` (AVIF + WebP, `srcset`), sources in `src/assets/projects/`.
-- **JS**: page-specific scripts (contact form, work filter) are lazy chunks; the cookie banner loads when the browser is idle.
+- **Images**: project visuals go through `ui/ProjectImage.astro` (one WebP per project, the same file everywhere for the transitions), sources in `src/assets/projects/`.
+- **JS**: one bundle; the cookie banner loads when the browser is idle.
 - **CSS** is inlined in every page (no render-blocking stylesheet).
 - The fonts are self-hosted and the two that every page needs are preloaded.
 - Lighthouse locally (mobile): 97–100 on every category, every page.

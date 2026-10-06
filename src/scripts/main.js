@@ -16,6 +16,11 @@ import { initPageTransitions } from './global/pageTransitions.js';
 import { initScrollNext } from './components/scrollNext.js';
 import { initMarquee } from './components/marquee.js';
 import { initServices } from './components/services.js';
+import { initContactForm } from './components/contactForm.js';
+import { initWorkFilter } from './components/workFilter.js';
+import { initFilter } from './components/filter.js';
+import { initWorkIntro } from './components/workIntro.js';
+import { initWorkLoop } from './components/workLoop.js';
 import { initCardCursor } from './components/cardCursor.js';
 import { initHighlight } from './components/highlightText.js';
 import { initTextHover } from './components/textHover.js';
@@ -52,23 +57,16 @@ function mount() {
     }),
     initScrollNext(root),
     initServices(root),
+    initContactForm(root),
+    initWorkFilter(root),
+    initWorkLoop(root),
     initCardCursor(root),
+    initFilter(root),
+    initWorkIntro(root),
     initMarquee(root),
     initReveal(root),
     initDebugGrid(root),
   ];
-  // page-specific modules load only on their page (their own small chunks: the contact wizard; /work's filter, Flip,
-  // endless list and title fade), so the other pages don't download them
-  const later = (sel, load) => {
-    if (!root.querySelector(sel)) return;
-    load().then((init) => { if (id === page) cleanups.push(init(root)); });
-  };
-  later('[data-contact]', () => import('./components/contactForm.js').then((m) => m.initContactForm));
-  // /work: the filter, the Flip moves and the endless list, started in this order (the loop listens to the filter)
-  later('[data-filter]', () => Promise.all([import('./components/workFilter.js'), import('./components/filter.js'), import('./components/workLoop.js')])
-    .then(([a, b, c]) => (r) => { const done = [a.initWorkFilter(r), b.initFilter(r), c.initWorkLoop(r)]; return () => done.forEach((fn) => fn?.()); }));
-  later('[data-work-intro]', () => import('./components/workIntro.js').then((m) => m.initWorkIntro));
-  later('[data-filter]', () => import('./components/workLoop.js').then((m) => m.initWorkLoop));
   Promise.all([document.fonts.ready, whenUncovered()]).then(() => {
     if (id !== page) return; // swapped away in the meantime
     cleanups.push(initHighlight(root), initTextHover(root));
