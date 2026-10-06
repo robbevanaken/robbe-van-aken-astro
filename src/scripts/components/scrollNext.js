@@ -26,6 +26,10 @@ function measureTarget(root, wrap) {
   const put = (sel, text) => { const n = i.querySelector(sel); if (n && text != null) n.textContent = text; };
   put('[data-page-intro-title]', wrap.dataset.nextTitle);
   put('[data-page-intro-service]', wrap.dataset.nextService);
+  put('[data-page-intro-desc]', wrap.dataset.nextDesc);
+  put('[data-page-intro-year]', wrap.dataset.nextYear);
+  if (wrap.dataset.nextTitle) i.style.setProperty('--len', wrap.dataset.nextTitle.length); // the title's size follows its length
+  v.style.setProperty('--len', wrap.dataset.nextTitle?.length ?? '');
   probe.append(i, v);
   document.body.append(probe);
   const r = v.querySelector('[data-project-media]').getBoundingClientRect();

@@ -2,7 +2,7 @@
    middle of the screen: it starts there (margin-top) and stays there (top) while the projects (z 1,
    styles/components/_featured-projects.css) scroll over it, until the end of the page. --h: the title's height,
    --at: where it sits (the middle on desktop; below 1024px near the top, under the header). */
-.c-work-intro{--h:clamp(44px,6vw,108px);--at:calc(50svh - var(--h) / 2);position:sticky;top:var(--at);z-index:0;margin:var(--at) 0 var(--space-xl)}
+.c-work-intro{--h:var(--fs-page);--at:calc(50svh - var(--h) / 2);position:sticky;top:var(--at);z-index:0;margin:var(--at) 0 var(--space-xl)}
 @media (max-width:639px){ .c-work-intro{--h:min(44px,11.2vw)} } /* 320 wide phones: still on one line */
 @media (max-width:1023px){ .c-work-intro{--at:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 150px);margin-bottom:calc(var(--space-xl) * 1.5)} }
 @media (min-width:640px) and (max-width:1023px){ .c-work-intro{margin-bottom:calc(var(--space-xl) * 1.5 + 64px)} } /* room for the filter under the title */

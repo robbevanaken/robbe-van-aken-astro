@@ -1,0 +1,139 @@
+---
+// The case study on a project's detail page, below its visual:
+//   the intro (the context, as a lead, highlighted letter by letter on scroll) with the facts beside it (client, stack,
+//   status, a collaboration, website); a first visual (a photo, or the site's long page scrolling inside a 16:10
+//   window as you scroll: [data-case-scroll]); the brand (logo on panels in the brand's colours, if any); the
+//   challenge and the approach; the project's own moment (`moment`: a strip of stills drifting sideways, a grid of
+//   photos of the work, or the suite's parts as columns); two portrait visuals; the result, ending on the page's
+//   "All projects" button (slot "end"). The next project's visual (ScrollNext) follows straight after.
+// Scroll motion: components/caseMotion.js (reduced motion: none).
+// Visuals are the site's screenshots on quiet panels (--panel), or photos filling their boxes (projects whose screens
+// can't be shown), or panels in the project's colours ("Visuals coming soon"). Blocks fade up as they come into view
+// ([data-reveal], global/reveal.js). Copy: src/data/projects.ts (dummy for now), labels in projectPage
+// (src/data/pages.ts). Styles: styles/components/_project-case.css
+import ProjectImage from '../ui/ProjectImage.astro';
+import { getImage } from 'astro:assets';
+import Button from '../ui/Button.astro';
+import type { Project } from '../../data/projects';
+import { projectPage } from '../../data/pages';
+interface Props { project: Project }
+const { project: p } = Astro.props;
+const s = p.story, sc = p.screens, ph = p.photos, m = p.moment, l = projectPage;
+const svgs = import.meta.glob<string>('/src/assets/projects/**/*.svg', { query: '?raw', import: 'default', eager: true });
+const logo = p.brand ? svgs[`/src/assets${p.brand.logo}`] : null;
+const facts = [
+  p.client && { label: l.facts.client, value: p.client },
+  // (service and year: already at the top of the page)
+  p.stack?.length && { label: l.facts.stack, value: p.stack.join(', ') },
+  p.credit && p.credit,
+  p.status && { label: l.facts.status, value: p.status },
+].filter(Boolean) as { label: string; value: string }[];
+const tint = `--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`;
+const pad = (n: number) => String(n).padStart(2, '0');
+// the images' sizes on screen: screenshots inside their panels (less the padding), photos filling their boxes
+const DESKTOP = { sizes: '(max-width: 639px) 86vw, 84vw', widths: [640, 960, 1280, 1600, 2000, 2560] };
+const MOBILE = { sizes: '(max-width: 639px) 52vw, (max-width: 1023px) 30vw, 22vw', widths: [360, 540, 720, 960] };
+const WIDE = { sizes: '92vw', widths: [640, 960, 1280, 1600, 2000, 2560, 2880] };
+const HALF = { sizes: '(max-width: 639px) 92vw, 46vw', widths: [480, 720, 960, 1280] };
+const STILL = { sizes: '(max-width: 639px) 70vw, 34vw', widths: [480, 720, 960, 1280] };
+const THIRD = { sizes: '(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 30vw', widths: [400, 600, 800, 1200] };
+// the long page: a tiny blurred copy shows at once (a few hundred bytes), the real one fades in over it
+const LONG = { sizes: '(max-width: 639px) 86vw, 84vw', widths: [720, 1080, 1440, 1920, 2560] };
+const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/projects/**/*.{jpg,jpeg,png,webp}', { eager: true });
+const lqip = sc ? (await getImage({ src: files[`/src/assets${sc.desktop}`].default, width: 24, format: 'webp', quality: 40 })).src : '';
+const empty = (cls = '') => `c-project-case__panel c-project-case__panel--empty ${cls}`;
+---
+{s && (
+  <section class="c-project-case" aria-label={p.title}>
+    <div class="c-project-case__overview o-container o-grid">
+      <p class="c-project-case__intro u-text-lead" data-highlight-text>{s.intro}</p>
+      <div class="c-project-case__aside" data-reveal>
+        <dl class="c-project-case__facts">
+          {facts.map((f) => (
+            <div class="c-project-case__fact"><dt class="u-text-label u-text-muted">{f.label}</dt><dd class="u-text-ui">{f.value}</dd></div>
+          ))}
+        </dl>
+        {p.url && <Button class="c-project-case__visit" href={p.url} target="_blank" rel="noopener">{l.facts.visit}<span class="u-sr-only"> ({p.title}, opens in a new tab)</span></Button>}
+      </div>
+    </div>
+
+    <div class="c-project-case__screen o-container o-grid" data-reveal="media">
+      {p.mockup ? <div class="c-project-case__photo c-project-case__photo--wide"><ProjectImage class="c-project-case__img" src={p.mockup} alt={`${p.title}: the website on a device`} position={p.position} {...WIDE} /></div>
+        : ph ? <div class="c-project-case__photo c-project-case__photo--wide"><ProjectImage class="c-project-case__img" src={ph[0]} alt="" data-case-parallax {...WIDE} /></div>
+        : sc ? <div class="c-project-case__panel"><div class="c-project-case__window" style={`--lqip:url(${lqip})`} data-case-scroll><ProjectImage class="c-project-case__long" src={sc.desktop} alt={`${p.title}: a page of the website on a desktop screen`} {...LONG} /></div></div>
+        : <div class={empty()} style={tint}><span class="u-text-label">{l.screens}</span></div>}
+    </div>
+
+    {p.brand && logo && (
+      <>
+        <div class="c-project-case__text o-container o-grid">
+          <div class="c-project-case__row" data-reveal><h2 class="c-project-case__title u-text-body-l">{l.story.brand}</h2><p class="c-project-case__body u-text-body-l">{p.brand.text}</p></div>
+        </div>
+        <div class="c-project-case__logos o-container o-grid" role="img" aria-label={`${p.title} logo`}>
+          {p.brand.swatches.map((c, i) => (
+            <div class:list={['c-project-case__swatch', { 'c-project-case__swatch--big': i === 0 }]} style={`background:${c.bg};color:${c.fg};--i:${i}`} data-reveal="media">
+              <span class="c-project-case__logo" aria-hidden="true" set:html={logo} />
+            </div>
+          ))}
+        </div>
+      </>
+    )}
+
+    <div class="c-project-case__text o-container o-grid">
+      <div class="c-project-case__row" data-reveal><h2 class="c-project-case__title u-text-body-l">{l.story.challenge}</h2><p class="c-project-case__body u-text-body-l">{s.challenge}</p></div>
+      <div class="c-project-case__row" data-reveal><h2 class="c-project-case__title u-text-body-l">{l.story.approach}</h2><p class="c-project-case__body u-text-body-l">{s.approach}</p></div>
+    </div>
+
+    {m && (
+      <div class:list={['c-project-case__moment', `c-project-case__moment--${m.kind}`]}>
+        <div class="c-project-case__moment-head o-container o-grid">
+          <h2 class="c-project-case__moment-title u-text-h2">{m.title}</h2>
+          <p class="c-project-case__moment-text u-text-body-l">{m.text}</p>
+        </div>
+        {m.kind === 'strip' && m.images && (
+          <div class="c-project-case__strip" data-case-strip data-reveal="media">
+            <div class="c-project-case__strip-track" data-case-strip-track>
+              {m.images.map((src) => <div class="c-project-case__still"><ProjectImage class="c-project-case__img" src={src} alt="" {...STILL} /></div>)}
+            </div>
+          </div>
+        )}
+        {m.kind === 'grid' && m.images && (
+          <div class="c-project-case__grid o-container o-grid">
+            {m.images.map((src, i) => <div class="c-project-case__work" style={`--i:${i % 3}`} data-reveal><ProjectImage class="c-project-case__img" src={src} alt="" {...THIRD} /></div>)}
+          </div>
+        )}
+        {m.kind === 'suite' && p.parts?.length && (
+          <div class="c-project-case__suite o-container o-grid">
+            <ol class="c-project-case__nodes">
+              {p.parts.map((part, i) => (
+                <li class="c-project-case__node" data-reveal style={`--i:${i}`}>
+                  <span class="u-text-label u-text-muted" aria-hidden="true">{pad(i + 1)}</span>
+                  <h3 class="c-project-case__part-title u-text-lead">{part.title}</h3>
+                  <p class="c-project-case__part-text">{part.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+      </div>
+    )}
+
+    <div class="c-project-case__pair o-container o-grid">
+      {sc ? sc.mobile.map((m, i) => (
+          <div class="c-project-case__panel c-project-case__panel--phone" data-reveal="media" style={`--i:${i}`}>
+            <ProjectImage class="c-project-case__mobile" src={m} alt={`${p.title}: the website on a phone`} {...MOBILE} />
+          </div>))
+        : ph ? [ph[1], ph[2]].map((src, i) => (
+          <div class="c-project-case__photo c-project-case__photo--half" data-reveal="media" style={`--i:${i}`}><ProjectImage class="c-project-case__img" src={src} alt="" {...HALF} /></div>))
+        : [0, 1].map((i) => <div class={empty('c-project-case__panel--phone')} data-reveal style={`${tint};--i:${i}`}><span class="u-text-label">{l.screens}</span></div>)}
+    </div>
+
+    <div class="c-project-case__text o-container o-grid">
+      <div class="c-project-case__row" data-reveal>
+        <h2 class="c-project-case__title u-text-body-l">{l.story.result}</h2><p class="c-project-case__body u-text-body-l">{s.result}</p>
+        <div class="c-project-case__end"><slot name="end" /></div><!-- where the story ends: the page's "All projects" button -->
+      </div>
+    </div>
+
+  </section>
+)}

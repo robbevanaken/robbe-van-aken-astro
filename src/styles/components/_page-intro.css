@@ -3,27 +3,36 @@
 .c-page-intro__label{display:flex;gap:var(--space-xs);align-items:center;color:var(--muted)}
 .c-page-intro__arrow{color:var(--accent);font-size:14px}
 .c-page-intro__title{grid-column:1 / span 8}
+.c-page-intro__title.u-text-display{font-size:var(--fs-page);line-height:1;letter-spacing:-.03em} /* every subpage title at the page-title size (as /work and the projects) */
 .c-page-intro__text{grid-column:1 / span 5;color:var(--muted)}
 .c-page-intro__action{grid-column:1 / -1;justify-self:start}
 
-/* project detail: only the title (cols 1–5, 64px @1440), the service (cols 8–9) and the year (cols 11–12) */
-.c-page-intro--project .c-page-intro__title{grid-column:1 / span 5;font-size:var(--fs-title)}
-.c-page-intro__meta{grid-column:8 / span 2;align-self:end;margin:0;display:grid;}
-.c-page-intro__meta--year{grid-column:11 / span 2}
-.c-page-intro__meta-label{color:var(--muted)}
-.c-page-intro__meta-value{margin:0}
+/* project detail: the title on one line at the hero size (--fs-hero, as the contact page's), smaller only when a long
+   name wouldn't fit (--len: its number of characters, set on the intro); same top room as every subpage; the visual
+   below it, a step apart (tried: the visual sliding over the title's lower part); the visual (_project-detail.css) sliding up over its lower part
+   (cols 3–12). Beside the visual, on the left (cols 1–2): the description and the facts (service, year), hung below
+   the intro (absolute: they take no room, the visual sets the height). Below 1024px the visual spans the width and
+   still overlaps the title; the specs follow under it (a second copy, .c-page-intro__aside--below, in the page). */
+.c-page-intro--project{--fs:min(var(--fs-hero),calc((100vw - 2 * var(--margin)) / var(--len,10) * 1.7));position:relative;row-gap:0}
+.c-page-intro--project .c-page-intro__title{grid-column:1 / -1;grid-row:1;font-size:var(--fs);line-height:1;letter-spacing:-.03em;white-space:nowrap}
+.c-page-intro__aside{position:absolute;grid-column:1 / span 2;grid-row:1;top:100%;left:0;width:100%; /* absolute in its grid area: cols 1–2, under the title's row */
+  display:grid;gap:var(--space-m);padding-top:var(--space-m)} /* level with the visual's top */
+.c-page-intro__aside--below{display:none}
+.c-page-intro__desc{margin:0;color:var(--muted);line-height:1.5}
+.c-page-intro__facts{margin:0;display:grid;gap:var(--space-xs)}
+.c-page-intro__fact{display:grid;gap:2px;padding-top:var(--space-xs);border-top:1px solid var(--line)}
+.c-page-intro__fact dt{color:var(--muted)}
+.c-page-intro__fact dd{margin:0}
 
 @media (max-width:1023px){
   .c-page-intro__title,.c-page-intro__text{grid-column:1 / -1}
-  /* project detail: title, service and year stay side by side */
-  .c-page-intro--project .c-page-intro__title{grid-column:1 / span 3}
-  .c-page-intro__meta{grid-column:4 / span 2}
-  .c-page-intro__meta--year{grid-column:6}
+  .c-page-intro--project .c-page-intro__title{grid-column:1 / -1}
+  .c-page-intro__aside{display:none}
+  .c-page-intro__aside.c-page-intro__aside--below{display:grid;position:static;grid-column:1 / -1;grid-row:auto;width:auto;grid-template-columns:minmax(0,1fr);gap:var(--space-l);padding-top:var(--space-l)} /* the description, then the facts under each other */
+  .c-page-intro__desc{max-width:34em}
+  .c-page-intro__facts{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gutter);row-gap:var(--space-m)} /* two columns of facts, label over value, each under its thin line */
+  .c-page-intro__fact{padding-top:var(--space-xs)}
 }
-/* phones: the title over the full width, the year on the same row at the right, on the title's last line (project
-   names are short: there's room beside them); no service (too narrow for all three) */
 @media (max-width:639px){
-  .c-page-intro--project .c-page-intro__title{grid-column:1 / -1;grid-row:1;padding-right:3.5rem} /* clear of the year, also for a long title */
-  .c-page-intro__meta{display:none}
-  .c-page-intro__meta--year{display:grid;grid-column:4;grid-row:1;justify-self:end;text-align:right;padding-bottom:4px}
+  .c-page-intro__desc{font-size:15px}
 }

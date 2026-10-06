@@ -1,13 +1,14 @@
 ---
-// Project detail page. Empty for now: title + service, the placeholder visual, the back button ("All projects"),
-// then "scroll to next project".
+// Project detail page: the title in big type across the page with the visual sliding over its lower part (the
+// description, service and year beside it, on the left), the visual, the case study (sections/ProjectCase.astro), the back
+// button ("All projects"), then "scroll to next project".
 // Styles: styles/components/_project-detail.css
 import Page from '../../layouts/Page.astro';
 import PageIntro from '../../components/sections/PageIntro.astro';
-import Placeholder from '../../components/ui/Placeholder.astro';
 import Button from '../../components/ui/Button.astro';
-import ProjectImage from '../../components/ui/ProjectImage.astro';
+import ProjectVisual from '../../components/ui/ProjectVisual.astro';
 import ScrollNext from '../../components/sections/ScrollNext.astro';
+import ProjectCase from '../../components/sections/ProjectCase.astro';
 import { projects, type Project } from '../../data/projects';
 import { projectPage } from '../../data/pages';
 
@@ -17,24 +18,43 @@ export function getStaticPaths() {
 interface Props { project: Project; index: number }
 const { project, index } = Astro.props;
 const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
+// every fact, for the specs block under the visual on smaller screens
+const allFacts = [
+  { label: projectPage.service, value: project.service },
+  { label: projectPage.year, value: String(project.year) },
+  project.client && { label: projectPage.facts.client, value: project.client },
+  project.stack?.length && { label: projectPage.facts.stack, value: project.stack.join(', ') },
+  project.credit,
+  project.status && { label: projectPage.facts.status, value: project.status },
+].filter(Boolean) as { label: string; value: string }[];
 ---
 <Page title={project.title} description={project.description} footer={false}>
-  <PageIntro title={project.title} modifier="project">
-    <dl class="c-page-intro__meta">
-      <dt class="c-page-intro__meta-label u-text-label">{projectPage.service}</dt>
-      <dd class="c-page-intro__meta-value u-text-ui" data-page-intro-service>{project.service}</dd>
-    </dl>
-    <dl class="c-page-intro__meta c-page-intro__meta--year">
-      <dt class="c-page-intro__meta-label u-text-label">{projectPage.year}</dt>
-      <dd class="c-page-intro__meta-value u-text-ui">{project.year}</dd>
-    </dl>
+  <PageIntro title={project.title} modifier="project" style={`--len:${project.title.length}`}>
+    <div class="c-page-intro__aside">
+      <p class="c-page-intro__desc" data-page-intro-desc>{project.description}</p>
+      <dl class="c-page-intro__facts">
+        <div class="c-page-intro__fact"><dt class="u-text-label">{projectPage.service}</dt><dd class="u-text-ui" data-page-intro-service>{project.service}</dd></div>
+        <div class="c-page-intro__fact"><dt class="u-text-label">{projectPage.year}</dt><dd class="u-text-ui" data-page-intro-year>{project.year}</dd></div>
+      </dl>
+    </div>
   </PageIntro>
-  <div class="c-project-detail__visual o-container o-grid" data-project-visual>
-    {project.image
-      ? <ProjectImage class="c-project-detail__media" src={project.image} alt={`${project.title}: ${project.description}`} eager data-project-media />
+  <div class="c-project-detail__visual o-container o-grid" style={`--len:${project.title.length}`} data-project-visual>
+    {project.shot || project.image
+      ? <ProjectVisual class="c-project-detail__media" project={project} alt={`${project.title}: ${project.description}`} eager data-project-media />
       : <div class="c-project-detail__media c-project-detail__placeholder" data-project-media style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}>{project.label}</div>}
   </div>
-  <Placeholder text={projectPage.placeholder} />
-  <div class="c-project-detail__back o-container o-grid" data-scroll-next-fade><Button back class="c-project-detail__back-link" href="/work">{projectPage.back}</Button></div>
+  <!-- below 1024px the specs sit under the visual (the title overlaps the visual there too), all of them in one block
+       (the case study's own fact list is hidden there); the intro's copy is hidden -->
+  <div class="c-project-detail__specs o-container o-grid">
+    <div class="c-page-intro__aside c-page-intro__aside--below">
+      <p class="c-page-intro__desc">{project.description}</p>
+      <dl class="c-page-intro__facts">
+        {allFacts.map((f) => <div class="c-page-intro__fact"><dt class="u-text-label">{f.label}</dt><dd class="u-text-ui">{f.value}</dd></div>)}
+      </dl>
+    </div>
+  </div>
+  {project.story
+    ? <ProjectCase project={project}><Button slot="end" back href="/work">{projectPage.back}</Button></ProjectCase>
+    : <div class="c-project-detail__back o-container o-grid" data-scroll-next-fade><Button back class="c-project-detail__back-link" href="/work">{projectPage.back}</Button></div>}
   <ScrollNext project={next} label={projectPage.next} />
 </Page>

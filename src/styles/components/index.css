@@ -11,6 +11,7 @@
 @import "./_filter.css";
 @import "./_hero-home.css";
 @import "./_icon.css";
+@import "./_intro-lab.css";
 @import "./_legal.css";
 @import "./_link-mail.css";
 @import "./_marquee.css";
@@ -19,6 +20,7 @@
 @import "./_page.css";
 @import "./_pitch.css";
 @import "./_placeholder.css";
+@import "./_project-case.css";
 @import "./_project-detail.css";
 @import "./_projects-intro.css";
 @import "./_scroll-next.css";
@@ -32,4 +34,5 @@
 @import "./_theme-toggle.css";
 @import "./_transition.css";
 @import "./_trusted-by.css";
+@import "./_visual.css";
 @import "./_work-intro.css";

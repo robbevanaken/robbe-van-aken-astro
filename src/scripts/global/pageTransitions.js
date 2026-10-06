@@ -89,7 +89,8 @@ function createFrame(overlay) {
   };
   // closed: a square on the two middle columns
   const closed = () => ({ width: ruler.offsetWidth, height: ruler.offsetWidth });
-  return { frame, loader, count, bg, anchor, snap, chars, brand, edges, closed };
+  const counter = count.parentElement; // the number + its line: shown and hidden together
+  return { frame, loader, count, counter, bg, anchor, snap, chars, brand, edges, closed };
 }
 
 // -----------------------------------------
@@ -128,6 +129,7 @@ function startCounter(f, brackets, ease = .1) {
       c.shown += (g - c.shown) * ease;
       if (g === 1 && 1 - c.shown < .004) c.shown = 1;
       f.count.textContent = String(Math.round(c.shown * 100)).padStart(3, '0');
+      f.counter.style.setProperty('--p', c.shown.toFixed(3)); // the line beside it
       if (brackets) {
         const e = 1 - Math.pow(1 - Math.min(1, c.shown / .6), 3);
         gsap.set(f.frame, { width: from.width + (to.width - from.width) * e, height: from.height + (to.height - from.height) * e });
@@ -159,7 +161,7 @@ async function runLoader(f) {
   // background, so it seems to stay (the header shows it in the same place). The R flies from the middle to its place
   // on the page, with a full turn (home: grows into the hero R, subpages: into the header).
   await gsap.timeline({ delay: .2 })
-    .to(f.count, { autoAlpha: 0, duration: .3, ease: 'power1.in' })
+    .to(f.counter, { autoAlpha: 0, duration: .3, ease: 'power1.in' })
     .to(f.frame, { ...f.edges(), duration: .9, ease: 'expo.inOut' }, .1)
     .to(rIntro, { t: 0, duration: 1.3, ease: 'expo.inOut' }, .1)
     .to([f.bg, f.brand], { opacity: 0, duration: .7, ease: 'power2.inOut' }, .35)
@@ -167,7 +169,7 @@ async function runLoader(f) {
   rIntro.el = null;
   try { sessionStorage.setItem('loaded', '1'); } catch {} // the next pages in this visit skip the loader (Base.astro)
   document.documentElement.classList.remove('is-loading');
-  gsap.set([f.loader, f.bg, f.brand, f.count], { clearProps: 'all' });
+  gsap.set([f.loader, f.bg, f.brand, f.counter], { clearProps: 'all' });
   getLenis()?.start();
 }
 
@@ -183,8 +185,9 @@ async function cover(f) {
   const root = document.documentElement;
   gsap.set([f.frame, f.brand], { autoAlpha: 0 });
   gsap.set(f.bg, { opacity: 0 });
-  gsap.set(f.count, { autoAlpha: 0 });
+  gsap.set(f.counter, { autoAlpha: 0 });
   f.count.textContent = '000';
+  f.counter.style.setProperty('--p', 0);
   root.classList.add('is-transitioning');
   // the style recalculation of showing the overlay lands in this frame, before anything moves
   await nextFrame();
@@ -197,7 +200,7 @@ async function cover(f) {
   await gsap.timeline()
     .to(f.bg, { opacity: 1, duration: .4, ease: 'power2.inOut' })
     .to(rIntro, { t: 1, duration: .55, ease: 'expo.inOut' }, 0)
-    .to(f.count, { autoAlpha: 1, duration: .25, ease: 'power1.out' }, .1)
+    .to(f.counter, { autoAlpha: 1, duration: .25, ease: 'power1.out' }, .1)
     .add(() => root.classList.add('is-covered'), .4);
   // the swap comes next and is heavy: only once the R is at rest
   const t1 = performance.now();
@@ -236,13 +239,13 @@ async function uncover(f) {
   await c.done;
   document.documentElement.classList.remove('is-covered');
   await gsap.timeline({ delay: .05 })
-    .to([f.count, f.snap], { autoAlpha: 0, duration: .2, ease: 'power1.in' })
+    .to([f.counter, f.snap], { autoAlpha: 0, duration: .2, ease: 'power1.in' })
     .to(rIntro, { t: 0, duration: .75, ease: 'expo.inOut' }, .05)
     .to(f.bg, { opacity: 0, duration: .45, ease: 'power2.inOut' }, .12);
   rIntro.el = null;
   rIntro.onDraw = null;
   document.documentElement.classList.remove('is-transitioning', 'is-covered');
-  gsap.set([f.loader, f.bg, f.brand, f.count, f.snap, f.frame], { clearProps: 'all' });
+  gsap.set([f.loader, f.bg, f.brand, f.counter, f.snap, f.frame], { clearProps: 'all' });
 }
 
 // -----------------------------------------

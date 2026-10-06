@@ -1,0 +1,155 @@
+/* The case study on a project's detail page (sections/ProjectCase.astro). The intro (lead, cols 1–7) with the facts
+   beside it (cols 9–12, label over value between thin lines), then screens and story in turns, a section's space
+   apart: screens on quiet panels (--panel, generous padding; the second desktop screen inset, cols 2–11), the story as
+   rows between thin lines (title cols 1–4, text cols 6–11), two phone screens side by side (cols 1–6, 7–12).
+   Blocks fade up into view ([data-reveal] → .is-in). Below 1024px: the intro and facts full width, the story's title
+   over its text; phones: everything in one column. */
+.c-project-case{--gap:var(--space-section);padding-top:var(--space-xl)}
+.c-project-case>*+*{margin-top:var(--gap)}
+.c-project-case>.c-project-case__text+.c-project-case__pair,.c-project-case>.c-project-case__screen+.c-project-case__text{margin-top:var(--space-xl)}
+
+/* intro + facts */
+.c-project-case__overview{align-items:start}
+.c-project-case__intro{grid-column:1 / span 7;margin:0;max-width:22em} /* highlighted letter by letter on scroll (data-highlight-text) */
+.c-project-case__aside{grid-column:9 / -1;display:grid;justify-items:start;gap:var(--space-m)}
+.c-project-case__facts{justify-self:stretch;margin:0;display:grid}
+.c-project-case__fact{display:grid;gap:4px;padding:var(--space-xs) 0;border-top:1px solid var(--line)}
+.c-project-case__fact:last-child{border-bottom:1px solid var(--line)}
+.c-project-case__fact dd{margin:0}
+
+/* screens on panels */
+.c-project-case__panel{grid-column:1 / -1;display:grid;place-items:center;background:var(--panel);padding:clamp(20px,6vw,112px)}
+.c-project-case__screen--inset .c-project-case__panel{grid-column:2 / span 10}
+.c-project-case__desktop{display:block;width:100%;height:auto;aspect-ratio:16 / 10;object-fit:cover}
+.c-project-case__pair{row-gap:var(--gutter)}
+.c-project-case__panel--phone{grid-column:span 6;aspect-ratio:4 / 5;padding:0}
+.c-project-case__mobile{display:block;height:84%;width:auto;aspect-ratio:1170 / 2532;object-fit:cover}
+/* no screenshots yet: the panels in the project's colours, with a quiet label */
+.c-project-case__panel--empty{aspect-ratio:16 / 10;color:var(--t);background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
+.c-project-case__panel--empty.c-project-case__panel--phone{aspect-ratio:4 / 5}
+
+/* photos (projects whose screens can't be shown): filling their boxes, wide at 16:9, the pair at 4:5 */
+.c-project-case__photo{grid-column:1 / -1;position:relative;overflow:hidden;aspect-ratio:16 / 9}
+.c-project-case__screen--inset .c-project-case__photo{grid-column:2 / span 10}
+.c-project-case__photo--half{grid-column:span 6;aspect-ratio:4 / 5}
+.c-project-case__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* the brand: the logo on panels in the brand's colours, one big (cols 1–8) and two stacked beside it */
+.c-project-case__logos{row-gap:var(--gutter);margin-top:0}
+.c-project-case__text+.c-project-case__logos{margin-top:var(--space-l)}
+.c-project-case__swatch{grid-column:9 / span 4;display:grid;place-items:center;min-height:0;padding:var(--space-m)}
+.c-project-case__swatch--big{grid-column:1 / span 8;grid-row:span 2;aspect-ratio:4 / 3}
+.c-project-case__logo{display:block;width:min(46%,240px)}
+.c-project-case__swatch--big .c-project-case__logo{width:min(52%,440px)}
+.c-project-case__logo svg{display:block;width:100%;height:auto}
+
+/* what was made: columns, number over title over text, under a thin line */
+.c-project-case__parts{row-gap:var(--space-l);align-items:start}
+.c-project-case__parts-title{grid-column:1 / -1;margin:0;font-weight:400;padding-top:var(--space-m);border-top:1px solid var(--line)}
+.c-project-case__part{grid-column:span 4;display:grid;gap:var(--space-xs)}
+.c-project-case__part>*{margin:0}
+.c-project-case__part-title{font-weight:400}
+.c-project-case__part-text{color:var(--muted);line-height:1.5;max-width:26em}
+
+/* the story: rows between thin lines */
+.c-project-case__text{row-gap:0}
+.c-project-case__row{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:start;padding:var(--space-m) 0 var(--space-l);border-top:1px solid var(--line)}
+.c-project-case__title{grid-column:1 / span 4;margin:0;font-weight:400}
+.c-project-case__body{grid-column:6 / span 6;margin:0;max-width:34em;color:var(--muted);line-height:1.5}
+.c-project-case__end{grid-column:6 / span 6;margin-top:var(--space-l)}
+.c-project-case__end:empty{display:none}
+
+/* fade up into view (global/reveal.js); the second phone a beat later */
+/* coming into view (global/reveal.js: .is-in), on the site's slow ease-out:
+   - media ([data-reveal="media"]): uncovered from the bottom up (clip-path) while the image inside settles from a
+     touch larger (the `scale` property, apart from the scroll transforms GSAP sets);
+   - text stays put (no text reveals: the site's only text motion is the highlight on scroll); a story row's thin
+     line draws from the left. The second of a pair a beat later. */
+.c-project-case{--reveal-ease:cubic-bezier(.16,1,.3,1)}
+.c-project-case [data-reveal="media"]{clip-path:inset(100% 0 0 0);transition:clip-path 1.4s var(--reveal-ease);transition-delay:calc(var(--i,0) * .12s)}
+.c-project-case [data-reveal="media"] img{scale:1.14;transition:scale 1.8s var(--reveal-ease);transition-delay:calc(var(--i,0) * .12s)}
+.c-project-case [data-reveal="media"].is-in{clip-path:inset(0 0 0 0)}
+.c-project-case [data-reveal="media"].is-in img{scale:1}
+.c-project-case__row{border-top-color:transparent!important;position:relative}
+.c-project-case__row::before{content:"";position:absolute;top:-1px;left:0;right:0;height:1px;background:var(--line);transform-origin:left;transform:scaleX(0);transition:transform 1.3s var(--reveal-ease)}
+.c-project-case__row.is-in::before{transform:none}
+.no-js .c-project-case [data-reveal]{opacity:1;clip-path:none}
+.no-js .c-project-case [data-reveal] img{scale:1}
+.no-js .c-project-case__row::before{transform:none}
+
+
+@media (max-width:1023px){
+  .c-project-case__facts{display:none} /* all facts are in the specs under the visual (pages/work/[slug].astro) */
+  .c-project-case__aside{margin-top:var(--space-m)}
+  .c-project-case__photo--half{grid-column:span 3}
+  .c-project-case__screen--inset .c-project-case__photo{grid-column:1 / -1}
+  .c-project-case__swatch.c-project-case__swatch--big{grid-column:1 / -1;grid-row:auto}
+  .c-project-case__swatch{grid-column:span 3;aspect-ratio:4 / 3}
+  .c-project-case__part{grid-column:1 / -1;grid-template-columns:3em minmax(0,1fr);column-gap:var(--gutter)}
+  .c-project-case__part>:not(:first-child){grid-column:2}
+  .c-project-case__intro,.c-project-case__aside{grid-column:1 / -1}
+  .c-project-case__facts{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gutter)}
+  .c-project-case__aside{margin-top:var(--space-l)}
+  .c-project-case__fact:nth-last-child(2){border-bottom:1px solid var(--line)}
+  .c-project-case__screen--inset .c-project-case__panel{grid-column:1 / -1}
+  .c-project-case__panel--phone{grid-column:span 3}
+  .c-project-case__title{grid-column:1 / -1;margin-bottom:var(--space-s)}
+  .c-project-case__body,.c-project-case__end{grid-column:1 / span 5}
+}
+@media (max-width:639px){
+  .c-project-case{--gap:calc(var(--space-section) * .9)}
+  .c-project-case__panel{padding:14px} /* the screenshot as large as the screen allows */
+  .c-project-case__pair{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gutter)} /* the two phones side by side */
+  .c-project-case .c-project-case__panel--phone,.c-project-case .c-project-case__photo--half{grid-column:auto;aspect-ratio:9 / 16}
+  .c-project-case .c-project-case__mobile{height:auto;width:84%}
+  .c-project-case__facts{grid-template-columns:minmax(0,1fr)}
+  .c-project-case__fact:nth-last-child(2){border-bottom:0}
+  .c-project-case__panel--phone,.c-project-case__photo--half{grid-column:1 / -1}
+  .c-project-case__mobile{height:86%}
+  .c-project-case__swatch{grid-column:span 2}
+  .c-project-case__part{grid-template-columns:minmax(0,1fr)}
+  .c-project-case__part>:not(:first-child){grid-column:1}
+  .c-project-case__body,.c-project-case__end{grid-column:1 / -1}
+}
+@media (prefers-reduced-motion:reduce){
+  .c-project-case [data-reveal]{opacity:1;clip-path:none;transition:none}
+  .c-project-case [data-reveal] img{scale:1;transition:none}
+  .c-project-case__row::before{transform:none;transition:none}
+}
+
+/* the site's long page in a 16:10 window on its panel, scrolling as you scroll (components/caseMotion.js) */
+.c-project-case__window{position:relative;width:100%;aspect-ratio:16 / 10;overflow:hidden;background:var(--panel)}
+/* while the page loads: a tiny blurred copy of it (--lqip, a 24px webp), so the window is never empty */
+.c-project-case__window::before{content:"";position:absolute;inset:-20px;background:var(--lqip) center top / 100% auto no-repeat;filter:blur(14px);transform:translateZ(0)}
+.c-project-case__long{position:relative;display:block;width:100%;height:auto;will-change:transform}
+
+/* the project's own moment: a head (h2 cols 1–6, text cols 8–12), then its piece */
+.c-project-case__moment-head{align-items:end;row-gap:var(--space-s)}
+.c-project-case__moment-title{grid-column:1 / span 6;margin:0;font-weight:400}
+.c-project-case__moment-text{grid-column:8 / span 5;margin:0;color:var(--muted);line-height:1.5;max-width:28em}
+.c-project-case__moment>*+*{margin-top:var(--space-xl)}
+/* strip: stills in one row, wider than the screen, drifting sideways as you scroll */
+.c-project-case__strip{overflow:hidden}
+.c-project-case__strip-track{display:flex;gap:var(--gutter);width:max-content;padding-inline:var(--margin);will-change:transform}
+.c-project-case__still{position:relative;flex:none;width:clamp(260px,34vw,620px);aspect-ratio:16 / 9;overflow:hidden}
+/* grid: photos of the work, three columns, the middle one a step lower */
+.c-project-case__grid{row-gap:var(--gutter);align-items:start}
+.c-project-case__work{position:relative;grid-column:span 4;aspect-ratio:4 / 5;overflow:hidden}
+.c-project-case__work:nth-child(3n+2){margin-top:var(--space-xl)}
+.c-project-case__work:nth-child(3n){margin-top:calc(var(--space-xl) / 2)}
+/* suite: the parts as numbered columns, each under a thin line */
+.c-project-case__nodes{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;row-gap:var(--space-l);margin:0;padding:0;list-style:none}
+.c-project-case__node{grid-column:span 4;display:grid;align-content:start;gap:var(--space-xs);padding-top:var(--space-s);border-top:1px solid var(--line)}
+.c-project-case__node>*{margin:0}
+
+@media (max-width:1023px){
+  .c-project-case__moment-title,.c-project-case__moment-text{grid-column:1 / -1}
+  .c-project-case__work{grid-column:span 3}
+  .c-project-case__work:nth-child(n){margin-top:0}
+  .c-project-case__work:nth-child(even){margin-top:var(--space-l)}
+  .c-project-case__node{grid-column:1 / -1}
+}
+@media (max-width:639px){
+  .c-project-case__work{grid-column:span 2;aspect-ratio:3 / 4}
+  .c-project-case__moment>*+*{margin-top:var(--space-l)}
+}

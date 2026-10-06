@@ -1,0 +1,18 @@
+---
+// A project's main visual, the same on its card (home, /work), its detail page and the scroll-next section, so the
+// open-project and next-project transitions carry one visual from box to box:
+// - `shot` + `field`: the site itself, flat: its screenshot (1440×900, 16:10) centred on a field in the project's
+//   colour, at most 76% of the box's width or height (container units: it stays in proportion in every box, the cards
+//   at .86–1.5:1 and the detail page at 16:9, and while a transition grows the box);
+// - `image`: a photo filling the box (cover, focus `position`), for projects whose screens can't be shown.
+// The <span> takes the box's classes and data- attributes. Styles: styles/components/_visual.css
+import ProjectImage from './ProjectImage.astro';
+import type { Project } from '../../data/projects';
+interface Props { project: Project; class?: string; eager?: boolean; alt?: string; [attr: string]: unknown }
+const { project: p, class: cls, eager = false, alt = '', ...rest } = Astro.props;
+---
+<span class:list={['c-visual', cls]} style={p.field ? `--field:${p.field}` : undefined} data-visual {...rest}>
+  {p.shot
+    ? <ProjectImage class="c-visual__shot" src={p.shot} alt={alt} eager={eager} />
+    : p.image && <ProjectImage class="c-visual__photo" src={p.image} alt={alt} position={p.position} eager={eager} />}
+</span>

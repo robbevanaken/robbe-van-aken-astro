@@ -108,6 +108,8 @@ export const openProject = {
       const r = media.getBoundingClientRect();
       await Promise.all([
         gsap.to(copy, { top: r.top, left: r.left, width: r.width, height: r.height, duration: .85, ease: 'expo.inOut' }),
+        // the screenshot leaves the card's tag band and settles with the page's even margins, in step with the box
+        copy.querySelector('[data-visual]') ? gsap.to(copy.querySelector('[data-visual]'), { '--visual-bare': 1, duration: .85, ease: 'expo.inOut' }) : null,
         copy.querySelector('img') ? gsap.to(copy.querySelector('img'), { scale: 1, duration: .85, ease: 'expo.inOut' }) : null,
         media.decode ? media.decode().catch(() => {}) : null,
       ]);

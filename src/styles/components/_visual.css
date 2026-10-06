@@ -1,0 +1,17 @@
+/* A project's main visual (ui/ProjectVisual.astro): a screenshot of its site (one screen, 1440×900, 16:10) on a field,
+   or a photo filling the box. The field: the site's panel colour with a little of the project's colour (--field)
+   mixed in, so every project shares one quiet palette, in both themes.
+   The screenshot is always as wide as the box less a margin on either side (--side), centred in the height when there
+   is room; in a low box it starts a margin from the top and its bottom edge runs off the box. Top margin: --side, or on
+   a card --band (set by the card: the tags' inset × 2.5 + their height, so the gap between a tag and the screenshot is
+   more than the tag's distance to the edge). --visual-bare (0 → 1) drops the band: the open-project transition tweens
+   it on the card's copy ([data-visual]) together with the box, same duration and ease (components/openProject.js).
+   Container units: it looks the same in every box (the cards at .75–1.5:1, the detail page at 16:9) and while a
+   transition grows the box. */
+@property --visual-bare{syntax:"<number>";inherits:true;initial-value:0}
+:where(.c-visual){--side:max(18px,7cqw);position:relative;display:block;overflow:hidden;container-type:size;
+  background:color-mix(in oklab,var(--field,transparent) 16%,var(--panel))} /* :where: the box's own classes (card, detail, scroll-next) place and size it */
+.c-visual__shot{--w:calc(100cqw - 2 * var(--side));--t:calc(var(--band,var(--side)) * (1 - var(--visual-bare)) + var(--side) * var(--visual-bare));
+  position:absolute;left:var(--side);top:max(var(--t),calc((100cqh - var(--w) / 1.6) / 2));
+  display:block;width:var(--w);height:auto;max-width:none;aspect-ratio:16 / 10;object-fit:cover;object-position:top;transform-origin:50% 0} /* zooms (the card's hover) from its top edge: the long page's middle is far below the box */
+.c-visual__photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}

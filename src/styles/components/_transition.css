@@ -31,7 +31,11 @@ html.is-loading .c-r-canvas[data-r-intro],html.is-transitioning .c-r-canvas[data
 html.is-covered #swup{visibility:hidden}
 .c-transition__snap{position:absolute;inset:0;width:100%;height:100%;visibility:hidden}
 
-.c-transition__count{position:absolute;right:var(--margin);bottom:calc(env(safe-area-inset-bottom,0px) + var(--nav-top));font-variant-numeric:tabular-nums}
+.c-transition__count{position:absolute;right:var(--margin);bottom:calc(env(safe-area-inset-bottom,0px) + var(--nav-top));display:flex;align-items:center;gap:10px;margin:0;font-variant-numeric:tabular-nums}
+/* the counter as the scroll-to-next-project's: the number and a short line filling up with it (--p, 0–1) */
+.c-transition__bar{position:relative;display:block;width:40px;height:1px;background:var(--line)}
+.c-transition__fill{position:absolute;inset:0;background:currentColor;transform:scaleX(var(--p,0));transform-origin:left}
+@media (max-width:639px){ .c-transition__count{gap:8px} .c-transition__bar{width:24px} }
 
 @media (max-width:1023px){ .c-transition__ruler{grid-column:3 / span 2} }
 @media (max-width:639px){

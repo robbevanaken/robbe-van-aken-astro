@@ -5,12 +5,12 @@
 // the link can't be clicked (pointer-events), the script follows it at the end of the scroll.
 // Styles: styles/components/_scroll-next.css, behaviour: scripts/components/scrollNext.js. Keep the data- attributes.
 import type { Project } from '../../data/projects';
-import ProjectImage from '../ui/ProjectImage.astro';
+import ProjectVisual from '../ui/ProjectVisual.astro';
 // data-next-*: the next project's texts; scrollNext.js measures that page's layout with them
 interface Props { project: Project; label: string }
 const { project, label } = Astro.props; // label: for the link's accessible name
 ---
-<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next" data-next-title={project.title} data-next-service={project.service}>
+<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next" data-next-title={project.title} data-next-service={project.service} data-next-desc={project.description} data-next-year={project.year}>
   <a data-scroll-next-link href={`/work/${project.slug}`} class="c-scroll-next__inner" aria-label={`${label}: ${project.title}`}>
     <div class="c-scroll-next__stage">
       <!-- where the visual starts, partly below the fold (the box below is laid over it by the script) -->
@@ -18,8 +18,8 @@ const { project, label } = Astro.props; // label: for the link's accessible name
     </div>
     <div class="c-scroll-next__bg" data-scroll-next-box>
       <div class="c-scroll-next__clip">
-        {project.image
-          ? <ProjectImage src={project.image} data-scroll-next-bg class="c-scroll-next__bg-img" />
+        {project.shot || project.image
+          ? <ProjectVisual project={project} data-scroll-next-bg class="c-scroll-next__bg-img" />
           : <div data-scroll-next-bg class="c-scroll-next__bg-img c-scroll-next__bg-img--placeholder" style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}><span class="c-scroll-next__word" data-scroll-next-word>{project.label}</span></div>}
       </div>
       <!-- on the visual, like the project cards' labels: what's coming (top left) and how far the scroll to it is

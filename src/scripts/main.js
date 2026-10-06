@@ -16,6 +16,7 @@ import { initPageTransitions } from './global/pageTransitions.js';
 import { initScrollNext } from './components/scrollNext.js';
 import { initMarquee } from './components/marquee.js';
 import { initServices } from './components/services.js';
+import { initCaseMotion } from './components/caseMotion.js';
 import { initContactForm } from './components/contactForm.js';
 import { initWorkFilter } from './components/workFilter.js';
 import { initFilter } from './components/filter.js';
@@ -57,6 +58,7 @@ function mount() {
     }),
     initScrollNext(root),
     initServices(root),
+    initCaseMotion(root),
     initContactForm(root),
     initWorkFilter(root),
     initWorkLoop(root),

@@ -1,0 +1,61 @@
+/* LAB (temporary): proposals for the top of a project detail page (sections/IntroLab.astro). Each one screen tall,
+   starting below the header, the visual running off the bottom like the real page. */
+.c-intro-lab{position:relative;min-height:100svh;height:100svh;overflow:hidden;padding-top:calc(var(--nav-top) + 110px);border-bottom:1px solid var(--line)}
+.c-intro-lab__tag{position:absolute;right:var(--margin);bottom:var(--space-s);z-index:3;padding:6px 10px;background:var(--fg);color:var(--bg)}
+.c-intro-lab dl{margin:0}.c-intro-lab dd{margin:0}.c-intro-lab dt{color:var(--muted)}
+.c-intro-lab__title{margin:0;font-weight:400;letter-spacing:-.03em;line-height:.95}
+.c-intro-lab__count{margin:0;color:var(--muted);font-variant-numeric:tabular-nums}
+.c-intro-lab__desc{margin:0;color:var(--muted);max-width:24em}
+.c-intro-lab__visual{grid-column:1 / -1;aspect-ratio:16 / 9}
+
+/* A · Editorial */
+.c-intro-lab--a .c-intro-lab__head{row-gap:0;align-items:end}
+.c-intro-lab--a .c-intro-lab__count{grid-column:1 / -1;margin-bottom:var(--space-s)}
+.c-intro-lab--a .c-intro-lab__title{grid-column:1 / span 8;font-size:var(--fs-hero)}
+.c-intro-lab--a .c-intro-lab__desc{grid-column:9 / -1;padding-bottom:.35em}
+.c-intro-lab--a .c-intro-lab__facts{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;margin-top:var(--space-l);padding-top:var(--space-xs);border-top:1px solid var(--line)}
+.c-intro-lab--a .c-intro-lab__facts>div{grid-column:span 4}
+.c-intro-lab--a .c-intro-lab__visual{margin-top:var(--space-m)}
+
+/* B · Visual first */
+.c-intro-lab--b{padding-top:calc(var(--nav-top) + 90px)}
+.c-intro-lab--b .c-intro-lab__head{align-items:end;padding-bottom:var(--space-s)}
+.c-intro-lab--b .c-intro-lab__title{grid-column:1 / span 4;font-size:var(--fs-title)}
+.c-intro-lab--b .c-intro-lab__facts{grid-column:6 / -1;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gutter)}
+.c-intro-lab--b .c-intro-lab__visual{display:block;width:100%;height:calc(100svh - var(--nav-top) - 90px - 120px);aspect-ratio:auto}
+
+/* C · Split */
+.c-intro-lab--c .c-intro-lab__body{height:calc(100svh - var(--nav-top) - 110px - var(--space-l));align-items:stretch}
+.c-intro-lab--c .c-intro-lab__side{grid-column:1 / span 4;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:var(--space-m)}
+.c-intro-lab--c .c-intro-lab__title{font-size:var(--fs-title)}
+.c-intro-lab--c .c-intro-lab__facts{align-self:stretch;display:grid}
+.c-intro-lab--c .c-intro-lab__facts>div{padding:var(--space-xs) 0;border-top:1px solid var(--line)}
+.c-intro-lab--c .c-intro-lab__visual{grid-column:5 / -1;aspect-ratio:auto;height:100%}
+
+/* D · Big type */
+.c-intro-lab--d{padding-top:calc(var(--nav-top) + 80px)}
+.c-intro-lab--d .c-intro-lab__title{grid-column:1 / -1;font-size:clamp(64px,13.5vw,240px);white-space:nowrap}
+.c-intro-lab--d .c-intro-lab__stack{margin-top:calc(clamp(64px,13.5vw,240px) * -.42);align-items:start}
+.c-intro-lab--d .c-intro-lab__visual{grid-column:3 / span 10;grid-row:1 / span 3;position:relative;z-index:1}
+.c-intro-lab--d .c-intro-lab__desc{grid-column:1 / span 2;grid-row:2;padding-top:var(--space-l)}
+.c-intro-lab--d .c-intro-lab__facts{grid-column:1 / span 2;grid-row:3;display:grid;gap:var(--space-xs);padding-top:var(--space-m)}
+
+@media (max-width:1023px){
+  .c-intro-lab--a .c-intro-lab__title,.c-intro-lab--a .c-intro-lab__desc{grid-column:1 / -1}
+  .c-intro-lab--a .c-intro-lab__desc{margin-top:var(--space-s)}
+  .c-intro-lab--a .c-intro-lab__facts>div{grid-column:span 2}
+  .c-intro-lab--b .c-intro-lab__title,.c-intro-lab--b .c-intro-lab__facts{grid-column:1 / -1}
+  .c-intro-lab--b .c-intro-lab__facts{margin-top:var(--space-s)}
+  .c-intro-lab--c .c-intro-lab__body{height:auto}
+  .c-intro-lab--c .c-intro-lab__side,.c-intro-lab--c .c-intro-lab__visual{grid-column:1 / -1}
+  .c-intro-lab--c .c-intro-lab__visual{aspect-ratio:4 / 3;height:auto;margin-top:var(--space-m)}
+  .c-intro-lab--d .c-intro-lab__visual{grid-column:1 / -1;grid-row:1}
+  .c-intro-lab--d .c-intro-lab__desc,.c-intro-lab--d .c-intro-lab__facts{grid-column:1 / -1;grid-row:auto}
+  .c-intro-lab--d .c-intro-lab__title{font-size:clamp(48px,13vw,140px);white-space:normal}
+  .c-intro-lab--d .c-intro-lab__stack{margin-top:calc(clamp(48px,13vw,140px) * -.3)}
+}
+@media (max-width:639px){
+  .c-intro-lab__desc{font-size:16px}
+  .c-intro-lab--b .c-intro-lab__facts{grid-template-columns:1fr 1fr}
+  .c-intro-lab--b .c-intro-lab__visual{height:auto;aspect-ratio:3 / 4}
+}

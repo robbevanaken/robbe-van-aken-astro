@@ -1,0 +1,66 @@
+---
+// LAB (temporary, /lab/project-intro, noindex): proposals for the top of a project detail page (what shows above the
+// fold), each one screen tall, on a real project. Not linked anywhere; delete once one is chosen.
+// Styles: styles/components/_intro-lab.css
+import ProjectVisual from '../ui/ProjectVisual.astro';
+import Button from '../ui/Button.astro';
+import type { Project } from '../../data/projects';
+import { projectPage } from '../../data/pages';
+interface Props { project: Project; index: number; total: number }
+const { project: p, index, total } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+const facts = [
+  { label: projectPage.facts.client, value: p.client ?? p.title },
+  { label: projectPage.service, value: p.service },
+  { label: projectPage.year, value: String(p.year) },
+];
+---
+<!-- A · Editorial: a count, the title at hero size with the description beside it, the facts in a row on a thin line -->
+<section class="c-intro-lab c-intro-lab--a">
+  <p class="c-intro-lab__tag u-text-label">A · Editorial</p>
+  <div class="o-container o-grid c-intro-lab__head">
+    <p class="c-intro-lab__count u-text-label">{pad(index + 1)} / {pad(total)}</p>
+    <h2 class="c-intro-lab__title">{p.title}</h2>
+    <p class="c-intro-lab__desc u-text-body-l">{p.description}</p>
+    <dl class="c-intro-lab__facts">{facts.map((f) => <div><dt class="u-text-label">{f.label}</dt><dd class="u-text-ui">{f.value}</dd></div>)}</dl>
+  </div>
+  <div class="o-container o-grid"><ProjectVisual class="c-intro-lab__visual" project={p} /></div>
+</section>
+
+<!-- B · Visual first: the visual edge to edge and tall, the title small in one line with the facts above it -->
+<section class="c-intro-lab c-intro-lab--b">
+  <p class="c-intro-lab__tag u-text-label">B · Visual first</p>
+  <div class="o-container o-grid c-intro-lab__head">
+    <h2 class="c-intro-lab__title">{p.title}</h2>
+    <dl class="c-intro-lab__facts">{facts.map((f) => <div><dt class="u-text-label">{f.label}</dt><dd class="u-text-ui">{f.value}</dd></div>)}</dl>
+  </div>
+  <ProjectVisual class="c-intro-lab__visual" project={p} />
+</section>
+
+<!-- C · Split: the text in a column on the left (title, description, facts, visit), the visual filling the right -->
+<section class="c-intro-lab c-intro-lab--c">
+  <p class="c-intro-lab__tag u-text-label">C · Split</p>
+  <div class="o-container o-grid c-intro-lab__body">
+    <div class="c-intro-lab__side">
+      <p class="c-intro-lab__count u-text-label">{pad(index + 1)} / {pad(total)}</p>
+      <h2 class="c-intro-lab__title">{p.title}</h2>
+      <p class="c-intro-lab__desc u-text-body-l">{p.description}</p>
+      <dl class="c-intro-lab__facts">{facts.map((f) => <div><dt class="u-text-label">{f.label}</dt><dd class="u-text-ui">{f.value}</dd></div>)}</dl>
+      {p.url && <Button href={p.url} target="_blank" rel="noopener">{projectPage.facts.visit}</Button>}
+    </div>
+    <ProjectVisual class="c-intro-lab__visual" project={p} />
+  </div>
+</section>
+
+<!-- D · Big type: the title across the full width, the visual sliding over its lower half; facts under the visual's top -->
+<section class="c-intro-lab c-intro-lab--d">
+  <p class="c-intro-lab__tag u-text-label">D · Big type</p>
+  <div class="o-container o-grid c-intro-lab__head">
+    <h2 class="c-intro-lab__title">{p.title}</h2>
+  </div>
+  <div class="o-container o-grid c-intro-lab__stack">
+    <ProjectVisual class="c-intro-lab__visual" project={p} />
+    <p class="c-intro-lab__desc u-text-body-l">{p.description}</p>
+    <dl class="c-intro-lab__facts">{facts.map((f) => <div><dt class="u-text-label">{f.label}</dt><dd class="u-text-ui">{f.value}</dd></div>)}</dl>
+  </div>
+</section>

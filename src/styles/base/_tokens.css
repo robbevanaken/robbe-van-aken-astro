@@ -41,7 +41,8 @@
   --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
 
   /* type: scale (size @1440 in comments, measured from the Figma frame) */
-  --fs-hero:clamp(48px,7.5vw,116px);       /* 108 page hero titles (work overview, contact) */
+  --fs-hero:clamp(48px,7.5vw,116px);       /* 108 page hero titles (contact) */
+  --fs-page:clamp(44px,6vw,108px);         /* 86  a step below: the work overview's title, a project's title */
   --fs-display:clamp(38px,4.0278vw,76px);  /* 58  hero + footer title */
   --fs-title:clamp(40px,4.4444vw,84px);    /* 64  project detail title */
   --fs-h2:clamp(30px,3.3333vw,64px);       /* 48  section titles */

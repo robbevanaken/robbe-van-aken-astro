@@ -18,7 +18,7 @@
 /* on the visual (like the project cards' labels: dark, blurred, readable on any image): "Next project" + its title
    top left, the scroll's progress top right (a counter 000–100 and a line filling up); scrollNext.js sets them and
    fades them out just before the end */
-.c-scroll-next__hud{position:absolute;inset:0;pointer-events:none}
+.c-scroll-next__hud{position:absolute;inset:0;z-index:3;pointer-events:none}
 .c-scroll-next__tag{position:absolute;top:var(--space-s);left:var(--space-s);display:flex;align-items:center;gap:10px;padding:6px 10px;background:rgb(0 0 0 / .35);color:#fff;
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);white-space:nowrap}
 .c-scroll-next__tag-label{color:rgb(255 255 255 / .62)}

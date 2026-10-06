@@ -1,0 +1,10 @@
+---
+// LAB (temporary): proposals for the top of a project detail page. noindex, not linked; delete once one is chosen.
+import Page from '../../layouts/Page.astro';
+import IntroLab from '../../components/sections/IntroLab.astro';
+import { projects } from '../../data/projects';
+const i = Math.max(0, projects.findIndex((p) => p.slug === 'woonpact-gent'));
+---
+<Page title="Intro lab" noindex footer={false}>
+  <IntroLab project={projects[i]} index={i} total={projects.length} />
+</Page>

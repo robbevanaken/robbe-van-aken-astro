@@ -14,7 +14,7 @@ const { projects, label, layout = 'spread' } = Astro.props;
 // the card titles are headings (home: under the section's h2; /work: right under the page's h1)
 const Title = layout === 'grid' ? 'h2' : 'h3';
 const spread = layout === 'spread';
-import ProjectImage from '../ui/ProjectImage.astro';
+import ProjectVisual from '../ui/ProjectVisual.astro';
 ---
 <section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects data-cursor-label={work.cursor}>
   <slot name="head" />
@@ -26,8 +26,8 @@ import ProjectImage from '../ui/ProjectImage.astro';
           <a class="c-featured-projects__card" href={`/work/${p.slug}`} data-fp-card>
             <Corners />
             <span class="c-featured-projects__media" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-media>
-                {p.image
-                  ? <ProjectImage class="c-featured-projects__img" src={p.image} eager={!spread && i === 0} />
+                {p.shot || p.image
+                  ? <ProjectVisual class="c-featured-projects__visual" project={p} eager={!spread && i === 0} />
                   : <span class="c-featured-projects__placeholder">{p.label}</span>}
                 <span class="c-featured-projects__tag u-text-label">{p.service}</span>
                 <span class="c-featured-projects__tag c-featured-projects__tag--year u-text-label">{p.year}</span>
