@@ -1,4 +1,5 @@
 ---
+import ProgressiveBlur from '../ui/ProgressiveBlur.astro';
 // Site header. Styles: styles/components/_site-header.css + _button-menu.css, behaviour: scripts/global/siteHeader.js
 // withR: subpages show the animated R centred in the header (it is the only R stage there).
 import Socials from '../ui/Socials.astro';
@@ -10,6 +11,7 @@ interface Props { withR?: boolean }
 const { withR = false } = Astro.props;
 ---
 <header class="c-site-header" data-site-header>
+  <ProgressiveBlur class="is--top c-site-header__blur" />
   <div class="c-site-header__body o-container o-grid">
     <a class="c-site-header__brand u-text-ui" href="/" data-text-hover><span class="c-site-header__name">{nav.name}</span><span class="c-site-header__role">{nav.role}</span></a>
     {withR && <a class="c-site-header__r" href="/" aria-label="Home" data-stage="2"><span class="c-site-header__r-anchor" id="a-craft"></span></a>}

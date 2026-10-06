@@ -11,5 +11,5 @@ export const clients: Client[] = [
   { name: 'Client', logo: '/clients/client-y.svg', width: 49 }, // TODO: real client name (used as alt text)
   { name: 'Imagoo', logo: '/clients/imagoo.svg', width: 141 },
   { name: 'NGIS', logo: '/clients/ngis.svg', width: 110 },
-  { name: 'Antenna', logo: '/clients/antenna.svg', width: 122 },
+  { name: 'Gent', logo: '/clients/gent.svg', width: 86 },
 ];

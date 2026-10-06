@@ -4,9 +4,16 @@
 .c-site-header.is-hidden{transform:translateY(-100%)}
 
 .c-site-header__body{position:relative;align-items:start;padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top));padding-bottom:var(--space-m)}
-/* soft fade behind the header once the page has scrolled, so it stays readable over content */
-.c-site-header__body::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--page) 35%,transparent);opacity:0;transition:opacity .5s}
+/* soft fade behind the header once the page has scrolled, so it stays readable over content (tried: no backdrop, a solid
+   bar with a line under it) */
+.c-site-header__body::before{content:"";position:absolute;inset:0 0 -40px;z-index:-1;background:linear-gradient(var(--page) 62%,transparent);opacity:0;transition:opacity .5s} /* solid behind the whole nav (name, role, links), fading out below it */
 .is-scrolled .c-site-header__body::before{opacity:1}
+/* TEST: the progressive blur (ui/ProgressiveBlur.astro) behind the header instead of the fade above (the fade is off
+   while testing): as tall as the header + the fade's 40px, shown once the page has scrolled, gone with the menu open */
+.c-site-header__body::before{background:linear-gradient(color-mix(in srgb,var(--page) 78%,transparent) 62%,transparent)} /* the fade, lighter: a tint over the blur */
+.c-site-header__blur.progressive-blur{position:absolute;z-index:-1;height:calc(100% + 40px);opacity:0;transition:opacity .5s}
+.is-scrolled .c-site-header__blur{opacity:1}
+.c-site-header.is-open .c-site-header__blur{opacity:0}
 /* menu open: the header's backdrop goes, so the header shows the menu's own panel behind it; both fade on the same curve
    and duration, so the header and the menu change tint together */
 .c-site-header.is-open .c-site-header__body::before{opacity:0;transition:opacity .55s cubic-bezier(.65,0,.35,1)}

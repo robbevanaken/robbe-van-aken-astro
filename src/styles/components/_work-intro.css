@@ -11,7 +11,7 @@
 /* the filter (ui/Filter.astro) floats level with the title, above the projects: a zero-height sticky layer at the top of
    the page, held in the middle of the screen (like the title) until the end of the list. Below 1024px the title takes
    the full width: the filter floats just below it, on the left. Phones: fixed at the bottom centre, opening upwards. */
-.c-work-float{position:sticky;top:calc(50svh - 22px);z-index:3;height:0}
+.c-work-float{position:sticky;top:calc(50svh - 22px);z-index:29;height:0} /* above the bottom blur (28), below the header (30) */
 .c-work-float__filter{grid-column:1 / span 2}
 @media (max-width:1023px){
   .c-work-float{top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 150px + clamp(44px,6vw,108px) + 20px)} /* just under the title */

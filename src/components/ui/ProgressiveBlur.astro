@@ -1,0 +1,14 @@
+---
+// Progressive blur (Osmo Supply resource, markup and base CSS kept as delivered): five backdrop-blurred layers, each
+// masked to a band, so the blur builds up towards one edge. Styles: styles/components/_progressive-blur.css
+// (`.is--top`: our variant, strongest at the top, behind the site header).
+interface Props { class?: string; [attr: string]: unknown }
+const { class: cls, ...rest } = Astro.props;
+---
+<div class:list={['progressive-blur', cls]} aria-hidden="true" {...rest}>
+  <div class="progressive-blur__layer is--1"></div>
+  <div class="progressive-blur__layer is--2"></div>
+  <div class="progressive-blur__layer is--3"></div>
+  <div class="progressive-blur__layer is--4"></div>
+  <div class="progressive-blur__layer is--5"></div>
+</div>

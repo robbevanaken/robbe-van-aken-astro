@@ -1,0 +1,72 @@
+/* Progressive blur (Osmo Supply resource, ui/ProgressiveBlur.astro): kept as delivered, bottom of the screen. */
+.progressive-blur {
+  z-index: 40;
+  pointer-events: none;
+  isolation: isolate;
+  contain: paint;
+  width: 100%;
+  height: 15em;
+  transform-style: preserve-3d;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.progressive-blur__layer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.progressive-blur__layer.is--1 {
+  -webkit-backdrop-filter: blur(.09375em);
+  backdrop-filter: blur(.09375em);
+  -webkit-mask: linear-gradient(#0000 50%, #000 62.5% 75%, #0000 87.5%);
+  mask: linear-gradient(#0000 50%, #000 62.5% 75%, #0000 87.5%);
+}
+
+.progressive-blur__layer.is--2 {
+  -webkit-backdrop-filter: blur(.1875em);
+  backdrop-filter: blur(.1875em);
+  -webkit-mask: linear-gradient(#0000 62.5%, #000 75% 87.5%, #0000 100%);
+  mask: linear-gradient(#0000 62.5%, #000 75% 87.5%, #0000 100%);
+}
+
+.progressive-blur__layer.is--3 {
+  -webkit-backdrop-filter: blur(.375em);
+  backdrop-filter: blur(.375em);
+  -webkit-mask: linear-gradient(#0000 75%, #000 87.5% 100%);
+  mask: linear-gradient(#0000 75%, #000 87.5% 100%);
+}
+
+.progressive-blur__layer.is--4 {
+  -webkit-backdrop-filter: blur(.75em);
+  backdrop-filter: blur(.75em);
+  -webkit-mask: linear-gradient(#0000 82%, #000 92% 100%);
+  mask: linear-gradient(#0000 82%, #000 92% 100%);
+}
+
+.progressive-blur__layer.is--5 {
+  -webkit-backdrop-filter: blur(1.5em);
+  backdrop-filter: blur(1.5em);
+  -webkit-mask: linear-gradient(#0000 88%, #000 100%);
+  mask: linear-gradient(#0000 88%, #000 100%);
+}
+
+/* our variant: upside down (the same bands, measured from the bottom), the strongest blur at the top */
+.progressive-blur.is--top { top: 0; bottom: auto; font-size: 16px; }
+.progressive-blur.is--top .is--1 { -webkit-mask: linear-gradient(to top, #0000 50%, #000 62.5% 75%, #0000 87.5%); mask: linear-gradient(to top, #0000 50%, #000 62.5% 75%, #0000 87.5%); }
+.progressive-blur.is--top .is--2 { -webkit-mask: linear-gradient(to top, #0000 62.5%, #000 75% 87.5%, #0000 100%); mask: linear-gradient(to top, #0000 62.5%, #000 75% 87.5%, #0000 100%); }
+.progressive-blur.is--top .is--3 { -webkit-mask: linear-gradient(to top, #0000 75%, #000 87.5% 100%); mask: linear-gradient(to top, #0000 75%, #000 87.5% 100%); }
+.progressive-blur.is--top .is--4 { -webkit-mask: linear-gradient(to top, #0000 82%, #000 92% 100%); mask: linear-gradient(to top, #0000 82%, #000 92% 100%); }
+.progressive-blur.is--top .is--5 { -webkit-mask: linear-gradient(to top, #0000 88%, #000 100%); mask: linear-gradient(to top, #0000 88%, #000 100%); }
+
+/* TEST: at the bottom of the screen (Base.astro, [data-bottom-blur]), as delivered but 10em tall, with a light tint in
+   the page colour (like the header's), below the header (30) and above the page, under the phones' /work filter (29).
+   Shown once the page has scrolled (the hero's orange band at the fold stays sharp), gone while the footer or the
+   next project's visual is on screen and while the mobile menu is open (.is-on, global/siteHeader.js). */
+.progressive-blur.is--bottom { z-index: 28; height: 10em; font-size: 16px; opacity: 0; transition: opacity .5s; }
+.progressive-blur.is--bottom::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, color-mix(in srgb, var(--page) 78%, transparent), transparent); }
+.progressive-blur.is--bottom.is-on { opacity: 1; }

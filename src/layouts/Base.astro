@@ -3,6 +3,7 @@
 import '../styles/main.css';
 import { meta, nav, socials } from '../data/site';
 import PageTransition from '../components/layout/PageTransition.astro';
+import ProgressiveBlur from '../components/ui/ProgressiveBlur.astro';
 // noindex: pages search engines should skip (404)
 interface Props { title?: string; description?: string; noindex?: boolean }
 const { title = meta.title, description = meta.description, noindex = false } = Astro.props;
@@ -66,6 +67,9 @@ const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':ne
     <div id="swup">
       <slot />
     </div>
+    <!-- TEST: progressive blur at the bottom of the screen (outside #swup: stays across page swaps; shown by
+         global/siteHeader.js, styles in _progressive-blur.css) -->
+    <ProgressiveBlur class="is--bottom" data-bottom-blur />
     <PageTransition />
     <script>
       import '../scripts/main.js';
