@@ -16,3 +16,21 @@ export const LOOKS = {
   glyph:    { label: 'G · Glyph (old)', render: 0 },
 };
 export const LOOK = 'halftone';
+
+// Looks for the small R's (under 140px: the header's, the projects', the loader's), compared on a lab page (since
+// removed; `data-r-small` on a canvas picks one per engine). `now`: the
+// old way (crosses of at least 3 device px, boosted to mostly bright: the holes and hairlines filled in). The others draw
+// solid cells, shaded (the face in the two darkest / brightest tones by its light, the side walls in the two quietest),
+// so the letter's counters and hairlines stay open: `min` the smallest cell in device px, `rows` how many cells tall
+// (none: as fine as `min` allows), `fill` the share of the cell drawn (under 1: a hairline gap, a pixel grid),
+// `walls` false: the front face only (a flat letter that still turns).
+export const SMALLS = {
+  now:   { label: 'A · Now: crosses, boosted bright' },
+  solid: { label: 'B · Solid cells, shaded (~40 tall)', min: 3, rows: 40, fill: 1, walls: true },
+  fine:  { label: 'C · Finest cells (2 device px), shaded', min: 2, fill: 1, walls: true },
+  face:  { label: 'D · Finest, front face only', min: 2, fill: 1, walls: false },
+  grid:  { label: 'E · Fine pixels with a hairline gap', min: 3, fill: .72, walls: true },
+  pixel: { label: 'F · Pixels (~30 tall), small gap', min: 3, rows: 30, fill: .84, walls: true },
+  chunk: { label: 'G · Pixels (~30 tall), face only, small gap', min: 3, rows: 30, fill: .84, walls: false },
+};
+export const SMALL = 'fine'; // C: chosen side by side on a lab page (since removed)

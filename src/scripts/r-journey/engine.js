@@ -9,7 +9,7 @@
 // uses (home: the whole page; subpages: one R in the header, a separate one in the footer). `cull` skips all work
 // while the scope is off screen.
 import { R_PATH } from './r-shape.js';
-import { LOOKS, LOOK } from './looks.js';
+import { LOOKS, LOOK, SMALLS, SMALL } from './looks.js';
 import { serviceProgress } from '../components/services.js';
 import { theme } from '../global/theme.js';
 
@@ -35,7 +35,7 @@ const spriteCache = new Map(), grid = { GC: null, GS: null, GN: null, OCC: null 
 // `char`: draw this character (Inter Tight, as the page's type) instead of the R, with the same particles, looks and
 // stages (the 404's 4s); its own particle data, never the shared R's (`geo`), and never the loader's R. `turn`: how
 // much the footer state (stage 4) turns with the mouse (1 = as the footer; the 404's characters less, so they stay legible).
-export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false, look = LOOK, char = '', turn = 1 } = {}) {
+export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false, look = LOOK, char = '', turn = 1, small: smallLook = SMALL } = {}) {
   if (!canvas || !scope) return null;
   // page swaps: every window listener goes through this signal, destroy() stops the frame loop
   const ac=new AbortController(),signal=ac.signal;let alive=true,raf=0;
@@ -244,7 +244,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const t0=[0,0],t1=[0,0];let lastIdx=-1;
   // Glyph dither mode (like Unicorn's Glyph Dither): particles are binned into a screen grid and every
   // cell is drawn as a sprite glyph, empty / dim cross / bright cross, picked by brightness with ordered dithering
-  const LK=LOOKS[look]||LOOKS[LOOK];
+  const LK=LOOKS[look]||LOOKS[LOOK],SM=SMALLS[smallLook]||SMALLS[SMALL]; // SM: how the small R's are drawn (looks.js SMALLS)
   let render=LK.render??3,GC=null,GS=null,GN=null,OCC=null,nOcc=0;
   // glyph look per theme. gamma > 1 pushes cells towards the bright cross (a heavier, more present R); colors: [dim,
   // bright]; line / pad: cross stroke width and inset, as a share of the cell. Light needs more: dark on light reads
@@ -379,7 +379,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       const small=clamp((140-rh)/60,0,1); // white boost for the small R, so it reads white instead of grey
       const minCell=3/DPR; // glyphs of at least 3 device px (1.5 css px on retina): smaller and the crosses blur to grey
       const pitchF=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f;
-      const CELL=rh<140?Math.min(baseCell,Math.max(minCell,Math.round(rh/36*2)/2)):fine?Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*DPR)/DPR):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
+      const smCell=SM.fill?Math.max(SM.min/DPR,SM.rows?Math.round(rh/SM.rows*DPR)/DPR:0):0; // small R in an SM look: its own cell size
+      const CELL=rh<140?(SM.fill?Math.min(baseCell,smCell):Math.min(baseCell,Math.max(minCell,Math.round(rh/36*2)/2))):fine?Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*DPR)/DPR):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
       if(!grid.GC||grid.GC.length<NN)Object.assign(grid,{GC:new Float32Array(NN),GS:new Float32Array(NN),GN:new Uint16Array(NN),OCC:new Uint32Array(NN)});
       ({GC,GS,GN,OCC}=grid);nOcc=0;
       GC.fill(0,0,NN);GS.fill(0,0,NN);GN.fill(0,0,NN);
@@ -413,6 +414,19 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
           const ci=OCC[o],r=(ci/cols)|0,q=ci-r*cols,cap=GC[ci]>0,v=clamp(cap?GC[ci]:GS[ci],0,1);
           const lv=clamp(Math.round((cap?v*4+.22:v*4.2+.9)+((BAYER4[(r&3)*4+(q&3)]+.5)/16-.5)*.9),1,4);
           ctx.drawImage((cap?sf.x:sf.q)[lv-1],q*CELL,r*CELL,CELL,CELL);
+        }
+      }else if(SM.fill&&rh<140){
+        // small R (looks.js SMALLS): solid cells in four tones, one path per tone; the face lit / shaded in the two
+        // strongest tones, the walls in the two quietest (or left out), so the counters and hairlines stay open
+        const tones=FINE[mode],sq=CELL*SM.fill,off=(CELL-sq)/2;
+        for(let lv=0;lv<4;lv++){
+          ctx.fillStyle=tones[lv];ctx.beginPath();let any=false;
+          for(let o=0;o<nOcc;o++){
+            const ci=OCC[o],cap=GC[ci]>0;if(!cap&&!SM.walls)continue;
+            const l=cap?(GC[ci]>.42?3:2):(GS[ci]>.5?1:0);if(l!==lv)continue;
+            const r=(ci/cols)|0,q=ci-r*cols;ctx.rect(q*CELL+off,r*CELL+off,sq,sq);any=true;
+          }
+          if(any)ctx.fill();
         }
       }else{
       const spr=sprites(CELL,mode),gamma=G[mode].gamma;
