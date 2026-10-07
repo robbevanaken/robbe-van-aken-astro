@@ -237,7 +237,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       if(motion){let x=o[0],y=o[1];const dx=x-mpx,dy=y-mpy,dd=Math.hypot(dx,dy)||1,R=a.S*.24;if(dd<R){const pu=1-dd/R,push=pu*pu*R*.95;x+=dx/dd*push;y+=dy/dd*push}o[0]=x;o[1]=y}}
   }
   // colours per theme (global/theme.js): light = dark crosses / pixels on the light page
-  const PALS={dark:['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'],light:['#e6ded6','#cfc5bc','#a3978e','#6f6560','#3d302a','#1f1511']};
+  const PALS={dark:['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'],light:['#e6ded6','#cfc5bc','#a3978e','#6f6560','#3d302a','#1f1511'],
+    wild:['#2c2ccc','#4a3fdc','#7a5cf0','#c160d8','#ff5ab4','#ff7a45']}; // wild: the easter egg theme (global/theme.js)
   const LX=-.35,LY=-.55,LZ=.76;
   const DENS=[.8,.82,1.12,1,1.08,1.12,1];
   const t0=[0,0],t1=[0,0];let lastIdx=-1;
@@ -249,7 +250,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // bright]; line / pad: cross stroke width and inset, as a share of the cell. Light needs more: dark on light reads
   // thinner and greyer than white on dark, so more full crosses, heavier strokes, and a paler dim tone so the shaded
   // sides fall back and the front face (the shape) stands out.
-  const G={dark:{gamma:2,colors:['#8d817a','#ffffff'],line:.32,pad:.23},light:{gamma:3,colors:['#c2b8af','#140b08'],line:.37,pad:.21}},BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+  const G={dark:{gamma:2,colors:['#8d817a','#ffffff'],line:.32,pad:.23},light:{gamma:3,colors:['#c2b8af','#140b08'],line:.37,pad:.21},wild:{gamma:2,colors:['#7c6cff','#ff6b3d'],line:.32,pad:.23}},BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
   function sprites(cell,mode){
     const key=cell+'@'+DPR+mode;if(spriteCache.has(key))return spriteCache.get(key);
     const gs=G[mode],px=Math.max(2,Math.round(cell*DPR)),out=gs.colors.map(col=>{
@@ -262,7 +263,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // cell size per stage, in particle pitches: about one particle per cell; the two biggest R's (pitch, footer) a step
   // coarser, so their crosses still read as crosses
   const FCELL=LK.cell?[0,1,2,3,4,5,6].map(i=>i===1||i===4?LK.cell[1]:LK.cell[0]):[1.12,1.3,1.12,1.12,1.3,1.12,1.12];
-  const FINE={dark:['#5a4f49','#8d817a','#cbc2bc','#ffffff'],light:['#d9d0c8','#ab9f96','#5f514a','#140b08']};
+  const FINE={dark:['#5a4f49','#8d817a','#cbc2bc','#ffffff'],light:['#d9d0c8','#ab9f96','#5f514a','#140b08'],wild:['#5a4be6','#9a7cff','#ff5ab4','#ff6b3d']}; // wild: lilac walls, pink and orange on the face
   function spritesFine(cell,mode){
     const key='f'+cell+'@'+DPR+mode;if(spriteCache.has(key))return spriteCache.get(key);
     const gs=G[mode],px=Math.max(2,Math.round(cell*DPR)),mk=(col,sq)=>{

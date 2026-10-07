@@ -60,7 +60,7 @@ const empty = (cls = '') => `c-project-case__panel c-project-case__panel--empty 
     <div class="c-project-case__screen o-container o-grid" data-reveal="media">
       {p.mockup ? <div class="c-project-case__photo c-project-case__photo--wide"><ProjectImage class="c-project-case__img" src={p.mockup} alt={`${p.title}: the website on a device`} position={p.position} {...WIDE} /></div>
         : ph ? <div class="c-project-case__photo c-project-case__photo--wide"><ProjectImage class="c-project-case__img" src={ph[0]} alt="" data-case-parallax {...WIDE} /></div>
-        : sc ? <div class="c-project-case__panel"><div class="c-project-case__window" style={`--lqip:url(${lqip})`} data-case-scroll><ProjectImage class="c-project-case__long" src={sc.desktop} alt={`${p.title}: a page of the website on a desktop screen`} {...LONG} /></div></div>
+        : sc ? <div class="c-project-case__panel"><div class="c-project-case__window" style={`--lqip:url(${lqip})`} data-case-scroll><ProjectImage class="c-project-case__long" src={sc.desktop} alt={`${p.title}: the website's home page on a desktop screen`} {...LONG} /></div></div>
         : <div class={empty()} style={tint}><span class="u-text-label">{l.screens}</span></div>}
     </div>
 

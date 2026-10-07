@@ -33,7 +33,7 @@ export interface Project {
   // visuals for the case study, in src/assets/projects/<slug>/: screenshots of the site (desktop: 1440×900 @2x,
   // mobile: 390×844 @3x), or photos (when screens can't be shown: wide, two portrait, wide); with neither, placeholder
   // panels in the project's colours
-  screens?: { desktop: string; mobile: [string, string] }; // desktop: a long page (1440 wide @2x, ~3 screens), it scrolls inside its window
+  screens?: { desktop: string; mobile: [string, string] }; // desktop: the site's home page from the top (1440×2700 @2x, three screens), it scrolls inside its window
   // one moment of its own per project, after the approach: `strip` (stills in a row: video work), `grid` (photos of
   // the work), `suite` (the parts as numbered columns: uses `parts`)
   moment?: { kind: 'strip' | 'grid' | 'suite'; title: string; text: string; images?: string[] };

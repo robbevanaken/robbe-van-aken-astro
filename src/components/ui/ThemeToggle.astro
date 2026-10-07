@@ -17,9 +17,11 @@ const { class: cls, float = false } = Astro.props;
       <span class="c-theme-toggle__tip u-text-label">
         <span class="c-theme-toggle__label c-theme-toggle__label--to-dark">{nav.theme.dark}</span>
         <span class="c-theme-toggle__label c-theme-toggle__label--to-light">{nav.theme.light}</span>
+        <span class="c-theme-toggle__label c-theme-toggle__label--back">{nav.theme.back}</span>
       </span>
     </button>
   : <button class:list={['c-theme-toggle', cls]} type="button" data-theme-toggle>
       <span class="c-theme-toggle__label c-theme-toggle__label--to-dark">{nav.theme.dark}</span>
       <span class="c-theme-toggle__label c-theme-toggle__label--to-light">{nav.theme.light}</span>
+      <span class="c-theme-toggle__label c-theme-toggle__label--back">{nav.theme.back}</span>
     </button>}

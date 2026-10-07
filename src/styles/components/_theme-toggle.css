@@ -1,8 +1,11 @@
 /* Light/dark toggle (ui/ThemeToggle.astro). Text form: styled by where it sits (the mobile menu's foot); only the word
    swaps with the theme. */
 .c-theme-toggle{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
-.c-theme-toggle__label--to-light,:root[data-theme="dark"] .c-theme-toggle__label--to-dark{display:none}
+.c-theme-toggle__label--to-light,.c-theme-toggle__label--back,:root[data-theme="dark"] .c-theme-toggle__label--to-dark{display:none}
 :root[data-theme="dark"] .c-theme-toggle__label--to-light{display:inline}
+/* the hidden theme (global/theme.js): one label, back to the saved light / dark */
+:root[data-theme="wild"] .c-theme-toggle__label{display:none}
+:root[data-theme="wild"] .c-theme-toggle__label--back{display:inline}
 
 /* Float form: fixed bottom right inside the grid (its right edge on the page margin, on the loader counter's line);
    a 13px square, one half filled, on a quiet tile (--panel) like the nav's. The dark theme turns it half a turn
@@ -18,6 +21,7 @@
 .c-theme-toggle--float:hover .c-theme-toggle__square,.c-theme-toggle--float:focus-visible .c-theme-toggle__square{scale:.86}
 .c-theme-toggle--float:hover .c-theme-toggle__square::before,.c-theme-toggle--float:focus-visible .c-theme-toggle__square::before{right:15%}
 :root[data-theme="dark"] .c-theme-toggle__square{transform:rotate(180deg)}
+:root[data-theme="wild"] .c-theme-toggle__square{transform:rotate(450deg)} /* the hidden theme: a turn and a quarter, the fill on top */
 html.is-loading .c-theme-toggle--float,html.is-transitioning .c-theme-toggle--float,html.is-menu-open .c-theme-toggle--float{opacity:0;visibility:hidden}
 /* phones: the cookie banner spans the width at the bottom; out of its way while it shows */
 @media (max-width:639px){ html.show--consent .c-theme-toggle--float{opacity:0;visibility:hidden} }

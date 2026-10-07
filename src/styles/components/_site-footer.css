@@ -29,6 +29,18 @@
 .c-site-footer__legal::before{content:"";position:absolute;inset:-14px -8px} /* a 44px tap area */
 .c-site-footer__legal:hover,.c-site-footer__legal:focus-visible{color:var(--fg)}
 
+/* the hint at the hidden theme (Footer.astro, global/theme.js): after the location, in the row's own quiet voice; the
+   key (R, or the toggle's half-filled square) on a small tile like the toggle's. Keyboard + fine pointer: "press R";
+   touch: "tap the square three times"; in the hidden theme: "You found it." */
+.c-site-footer__egg{margin:0;color:var(--subtle)}
+.c-site-footer__egg > *{display:none;align-items:center;gap:6px}
+.c-site-footer__egg-tap{display:inline-flex}
+@media (hover:hover) and (pointer:fine){ .c-site-footer__egg-tap{display:none} .c-site-footer__egg-keys{display:inline-flex} }
+:root[data-theme="wild"] .c-site-footer__egg > *{display:none}
+:root[data-theme="wild"] .c-site-footer__egg > .c-site-footer__egg-found{display:inline-flex;color:var(--accent)}
+.c-site-footer__key{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;background:var(--panel);color:var(--fg);font:inherit;font-weight:500}
+.c-site-footer__key-square{position:relative;width:9px;height:9px;border:1px solid currentColor;overflow:hidden}
+.c-site-footer__key-square::before{content:"";position:absolute;inset:0 50% 0 0;background:currentColor}
 
 /* tablet + phone: two tidy columns (company | location, privacy | cookies) */
 @media (max-width:1023px){
@@ -42,6 +54,7 @@
     padding-block:var(--space-m) calc(var(--space-m) + env(safe-area-inset-bottom,0px))}
   .c-site-footer__bottom > *{grid-column:auto} /* not the full width .o-grid > * gives them */
   .c-site-footer__legal:not(.c-site-footer__legal--cookies){margin-left:0}
+  .c-site-footer__egg{grid-column:1 / -1;order:1;margin-top:var(--space-2xs)} /* phones: the hint on its own row, under the others */
 }
 /* desktop: room at the end of the bottom row for the fixed light/dark toggle (ui/ThemeToggle.astro, float) */
 @media (min-width:1024px){ .c-site-footer__bottom{padding-right:calc(var(--margin) + 36px + var(--space-m))} }

@@ -23,7 +23,9 @@ export const nav = {
     { label: 'Contact', href: '/contact' },
   ],
   // light/dark toggle (footer bottom row + mobile menu foot): worded for what a click does
-  theme: { dark: 'Dark mode', light: 'Light mode' },
+  theme: { dark: 'Dark mode', light: 'Light mode', back: 'Back to normal' },
+  // the hidden third theme (global/theme.js): the hint in the footer's bottom row, per kind of device, and once found
+  wild: { hintKeys: 'Psst… press', hintTap: 'Psst… tap', hintTapAfter: 'three times', found: 'You found it.' },
 };
 
 export const hero = {

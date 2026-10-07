@@ -33,8 +33,8 @@ const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':ne
     <title>{title}</title>
     {live && <script is:inline set:html={consentDefaults} />}
     {live && <script is:inline type="text/plain" data-category="analytics" set:html={gtmSnippet} />}
-    <!-- theme (scripts/global/theme.js): light, or dark if that's the saved choice, set before the first paint -->
-    <script is:inline>document.documentElement.classList.remove('no-js');try{if(localStorage.getItem('mode')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+    <!-- theme (scripts/global/theme.js): light, or dark if that's the saved choice, or the hidden "wild" one if it was found in this visit, set before the first paint -->
+    <script is:inline>document.documentElement.classList.remove('no-js');try{if(sessionStorage.getItem('wild'))document.documentElement.dataset.theme='wild';else if(localStorage.getItem('mode')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
     <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless);
          once per visit (a reload or a link opened in the same tab later skips it) -->
     <script is:inline>let seen;try{seen=sessionStorage.getItem('loaded')}catch(e){}if(!seen&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');setTimeout(()=>document.documentElement.classList.remove('is-loading'),8000)}</script>

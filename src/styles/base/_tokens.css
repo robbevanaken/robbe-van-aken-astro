@@ -93,6 +93,27 @@
   color-scheme:light;
 }
 
+/* the hidden third theme (an easter egg, global/theme.js: press R, or the toggle three times quickly; this visit only):
+   risograph inks, loud but one family. Ultramarine paper, yellow type, pink for the quieter text, the orange bands go
+   fluorescent green, the R prints in orange and lilac (engine.js G / FINE / PALS .wild). Still readable: yellow on the
+   blue 7.9:1, the pink 5.2:1. */
+:root[data-theme="wild"]{
+  --bg:#2323c8;
+  --fg:#ffe94a;
+  --muted:#ffa3d8;
+  --subtle:#b9b4ff;
+  --line:#4646dc;
+  --line-strong:#8a86ff;
+  --accent:#3cf08a;
+  --card:#3a3ae0;
+  --on-fg:#2323c8;
+  --surface:#2a2ad2;
+  --paper:#ffe94a;
+  --panel:#3434dc;
+  --logo-filter:brightness(0) invert(1) sepia(1) saturate(6) hue-rotate(5deg); /* the white logos printed in the yellow */
+  color-scheme:dark;
+}
+
 /* tablet: 6 columns */
 @media (max-width:1023px){
   :root{ --cols:6; }

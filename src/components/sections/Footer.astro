@@ -4,7 +4,7 @@
 // on subpages it has its own R (a second canvas scoped to [data-site-footer]).
 import Marquee from '../ui/Marquee.astro';
 import Socials from '../ui/Socials.astro';
-import { footer, meta } from '../../data/site';
+import { footer, meta, nav } from '../../data/site';
 ---
 <footer class="c-site-footer" id="contact" data-stage="4" data-site-footer>
   <Marquee text={footer.marquee} icon="together" />
@@ -19,6 +19,13 @@ import { footer, meta } from '../../data/site';
   <div class="c-site-footer__bottom o-container o-grid">
     <span class="c-site-footer__company">© {new Date().getFullYear()} {footer.company}</span>
     <span class="c-site-footer__location">{footer.location}</span>
+    <!-- the hint at the hidden theme (global/theme.js): press R with a keyboard and a fine pointer, three taps on the
+         toggle's square on touch; once found, a nod -->
+    <p class="c-site-footer__egg" aria-hidden="true">
+      <span class="c-site-footer__egg-keys">{nav.wild.hintKeys} <kbd class="c-site-footer__key">R</kbd></span>
+      <span class="c-site-footer__egg-tap">{nav.wild.hintTap} <span class="c-site-footer__key"><i class="c-site-footer__key-square"></i></span> {nav.wild.hintTapAfter}</span>
+      <span class="c-site-footer__egg-found">{nav.wild.found}</span>
+    </p>
     {footer.legal.map((l) => <a class="c-site-footer__legal" href={l.href}>{l.label}</a>)}
     <button class="c-site-footer__legal c-site-footer__legal--cookies" type="button" data-cookie-settings>{footer.cookieSettings}</button>
   </div>
