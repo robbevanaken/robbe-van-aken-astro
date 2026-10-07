@@ -4,6 +4,7 @@
 .c-pitch{padding-top:var(--space-section)}
 .c-pitch__r-anchor{grid-column:1 / span 6;grid-row:1;height:clamp(420px,92vh,1100px);align-self:center}
 .c-pitch__body{grid-column:7 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-content:start}
+.c-pitch__body:not(:has(.c-pitch__portrait)){align-self:center} /* no portrait yet (builds leave the placeholder out): the quote level with the R */
 .c-pitch__quote.c-pitch__quote{grid-column:1 / -1;font-size:clamp(26px,2.7778vw,52px);line-height:1.1;letter-spacing:-.025em} /* a statement: 40 @1440, between the lead and the h2, set tight; doubled: .u-text-lead is imported later */
 .c-pitch__arrow{color:var(--accent);width:.75em;height:.625em;margin-right:.5em;vertical-align:.02em}
 .c-pitch__portrait{grid-column:1 / span 3;width:82%;margin:var(--space-xl) 0 0;aspect-ratio:315 / 372;background:var(--panel);color:var(--fg);display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}

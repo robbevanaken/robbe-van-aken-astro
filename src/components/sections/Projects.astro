@@ -1,7 +1,8 @@
 ---
 // Featured projects on home: the first `work.featured` projects on the globe (sections/ProjectGlobe.astro), the intro
 // text on the left next to the first project.
-// The small R stays at the top of the screen while they pass (stage 2 from the sticky head down to the end marker).
+// The small R stays at the top of the screen while they pass (stage 2 from the sticky head down to the end marker), then
+// scrolls away with the section's end; "View all projects" follows outside it, so the R never lands on it.
 // Styles: styles/components/_projects-intro.css + _featured-projects.css
 import Button from '../ui/Button.astro';
 import ProjectGlobe from './ProjectGlobe.astro';
@@ -14,7 +15,8 @@ import { projects } from '../../data/projects';
     <h2 class="c-projects-intro__title u-text-h2">{work.title}</h2>
     <p class="c-projects-intro__text u-text-body-l u-text-muted" data-highlight-text>{work.intro}</p>
   </div>
-  <div class="c-featured-projects__foot o-container o-grid"><Button href={work.cta.href} class="c-featured-projects__all">{work.cta.label}</Button></div>
-  <!-- the R stays in stage 2 down to here -->
+  <!-- the R stays in stage 2 down to here; the section (and the sticky R with it) ends a step below the last project,
+       so the R scrolls away before the button and the services title come up to it -->
   <div class="c-featured-projects__end" data-stage="2" aria-hidden="true"></div>
 </ProjectGlobe>
+<div class="c-featured-projects__foot o-container o-grid"><Button href={work.cta.href} class="c-featured-projects__all">{work.cta.label}</Button></div>

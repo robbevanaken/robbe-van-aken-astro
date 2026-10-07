@@ -5,8 +5,9 @@
 /* home: the pitch ends on its R anchor (with room around the R in it), so a smaller step to the head (the small R);
    below 1024px the pitch ends on the portrait: the full section spacing */
 .c-featured-projects:has(.c-projects-intro){padding-top:calc(var(--space-xl) * 1.5)}
-/* home: the button and the services follow on their own spacing */
-.c-featured-projects:has(.c-featured-projects__foot){padding-bottom:0}
+/* home: the section ends a step below the last project (room for the small R, which scrolls away with its end), then the
+   button and the services follow on their own spacing */
+.c-featured-projects:has(.c-featured-projects__end){padding-bottom:var(--space-xl)}
 .c-featured-projects__head{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);z-index:2;display:flex;justify-content:center;height:56px;pointer-events:none}
 .c-featured-projects__r{width:56px;height:56px}
 
@@ -64,9 +65,10 @@
 .c-featured-projects__caption-title{margin:0;font-weight:400;font-size:clamp(19px,1.6667vw,28px);line-height:1.2;letter-spacing:-.01em;color:var(--fg)} /* 24 @1440 */
 
 
-/* "View all projects" sits exactly in the middle between the last project and the services title: the same room above
-   and below (the services section adds none on top, styles/components/_services.css) */
-.c-featured-projects__foot{--mid:calc(var(--space-section) * 1.25);margin-block:var(--mid)}
+/* "View all projects" (after the section) sits exactly in the middle between the last project and the services title:
+   the same room above (the section's padding + its margin) and below (the services section adds none on top,
+   styles/components/_services.css) */
+.c-featured-projects__foot{--mid:calc(var(--space-section) * 1.25);margin-block:calc(var(--mid) - var(--space-xl)) var(--mid)}
 .c-featured-projects__all{grid-column:1 / -1;justify-self:center}
 .c-featured-projects__end{height:1px}
 

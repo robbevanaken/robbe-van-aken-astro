@@ -8,10 +8,11 @@ import { pitch } from '../../data/site';
   <div class="c-pitch__r-anchor" id="a-pitch"></div>
   <div class="c-pitch__body">
     <p class="c-pitch__quote u-text-lead" data-highlight-text><Icon name="arrow" class="c-pitch__arrow" />{pitch.quote}</p>
-    <figure class="c-pitch__portrait">
+    <!-- the placeholder only shows in `npm run dev`: a build without the portrait leaves it out -->
+    {(pitch.portrait.image || import.meta.env.DEV) && <figure class="c-pitch__portrait">
       {pitch.portrait.image
         ? <img class="c-pitch__portrait-img" src={pitch.portrait.image} alt={pitch.portrait.alt} loading="lazy" decoding="async" />
         : <figcaption class="u-text-label">{pitch.portrait.placeholder}</figcaption>}
-    </figure>
+    </figure>}
   </div>
 </section>

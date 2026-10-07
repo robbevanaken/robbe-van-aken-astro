@@ -32,7 +32,8 @@ export const hero = {
     { text: 'Digital craftsman', muted: true },
     { text: 'Based in Ghent', muted: false },
   ],
-  intro: "An independent studio for full-cycle product development. Pairing a designer's eye with a developer's craft.",
+  // \u2011: a non-breaking hyphen, so "full-cycle" never splits over two lines
+  intro: "An independent studio for full\u2011cycle product development. Pairing a designer's eye with a developer's craft.",
   cta: { label: 'Get in touch', href: '/contact' },
 };
 
