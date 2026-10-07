@@ -4,3 +4,9 @@
 .c-projects-intro__text{max-width:24em}
 
 @media (max-width:1023px){ .c-projects-intro{grid-column:1 / -1} }
+/* wide screens: the intro text in four columns (cols 1–4), the title over all five */
+@media (min-width:1280px){
+  .c-projects-intro{grid-template-columns:subgrid}
+  .c-projects-intro > *{grid-column:1 / -1}
+  .c-projects-intro .c-projects-intro__text{grid-column:1 / span 4;max-width:none}
+}

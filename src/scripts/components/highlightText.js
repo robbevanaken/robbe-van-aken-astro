@@ -1,5 +1,5 @@
 // Highlight text on scroll (Osmo Supply "Highlight Text on Scroll"), kept as delivered.
-// Only changes: npm imports instead of CDN scripts, one export instead of DOMContentLoaded, nothing runs with prefers-reduced-motion,
+// Only changes: npm imports instead of CDN scripts, fixed start and end values (fromTo opacity, see onSplit), one export instead of DOMContentLoaded, nothing runs with prefers-reduced-motion,
 // it takes a root and returns a cleanup function (page swaps), and accessibility: SplitText's default puts an aria-label on
 // the element, which isn't allowed on a <p>, so the split text is hidden from screen readers instead (aria: "hidden") and
 // a visually hidden copy of the text sits right before it.
@@ -46,8 +46,11 @@ function initHighlightText(root){
               end: scrollEnd,
             }
           })
-          tl.from(self.chars,{
-            autoAlpha: fadedValue,
+          // fromTo with fixed values (the delivered version: from autoAlpha, ending on whatever the letters were): set up
+          // while a page transition hides the text (visibility:hidden on a parent), GSAP read that end as 0, and every
+          // letter scrolled past faded out instead of in. Opacity only, no visibility.
+          tl.fromTo(self.chars,{ opacity: fadedValue },{
+            opacity: 1,
             stagger: staggerValue,
             ease: "linear"
           })
