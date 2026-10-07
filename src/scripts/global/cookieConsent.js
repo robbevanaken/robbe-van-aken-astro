@@ -3,7 +3,13 @@
 // production only) is a <script type="text/plain" data-category="analytics">, so it only runs after consent.
 // The footer button [data-cookie-settings] reopens the preferences (delegated, so it keeps working after page swaps).
 // The library and its CSS load on their own, once the browser is idle (they're not needed for the first paint).
+import { cookies } from '../../data/cookies';
 let lib = null;
+// a category's cookies and storage (data/cookies.ts, the same list as the privacy notice) as the library's table
+const table = (items) => ({
+  headers: { name: 'Name', text: 'What for', kept: 'Kept' },
+  body: items.map(({ name, text, kept }) => ({ name, text, kept })),
+});
 // its CSS: a copy in public/vendor (CSS is inlined in the pages, which a lazily imported stylesheet can't be); update the
 // copy with the library (node_modules/vanilla-cookieconsent/dist/cookieconsent.css)
 const css = () => new Promise((resolve) => {
@@ -40,7 +46,7 @@ function run(CookieConsent) {
     categories: {
       necessary: { enabled: true, readOnly: true },
       // Google Tag Manager (production only, layouts/Base.astro); its cookies are cleared when analytics is switched off
-      analytics: { autoClear: { cookies: [{ name: /^_ga/ }, { name: '_gid' }] } },
+      analytics: { autoClear: { cookies: [{ name: /^_ga/ }] } }, // GA4 sets _ga and _ga_<id> (data/cookies.ts)
     },
     language: {
       default: 'en',
@@ -62,8 +68,8 @@ function run(CookieConsent) {
             closeIconLabel: 'Close',
             sections: [
               { description: 'Choose which cookies you allow. Necessary cookies are always on because the site needs them.' },
-              { title: 'Necessary', description: 'Needed for the site to work, for example to remember your cookie choice.', linkedCategory: 'necessary' },
-              { title: 'Analytics', description: 'Help me understand how visitors use the site. Only set when you allow it.', linkedCategory: 'analytics' },
+              { title: 'Necessary', description: 'Needed for the site to work: your cookie choice, your theme and whether the opening animation has played. Nothing here is used to track you.', linkedCategory: 'necessary', cookieTable: table(cookies.necessary) },
+              { title: 'Analytics', description: 'Google Analytics, loaded through Google Tag Manager: shows me how the site is used (pages visited, rough location, device), never who you are. Only set when you allow it.', linkedCategory: 'analytics', cookieTable: table(cookies.analytics) },
               { title: 'More information', description: 'Read the <a href="/privacy">privacy notice</a> or mail me with any questions.' },
             ],
           },

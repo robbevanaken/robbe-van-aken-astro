@@ -73,3 +73,10 @@ html #cc-main .cm__btn:hover,html #cc-main .pm__btn:hover,html #cc-main .cc--ani
 html #cc-main a,html #cc-main .cc__link{text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px;background:none}
 html #cc-main a,html #cc-main .cc__link{transition:color var(--hover-dur) var(--ease-punch),text-decoration-color var(--hover-dur) var(--ease-punch)}
 html #cc-main a:hover,html #cc-main .cc__link:hover{color:var(--accent);text-decoration-color:var(--accent)}
+
+/* the cookie tables in the preferences (one per category, data/cookies.ts): room for "Kept", so "2 years" stays on one
+   line; below 640px the library stacks each row (label: value) */
+@media (min-width:640px){
+  #cc-main .pm__table-th:last-child,#cc-main .pm__table-td:last-child{width:9.5em}
+  #cc-main .pm__table-td:first-child{white-space:nowrap}
+}

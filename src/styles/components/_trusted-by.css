@@ -1,11 +1,12 @@
-/* Client logos, 4 cells of 3 columns. Reveal (global/reveal.js adds .is-in): the corners start around the logo and
+/* Client logos, one row of cells: 12 / count columns each (--span, TrustedBy.astro; 4 logos: 3 columns, 6: 2). Reveal (global/reveal.js adds .is-in): the corners start around the logo and
    move apart to the cell edges, then the logo fades in. */
 .c-trusted-by{padding-top:var(--space-section)}
 .c-trusted-by__label{text-align:center;color:var(--muted);margin-bottom:var(--space-l)}
 .c-trusted-by__viewport{display:contents} /* phones: the band's window */
 .c-trusted-by__list{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;row-gap:var(--gutter)} /* full width set here: the viewport in between (display:contents) hides it from .o-grid > * */
 .c-trusted-by__item--copy{display:none} /* phones only: the second half of the endless band */
-.c-trusted-by__item{grid-column:span 3}
+.c-trusted-by__item{grid-column:span var(--span,3)}
+@media (max-width:1023px){ .c-trusted-by__item{grid-column:span var(--span-t,3)} } /* tablet: 2 or 3 per row */
 .c-trusted-by__cell{
   position:relative;display:grid;place-items:center;height:clamp(110px,11.1111vw,200px);text-decoration:none;
   container-type:size;

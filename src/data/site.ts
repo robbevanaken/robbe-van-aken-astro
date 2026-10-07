@@ -32,8 +32,7 @@ export const hero = {
     { text: 'Digital craftsman', muted: true },
     { text: 'Based in Ghent', muted: false },
   ],
-  // \u2011: a non-breaking hyphen, so "full-cycle" never splits over two lines
-  intro: "An independent studio for full\u2011cycle product development. Pairing a designer's eye with a developer's craft.",
+  intro: "Freelance product development, start to finish and well after launch. Pairing a designer's eye with a developer's craft.",
   cta: { label: 'Get in touch', href: '/contact' },
 };
 
@@ -82,7 +81,7 @@ export const approach = {
 export const statement = [
   { big: 'Built to last,', small: 'not just to launch', muted: true },
   { lead: 'made with', big: 'care' },
-  { big: 'Ready', small: 'when you are.' },
+  { big: 'Yours', small: 'to keep.' }, // not a call to action: the footer's band and title right after it are
 ];
 
 export const footer = {

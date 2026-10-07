@@ -8,12 +8,15 @@ import { clients } from '../../data/clients';
 // each logo's own width / height (from its SVG), so the browser reserves its box before it loads
 import fs from 'node:fs';
 const size = (logo: string) => { const m = fs.readFileSync(`public${logo}`, 'utf8').match(/width="([\d.]+)"\s+height="([\d.]+)"/); return m ? { width: +m[1], height: +m[2] } : {}; };
+// one row on desktop: each logo gets 12 / count columns (4 logos: 3 each, 6: 2 each); tablet: 2 or 3 per row
+const span = 12 % clients.length === 0 ? 12 / clients.length : 3;
+const spanTablet = clients.length % 3 === 0 ? 2 : 3;
 const rows = [...clients.map((c, i) => ({ c, i, copy: false })), ...clients.map((c, i) => ({ c, i, copy: true }))];
 ---
 <section class="c-trusted-by o-container o-grid" aria-labelledby="trusted-label">
   <p class="c-trusted-by__label u-text-label" id="trusted-label">{trustedBy.label}</p>
   <div class="c-trusted-by__viewport">
-    <ul class="c-trusted-by__list" data-reveal>
+    <ul class="c-trusted-by__list" style={`--span:${span};--span-t:${spanTablet}`} data-reveal>
       {rows.map(({ c, i, copy }) => {
         const Tag = c.url ? 'a' : 'div';
         return (

@@ -26,22 +26,19 @@
 .c-scroll-next__count{font-variant-numeric:tabular-nums}
 .c-scroll-next__line{position:relative;display:block;width:40px;height:1px;background:rgb(255 255 255 / .3)}
 .c-scroll-next__fill{position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:left}
-/* phones: the visual starts small and only its top ~60px are on screen, so the labels move out of it, just above it,
-   in the page's own colours (no dark labels), spread over the visual's width: "Next project" with the title under it
-   on the left (a long title wraps), the counter on the right, on the title's line */
+/* phones: the labels on the visual too, as on desktop (a little tighter: the inset of the project cards' labels on
+   phones); "Next project" and a long title cut off with an ellipsis, the counter's line shorter */
 @media (max-width:639px){
-  .c-scroll-next{margin-top:calc(var(--space-xl) + 44px - var(--lead,0px))} /* room for the labels above the visual: the button above stays clear (and unfaded) until the scroll starts */
-  .c-scroll-next__hud{inset:auto 0 100% 0;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-bottom:8px}
-  .c-scroll-next__tag,.c-scroll-next__tag--count{position:static;padding:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;color:var(--fg)}
-  .c-scroll-next__tag:not(.c-scroll-next__tag--count){display:grid;justify-items:start;gap:0;min-width:0}
-  .c-scroll-next__tag:not(.c-scroll-next__tag--count) > *{max-width:100%;overflow:hidden;text-overflow:ellipsis} /* a long title: one line, cut off with an ellipsis (more of it shows as the visual grows) */
-  .c-scroll-next__tag--count{flex:none;gap:8px}
-  .c-scroll-next__tag-label{color:var(--muted)}
-  .c-scroll-next__line{width:24px;background:var(--line)}
-  .c-scroll-next__fill{background:currentColor}
+  .c-scroll-next__tag{top:var(--space-xs);left:var(--space-xs);gap:8px;padding:5px 8px;max-width:calc(100% - 2 * var(--space-xs) - 76px)}
+  .c-scroll-next__tag--count{left:auto;right:var(--space-xs);max-width:none}
+  .c-scroll-next__tag-label{flex:none}
+  .c-scroll-next__tag-title{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .c-scroll-next__line{width:20px}
 }
 /* the visual lifted out of the page during the swap to the next project (scrollNext.js handOff) */
 .c-scroll-next__bg--carried{position:fixed;z-index:25;pointer-events:none}
 
 @media (max-width:1023px){ .c-scroll-next__slot{grid-column:2 / span 4} }
-@media (max-width:639px){ .c-scroll-next__slot{grid-column:2 / span 2} }
+/* phones: the full width less a little (wide enough for both labels on it; it still grows into the next page's box),
+   about 65% above the fold here too (35% of its own height: 82% × 9/16 × 35% of the row's width) */
+@media (max-width:639px){ .c-scroll-next__slot{grid-column:1 / -1;justify-self:center;width:82%;margin-bottom:-16.14%} }

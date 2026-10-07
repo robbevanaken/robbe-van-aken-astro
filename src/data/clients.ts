@@ -1,4 +1,4 @@
-// "Trusted by" logos. Shown 4 per row, each in a 3-column cell.
+// "Trusted by" logos. Desktop: one row, each in a cell of 12 / count columns (4 or 6 logos fit); phones: an endless band.
 // Logos live in /public/clients/ (white SVG). `width` is the logo width in px at 1440, it scales with the viewport.
 export interface Client {
   name: string;

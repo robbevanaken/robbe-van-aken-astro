@@ -1,5 +1,6 @@
 // Copy for the subpages. Each page is empty for now: a label, a title and an intro.
 // Project detail pages (/work/<slug>) take their copy from projects.ts.
+import { cookies } from './cookies';
 
 export const workPage = {
   title: 'The project archive',
@@ -98,12 +99,7 @@ export const privacyPage = {
     { title: 'Cookies and storage',
       blocks: [
         { p: 'This site stores as little as it can in your browser. There are no advertising cookies.' },
-        { rows: [
-          { name: 'cc_cookie', text: 'Remembers your cookie choice, so the banner does not come back on every page.', kept: '6 months' },
-          { name: 'mode', text: 'Remembers whether you chose the light or the dark theme (local storage, never sent to the server).', kept: 'Until you clear it' },
-          { name: '_ga, _ga_*', text: 'Google Analytics: tells visits apart, so I can see how the site is used. Only set when you allow analytics.', kept: '2 years' },
-          { name: 'loaded', text: 'Notes that the opening animation has played, so it only plays once per visit (session storage).', kept: 'Until you close the tab' },
-        ] },
+        { rows: [...cookies.necessary, ...cookies.analytics] }, // the same list as the cookie preferences (cookies.ts)
         { p: 'With your permission, this site uses Google Tag Manager to load Google Analytics, which tells me how the site is used (pages visited, rough location, device), never who you are. It only runs after you allow analytics. You can change your choice at any time in the <button type="button" data-cookie-settings>cookie settings</button>.' },
         { p: 'The fonts are served from this site itself, so no request goes to Google Fonts or any other font service. Links to Instagram and LinkedIn are plain links: those sites only see you once you click through.' },
       ] },

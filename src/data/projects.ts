@@ -58,9 +58,9 @@ export const projects: Project[] = [
     credit: { label: 'Design with', value: 'Nick Slemsbrouck, Studio Uruku' },
     story: {
       intro: 'Ghent needs more affordable homes than the city can build alone. The housing pact brings owners, developers and residents to the table, and it needed a voice of its own to do that.',
-      challenge: 'A lot of information, many audiences and a subject that can feel heavy. The pact needed an identity that is approachable without losing any of the substance, and a site the city\'s team can keep up to date themselves.',
-      approach: 'The brand came first, made together with Nick Slemsbrouck of Studio Uruku, then the site grew out of it: a clearly structured Craft CMS setup with a bold, typographic design, and news, a timeline and video as building blocks the team can combine freely.',
-      result: 'An identity that feels like a campaign and a site that works like a reference: easy to read on every screen, quick to update, and built to grow with the pact.',
+      challenge: 'There was no imagery to work with, and the city chose not to use photos on purpose: glossy pictures of homes would make the pact look like a sales pitch, not a shared effort. Add a lot of information, many audiences and a subject that can feel heavy, and the design had to carry all of it without a single picture.',
+      approach: 'So the identity does the work photos usually do. The brand came first, made together with Nick Slemsbrouck of Studio Uruku: bold type, warm pale colours and loose outlined shapes that give every page something to look at. The site grew out of it: a clearly structured Craft CMS setup, with news, a timeline and video as building blocks the city\'s team can combine and keep up to date themselves.',
+      result: 'An identity that feels like a campaign, not an advert, and a site that works like a reference: easy to read on every screen, quick to update, and built to grow with the pact.',
     },
     brand: {
       text: 'A house drawn as a label: one bold roof over the words, simple enough for a sticker, a building site fence or a favicon. Warm, pale colours keep a serious subject friendly, with black type that holds its own next to them.',

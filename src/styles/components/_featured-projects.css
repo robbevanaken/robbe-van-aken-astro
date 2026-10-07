@@ -19,7 +19,7 @@
 /* home (spread): staggered like /work, each in a repeating pattern of three: its own width, aspect ratio and offset */
 .c-featured-projects--spread .c-featured-projects__item:nth-child(3n+1){grid-column:8 / span 5;--ratio:.98;margin-top:max(10vw,calc(var(--space-xl) * 1.2))}
 .c-featured-projects--spread .c-featured-projects__item:nth-child(3n+2){grid-column:1 / span 7;--ratio:1.5;margin-top:max(8vw,var(--space-xl))}
-.c-featured-projects--spread .c-featured-projects__item:nth-child(3n+3){grid-column:7 / span 4;--ratio:.86;margin-top:max(6vw,var(--space-xl))}
+.c-featured-projects--spread .c-featured-projects__item:nth-child(3n+3){grid-column:8 / span 4;--ratio:.86;margin-top:max(6vw,var(--space-xl))}
 .c-featured-projects--spread .c-featured-projects__item:first-child{margin-top:0}
 /* one row each (grid-row inline): every next project starts a little before the previous one ends (not more: bent
    towards you, a card's near edge grows) */
