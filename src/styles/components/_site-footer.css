@@ -57,5 +57,5 @@
   .c-site-footer__egg{grid-column:1 / -1;order:1;margin-top:var(--space-2xs)} /* phones: the hint on its own row, under the others */
 }
 /* desktop: room at the end of the bottom row for the fixed light/dark toggle (ui/ThemeToggle.astro, float) */
-@media (min-width:1024px){ .c-site-footer__bottom{padding-right:calc(var(--margin) + 36px + var(--space-m))} }
-@media (max-width:1023px){ .c-site-footer__bottom{padding-bottom:calc(36px + var(--space-m))} } /* phones/tablet: room under the row for it */
+@media (min-width:1024px){ .c-site-footer__bottom{padding-right:calc(var(--margin) + 36px + var(--space-m));padding-left:calc(var(--margin) + 36px + var(--space-m));padding-bottom:calc(var(--float-bottom) + 18px - .65em)} } /* the row level with the tiles' middle (36px tiles on --float-bottom; a 1.3 line); room at both ends for the tiles (the theme toggle, the album of the week) */
+@media (max-width:1023px){ .c-site-footer__bottom{padding-bottom:calc(var(--float-bottom) + 36px + var(--space-s))} } /* phones/tablet: room under the row for it */

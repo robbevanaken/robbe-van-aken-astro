@@ -1,0 +1,56 @@
+/* Album of the week (ui/Music.astro): fixed bottom left, its left edge on the page margin, on the theme toggle's line (--float-bottom).
+   Closed: a 36px quiet tile (--panel) with a record on it (22px: black vinyl, the cover as a small label). Open (.is-open:
+   hover, keyboard focus, a first tap, the peek; scripts/global/music.js): the tile grows up and to the right (from its
+   bottom left corner, punch ease) into a small deck; the record grows to 64px, slides to the right and spins (33⅓ rpm:
+   1.8s a turn), the cover is uncovered on the left from the bottom up while it settles from 1.14× (as the images on a
+   project page: _project-case.css), and beside it, like a walkman's display: "Album of the week" with a little
+   equalizer, the album (with the brand arrow) and the artist. Hidden during the loader, page swaps, with the menu open
+   and while the cookie banner shows (bottom left on desktop too). Reduced motion: it opens, nothing spins or bounces. */
+.c-music{--reveal-ease:cubic-bezier(.16,1,.3,1);--s:22px;--x:7px;--y:7px;--out:0px;
+  position:fixed;left:var(--margin);bottom:var(--float-bottom);z-index:36; /* above the R canvases (35) */
+  display:block;width:36px;height:36px;background:var(--panel);color:var(--fg);text-decoration:none;overflow:hidden;
+  transition:width .7s var(--ease-punch),height .7s var(--ease-punch),opacity .4s var(--ease-out),visibility .4s}
+.c-music::before{content:"";position:absolute;inset:-4px} /* a 44px tap area (closed) */
+.c-music.is-open{--s:64px;--x:12px;--y:12px;--out:34px;width:296px;height:88px}
+
+/* the deck: the cover in front (on the left), the record behind it, sliding out to the right */
+.c-music__deck{position:absolute;left:var(--x);bottom:var(--y);width:var(--s);height:var(--s);
+  transition:left .7s var(--ease-punch),bottom .7s var(--ease-punch),width .7s var(--ease-punch),height .7s var(--ease-punch)}
+.c-music__sleeve{position:absolute;inset:0;z-index:1;overflow:hidden;box-shadow:2px 0 6px rgb(0 0 0 / .18);
+  clip-path:inset(100% 0 0 0);transition:clip-path .45s var(--reveal-ease)}
+.c-music__cover{display:block;width:100%;height:100%;object-fit:cover;scale:1.14;transition:scale .45s var(--reveal-ease)}
+.c-music.is-open .c-music__sleeve{clip-path:inset(0 0 0 0);transition:clip-path .7s var(--reveal-ease) .06s}
+.c-music.is-open .c-music__cover{scale:1;transition:scale 1s var(--reveal-ease) .06s}
+.c-music__vinyl{position:absolute;inset:0;border-radius:50%;translate:var(--out) 0;transition:translate .8s var(--ease-punch)}
+/* the light on the record: a still sheen and a thin rim (it reads on the dark panel too), the grooves spin beneath it */
+.c-music__vinyl::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .14);
+  background:conic-gradient(from 20deg,transparent 0 8%,rgb(255 255 255 / .16) 13%,transparent 19% 58%,rgb(255 255 255 / .1) 63%,transparent 69%)}
+.c-music__disc{position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,transparent 0 31%,rgb(255 255 255 / .1) 31.5% 32.5%,transparent 33%),
+    repeating-radial-gradient(circle,#141110 0 1.2px,#1f1a18 1.2px 2.4px);
+  animation:c-music-spin 1.8s linear infinite;animation-play-state:paused}
+.c-music:hover .c-music__disc,.c-music.is-open .c-music__disc{animation-play-state:running} /* closed + hovered: it starts turning */
+/* the label: the cover, round, a hole in the middle */
+.c-music__label{position:absolute;inset:31%;border-radius:50%;background:var(--cover) center / cover}
+.c-music__label::after{content:"";position:absolute;inset:40%;border-radius:50%;background:var(--panel)}
+@keyframes c-music-spin{to{rotate:360deg}}
+
+/* the display, beside the record */
+.c-music__info{position:absolute;left:calc(12px + 64px + 34px + 14px);bottom:12px;display:grid;gap:2px;white-space:nowrap;
+  opacity:0;translate:-6px 0;transition:opacity .2s var(--ease-out),translate .3s var(--ease-out)}
+.c-music.is-open .c-music__info{opacity:1;translate:0 0;transition:opacity .4s var(--ease-out) .2s,translate .7s var(--ease-punch) .2s}
+.c-music__now{display:flex;align-items:center;gap:6px;color:var(--muted);margin-bottom:4px}
+.c-music__title{display:flex;align-items:center;gap:6px;font-size:var(--fs-ui)}
+.c-music__artist{color:var(--muted)}
+.c-music__arrow{width:10px;height:10px;rotate:-45deg} /* the brand arrow at 45°, as on the buttons */
+/* the equalizer: four bars bouncing out of step while the record plays */
+.c-music__eq{display:inline-flex;align-items:flex-end;gap:1.5px;height:9px}
+.c-music__eq i{display:block;width:2px;height:100%;background:var(--accent);transform-origin:bottom;scale:1 .3;animation:c-music-eq .9s ease-in-out infinite alternate;animation-play-state:paused}
+.c-music__eq i:nth-child(2){animation-duration:.6s;animation-delay:-.2s}
+.c-music__eq i:nth-child(3){animation-duration:.75s;animation-delay:-.5s}
+.c-music__eq i:nth-child(4){animation-duration:1.05s;animation-delay:-.35s}
+.c-music.is-open .c-music__eq i{animation-play-state:running}
+@keyframes c-music-eq{0%{scale:1 .25}50%{scale:1 1}100%{scale:1 .5}}
+
+html.is-loading .c-music,html.is-transitioning .c-music,html.is-menu-open .c-music,html.show--consent .c-music{opacity:0;visibility:hidden}
+@media (prefers-reduced-motion:reduce){ .c-music__disc,.c-music__eq i{animation:none} .c-music__cover{scale:1} }

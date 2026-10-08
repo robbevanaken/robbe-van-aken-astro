@@ -1,0 +1,31 @@
+---
+// Album of the week: a record, fixed bottom left (the theme toggle's mirror image, on the same line). Closed: a record
+// on a quiet tile. Open (hover, keyboard focus, a first tap on touch screens, and once by itself after the loader:
+// scripts/global/music.js): the tile opens up, the record grows, slides to the right and spins (33⅓ rpm, the cover as
+// its label), the album's cover is uncovered from the bottom up like the images on a project page, and beside it, like
+// a walkman's display, "Album of the week", a little equalizer, the album and the artist. It's one link: a click (on
+// touch: the second tap) opens the album in a new tab. Outside #swup (Base.astro), so it stays through page swaps.
+// Copy: music in src/data/site.ts; without a url it only renders in `npm run dev`. Styles: styles/components/_music.css
+import { getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import { music } from '../../data/site';
+const covers = import.meta.glob<{ default: ImageMetadata }>('/src/assets/music/*.{jpg,jpeg,png,webp}', { eager: true });
+const file = covers[`/src/assets/music/${music.cover}`]?.default;
+const show = !!file && (!!music.url || import.meta.env.DEV);
+// the cover shows at most 64 css px, the record's label less: 2× for sharp screens
+const cover = file ? (await getImage({ src: file, width: 160, height: 160, format: 'webp', quality: 80 })).src : '';
+---
+{show && (
+  <a class="c-music" href={music.url || '#'} target="_blank" rel="noopener" data-music style={`--cover:url(${cover})`}
+    aria-label={`${music.label}: ${music.title} by ${music.artist}, on ${music.service} (opens in a new tab)`}>
+    <span class="c-music__deck" aria-hidden="true">
+      <span class="c-music__vinyl"><span class="c-music__disc"><span class="c-music__label"></span></span></span>
+      <span class="c-music__sleeve"><img class="c-music__cover" src={cover} alt="" width="160" height="160" loading="lazy" decoding="async" /></span>
+    </span>
+    <span class="c-music__info u-text-label" aria-hidden="true">
+      <span class="c-music__now"><span class="c-music__eq"><i></i><i></i><i></i><i></i></span>{music.label}</span>
+      <span class="c-music__title">{music.title}<Icon name="arrow" class="c-music__arrow" /></span>
+      <span class="c-music__artist">{music.artist}</span>
+    </span>
+  </a>
+)}

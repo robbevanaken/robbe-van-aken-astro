@@ -19,10 +19,10 @@
   .c-hero-home__r-anchor{left:0;right:0;height:86%} /* a size smaller than the row, so the R's tail stays on screen */
   .c-hero-home__side{grid-column:1 / span 4;grid-row:3}
 }
-/* phones: exactly one screen (above the marquee); the title, R and intro centred vertically with the same room under the
+/* phones: exactly one screen (above the marquee); --hero-pad at least the fixed tiles (36px on --float-bottom) and room; the title, R and intro centred vertically with the same room under the
    header (its height: --nav-top + two lines of 12px + its bottom padding) as above the marquee; the R takes the rest */
 @media (max-width:639px){
-  .c-hero-home{--hero-pad:var(--space-l);height:auto;min-height:calc(100svh - var(--marquee-h));grid-template-rows:auto minmax(120px,1fr) auto;align-content:stretch;
+  .c-hero-home{--hero-pad:max(var(--space-l),calc(36px + 2 * var(--space-xs)));height:auto;min-height:calc(100svh - var(--marquee-h));grid-template-rows:auto minmax(120px,1fr) auto;align-content:stretch;
     padding-block:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 32px + var(--space-m) + var(--hero-pad)) var(--hero-pad)}
   /* centred: title, R, intro and button on one axis, like a cover */
   .c-hero-home__title,.c-hero-home__side{text-align:center}

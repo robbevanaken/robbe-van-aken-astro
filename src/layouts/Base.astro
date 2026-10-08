@@ -3,6 +3,7 @@
 import '../styles/main.css';
 import { meta, nav, socials } from '../data/site';
 import ThemeToggle from '../components/ui/ThemeToggle.astro';
+import Music from '../components/ui/Music.astro';
 import PageTransition from '../components/layout/PageTransition.astro';
 // noindex: pages search engines should skip (404)
 interface Props { title?: string; description?: string; noindex?: boolean }
@@ -71,6 +72,8 @@ const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':ne
     <PageTransition />
     <!-- the light/dark toggle, fixed bottom right on desktop (outside #swup: it stays through page swaps) -->
     <ThemeToggle float />
+    <!-- album of the week, fixed bottom left (outside #swup too) -->
+    <Music />
     <script>
       import '../scripts/main.js';
     </script>

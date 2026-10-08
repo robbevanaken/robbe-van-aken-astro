@@ -18,7 +18,7 @@
   .c-work-float__filter{grid-column:1 / -1;justify-self:start}
 }
 @media (max-width:639px){
-  .c-work-float{top:calc(100svh - var(--space-m) - env(safe-area-inset-bottom,0px))}
+  .c-work-float{top:calc(100svh - var(--float-bottom))} /* on the fixed tiles' line, between them */
   .c-work-float__filter{position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
   .c-work-float .c-filter__inner{top:auto;bottom:0;display:flex;flex-direction:column-reverse}
   .c-work-float .c-filter__icon{top:auto;bottom:0}

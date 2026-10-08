@@ -72,6 +72,9 @@
   --ease-punch:cubic-bezier(.19,1,.22,1);
   --hover-dur:.6s;
   --marquee-h:48px;
+  /* the line the fixed tiles sit on (the theme toggle bottom right, the album of the week bottom left, the phones'
+     filter on /work): just above the orange band at the bottom of the home hero, at every screen size */
+  --float-bottom:calc(env(safe-area-inset-bottom,0px) + var(--marquee-h) + var(--space-xs));
 
   color-scheme:dark;
 }

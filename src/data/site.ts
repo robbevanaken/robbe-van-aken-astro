@@ -28,6 +28,17 @@ export const nav = {
   wild: { hintKeys: 'Psst… press', hintTap: 'Psst… tap', hintTapAfter: 'three times', found: 'You found it.' },
 };
 
+// Album of the week: the record fixed bottom left (ui/Music.astro). A new week: change the album, the artist, the link
+// and the cover (a square image in src/assets/music/, ~600px). Without a url it only shows in `npm run dev`.
+export const music = {
+  label: 'Album of the week',
+  title: 'Soft Spot',
+  artist: 'Honningbarna',
+  cover: 'honningbarna-soft-spot.jpg', // in src/assets/music/
+  url: 'https://music.apple.com/no/album/soft-spot/1790405431',
+  service: 'Apple Music', // for screen readers: "… on Apple Music, opens in a new tab"
+};
+
 export const hero = {
   // Each entry is one line; `muted` lines are shown in the softer colour.
   title: [

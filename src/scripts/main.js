@@ -11,6 +11,7 @@ import { initSiteHeader } from './global/siteHeader.js';
 import { initReveal } from './global/reveal.js';
 import { initCookieConsent } from './global/cookieConsent.js';
 import { initTheme, syncThemeMeta } from './global/theme.js';
+import { initMusic } from './global/music.js';
 import { initDebugGrid } from './global/debugGrid.js';
 import { initPageTransitions } from './global/pageTransitions.js';
 import { initScrollNext } from './components/scrollNext.js';
@@ -82,6 +83,7 @@ function unmount() {
 }
 
 initTheme();
+initMusic();
 initSmoothScroll();
 // the cookie banner waits for the first-visit loader to finish (it would sit on top of it)
 if (document.documentElement.classList.contains('is-loading')) {
