@@ -33,7 +33,7 @@ export function initMusic() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const peek = () => {
     if (html.classList.contains('show--consent')) return; // the cookie banner is up (the record hides meanwhile)
-    if (matchMedia('(max-width: 639px)').matches && document.querySelector('[data-filter]')) return; // phones on /work: the fixed filter
+    if (matchMedia('(max-width: 639px)').matches) return; // phones: the record lives in the menu there (layout/Nav.astro)
     peeking = true; sync();
     peekTimer = setTimeout(() => { peeking = false; sync(); }, SHOW);
   };

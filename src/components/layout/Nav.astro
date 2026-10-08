@@ -3,6 +3,7 @@ import ProgressiveBlur from '../ui/ProgressiveBlur.astro';
 // Site header. Styles: styles/components/_site-header.css + _button-menu.css, behaviour: scripts/global/siteHeader.js
 // withR: subpages show the animated R centred in the header (it is the only R stage there).
 import Socials from '../ui/Socials.astro';
+import Music from '../ui/Music.astro';
 import { nav, meta } from '../../data/site';
 // the current path, without a trailing slash or the .html the build's file format gives it ('/contact.html')
 const here = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/').replace(/(.)\/$/, '$1');
@@ -41,6 +42,8 @@ const { withR = false } = Astro.props;
       ))}
     </ul>
     <div class="c-site-header__menu-foot">
+      <!-- album of the week (phones: here instead of fixed bottom left), opening as the menu comes in -->
+      <Music menu />
       <a class="c-site-header__menu-mail u-text-body-l" href={`mailto:${meta.email}`}>{meta.email}</a>
       <Socials class="c-site-header__menu-socials" />
     </div>

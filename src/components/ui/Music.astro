@@ -4,11 +4,15 @@
 // scripts/global/music.js): the tile opens up, the record grows, slides to the right and spins (33⅓ rpm, the cover as
 // its label) while the album's sleeve comes out from under it to the left, and beside it, like
 // a walkman's display, "Album of the week", a little equalizer, the album and the artist. It's one link: a click (on
-// touch: the second tap) opens the album in a new tab. Outside #swup (Base.astro), so it stays through page swaps.
+// touch: the second tap) opens the album in a new tab. Phones: not fixed, but in the menu (`menu`, layout/Nav.astro), opening
+// as the menu comes in. Outside #swup (Base.astro), so it stays through page swaps.
 // Copy: music in src/data/site.ts; without a url it only renders in `npm run dev`. Styles: styles/components/_music.css
 import { getImage } from 'astro:assets';
 import Icon from './Icon.astro';
 import { music } from '../../data/site';
+// menu: the copy in the phones' menu (layout/Nav.astro), opening with the menu itself; the fixed one hides on phones
+interface Props { menu?: boolean }
+const { menu = false } = Astro.props;
 const covers = import.meta.glob<{ default: ImageMetadata }>('/src/assets/music/*.{jpg,jpeg,png,webp}', { eager: true });
 const file = covers[`/src/assets/music/${music.cover}`]?.default;
 const show = !!file && (!!music.url || import.meta.env.DEV);
@@ -16,7 +20,7 @@ const show = !!file && (!!music.url || import.meta.env.DEV);
 const cover = file ? (await getImage({ src: file, width: 160, height: 160, format: 'webp', quality: 80 })).src : '';
 ---
 {show && (
-  <a class="c-music" href={music.url || '#'} target="_blank" rel="noopener" data-music style={`--cover:url(${cover})`}
+  <a class:list={['c-music', { 'c-music--menu': menu }]} href={music.url || '#'} target="_blank" rel="noopener" data-music={menu ? undefined : ''} style={`--cover:url(${cover})`}
     aria-label={`${music.label}: ${music.title} by ${music.artist}, on ${music.service} (opens in a new tab)`}>
     <span class="c-music__deck" aria-hidden="true">
       <span class="c-music__vinyl"><span class="c-music__disc"><span class="c-music__label"></span></span></span>
