@@ -29,7 +29,7 @@ const allFacts = [
 ].filter(Boolean) as { label: string; value: string }[];
 ---
 <Page title={project.title} description={project.description} footer={false}>
-  <PageIntro title={project.title} modifier="project" style={`--len:${project.title.length}`}>
+  <PageIntro title={project.title} modifier="project" frame style={`--len:${project.title.length}`}>
     <div class="c-page-intro__aside">
       <p class="c-page-intro__desc" data-page-intro-desc>{project.description}</p>
       <dl class="c-page-intro__facts">

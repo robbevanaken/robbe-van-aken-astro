@@ -13,7 +13,8 @@
    (cols 3–12). Beside the visual, on the left (cols 1–2): the description and the facts (service, year), hung below
    the intro (absolute: they take no room, the visual sets the height). Below 1024px the visual spans the width and
    still overlaps the title; the specs follow under it (a second copy, .c-page-intro__aside--below, in the page). */
-.c-page-intro--project{--fs:min(var(--fs-hero),calc((100vw - 2 * var(--margin)) / var(--len,10) * 1.7));position:relative;row-gap:0}
+.c-page-intro--project{--frame-pad:var(--space-m); /* the title frame's padding (_title-frame.css) */
+  --fs:min(var(--fs-hero),calc((100vw - 2 * var(--margin) - 2 * var(--frame-pad)) / var(--len,10) * 1.7));position:relative;row-gap:0}
 .c-page-intro--project .c-page-intro__title{grid-column:1 / -1;grid-row:1;font-size:var(--fs);line-height:1;letter-spacing:-.03em;white-space:nowrap}
 .c-page-intro__aside{position:absolute;grid-column:1 / span 2;grid-row:1;top:100%;left:0;width:100%; /* absolute in its grid area: cols 1–2, under the title's row */
   display:grid;gap:var(--space-m);padding-top:var(--space-xl)} /* level with the visual's top (_project-detail.css) */

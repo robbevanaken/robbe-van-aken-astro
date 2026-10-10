@@ -1,13 +1,18 @@
 ---
 // Top of a subpage: label, title and intro (label and intro optional; extra content in the slot).
-// Styles: styles/components/_page-intro.css. modifier: e.g. "project" (project detail: title + service).
+// Styles: styles/components/_page-intro.css. modifier: e.g. "project" (project detail: title + service). frame: the four
+// corner brackets around the title (project detail: the loader's frame, open, as the brand moment above the fold; they come
+// in as the page arrives, like the cards' brackets on hover: scripts/components/titleFrame.js).
 import Icon from '../ui/Icon.astro';
-interface Props { label?: string; title: string; intro?: string; modifier?: string; style?: string }
-const { label, title, intro, modifier, style } = Astro.props;
+import Corners from '../ui/Corners.astro';
+interface Props { label?: string; title: string; intro?: string; modifier?: string; style?: string; frame?: boolean }
+const { label, title, intro, modifier, style, frame = false } = Astro.props;
 ---
 <header class:list={['c-page-intro o-container o-grid', modifier && `c-page-intro--${modifier}`]} style={style} data-page-intro>
   {label && <p class="c-page-intro__label u-text-label"><Icon name="arrow" class="c-page-intro__arrow" /><span data-page-intro-label>{label}</span></p>}
-  <h1 class="c-page-intro__title u-text-display" data-page-intro-title>{title}</h1>
+  {frame
+    ? <h1 class="c-page-intro__title u-text-display"><span class="c-title-frame" data-title-frame><span data-page-intro-title>{title}</span><Corners /></span></h1>
+    : <h1 class="c-page-intro__title u-text-display" data-page-intro-title>{title}</h1>}
   {intro && <p class="c-page-intro__text u-text-body-l" data-page-intro-text>{intro}</p>}
   <slot />
 </header>

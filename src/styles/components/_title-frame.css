@@ -1,0 +1,8 @@
+/* The title frame (project detail: PageIntro `frame`; contact: ContactIntro): the four corner brackets (ui/Corners.astro),
+   open, from margin to margin around a page's big title, the title a step (--frame-pad) inside them: the brand moment
+   above the fold. They come in once the title shows (.is-in, scripts/components/titleFrame.js) as the buttons' and
+   project cards' brackets do on hover: fading in while sliding the last bit outwards; without JS they're simply there. */
+.c-title-frame{position:relative;display:block;padding:var(--frame-pad,var(--space-m));--corner-color:var(--fg);--corner-size:16px;
+  --corner-opacity:0;--pull-x:max(0px,calc(var(--gutter) - 10px));--pull-y:max(0px,calc(var(--gutter) - 10px));--corner-dur:var(--hover-dur);--corner-ease:var(--ease-punch)}
+.c-title-frame.is-in,html.no-js .c-title-frame{--corner-opacity:1;--pull-x:0px;--pull-y:0px}
+@media (max-width:639px){ .c-title-frame{--corner-size:12px} }

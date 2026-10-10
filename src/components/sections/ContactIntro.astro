@@ -1,8 +1,10 @@
 ---
-// Contact page hero: a large title (first part muted, like the footer title), each part on its own line.
+// Contact page hero: a large title (first part muted, like the footer title), each part on its own line, in the title
+// frame (the corner brackets, as on the project pages: _title-frame.css, scripts/components/titleFrame.js).
 // Styles: styles/components/_contact-intro.css. Copy: contactPage in src/data/pages.ts.
+import Corners from '../ui/Corners.astro';
 import { contactPage as p } from '../../data/pages';
 ---
 <header class="c-contact-intro o-container o-grid">
-  <h1 class="c-contact-intro__title u-text-hero">{p.title.map((t) => <span class:list={{ 'u-text-muted': t.muted }}>{t.text}</span>)}</h1>
+  <h1 class="c-contact-intro__title u-text-hero"><span class="c-title-frame" data-title-frame>{p.title.map((t) => <span class:list={['c-contact-intro__line', { 'u-text-muted': t.muted }]}>{t.text}</span>)}<Corners /></span></h1>
 </header>
