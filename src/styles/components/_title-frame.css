@@ -8,10 +8,17 @@
 @media (max-width:639px){ .c-title-frame{--corner-size:12px} }
 
 /* note: a small label on the frame's top line, level with the top right bracket's arm, just left of it (a drawing's sheet
-   number: the project's "03 / 06"; contact: Ghent + his local time, a small orange square for live; letter-spacing reset: the title's tight spacing is inherited in px). It comes in with
-   the brackets, a beat later. */
-.c-title-frame__note{position:absolute;top:0;right:calc(var(--corner-size) + var(--space-2xs));translate:0 -50%;display:flex;align-items:center;gap:.6em;
-  color:var(--muted);letter-spacing:0;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;opacity:0;transition:opacity var(--hover-dur) var(--ease-out) .15s}
-.c-title-frame.is-in .c-title-frame__note,html.no-js .c-title-frame__note{opacity:1}
+   number: the project's "03 / 06"; contact: Ghent + his local time, a small orange square for live; letter-spacing
+   reset: the title's tight spacing is inherited in px). It comes in like the services' count: the line slides up out
+   of a mask as the brackets land, and the project's number rolls up from 01 to its own (the same roll, .8s punch). */
+.c-title-frame__note{position:absolute;top:0;right:calc(var(--corner-size) + var(--space-xs));translate:0 -50%;overflow:hidden;
+  color:var(--muted);letter-spacing:0;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.c-title-frame__in{display:flex;align-items:center;gap:.35em;translate:0 110%;transition:translate .8s var(--ease-punch) .15s}
+.c-title-frame__roll,.c-title-frame__of{display:block;height:1em;overflow:hidden} /* both one 1em box: the rolling number level with "/ 04" */
+.c-title-frame__roll-list{display:grid;transition:transform .9s var(--ease-punch) .3s}
+.c-title-frame__roll-list > span{height:1em}
+.c-title-frame.is-in .c-title-frame__in,html.no-js .c-title-frame__in{translate:0 0}
+.c-title-frame.is-in .c-title-frame__roll-list,html.no-js .c-title-frame__roll-list{transform:translateY(calc(var(--to,0) * -1em))}
 .c-title-frame__live{width:6px;height:6px;background:var(--accent)}
 .c-title-frame__note time:empty{display:none}
+@media (prefers-reduced-motion:reduce){ .c-title-frame__in,.c-title-frame__roll-list{transition:none} }

@@ -17,8 +17,6 @@ export function getStaticPaths() {
 }
 interface Props { project: Project; index: number }
 const { project, index } = Astro.props;
-// the project's number on the title frame: "03 / 06"
-const pad = (n: number) => String(n).padStart(2, '0');
 const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
 // every fact, for the specs block under the visual on smaller screens
 const allFacts = [
@@ -31,7 +29,7 @@ const allFacts = [
 ].filter(Boolean) as { label: string; value: string }[];
 ---
 <Page title={project.title} description={project.description} footer={false}>
-  <PageIntro title={project.title} modifier="project" frame note={`${pad(index + 1)} / ${pad(projects.length)}`} style={`--len:${project.title.length}`}>
+  <PageIntro title={project.title} modifier="project" frame count={{ i: index + 1, n: projects.length }} style={`--len:${project.title.length}`}>
     <div class="c-page-intro__aside">
       <p class="c-page-intro__desc" data-page-intro-desc>{project.description}</p>
       <dl class="c-page-intro__facts">

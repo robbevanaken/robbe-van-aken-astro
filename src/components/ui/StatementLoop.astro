@@ -1,0 +1,10 @@
+---
+// A funny GIF between the statement's big and small words (sections/Statement.astro), 3:2, as tall as the big words'
+// capitals: a GIPHY clip, played as GIPHY's own MP4 (much lighter than the .gif) from its CDN, its still as the poster,
+// cropped to the box at `pos`. It loads and plays only while on screen (components/statementLoops.js); it uncovers from
+// the bottom up as it comes into view (global/reveal.js); reduced motion: the still. Styles: styles/components/_statement.css.
+interface Props { id: string; pos?: string }
+const { id, pos = '50% 50%' } = Astro.props;
+const base = `https://media.giphy.com/media/${id}`;
+---
+<span class="c-statement__loop" data-statement-loop data-reveal="media"><video src={`${base}/giphy.mp4`} poster={`${base}/giphy_s.gif`} style={`object-position:${pos}`} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video></span>

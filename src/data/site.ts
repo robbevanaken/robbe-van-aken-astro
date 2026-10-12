@@ -90,11 +90,12 @@ export const approach = {
 };
 
 // home, after the services: the closing statement before the footer. Lines of big words (`muted`: in the grey) and small
-// ones hung beside them (`lead` before, `small` after)
+// ones hung beside them (`lead` before, `small` after); `gif`: a funny GIF between the big and the small words, a GIPHY id
+// (served from GIPHY's own CDN as its MP4 + still: media.giphy.com/media/<id>/giphy.mp4) and its crop focus in the 3:2 box
 export const statement = [
-  { big: 'Built to last,', small: 'not just to launch', muted: true },
-  { lead: 'made with', big: 'care' },
-  { big: 'Yours', small: 'to keep.' }, // not a call to action: the footer's band and title right after it are
+  { big: 'Built to last,', small: 'not just to launch', muted: true, gif: { id: 'l1KXqoOC36VeCbjtC', pos: '50% 100%' } }, // Plankton: "It's indestructible!"
+  { lead: 'made with', big: 'care', gif: { id: '8OJdqYqN1Nii3UTD6l', pos: '50% 30%' } },                                 // Bob Ross holding a baby deer
+  { big: 'Yours', small: 'to keep.', gif: { id: 'nIkkvyLzkZoQ9E4TGC', pos: '50% 50%' } },                                 // an otter handed an egg to keep // not a call to action: the footer's band and title right after it are
 ];
 
 export const footer = {

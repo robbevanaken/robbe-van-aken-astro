@@ -1,19 +1,24 @@
 ---
 // The projects, staggered down the page (flat: no bend, no tilt); on hover the corner brackets slide out around a card (home: the featured ones, /work: all of them). Every card links to its project;
-// the images are square. layout "spread" (home): alternately right/left, one row each, with the corner brackets on the
+// the images are square. layout "spread" (home before the stories, unused now): alternately right/left, one row each, with the corner brackets on the
 // project in the middle; layout "grid" (/work): one per row, staggered in a repeating pattern of four slots (columns and
 // aspect ratios: .is-slot-0…3, row in --row; workFilter.js keeps them right while filtering), no brackets. Slots: "head" (before the list, e.g. the home's sticky R), "intro" (text on the grid's first
 // row, next to the first project, which starts on the right) and the default slot (after the list, e.g. a button).
+// layout "stories" (home): one project per row between thin lines, the image left (cols 1–5) and its story right
+// (cols 8–12: number, service, title, description, a real result if there is one, the facts); cols 6–7 stay free for
+// the small R. Hover: the corner brackets come in around the image only, the image zooms a touch.
 // Styles: styles/components/_featured-projects.css (hover: the corner brackets slide out of the card's corners)
 import Corners from '../ui/Corners.astro';
 import Icon from '../ui/Icon.astro';
 import { projectTags, type Project } from '../../data/projects';
 import { work } from '../../data/site';
-interface Props { projects: Project[]; label: string; layout?: 'spread' | 'grid' }
+interface Props { projects: Project[]; label: string; layout?: 'spread' | 'grid' | 'stories' }
 const { projects, label, layout = 'spread' } = Astro.props;
 // the card titles are headings (home: under the section's h2; /work: right under the page's h1)
 const Title = layout === 'grid' ? 'h2' : 'h3';
-const spread = layout === 'spread';
+const spread = layout === 'spread', grid = layout === 'grid', stories = layout === 'stories';
+const pad = (n: number) => String(n).padStart(2, '0');
+import { projectPage } from '../../data/pages';
 import ProjectVisual from '../ui/ProjectVisual.astro';
 ---
 <section class:list={['c-featured-projects', `c-featured-projects--${layout}`]} aria-label={label} data-featured-projects data-cursor-label={work.cursor}>
@@ -21,13 +26,36 @@ import ProjectVisual from '../ui/ProjectVisual.astro';
   <div class="c-featured-projects__grid o-container o-grid">
     <slot name="intro" />
     <ol class="c-featured-projects__list">
-      {projects.map((p, i) => (
-        <li class:list={['c-featured-projects__item', !spread && `is-slot-${i % 4}`]} style={spread ? `grid-row:${i + 1}` : `--row:${i + 1}`} data-fp-item data-tags={projectTags(p).join('|')}>
+      {projects.map((p, i) => stories ? (
+        <li class="c-featured-projects__item c-stories__item" data-fp-item data-tags={projectTags(p).join('|')}>
+          <a class="c-featured-projects__card c-stories__row" href={`/work/${p.slug}`} data-fp-card>
+            <span class="c-stories__frame">
+              <span class="c-featured-projects__media c-stories__media" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-media data-reveal="media">
+                <ProjectVisual class="c-featured-projects__visual" project={p} />
+              </span>
+              <Corners />
+            </span>
+            <span class="c-stories__body">
+              <span class="c-stories__top u-text-label"><span class="c-stories__num">{pad(i + 1)}<span class="c-stories__of"> / {pad(projects.length)}</span></span><span class="c-stories__service">{p.service}</span></span>
+              <span class="c-featured-projects__caption-row c-stories__head"><Title class="c-featured-projects__caption-title c-stories__title">{p.title}</Title><span class="c-featured-projects__arrows" aria-hidden="true"><Icon name="arrow" class="c-featured-projects__arrow" /><Icon name="arrow" class="c-featured-projects__arrow c-featured-projects__arrow--next" /></span></span>
+              <span class="c-stories__text u-text-body-l">{p.description}</span>
+              <span class="c-stories__foot">
+                {p.outcome && <span class="c-stories__outcome"><span class="c-stories__value">{p.outcome.value}</span><span class="c-stories__value-label u-text-label">{p.outcome.label}</span></span>}
+                <span class="c-stories__facts u-text-label">
+                  {p.client && <span class="c-stories__fact"><span class="c-stories__fact-label">{projectPage.facts.client}</span>{p.client}</span>}
+                  <span class="c-stories__fact"><span class="c-stories__fact-label">{projectPage.year}</span>{p.year}</span>
+                </span>
+              </span>
+            </span>
+          </a>
+        </li>
+      ) : (
+        <li class:list={['c-featured-projects__item', grid && `is-slot-${i % 4}`]} style={spread ? `grid-row:${i + 1}` : grid ? `--row:${i + 1}` : undefined} data-fp-item data-tags={projectTags(p).join('|')}>
           <a class="c-featured-projects__card" href={`/work/${p.slug}`} data-fp-card>
             <Corners />
             <span class="c-featured-projects__media" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-fp-media>
                 {p.shot || p.image
-                  ? <ProjectVisual class="c-featured-projects__visual" project={p} eager={!spread && i === 0} />
+                  ? <ProjectVisual class="c-featured-projects__visual" project={p} eager={grid && i === 0} />
                   : <span class="c-featured-projects__placeholder">{p.label}</span>}
                 <span class="c-featured-projects__tag u-text-label">{p.service}</span>
                 <span class="c-featured-projects__tag c-featured-projects__tag--year u-text-label">{p.year}</span>

@@ -1,8 +1,9 @@
 ---
 // Statement (home, after the services): the story's last word before the footer. Big words in staggered lines on the
-// grid, two-tone like the page's other titles (the first line in the grey), with small muted words hung beside them. Each piece lights up letter by letter on scroll, like the pitch and the footer title.
+// grid, two-tone like the page's other titles (the first line in the grey), with small muted words hung beside them, and a funny GIF between them (ui/StatementLoop.astro). Each piece lights up letter by letter on scroll, like the pitch and the footer title.
 // Styles: styles/components/_statement.css. Copy: statement in src/data/site.ts.
 import { statement } from '../../data/site';
+import Loop from '../ui/StatementLoop.astro';
 const text = statement.map((l) => [l.lead, l.big, l.small].filter(Boolean).join(' ')).join(' ');
 ---
 <section class="c-statement o-container o-grid">
@@ -10,7 +11,9 @@ const text = statement.map((l) => [l.lead, l.big, l.small].filter(Boolean).join(
   {statement.map((l, i) => (
     <p class:list={['c-statement__line', `c-statement__line--${i + 1}`]} aria-hidden="true">
       {l.lead && <span class="c-statement__small u-text-body-l u-text-muted" data-highlight-text>{l.lead}</span>}
+      {l.lead && l.gif && <Loop {...l.gif} />}
       <span class:list={['c-statement__big', { 'u-text-muted': l.muted }]} data-highlight-text>{l.big}</span>
+      {!l.lead && l.gif && <Loop {...l.gif} />}
       {l.small && <span class="c-statement__small u-text-body-l u-text-muted" data-highlight-text>{l.small}</span>}
     </p>
   ))}

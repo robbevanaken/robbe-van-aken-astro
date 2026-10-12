@@ -23,6 +23,9 @@ export interface Project {
   stack?: string[];
   status?: string;     // e.g. "In progress"
   credit?: { label: string; value: string }; // e.g. a collaboration
+  // one real result, shown big on home's project rows (e.g. { value: '2×', label: 'more enquiries in the first quarter' });
+  // only real, checked numbers: without one the row shows its facts only
+  outcome?: { value: string; label: string };
   // the case study on the detail page (sections/ProjectCase.astro). DUMMY copy for now: replace with the real story.
   story?: { intro: string; challenge: string; approach: string; result: string };
   // what was made, as columns (e.g. the parts of a product suite), between the approach and the result
@@ -56,6 +59,8 @@ export const projects: Project[] = [
     description: 'A brand and website for the City of Ghent\'s housing pact.', service: 'Branding, design & development', year: 2026,
     colors: { a: '#3f5a2c', b: '#cfd8b4', t: '#f3efe2' }, url: 'https://woonpact.gent', client: 'Stad Gent', stack: ['Craft CMS', 'Twig', 'Vite'],
     credit: { label: 'Design with', value: 'Nick Slemsbrouck, Studio Uruku' },
+    // measured: Lighthouse on woonpact.gent, mobile, median of three runs, 12 Oct 2026 (89 / 93 / 96)
+    outcome: { value: '93', label: 'Lighthouse performance score on mobile, measured October 2026' },
     story: {
       intro: 'Ghent needs more affordable homes than the city can build alone. The housing pact brings owners, developers and residents to the table, and it needed a voice of its own to do that.',
       challenge: 'There was no imagery to work with, and the city chose not to use photos on purpose: glossy pictures of homes would make the pact look like a sales pitch, not a shared effort. Add a lot of information, many audiences and a subject that can feel heavy, and the design had to carry all of it without a single picture.',
@@ -87,6 +92,8 @@ export const projects: Project[] = [
     slug: 'dewilde-braems', title: 'De Wilde-Braems', label: 'De Wilde-Braems', image: '/projects/dewilde-braems/mockup.jpg', position: '50% 22%',
     description: 'A clear, calm website for a family-run construction company.', service: 'Design & development', year: 2025,
     colors: { a: '#0b2f57', b: '#9db7d6', t: '#eef3f9' }, url: 'https://dewilde-braems.be', client: 'De Wilde-Braems BV', stack: ['WordPress', 'Tailwind CSS'],
+    // measured: Lighthouse on dewilde-braems.be, mobile, 100 in all three runs (main content in 1.1 s), 12 Oct 2026
+    outcome: { value: '100', label: 'Lighthouse performance score on mobile, measured October 2026' },
     story: {
       intro: 'De Wilde-Braems builds homes in and around Wachtebeke, a family business now in its fourth generation. Most of their clients find them through people they built for; the website had to feel just as trustworthy.',
       challenge: 'Their best argument is the work itself. The site had to show it at its best, make the three services easy to tell apart, and lead straight to a conversation, without the noise of a typical builder\'s site.',

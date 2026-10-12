@@ -10,6 +10,13 @@
 .c-statement__big{font-size:var(--big);line-height:1;letter-spacing:-.045em;white-space:nowrap}
 .c-statement__small{max-width:11em;line-height:1.3}
 .c-statement__hold{display:block;height:0}
+/* the loop between the big and the small words (ui/StatementLoop.astro): 3:2, as tall as the big words' capitals
+   (Inter Tight's cap height, .73em), standing on their baseline (a flex item without text aligns its bottom edge to the
+   line's baseline); it uncovers from the bottom up as it comes into view, like the case study's media */
+.c-statement__loop{--h:calc(var(--big) * .73);flex:none;display:block;height:var(--h);aspect-ratio:3 / 2;overflow:hidden;background:var(--panel);
+  clip-path:inset(100% 0 0 0);transition:clip-path 1.4s cubic-bezier(.16,1,.3,1)}
+.c-statement__loop.is-in,html.no-js .c-statement__loop{clip-path:inset(0)}
+.c-statement__loop video{display:block;width:100%;height:100%;object-fit:cover}
 @media (max-width:1023px){ .c-statement__line--3{padding-left:calc((100% - 5 * var(--gutter)) / 6 + var(--gutter))} }
 @media (max-width:639px){
   .c-statement{--big:12.6vw;padding-top:var(--space-l)} /* the services above already end on room of their own */
@@ -18,3 +25,4 @@
   .c-statement__small.c-statement__small{font-size:13px;max-width:7.5em}
   .c-statement__hold{translate:0 -6svh} /* the R heads for the footer as soon as the last line has left the screen */
 }
+@media (prefers-reduced-motion:reduce){ .c-statement__loop{clip-path:none;transition:none} }

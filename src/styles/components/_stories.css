@@ -1,0 +1,53 @@
+/* Home's projects as stories (ProjectGlobe layout="stories", after the case lists of editorial studio sites, built
+   in this site's language): one project per row between thin lines (like the services and the case study's story),
+   the image left (cols 1–5, square) and the story right (cols 8–12): its number ("01 / 03") and service, the title with
+   the brand arrow, the description, then at the foot a real result if there is one (`outcome`, big) and the facts
+   (client, year). Cols 6–7 stay free: the lane of the small R at the top centre. The intro is the first row: the
+   title over cols 1–5, the text in the story column. The image uncovers from the bottom up as it comes into view (the
+   case study's media reveal, global/reveal.js). Hover (the whole row): the corner brackets come in around the image
+   only (around the row, a fast hover carried them into the next row's), the image zooms a touch (the cards' own), and
+   the arrow turns. Below 1024px: the image above its story, full width. */
+.c-featured-projects--stories .c-projects-intro{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-items:end;row-gap:var(--space-s)}
+.c-featured-projects--stories .c-projects-intro > *{grid-column:auto}
+.c-featured-projects--stories .c-projects-intro__title{grid-column:1 / span 5;margin:0}
+.c-featured-projects--stories .c-projects-intro__text{grid-column:8 / span 5;max-width:26em;margin:0}
+.c-featured-projects--stories .c-featured-projects__list{grid-row:2;row-gap:0;margin-top:var(--space-xl)}
+
+.c-featured-projects--stories .c-featured-projects__item{grid-column:1 / -1;border-top:1px solid var(--line)} /* over the spread rules (cols 8–11 / 2–5) */
+.c-stories__item:last-child{border-bottom:1px solid var(--line)}
+.c-stories__row{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));column-gap:var(--gutter);padding-block:var(--space-l)}
+.c-stories__frame{grid-column:1 / span 5;position:relative;display:block;align-self:start} /* the image + its corner brackets (the card's --corner-* settings) */
+.c-stories__media{display:grid;aspect-ratio:1} /* square: the work fills the row's height (tried: 4:3, it left the story column half empty) */
+.c-stories__body{grid-column:8 / span 5;display:flex;flex-direction:column;min-height:100%}
+.c-stories__top{display:flex;justify-content:space-between;gap:var(--space-s);color:var(--muted)}
+.c-stories__num{color:var(--fg);font-variant-numeric:tabular-nums}
+.c-stories__of{color:var(--muted)}
+.c-stories__head{margin-top:var(--space-m)}
+.c-stories__title.c-stories__title{font-size:calc(var(--fs-lead) * 1.25);line-height:1.1;letter-spacing:-.02em} /* 40 @1440 */
+.c-stories__text{margin-top:var(--space-s);color:var(--muted);max-width:26em}
+.c-stories__foot{margin-top:auto;padding-top:var(--space-l);display:grid;gap:var(--space-m)}
+.c-stories__outcome{display:grid;gap:var(--space-2xs)}
+.c-stories__value{font-size:var(--fs-display);line-height:1;letter-spacing:-.04em;color:var(--fg)}
+.c-stories__value-label{color:var(--muted);max-width:22em}
+.c-stories__facts{display:grid;grid-template-columns:1fr 1fr;column-gap:var(--gutter);border-top:1px solid var(--line);padding-top:var(--space-xs)}
+.c-stories__fact{display:grid;gap:2px}
+.c-stories__fact-label{color:var(--muted)}
+
+/* the image uncovers from the bottom up as it comes into view (global/reveal.js), settling from a touch larger */
+.c-stories__media[data-reveal]{clip-path:inset(100% 0 0 0);transition:clip-path 1.4s cubic-bezier(.16,1,.3,1)}
+.c-stories__media[data-reveal] .c-visual{scale:1.14;transition:scale 1.8s cubic-bezier(.16,1,.3,1)}
+.c-stories__media[data-reveal].is-in{clip-path:inset(0 0 0 0)}
+.c-stories__media[data-reveal].is-in .c-visual{scale:1}
+html.no-js .c-stories__media[data-reveal]{clip-path:none}
+html.no-js .c-stories__media[data-reveal] .c-visual{scale:1}
+
+@media (max-width:1023px){
+  .c-featured-projects--stories .c-projects-intro__title,.c-featured-projects--stories .c-projects-intro__text{grid-column:1 / -1}
+  .c-stories__frame,.c-stories__body{grid-column:1 / -1}
+  .c-stories__body{margin-top:var(--space-m)}
+  .c-stories__head{margin-top:var(--space-s)}
+}
+@media (prefers-reduced-motion:reduce){
+  .c-stories__media[data-reveal]{clip-path:none;transition:none}
+  .c-stories__media[data-reveal] .c-visual{scale:1;transition:none}
+}
