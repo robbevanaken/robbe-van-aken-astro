@@ -35,6 +35,12 @@ const spriteCache = new Map(), grid = { GC: null, GS: null, GN: null, OCC: null 
 // `char`: draw this character (Inter Tight, as the page's type) instead of the R, with the same particles, looks and
 // stages (the 404's 4s); its own particle data, never the shared R's (`geo`), and never the loader's R. `turn`: how
 // much the footer state (stage 4) turns with the mouse (1 = as the footer; the 404's characters less, so they stay legible).
+// how much the R is MORPHING right now (0…1), fed by every engine instance per frame; global/sound.js reads it for
+// the sand sound and decays it. Only real shape changes count: the stage blends (flights with their turn), the
+// services' icon morphs and the loader / menu flights — never the mouse sway or plain scrolling, so the R parked on
+// a spot (the small R top centre, the settled footer R) is silent, and the harder the morph, the louder the sand.
+export const rAudio = { v: 0 };
+
 export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false, look = LOOK, char = '', turn = 1, small: smallLook = SMALL } = {}) {
   if (!canvas || !scope) return null;
   // page swaps: every window listener goes through this signal, destroy() stops the frame loop
@@ -296,6 +302,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // Slow devices: when a frame's own work stays above ~10 ms, render every other frame (springs take a double step, so
   // the R moves just as fast). Fast devices never notice.
   let culled=false,cost=0,slow=false,odd=false,K2=null;
+  const pa={s:0,sg:0,jf:0,jon:false,t:0}; // last frame's scalars, for the sand sound's morph signal (rAudio)
   // the eased dark share of the R's palette (0 light … 1 dark), following the scroll theme
   let dkB=theme.mode==='dark'?1:0;
   const mixHex=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);
@@ -486,6 +493,14 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       }
     }
 
+    }
+    { // the morph signal for the sand sound (rAudio): only shape changes, scalar deltas against the last frame
+      let mo=Math.abs(sg-pa.sg)*4; // the services' icon morph
+      if(jump){ if(!pa.jon)pa.jf=jump.f; mo+=Math.abs(jump.f-pa.jf)*6; pa.jf=jump.f; pa.jon=true; } // a jump blend (s itself snaps at .5)
+      else { pa.jon=false; mo+=Math.abs(s-pa.s)*6; } // a flight between stages (parked between equal stages: s is flat)
+      if(intro&&rIntro.el){ mo+=Math.abs(rIntro.t-pa.t)*4; pa.t=rIntro.t; } // the loader / menu / transition flights
+      pa.s=s;pa.sg=sg;
+      if(!document.hidden)rAudio.v=Math.min(1,Math.max(rAudio.v,mo*2.2));
     }
     const idx=Math.round(s);if(idx!==lastIdx){if(hudName)hudName.textContent=NAMES[idx];lastIdx=idx}
     if(hudBar)hudBar.style.width=(s/4*100)+'%';

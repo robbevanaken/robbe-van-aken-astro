@@ -3,6 +3,7 @@
 import '../styles/main.css';
 import { meta, nav, socials } from '../data/site';
 import Music from '../components/ui/Music.astro';
+import SoundToggle from '../components/ui/SoundToggle.astro';
 import PageTransition from '../components/layout/PageTransition.astro';
 // noindex: pages search engines should skip (404)
 interface Props { title?: string; description?: string; noindex?: boolean }
@@ -71,6 +72,8 @@ const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':ne
     <PageTransition />
     <!-- album of the week, fixed bottom left (outside #swup too) -->
     <Music />
+    <!-- the sound tile, fixed bottom right (outside #swup too) -->
+    <SoundToggle />
     <!-- the paper grain over everything (_grain.css) -->
     <div class="c-grain" aria-hidden="true"></div>
     <script>

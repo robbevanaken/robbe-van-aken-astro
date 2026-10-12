@@ -23,6 +23,7 @@ import { initLocalTime } from './components/localTime.js';
 import { initStatementLoops } from './components/statementLoops.js';
 import { initStatementPin } from './components/statementPin.js';
 import { initScrollTheme } from './global/scrollTheme.js';
+import { initSound } from './global/sound.js';
 import { initStackCards } from './components/stackCards.js';
 import { initContactForm } from './components/contactForm.js';
 import { initWorkFilter } from './components/workFilter.js';
@@ -95,6 +96,8 @@ function unmount() {
 }
 
 initTheme();
+initSound();
+
 initMusic();
 initSmoothScroll();
 // the cookie banner waits for the first-visit loader to finish (it would sit on top of it)

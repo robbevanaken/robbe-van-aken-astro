@@ -1,0 +1,14 @@
+/* The sound tile (ui/SoundToggle.astro): a 36px --panel tile fixed bottom right on the page margin (the theme
+   toggle's old spot, the album tile's mirror), on --float-bottom. Off (.is-off): the waves fade and a slash draws.
+   Hidden like the album tile: loader, page swaps, menu open, while the cookie banner shows. */
+.c-sound-toggle{position:fixed;right:var(--margin);bottom:var(--float-bottom);z-index:36;
+  display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;background:var(--panel);color:var(--fg);cursor:pointer;
+  transition:opacity .4s var(--ease-out),visibility .4s}
+.c-sound-toggle::before{content:"";position:absolute;inset:-4px} /* a 44px tap area */
+.c-sound-toggle__icon{width:16px;height:16px}
+.c-sound-toggle__wave{opacity:1;transition:opacity .3s var(--ease-out)}
+.c-sound-toggle__slash{stroke-dasharray:17;stroke-dashoffset:17;transition:stroke-dashoffset .3s var(--ease-punch)}
+.c-sound-toggle.is-off .c-sound-toggle__wave{opacity:.25}
+.c-sound-toggle.is-off .c-sound-toggle__wave--far{opacity:.12}
+.c-sound-toggle.is-off .c-sound-toggle__slash{stroke-dashoffset:0}
+html.is-loading .c-sound-toggle,html.is-transitioning .c-sound-toggle,html.is-menu-open .c-sound-toggle,html.show--consent .c-sound-toggle{opacity:0;visibility:hidden}
