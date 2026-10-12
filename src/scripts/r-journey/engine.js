@@ -307,7 +307,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // Slow devices: when a frame's own work stays above ~10 ms, render every other frame (springs take a double step, so
   // the R moves just as fast). Fast devices never notice.
   let culled=false,cost=0,slow=false,odd=false,K2=null;
-  const pa={s:0,sg:0,jf:0,jon:false,t:0}; // last frame's scalars, for the grains' morph signal (rAudio)
+  const pa={init:false,s:0,sg:0,jf:0,jon:false,t:0}; // last frame's scalars, for the grains' morph signal (rAudio)
   let audioPP=null,pushAcc=0; // the footer R's cursor push per particle (its change per frame joins the signal)
   // the eased dark share of the R's palette (0 light … 1 dark), following the scroll theme
   let dkB=theme.mode==='dark'?1:0;
@@ -501,7 +501,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
     }
     if(audioPP?.length!==N&&N)audioPP=new Float32Array(N);
-    { // the morph signal for the grains (rAudio): only shape changes, scalar deltas against the last frame
+    if(!pa.init){ // a fresh instance (a page swap hands the R over mid-flight): calibrate only, no phantom burst
+      pa.init=true;pa.s=s;pa.sg=sg;pa.t=rIntro.t;pa.jf=jump?jump.f:0;pa.jon=!!jump;pushAcc=0;
+    }else{ // the morph signal for the grains (rAudio): only shape changes, scalar deltas against the last frame
       let mo=Math.abs(sg-pa.sg)*4; // the services' icon morph
       if(jump){ if(!pa.jon)pa.jf=jump.f; mo+=Math.abs(jump.f-pa.jf)*6; pa.jf=jump.f; pa.jon=true; } // a jump blend (s itself snaps at .5)
       else { pa.jon=false; mo+=Math.abs(s-pa.s)*6; } // a flight between stages (parked between equal stages: s is flat)
