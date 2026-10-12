@@ -1,4 +1,5 @@
-/* Services: the head (title + intro) centred, scrolling by as usual (cols 4–9, the intro narrower: cols 5–8). Then the
+/* Services: the head set like the projects head, one chapter voice (the page size, title left cols 1–6, the intro at
+   lead size right cols 8–12; tried: centred at the h2 size: underpowered next to "Recent work"). Then the
    stage: one screen, pinned while the pin track scrolls on (one screen per service, --services set inline): the icon in
    the middle (slot, cols 5–8), the active service's count + name on the left (cols 1–4) and its text on the right
    (cols 10–12), a progress line at the bottom (one segment per service). All items share one grid cell; only the
@@ -6,9 +7,9 @@
    icon inside [data-service-slot]. Below 1024px: one centred column (icon, then count, name and text), the group
    centred on the screen, a progress line (one segment per service) at the bottom. */
 .c-services{padding-top:0} /* the room above comes from the button before it (its --mid), so it sits exactly in the middle */
-.c-services__head{row-gap:var(--space-s);padding-bottom:calc(var(--space-xl) * 1.5);text-align:center}
-.c-services__title{grid-column:4 / span 6}
-.c-services__intro{grid-column:5 / span 4}
+.c-services__head{row-gap:var(--space-s);padding-bottom:calc(var(--space-xl) * 1.5);align-items:end}
+.c-services__title.c-services__title{grid-column:1 / span 6;font-size:var(--fs-page);line-height:1;letter-spacing:-.04em}
+.c-services__intro.c-services__intro{grid-column:8 / span 5;font-size:var(--fs-lead);line-height:1.25;letter-spacing:-.01em}
 .c-services__hold{grid-column:1 / -1;height:0}
 
 .c-services__pin{height:calc(var(--services,4) * 100svh)}
@@ -44,8 +45,8 @@
 @media (max-width:1023px){
   .c-services{padding-bottom:var(--space-xl)}
   .c-services__head{row-gap:var(--space-s);padding-bottom:calc(var(--space-xl) * 1.6)}
-  .c-services__title{grid-column:1 / -1;font-size:clamp(40px,10.5vw,72px);line-height:var(--lh-tight)}
-  .c-services__intro{grid-column:2 / span 4}
+  .c-services__title.c-services__title{grid-column:1 / -1;font-size:clamp(40px,10.5vw,72px);line-height:var(--lh-tight)}
+  .c-services__intro.c-services__intro{grid-column:1 / -1;font-size:var(--fs-body-l);line-height:var(--lh-text)}
   /* one centred column: icon, count, name, text; spacer rows above and below keep the group in the middle, with more
      room below it than above (the progress line sits at the bottom) */
   .c-services__stage{grid-template-rows:1fr auto auto 1.5fr auto;align-items:start;
