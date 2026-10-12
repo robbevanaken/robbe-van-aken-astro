@@ -15,6 +15,7 @@
 // Only transforms, opacity and the copy's box are animated; the copy is removed at the end.
 import gsap from 'gsap';
 import { rIntro } from '../r-journey/engine.js';
+import { setScrollTheme } from '../global/theme.js';
 
 const swupEl = () => document.getElementById('swup');
 // the page's R stays: everything else fades
@@ -54,6 +55,7 @@ function releaseR() {
 export const openProject = {
   async leave(card) {
     document.documentElement.classList.add('is-opening');
+    setScrollTheme('light'); // opening from the dark projects chapter: the page eases to the light the project page starts in
     holdR();
     const media = card?.querySelector('[data-fp-media]');
     if (!media) { await gsap.to(pageParts(), { autoAlpha: 0, duration: .4 }); return null; }

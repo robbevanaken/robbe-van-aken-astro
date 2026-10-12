@@ -6,7 +6,7 @@ import { statement } from '../../data/site';
 import Loop from '../ui/StatementLoop.astro';
 const text = statement.map((l) => [l.lead, l.big, l.small].filter(Boolean).join(' ')).join(' ');
 ---
-<section class="c-statement o-container o-grid">
+<section class="c-statement o-container o-grid t-dark">
   <p class="u-sr-only">{text}</p>
   {statement.map((l, i) => (
     <p class:list={['c-statement__line', `c-statement__line--${i + 1}`]} aria-hidden="true">

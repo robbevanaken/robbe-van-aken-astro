@@ -21,6 +21,7 @@ import { initCaseMotion } from './components/caseMotion.js';
 import { initTitleFrame } from './components/titleFrame.js';
 import { initLocalTime } from './components/localTime.js';
 import { initStatementLoops } from './components/statementLoops.js';
+import { initScrollTheme } from './global/scrollTheme.js';
 import { initStackCards } from './components/stackCards.js';
 import { initContactForm } from './components/contactForm.js';
 import { initWorkFilter } from './components/workFilter.js';
@@ -66,6 +67,7 @@ function mount() {
     initCaseMotion(root),
     initTitleFrame(root),
     initLocalTime(root),
+    initScrollTheme(root),
     initStatementLoops(root),
     initStackCards(root),
     initContactForm(root),

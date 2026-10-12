@@ -63,17 +63,8 @@ export function initSiteHeader(root = document) {
     document.fonts?.ready.then(() => { if (!signal.aborted) to(current, true); });
   }
 
-  // over the footer (always dark, _tokens.css: on the light theme that's a switch) the header's bar switches with it: its text and
-  // the fade behind it in the footer's colours (.is-on-footer), and a subpage's small R too (r-journey/engine.js)
-  // (from the footer's own part: below its orange band, which sits on the page's paper)
-  const footer = root.querySelector('[data-site-footer] .c-site-footer__main');
-  const onFooter = () => header.classList.toggle('is-on-footer', !!footer && footer.getBoundingClientRect().top < header.offsetHeight / 2);
-  onFooter();
-  addEventListener('resize', onFooter, { signal });
-
   // hide on scroll down, show on scroll up (always shown near the top or while the menu is open)
   addEventListener('scroll', () => {
-    onFooter();
     const y = scrollY, dy = y - lastY;
     if (Math.abs(dy) < 4) return;
     // a jump of more than a screen is not the visitor scrolling (e.g. the endless list on /work looping back): keep the state

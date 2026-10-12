@@ -120,19 +120,6 @@
   color-scheme:dark;
 }
 
-/* the footer always dark: on the light theme it takes the dark theme's palette (the story ends on a turn of the page);
-   on the dark theme it already is (tried: always the other theme, a light footer on a dark page: a bright flash at the
-   end for someone who chose dark). Set on the footer, its R drawn dark too (r-journey/engine.js); --panel / --page /
-   --scrim mixed again here (a token built from others is computed where it's defined). The header's bar switches with
-   it while it sits over the footer (.is-on-footer, global/siteHeader.js). The wild theme stays one colour throughout. */
-:root[data-theme="light"] .c-site-footer,:root[data-theme="light"] .c-site-header.is-on-footer .c-site-header__body{
-  --bg:#170e0b;--fg:#ffffff;--muted:#b2b2b2;--subtle:#8c827c;--line:#3a2f2a;--line-strong:#6e625b;--card:#d8d2cc;
-  --on-fg:#170e0b;--surface:#1d1310;--logo-filter:brightness(1);color-scheme:dark}
-:root[data-theme="light"] .c-site-footer{background:var(--bg);color:var(--fg)}
-:root[data-theme="light"] :is(.c-site-footer,.c-site-header.is-on-footer .c-site-header__body){
-  --page:var(--bg);--panel:color-mix(in srgb,var(--fg) 7%,var(--bg));color:var(--fg);
-  --scrim:color-mix(in srgb, var(--page) 100%, transparent) 0%, color-mix(in srgb, var(--page) 98.7%, transparent) 8.1%, color-mix(in srgb, var(--page) 95.1%, transparent) 15.5%, color-mix(in srgb, var(--page) 89.6%, transparent) 22.5%, color-mix(in srgb, var(--page) 82.5%, transparent) 29%, color-mix(in srgb, var(--page) 74.1%, transparent) 35.3%, color-mix(in srgb, var(--page) 64.8%, transparent) 41.2%, color-mix(in srgb, var(--page) 55.0%, transparent) 47.1%, color-mix(in srgb, var(--page) 45.0%, transparent) 52.9%, color-mix(in srgb, var(--page) 35.2%, transparent) 58.8%, color-mix(in srgb, var(--page) 25.9%, transparent) 64.7%, color-mix(in srgb, var(--page) 17.5%, transparent) 71%, color-mix(in srgb, var(--page) 10.4%, transparent) 77.5%, color-mix(in srgb, var(--page) 4.9%, transparent) 84.5%, color-mix(in srgb, var(--page) 1.3%, transparent) 91.9%, color-mix(in srgb, var(--page) 0%, transparent) 100%;}
-
 /* tablet: 6 columns */
 @media (max-width:1023px){
   :root{ --cols:6; }

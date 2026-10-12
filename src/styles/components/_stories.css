@@ -9,8 +9,8 @@
    the arrow turns. Below 1024px: the image above its story, full width. */
 .c-featured-projects--stories .c-projects-intro{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-items:end;row-gap:var(--space-s)}
 .c-featured-projects--stories .c-projects-intro > *{grid-column:auto}
-.c-featured-projects--stories .c-projects-intro__title{grid-column:1 / span 5;margin:0}
-.c-featured-projects--stories .c-projects-intro__text{grid-column:8 / span 5;max-width:26em;margin:0}
+.c-featured-projects--stories .c-projects-intro__title.c-projects-intro__title{grid-column:1 / span 6;margin:0;font-size:var(--fs-page);line-height:1;letter-spacing:-.04em} /* the page's chapter size (86 @1440, as /work's title): the h2 read too small over the big cards */
+.c-featured-projects--stories .c-projects-intro__text.c-projects-intro__text{grid-column:8 / span 5;max-width:none;margin:0;font-size:var(--fs-lead);line-height:1.25;letter-spacing:-.01em}
 .c-featured-projects--stories .c-featured-projects__list{grid-row:2;row-gap:0;margin-top:var(--space-l)}
 
 .c-featured-projects--stories .c-featured-projects__item{grid-column:1 / -1;border-top:1px solid var(--line)} /* over the spread rules (cols 8–11 / 2–5) */
@@ -30,7 +30,10 @@
 .c-stories__frame{grid-column:1 / span 5;position:relative;display:block;align-self:start} /* the image + its corner brackets (the card's --corner-* settings) */
 .c-stories__media{display:grid;aspect-ratio:4 / 3} /* (tried: square: the cards ran too tall) */
 .c-stories__body{grid-column:8 / span 5;display:flex;flex-direction:column;min-height:100%}
-.c-stories__top{display:flex;justify-content:space-between;gap:var(--space-s);color:var(--muted)}
+/* the meta row: the number and the service as quiet chips on the panel tone (the nav tile's language), so the row
+   reads as a label strip over the image and the air around it */
+.c-stories__top{display:flex;justify-content:space-between;align-items:center;gap:var(--space-2xs);color:var(--muted)}
+.c-stories__num,.c-stories__service{padding:5px 10px;background:var(--panel)}
 .c-stories__num{color:var(--fg);font-variant-numeric:tabular-nums}
 .c-stories__of{color:var(--muted)}
 .c-stories__head{margin-top:var(--space-m)}
@@ -45,11 +48,25 @@
 html.no-js .c-stories__media[data-reveal]{clip-path:none}
 html.no-js .c-stories__media[data-reveal] .c-visual{scale:1}
 
+/* below 1024px: no stacking parallax (components/stackCards.js); the body's children are placed on the row's grid
+   themselves (display:contents). Tablet: the image beside the text (meta row on top, the image in the first two
+   columns, title and description beside it); phones the same, a size down, the image stretched to the text's height. */
 @media (max-width:1023px){
-  .c-featured-projects--stories .c-projects-intro__title,.c-featured-projects--stories .c-projects-intro__text{grid-column:1 / -1}
-  .c-stories__frame,.c-stories__body{grid-column:1 / -1}
-  .c-stories__body{margin-top:var(--space-m)}
-  .c-stories__head{margin-top:var(--space-s)}
+  .c-featured-projects--stories .c-projects-intro__title.c-projects-intro__title,.c-featured-projects--stories .c-projects-intro__text.c-projects-intro__text{grid-column:1 / -1}
+  .c-stories__row{row-gap:var(--space-s)}
+  .c-stories__body{display:contents}
+  .c-stories__top{grid-column:1 / -1;grid-row:1}
+  .c-stories__frame{grid-column:1 / span 2;grid-row:2 / span 2;align-self:start}
+  .c-stories__head{grid-column:3 / -1;grid-row:2;margin-top:0;align-self:start}
+  .c-stories__text{grid-column:3 / -1;grid-row:3;align-self:start}
+}
+/* phones: the same side-by-side row, a size down and with more air; the image stretches to the text column's full
+   height (tried: Monolog's full-width square image on top: too much card, too little list) */
+@media (max-width:639px){
+  .c-stories__title.c-stories__title{font-size:var(--fs-lead)}
+  .c-stories__row{row-gap:var(--space-m)}
+  .c-stories__frame{align-self:stretch}
+  .c-stories__media{aspect-ratio:auto;height:100%;min-height:138px}
 }
 @media (prefers-reduced-motion:reduce){
   .c-stories__media[data-reveal]{clip-path:none;transition:none}

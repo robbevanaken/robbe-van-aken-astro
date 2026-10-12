@@ -1,6 +1,7 @@
 ---
 // Featured projects on home: the first `work.featured` projects as stories, one per row (sections/ProjectGlobe.astro,
-// layout "stories"): the intro above them, the button below.
+// layout "stories"): the intro above them, the button below. The whole chapter (cards + button) is a dark one (t-dark,
+// the scroll theme: global/scrollTheme.js).
 // The small R stays at the top of the screen while they pass (stage 2 from the sticky head down to the end marker), then
 // scrolls away with the section's end; "View all projects" follows outside it, so the R never lands on it.
 // Styles: styles/components/_projects-intro.css + _featured-projects.css
@@ -9,6 +10,7 @@ import ProjectGlobe from './ProjectGlobe.astro';
 import { work } from '../../data/site';
 import { projects } from '../../data/projects';
 ---
+<div class="t-dark">
 <ProjectGlobe projects={projects.slice(0, work.featured)} label="Featured projects" layout="stories">
   <div class="c-featured-projects__head" slot="head" data-stage="2"><div class="c-featured-projects__r" id="a-craft"></div></div>
   <div class="c-projects-intro" id="work" slot="intro">
@@ -20,3 +22,4 @@ import { projects } from '../../data/projects';
   <div class="c-featured-projects__end" data-stage="2" aria-hidden="true"></div>
 </ProjectGlobe>
 <div class="c-featured-projects__foot o-container o-grid"><Button href={work.cta.href} class="c-featured-projects__all">{work.cta.label}</Button></div>
+</div>

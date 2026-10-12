@@ -61,8 +61,6 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // a section with its own R ([data-r-own], e.g. the statement's R on home) keeps its stage to itself: the page's R skips it
   const own=(e)=>e.closest('[data-r-own]')&&!scope.closest?.('[data-r-own]');
   const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...[...scope.querySelectorAll('[data-stage]')].filter((e)=>!own(e))],SV=stages.map(e=>+e.dataset.stage);
-  const footerStage=stages.some((e)=>e.matches('[data-site-footer]')); // its stage 4 is the footer (not the 404's)
-  const headerScope=!!scope.matches?.('[data-site-header]'); // a subpage's header R: over the footer it switches too
   if(!stages.length)return null;
   // A scope may have only one anchor (header: #a-craft, footer: #a-foot, contact's How I work: the arrow's
   // [data-r-pointer]): every missing anchor falls back to it.
@@ -284,7 +282,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const x=(col)=>{const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');const pad=px*(gs.pad-.06);g.strokeStyle=col;g.lineWidth=Math.max(1,px*gs.line);g.lineCap=px<6?'butt':'round';
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c};
     const out=shape==='x'?FINE[mode].map(x):shape==='sq'?FINE[mode].map(c=>sq(c,.58)):shape==='dot'?FINE[mode].map(c=>sq(c,.42)):
-      (mode==='light'?[.44,.56,.68,.8]:[.3,.42,.54,.66]).map(fr=>sq(FINE[mode][3],fr)); // half: the darkest tone, four sizes (bigger on light: dark ink on paper reads thinner)
+      [.44,.56,.68,.8].map((fr,i)=>{const bt=mode==='light'?0:mode[0]==='b'?+mode.slice(1)/8:1;return sq(FINE[mode][3],fr+([.3,.42,.54,.66][i]-fr)*bt)}); // half: the darkest tone, four sizes, eased from the light sizes (more ink on paper) to the dark ones with the blend
     spriteCache.set(key,out);return out;
   }
   const modeBtn=cull?null:scope.querySelector('#mode');
@@ -295,6 +293,11 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // Slow devices: when a frame's own work stays above ~10 ms, render every other frame (springs take a double step, so
   // the R moves just as fast). Fast devices never notice.
   let culled=false,cost=0,slow=false,odd=false,K2=null;
+  // the eased dark share of the R's palette (0 light … 1 dark), following the scroll theme
+  let dkB=theme.mode==='dark'?1:0;
+  const mixHex=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);
+    const ch=(sh)=>Math.round(((A>>sh&255)*(1-t)+(B>>sh&255)*t));
+    return '#'+((1<<24)+(ch(16)<<16)+(ch(8)<<8)+ch(0)).toString(16).slice(1)};
   function frame(ts){
     if(!alive)return;
     raf=requestAnimationFrame(frame);
@@ -371,11 +374,15 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     if(inIntro)rIntro.drift=drift/Math.ceil(N/16);
 
-    // the footer is always dark (_tokens.css): on the light theme its R draws in the dark theme's colours, from halfway
-    // into stage 4 on the stage that is the footer (home's travelling R, a subpage's footer R), and a subpage's header R
-    // while the header sits over the footer
-    const inFooter=(footerStage&&s>3.5&&s<=4.5)||(headerScope&&scope.classList.contains('is-on-footer')),themeMode=theme.mode;
-    const mode=inFooter&&themeMode==="light"?"dark":themeMode;
+    // the scroll theme (global/scrollTheme.js) fades the page between light and dark: the R eases its palette along
+    // with it, blended in 1/8 steps ('b1'…'b7' entries mixed into G / FINE / PALS, so the sprite caches stay small)
+    const themeMode=theme.mode,dkT=themeMode==='dark'?1:0;
+    dkB+=(dkT-dkB)*(slow?.22:.12);if(Math.abs(dkB-dkT)<.02)dkB=dkT;
+    const BQ=Math.round(dkB*8);
+    const mode=themeMode==='wild'?'wild':BQ===0?'light':BQ===8?'dark':'b'+BQ;
+    if(mode[0]==='b'&&!PALS[mode]){const t=BQ/8,mixA=(a,b)=>a.map((c,i)=>mixHex(c,b[i],t));
+      PALS[mode]=mixA(PALS.light,PALS.dark);FINE[mode]=mixA(FINE.light,FINE.dark);
+      G[mode]={gamma:3-t,colors:mixA(G.light.colors,G.dark.colors),line:.37-.05*t,pad:.21+.02*t}}
     ctx.clearRect(0,0,W,H);
     if(render===0||render===3){
       const fine=render===3;
@@ -405,7 +412,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
           for(const d of [1,cols]){const m=ci+d,e=ci+2*d;if(e<NN&&!(GC[m]>0)&&GC[e]>0){GC[m]=(GC[ci]+GC[e])/2;if(GN[m]===0)OCC[nOcc++]=m;GN[m]=1}}
         }
         if(LK.face&&look!=='fine'){
-          const X_=spritesLook(CELL,mode,'x'),FA=LK.face==='alt'?null:spritesLook(CELL,mode,LK.face),WA=spritesLook(CELL,mode,LK.wall),DO=LK.face==='alt'?spritesLook(CELL,mode,'dot'):null,dz=LK.dither||0,lb=mode==='light'?.8:0; // lb: light needs more ink to read
+          const X_=spritesLook(CELL,mode,'x'),FA=LK.face==='alt'?null:spritesLook(CELL,mode,LK.face),WA=spritesLook(CELL,mode,LK.wall),DO=LK.face==='alt'?spritesLook(CELL,mode,'dot'):null,dz=LK.dither||0,lb=themeMode==='wild'?0:.8*(1-dkB); /* the light theme's extra ink, eased with the blend */ // lb: light needs more ink to read
           for(let o=0;o<nOcc;o++){
             const ci=OCC[o],r=(ci/cols)|0,q=ci-r*cols,cap=GC[ci]>0,v=clamp(cap?GC[ci]:GS[ci],0,1),bay=((BAYER4[(r&3)*4+(q&3)]+.5)/16-.5)*dz;
             if(!cap){ctx.drawImage(WA[clamp(Math.round(v*4.2+.9+lb+bay),1,4)-1],q*CELL,r*CELL,CELL,CELL);continue}

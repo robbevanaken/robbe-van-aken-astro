@@ -37,11 +37,10 @@
 
 /* the hint at the hidden theme (Footer.astro, global/theme.js): after the location, in the row's own quiet voice; the
    key (R, or the toggle's half-filled square) on a small tile like the toggle's. Keyboard + fine pointer: "press R";
-   touch: "tap the square three times"; in the hidden theme: "You found it." */
+   touch: none; in the hidden theme: "You found it." */
 .c-site-footer__egg{margin:0;color:var(--subtle)}
 .c-site-footer__egg > *{display:none;align-items:center;gap:6px}
-.c-site-footer__egg-tap{display:inline-flex}
-@media (hover:hover) and (pointer:fine){ .c-site-footer__egg-tap{display:none} .c-site-footer__egg-keys{display:inline-flex} }
+@media (hover:hover) and (pointer:fine){ .c-site-footer__egg-keys{display:inline-flex} } /* touch: no hint (the toggle it pointed at is gone) */
 :root[data-theme="wild"] .c-site-footer__egg > *{display:none}
 :root[data-theme="wild"] .c-site-footer__egg > .c-site-footer__egg-found{display:inline-flex;color:var(--accent)}
 .c-site-footer__key{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;background:var(--panel);color:var(--fg);font:inherit;font-weight:500}
@@ -62,6 +61,7 @@
   .c-site-footer__legal:not(.c-site-footer__legal--cookies){margin-left:0}
   .c-site-footer__egg{grid-column:1 / -1;order:1;margin-top:var(--space-2xs)} /* phones: the hint on its own row, under the others */
 }
-/* desktop: room at the end of the bottom row for the fixed light/dark toggle (ui/ThemeToggle.astro, float) */
-@media (min-width:1024px){ .c-site-footer__bottom{padding-right:calc(var(--margin) + 36px + var(--space-m));padding-left:calc(var(--margin) + 36px + var(--space-m));padding-bottom:calc(var(--float-bottom) + 18px - .65em)} } /* the row level with the tiles' middle (36px tiles on --float-bottom; a 1.3 line); room at both ends for the tiles (the theme toggle, the album of the week) */
-@media (max-width:1023px){ .c-site-footer__bottom{padding-bottom:calc(var(--float-bottom) + 36px + var(--space-s))} } /* phones/tablet: room under the row for it */
+/* tablet: room under the row for the fixed album tile (phones: it lives in the menu) */
+@media (min-width:640px) and (max-width:1023px){ .c-site-footer__bottom{padding-bottom:calc(var(--float-bottom) + 36px + var(--space-s))} }
+/* desktop: room at the start of the bottom row for the fixed album tile (ui/Music.astro) */
+@media (min-width:1024px){ .c-site-footer__bottom{padding-left:calc(var(--margin) + 36px + var(--space-m));padding-bottom:calc(var(--float-bottom) + 18px - .65em)} } /* the row level with the tiles' middle (36px tiles on --float-bottom; a 1.3 line); room at both ends for the tiles (the theme toggle, the album of the week) */

@@ -9,6 +9,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export function initStackCards(root = document) {
+  // desktop only: below 1024px the rows are plain (image beside text, as on bymonolog.com), nothing stacks
+  if (matchMedia('(max-width: 1023px)').matches) return;
   const cards = [...root.querySelectorAll('[data-stack-card]')];
   if (cards.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const tls = cards.slice(1).map((card, i) => {
