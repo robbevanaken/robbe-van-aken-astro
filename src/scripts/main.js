@@ -19,6 +19,7 @@ import { initMarquee } from './components/marquee.js';
 import { initServices } from './components/services.js';
 import { initCaseMotion } from './components/caseMotion.js';
 import { initTitleFrame } from './components/titleFrame.js';
+import { initLocalTime } from './components/localTime.js';
 import { initContactForm } from './components/contactForm.js';
 import { initWorkFilter } from './components/workFilter.js';
 import { initFilter } from './components/filter.js';
@@ -62,6 +63,7 @@ function mount() {
     initServices(root),
     initCaseMotion(root),
     initTitleFrame(root),
+    initLocalTime(root),
     initContactForm(root),
     initWorkFilter(root),
     initWorkLoop(root),

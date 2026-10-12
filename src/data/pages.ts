@@ -14,6 +14,8 @@ export const contactPage = {
     { text: 'Have a project in mind?', muted: true },
     { text: " Let's talk.", muted: false },
   ],
+  // on the title frame's top line: where he is and his time there, live (components/localTime.js)
+  frameNote: { place: 'Ghent', timeZone: 'Europe/Brussels' },
   intro: "Tell me what you're working on. I'll get back to you personally, usually within a day.", // meta description
   portrait: { image: '', alt: 'Robbe Van Aken', placeholder: 'Portrait' },
   // left column (below the form on phones); an item with href is a link

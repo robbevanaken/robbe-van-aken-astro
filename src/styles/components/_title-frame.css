@@ -6,3 +6,12 @@
   --corner-opacity:0;--pull-x:max(0px,calc(var(--gutter) - 10px));--pull-y:max(0px,calc(var(--gutter) - 10px));--corner-dur:var(--hover-dur);--corner-ease:var(--ease-punch)}
 .c-title-frame.is-in,html.no-js .c-title-frame{--corner-opacity:1;--pull-x:0px;--pull-y:0px}
 @media (max-width:639px){ .c-title-frame{--corner-size:12px} }
+
+/* note: a small label on the frame's top line, level with the top right bracket's arm, just left of it (a drawing's sheet
+   number: the project's "03 / 06"; contact: Ghent + his local time, a small orange square for live; letter-spacing reset: the title's tight spacing is inherited in px). It comes in with
+   the brackets, a beat later. */
+.c-title-frame__note{position:absolute;top:0;right:calc(var(--corner-size) + var(--space-2xs));translate:0 -50%;display:flex;align-items:center;gap:.6em;
+  color:var(--muted);letter-spacing:0;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;opacity:0;transition:opacity var(--hover-dur) var(--ease-out) .15s}
+.c-title-frame.is-in .c-title-frame__note,html.no-js .c-title-frame__note{opacity:1}
+.c-title-frame__live{width:6px;height:6px;background:var(--accent)}
+.c-title-frame__note time:empty{display:none}
