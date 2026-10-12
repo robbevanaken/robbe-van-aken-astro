@@ -45,6 +45,11 @@
 @media (max-width:1023px){
   .c-services{padding-bottom:var(--space-xl)}
   .c-services__head{row-gap:var(--space-s);padding-bottom:calc(var(--space-xl) * 1.6)}
+  /* phones: the head centred, like the hero (and the projects head): the stage below is centred too */
+  @media (max-width:639px){
+    .c-services__head{text-align:center}
+    .c-services__intro.c-services__intro{max-width:30ch;justify-self:center}
+  }
   .c-services__title.c-services__title{grid-column:1 / -1;font-size:clamp(40px,10.5vw,72px);line-height:var(--lh-tight)}
   .c-services__intro.c-services__intro{grid-column:1 / -1;font-size:var(--fs-body-l);line-height:var(--lh-text)}
   /* one centred column: icon, count, name, text; spacer rows above and below keep the group in the middle, with more
@@ -60,5 +65,4 @@
   .c-services__text{grid-row:3;max-width:30ch;margin-top:var(--space-2xs)}
   .c-services__progress{grid-row:5;margin-bottom:0}
 }
-@media (max-width:639px){.c-services__intro{grid-column:1 / -1;max-width:28ch;justify-self:center}} /* a narrower column, centred */
 @media (prefers-reduced-motion:reduce){.c-services__item>*,.c-services__roll-list{transition:none!important}.c-services__item>*{transform:none!important}}

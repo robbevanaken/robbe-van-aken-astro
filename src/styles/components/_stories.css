@@ -40,8 +40,8 @@
 .c-stories__title.c-stories__title{font-size:calc(var(--fs-lead) * 1.25);line-height:1.1;letter-spacing:-.02em} /* 40 @1440 */
 .c-stories__text{margin-top:var(--space-s);color:var(--muted);max-width:26em}
 
-/* the image uncovers from the bottom up as it comes into view (global/reveal.js), settling from a touch larger */
-.c-stories__media[data-reveal]{clip-path:inset(100% 0 0 0);transition:clip-path 1.4s cubic-bezier(.16,1,.3,1)}
+/* the image opens from its centre as it comes into view (global/reveal.js), settling from a touch larger */
+.c-stories__media[data-reveal]{clip-path:inset(50% 50% 50% 50%);transition:clip-path 1.4s cubic-bezier(.16,1,.3,1)} /* opens from its centre */
 .c-stories__media[data-reveal] .c-visual{scale:1.14;transition:scale 1.8s cubic-bezier(.16,1,.3,1)}
 .c-stories__media[data-reveal].is-in{clip-path:inset(0 0 0 0)}
 .c-stories__media[data-reveal].is-in .c-visual{scale:1}
@@ -60,9 +60,12 @@ html.no-js .c-stories__media[data-reveal] .c-visual{scale:1}
   .c-stories__head{grid-column:3 / -1;grid-row:2;margin-top:0;align-self:start}
   .c-stories__text{grid-column:3 / -1;grid-row:3;align-self:start}
 }
-/* phones: the same side-by-side row, a size down and with more air; the image stretches to the text column's full
-   height (tried: Monolog's full-width square image on top: too much card, too little list) */
+/* phones: the head centred, like the hero (the chapter titles stay big); the rows stay side by side, a size down and
+   with more air; the image stretches to the text column's full height (tried: Monolog's full-width square image on
+   top: too much card, too little list) */
 @media (max-width:639px){
+  .c-featured-projects--stories .c-projects-intro{text-align:center;justify-items:center}
+  .c-featured-projects--stories .c-projects-intro__text.c-projects-intro__text{max-width:30ch}
   .c-stories__title.c-stories__title{font-size:var(--fs-lead)}
   .c-stories__row{row-gap:var(--space-m)}
   .c-stories__frame{align-self:stretch}

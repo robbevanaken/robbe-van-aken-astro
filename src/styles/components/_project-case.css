@@ -66,7 +66,7 @@
    - text stays put (no text reveals: the site's only text motion is the highlight on scroll); a story row's thin
      line draws from the left. The second of a pair a beat later. */
 .c-project-case{--reveal-ease:cubic-bezier(.16,1,.3,1)}
-.c-project-case [data-reveal="media"]{clip-path:inset(100% 0 0 0);transition:clip-path 1.4s var(--reveal-ease);transition-delay:calc(var(--i,0) * .12s)}
+.c-project-case [data-reveal="media"]{clip-path:inset(50% 50% 50% 50%);transition:clip-path 1.4s var(--reveal-ease); /* opens from its centre (was: from the bottom up) */transition-delay:calc(var(--i,0) * .12s)}
 .c-project-case [data-reveal="media"] img{scale:1.14;transition:scale 1.8s var(--reveal-ease);transition-delay:calc(var(--i,0) * .12s)}
 .c-project-case [data-reveal="media"].is-in{clip-path:inset(0 0 0 0)}
 .c-project-case [data-reveal="media"].is-in img{scale:1}
