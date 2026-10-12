@@ -11,6 +11,9 @@ const text = statement.map((l) => [l.lead, l.big, l.small].filter(Boolean).join(
 ---
 <section class="c-statement t-dark" data-statement-pin>
   <div class="c-statement__sticky o-container o-grid">
+  <!-- the page's R, small and central at the top of the pinned screen (as above the projects): a stage-2 marker with
+       its own anchor (r-journey/engine.js, data-r-self); the end marker below holds it there for the whole pin -->
+  <div class="c-statement__r" data-stage="2" data-r-self aria-hidden="true"></div>
   <p class="u-sr-only">{text}</p>
   {statement.map((l, i) => (
     <p class:list={['c-statement__line', `c-statement__line--${i + 1}`]} aria-hidden="true">
@@ -22,8 +25,6 @@ const text = statement.map((l) => [l.lead, l.big, l.small].filter(Boolean).join(
     </p>
   ))}
   </div>
+  <span class="c-statement__end" data-stage="2" data-r-self aria-hidden="true"></span>
 </section>
-<!-- holds the page's R in the services' state (scrolled away with them) until the statement is past, so it doesn't fly
-     through the words on its way to the footer -->
-<span class="c-statement__hold" data-stage="3" aria-hidden="true"></span>
 

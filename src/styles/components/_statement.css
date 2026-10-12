@@ -15,7 +15,9 @@ html.no-js .c-statement__sticky{position:static;height:auto}
 .c-statement__line{grid-column:1 / -1;display:flex;align-items:baseline;column-gap:var(--space-s);margin:0;overflow:hidden;padding-bottom:.26em;margin-bottom:-.26em}
 .c-statement__line--2{justify-content:flex-end}
 .c-statement__line--3{padding-left:calc((100% - 11 * var(--gutter)) / 12 * 2 + 2 * var(--gutter))}
-.c-statement__hold{display:block;height:0}
+/* the R's spot on the pinned screen: small and central at the top, as above the projects (the engine draws it here) */
+.c-statement__r{position:absolute;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);left:50%;translate:-50% 0;width:56px;height:56px;pointer-events:none}
+.c-statement__end{display:block;height:0}
 .c-statement__big{font-size:var(--big);line-height:1;letter-spacing:-.045em;white-space:nowrap}
 .c-statement__small{max-width:11em;line-height:1.3}
 /* the loop between the big and the small words (ui/StatementLoop.astro): 3:2, as tall as the big words' capitals
@@ -29,5 +31,4 @@ html.no-js .c-statement__sticky{position:static;height:auto}
   .c-statement__line{column-gap:var(--space-2xs)}
   .c-statement__line--3{padding-left:calc((100% - 3 * var(--gutter)) / 4 * .5)}
   .c-statement__small.c-statement__small{font-size:13px;max-width:7.5em}
-  .c-statement__hold{translate:0 -6svh} /* the R heads for the footer as soon as the last line has left the screen */
 }

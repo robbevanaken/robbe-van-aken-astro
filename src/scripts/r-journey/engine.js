@@ -61,6 +61,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // a section with its own R ([data-r-own], e.g. the statement's R on home) keeps its stage to itself: the page's R skips it
   const own=(e)=>e.closest('[data-r-own]')&&!scope.closest?.('[data-r-own]');
   const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...[...scope.querySelectorAll('[data-stage]')].filter((e)=>!own(e))],SV=stages.map(e=>+e.dataset.stage);
+  // a stage element with its own anchor (data-r-self: the statement's top-centre marker and its end marker): while
+  // it's one of the stages the R is between, stage 2 draws on it instead of on #a-craft
+  const isSelf=stages.map((e)=>e.hasAttribute('data-r-self')),selfEl=stages.find((e)=>e.hasAttribute('data-r-self'))||null;let selfOn=false;
   if(!stages.length)return null;
   // A scope may have only one anchor (header: #a-craft, footer: #a-foot, contact's How I work: the arrow's
   // [data-r-pointer]): every missing anchor falls back to it.
@@ -189,13 +192,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // blend those two states directly instead of passing through the ones in between ({a, b, f}; null otherwise)
   let jump=null;
   function computeS(){
-    jump=null;
+    jump=null;selfOn=false;
     const vc=H/2,cs=stages.map(e=>{const r=e.getBoundingClientRect();return r.top+r.height/2});
-    if(vc<=cs[0])return SV[0];
-    for(let i=0;i<cs.length-1;i++){if(vc<=cs[i+1]){const f=cs[i+1]-cs[i]<1?1:(vc-cs[i])/(cs[i+1]-cs[i]),t=clamp((f-.18)/.64,0,1);
+    if(vc<=cs[0]){selfOn=isSelf[0];return SV[0]}
+    for(let i=0;i<cs.length-1;i++){if(vc<=cs[i+1]){selfOn=isSelf[i]||isSelf[i+1];const f=cs[i+1]-cs[i]<1?1:(vc-cs[i])/(cs[i+1]-cs[i]),t=clamp((f-.18)/.64,0,1);
       if(Math.abs(SV[i+1]-SV[i])>1){jump={a:SV[i],b:SV[i+1],f:t};return t<.5?SV[i]:SV[i+1]}
       return SV[i]+(SV[i+1]-SV[i])*t}}
-    return SV[cs.length-1];
+    selfOn=isSelf[cs.length-1];return SV[cs.length-1];
   }
   // rotation matrices: Rz * Rx * Ry
   function mat(ry,rx,rz,m){
@@ -314,7 +317,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const ml=(slow?.1164:.06)*motion;smx+=(mx-smx)*ml;smy+=(my-smy)*ml;if(intro)Object.assign(mouse,{mx,my,smx,smy});
     rect(aHero,A[0]);A[0].S=Math.min(A[0].h,A[0].w*1.05)*.92;
     rect(aPitch,A[1]);A[1].S=Math.min(A[1].h*.8,A[1].w*1.15);A[1].cx-=A[1].w*.1;
-    rect(aCraft,A[2]);A[2].S=A[2].h*.9;
+    rect(selfOn&&selfEl?selfEl:aCraft,A[2]);A[2].S=A[2].h*.9;
     rect(svcSlot,AS);
     rect(aFoot,A[4]);A[4].S=char?A[4].h*.83:Math.min(A[4].h,A[4].w*1.05)*.9; // a character: sized by its box's height, to the same scale as the R beside it on the 404 (its box: .92 × 1.05em → .87em), so both have the same particle size
     const inIntro=intro&&rIntro.el&&rIntro.t>0;
