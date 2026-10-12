@@ -11,13 +11,24 @@
 .c-featured-projects--stories .c-projects-intro > *{grid-column:auto}
 .c-featured-projects--stories .c-projects-intro__title{grid-column:1 / span 5;margin:0}
 .c-featured-projects--stories .c-projects-intro__text{grid-column:8 / span 5;max-width:26em;margin:0}
-.c-featured-projects--stories .c-featured-projects__list{grid-row:2;row-gap:0;margin-top:var(--space-xl)}
+.c-featured-projects--stories .c-featured-projects__list{grid-row:2;row-gap:0;margin-top:var(--space-l)}
 
 .c-featured-projects--stories .c-featured-projects__item{grid-column:1 / -1;border-top:1px solid var(--line)} /* over the spread rules (cols 8–11 / 2–5) */
+/* stacking cards (after Osmo's "Stacking cards parallax", components/stackCards.js): every row is a card as tall as its
+   content (tried: at least a screen: too tall), on the page's paper; the next one scrolls up over it while the one beneath
+   sinks back at half the speed (parallax) and its image lifts a little, its story fading. Flat, no 3D.
+   Each next card lies on top (z-index in DOM order). The cards stay in the grid's columns; the paper spans the page. */
+.c-featured-projects--stories .c-stories__item{position:relative;display:flex;align-items:center;background:var(--bg);
+  box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)} /* the paper to the screen's edges, not past the card's top / bottom */
+.c-featured-projects--stories .c-stories__item:nth-child(2){z-index:2}
+.c-featured-projects--stories .c-stories__item:nth-child(3){z-index:3}
+.c-featured-projects--stories .c-stories__item:nth-child(4){z-index:4}
+.c-featured-projects--stories .c-stories__item:nth-child(5){z-index:5}
+.c-featured-projects--stories .c-stories__row{width:100%}
 .c-stories__item:last-child{border-bottom:1px solid var(--line)}
 .c-stories__row{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));column-gap:var(--gutter);padding-block:var(--space-l)}
 .c-stories__frame{grid-column:1 / span 5;position:relative;display:block;align-self:start} /* the image + its corner brackets (the card's --corner-* settings) */
-.c-stories__media{display:grid;aspect-ratio:1} /* square: the work fills the row's height (tried: 4:3, it left the story column half empty) */
+.c-stories__media{display:grid;aspect-ratio:4 / 3} /* (tried: square: the cards ran too tall) */
 .c-stories__body{grid-column:8 / span 5;display:flex;flex-direction:column;min-height:100%}
 .c-stories__top{display:flex;justify-content:space-between;gap:var(--space-s);color:var(--muted)}
 .c-stories__num{color:var(--fg);font-variant-numeric:tabular-nums}
@@ -25,13 +36,6 @@
 .c-stories__head{margin-top:var(--space-m)}
 .c-stories__title.c-stories__title{font-size:calc(var(--fs-lead) * 1.25);line-height:1.1;letter-spacing:-.02em} /* 40 @1440 */
 .c-stories__text{margin-top:var(--space-s);color:var(--muted);max-width:26em}
-.c-stories__foot{margin-top:auto;padding-top:var(--space-l);display:grid;gap:var(--space-m)}
-.c-stories__outcome{display:grid;gap:var(--space-2xs)}
-.c-stories__value{font-size:var(--fs-display);line-height:1;letter-spacing:-.04em;color:var(--fg)}
-.c-stories__value-label{color:var(--muted);max-width:22em}
-.c-stories__facts{display:grid;grid-template-columns:1fr 1fr;column-gap:var(--gutter);border-top:1px solid var(--line);padding-top:var(--space-xs)}
-.c-stories__fact{display:grid;gap:2px}
-.c-stories__fact-label{color:var(--muted)}
 
 /* the image uncovers from the bottom up as it comes into view (global/reveal.js), settling from a touch larger */
 .c-stories__media[data-reveal]{clip-path:inset(100% 0 0 0);transition:clip-path 1.4s cubic-bezier(.16,1,.3,1)}

@@ -61,6 +61,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // a section with its own R ([data-r-own], e.g. the statement's R on home) keeps its stage to itself: the page's R skips it
   const own=(e)=>e.closest('[data-r-own]')&&!scope.closest?.('[data-r-own]');
   const stages=[...(scope.matches?.('[data-stage]')?[scope]:[]),...[...scope.querySelectorAll('[data-stage]')].filter((e)=>!own(e))],SV=stages.map(e=>+e.dataset.stage);
+  const footerStage=stages.some((e)=>e.matches('[data-site-footer]')); // its stage 4 is the footer (not the 404's)
+  const headerScope=!!scope.matches?.('[data-site-header]'); // a subpage's header R: over the footer it switches too
   if(!stages.length)return null;
   // A scope may have only one anchor (header: #a-craft, footer: #a-foot, contact's How I work: the arrow's
   // [data-r-pointer]): every missing anchor falls back to it.
@@ -369,7 +371,11 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     if(inIntro)rIntro.drift=drift/Math.ceil(N/16);
 
-    const mode=theme.mode;
+    // the footer is always dark (_tokens.css): on the light theme its R draws in the dark theme's colours, from halfway
+    // into stage 4 on the stage that is the footer (home's travelling R, a subpage's footer R), and a subpage's header R
+    // while the header sits over the footer
+    const inFooter=(footerStage&&s>3.5&&s<=4.5)||(headerScope&&scope.classList.contains('is-on-footer')),themeMode=theme.mode;
+    const mode=inFooter&&themeMode==="light"?"dark":themeMode;
     ctx.clearRect(0,0,W,H);
     if(render===0||render===3){
       const fine=render===3;
