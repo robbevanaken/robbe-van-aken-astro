@@ -7,8 +7,12 @@
 // comes in).
 const HOLD = .3; // part of each screen at the start and at the end where the shape holds still (the morph: the 40% between)
 
+// the count and the pin never change per section: cached (serviceProgress runs every engine frame and every scroll)
+const geo = new WeakMap();
 export function serviceProgress(el) {
-  const n = el.querySelectorAll('[data-service]').length, r = el.querySelector('[data-services-pin]').getBoundingClientRect();
+  let sg = geo.get(el);
+  if (!sg) geo.set(el, (sg = { n: el.querySelectorAll('[data-service]').length, pin: el.querySelector('[data-services-pin]') }));
+  const n = sg.n, r = sg.pin.getBoundingClientRect();
   const run = r.height - innerHeight;
   if (n < 2 || run <= 0) return 0;
   const raw = Math.min(1, Math.max(0, -r.top / run)) * (n - 1), i = Math.min(Math.floor(raw), n - 2);
@@ -33,8 +37,11 @@ export function initServices(root = document) {
     el.style.setProperty('--svc', a); // the count's number rolls (_services.css)
     items.forEach((it, i) => { it.classList.toggle('is-active', i === a); it.classList.toggle('is-past', i < a); });
   };
-  addEventListener('scroll', update, { passive: true, signal: ac.signal });
-  addEventListener('resize', update, { signal: ac.signal });
+  // coalesced to one update per frame (Lenis fires a scroll event every frame while gliding)
+  let raf = 0;
+  const queue = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); }); };
+  addEventListener('scroll', queue, { passive: true, signal: ac.signal });
+  addEventListener('resize', queue, { signal: ac.signal });
   update();
-  return () => ac.abort();
+  return () => { ac.abort(); cancelAnimationFrame(raf); };
 }

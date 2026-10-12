@@ -19,7 +19,10 @@
    sinks back at half the speed (parallax) and its image lifts a little, its story fading. Flat, no 3D.
    Each next card lies on top (z-index in DOM order). The cards stay in the grid's columns; the paper spans the page. */
 .c-featured-projects--stories .c-stories__item{position:relative;display:flex;align-items:center;background:var(--bg);
-  box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)} /* the paper to the screen's edges, not past the card's top / bottom */
+  box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)}
+/* desktop (where the stack parallax transforms them, components/stackCards.js): each card on its own layer, so the
+   viewport-wide paper strip moves by compositing instead of repainting every frame */
+@media (min-width:1024px){ .c-featured-projects--stories .c-stories__item,.c-featured-projects--stories .c-stories__media{will-change:transform} } /* the paper to the screen's edges, not past the card's top / bottom */
 .c-featured-projects--stories .c-stories__item:nth-child(2){z-index:2}
 .c-featured-projects--stories .c-stories__item:nth-child(3){z-index:3}
 .c-featured-projects--stories .c-stories__item:nth-child(4){z-index:4}

@@ -17,7 +17,7 @@ export function initStackCards(root = document) {
     const prev = cards[i];
     const tl = gsap.timeline({
       defaults: { ease: 'none', duration: 1 },
-      scrollTrigger: { trigger: card, start: 'top bottom', end: 'top top', scrub: true, invalidateOnRefresh: true },
+      scrollTrigger: { trigger: card, start: 'top bottom', end: 'top top', scrub: .8, invalidateOnRefresh: true }, // a slight lag: wheel steps glide instead of stepping
     });
     tl.fromTo(prev, { yPercent: 0 }, { yPercent: 50 })
       .fromTo(prev.querySelector('[data-stack-card-media]'), { yPercent: 0 }, { yPercent: -12 }, '<')

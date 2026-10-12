@@ -156,7 +156,8 @@ function initScrollToNextPage(root) {
       el.style.opacity = o.toFixed(3); el.style.visibility = o < .02 ? 'hidden' : '';
     });
   };
-  addEventListener('scroll', fade, { passive: true, signal: ac.signal });
+  let fadeRaf = 0; // one read per frame (Lenis fires scroll every frame)
+  addEventListener('scroll', () => { if (!fadeRaf) fadeRaf = requestAnimationFrame(() => { fadeRaf = 0; fade(); }); }, { passive: true, signal: ac.signal });
   fade();
 
   return () => { ac.abort(); clearTimeout(rest); tl.scrollTrigger?.kill(); };
