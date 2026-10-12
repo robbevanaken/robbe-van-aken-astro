@@ -37,8 +37,9 @@ const spriteCache = new Map(), grid = { GC: null, GS: null, GN: null, OCC: null 
 // much the footer state (stage 4) turns with the mouse (1 = as the footer; the 404's characters less, so they stay legible).
 // how much the R is MORPHING right now (0…1), fed by every engine instance per frame; global/sound.js reads it for
 // the sand sound and decays it. Only real shape changes count: the stage blends (flights with their turn), the
-// services' icon morphs and the loader / menu flights — never the mouse sway or plain scrolling, so the R parked on
-// a spot (the small R top centre, the settled footer R) is silent, and the harder the morph, the louder the sand.
+// services' icon morphs, the loader / menu flights, and the footer R's crater as the cursor (or a finger) pushes
+// through it (measured by its CHANGE: holding still inside is silent) — never the mouse sway or plain scrolling, so
+// the R parked on a spot is silent, and the harder the morph, the denser the grains.
 export const rAudio = { v: 0 };
 
 export function initREngine({ canvas = document.getElementById('r-canvas'), scope = document, cull = false, follow = true, intro = false, look = LOOK, char = '', turn = 1, small: smallLook = SMALL } = {}) {
@@ -243,7 +244,11 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
         x=m[0]*lx+m[1]*ly+m[2]*lz,y=m[3]*lx+m[4]*ly+m[5]*lz,z=m[6]*lx+m[7]*ly+m[8]*lz,k=1/(1-z*.6);
       o[0]=a.cx+x*k*box;o[1]=a.cy+y*k*box}
     else{const a=A[4];proj(4,a,u,v,z,o);
-      if(motion){let x=o[0],y=o[1];const dx=x-mpx,dy=y-mpy,dd=Math.hypot(dx,dy)||1,R=a.S*.24;if(dd<R){const pu=1-dd/R,push=pu*pu*R*.95;x+=dx/dd*push;y+=dy/dd*push}o[0]=x;o[1]=y}}
+      if(motion){let x=o[0],y=o[1];const dx=x-mpx,dy=y-mpy,dd=Math.hypot(dx,dy)||1,R=a.S*.24;
+        if(dd<R){const pu=1-dd/R,push=pu*pu*R*.95;x+=dx/dd*push;y+=dy/dd*push;
+          if(audioPP){pushAcc+=Math.abs(push-audioPP[p]);audioPP[p]=push}} // the crater CHANGING feeds the grains (rAudio); holding still is silent
+        else if(audioPP&&audioPP[p]){pushAcc+=audioPP[p];audioPP[p]=0}
+        o[0]=x;o[1]=y}}
   }
   // colours per theme (global/theme.js): light = dark crosses / pixels on the light page
   const PALS={dark:['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'],light:['#e6ded6','#cfc5bc','#a3978e','#6f6560','#3d302a','#1f1511'],
@@ -302,7 +307,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // Slow devices: when a frame's own work stays above ~10 ms, render every other frame (springs take a double step, so
   // the R moves just as fast). Fast devices never notice.
   let culled=false,cost=0,slow=false,odd=false,K2=null;
-  const pa={s:0,sg:0,jf:0,jon:false,t:0}; // last frame's scalars, for the sand sound's morph signal (rAudio)
+  const pa={s:0,sg:0,jf:0,jon:false,t:0}; // last frame's scalars, for the grains' morph signal (rAudio)
+  let audioPP=null,pushAcc=0; // the footer R's cursor push per particle (its change per frame joins the signal)
   // the eased dark share of the R's palette (0 light … 1 dark), following the scroll theme
   let dkB=theme.mode==='dark'?1:0;
   const mixHex=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);
@@ -494,12 +500,14 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
 
     }
-    { // the morph signal for the sand sound (rAudio): only shape changes, scalar deltas against the last frame
+    if(audioPP?.length!==N&&N)audioPP=new Float32Array(N);
+    { // the morph signal for the grains (rAudio): only shape changes, scalar deltas against the last frame
       let mo=Math.abs(sg-pa.sg)*4; // the services' icon morph
       if(jump){ if(!pa.jon)pa.jf=jump.f; mo+=Math.abs(jump.f-pa.jf)*6; pa.jf=jump.f; pa.jon=true; } // a jump blend (s itself snaps at .5)
       else { pa.jon=false; mo+=Math.abs(s-pa.s)*6; } // a flight between stages (parked between equal stages: s is flat)
       if(intro&&rIntro.el){ mo+=Math.abs(rIntro.t-pa.t)*4; pa.t=rIntro.t; } // the loader / menu / transition flights
       pa.s=s;pa.sg=sg;
+      mo+=Math.min(1,pushAcc/(Math.max(N,1)*5));pushAcc=0; // the footer R's crater, moved by the cursor (or a finger)
       if(!document.hidden)rAudio.v=Math.min(1,Math.max(rAudio.v,mo*2.2));
     }
     const idx=Math.round(s);if(idx!==lastIdx){if(hudName)hudName.textContent=NAMES[idx];lastIdx=idx}
