@@ -26,7 +26,7 @@
   transition:color var(--hover-dur) var(--ease-punch)}
 .c-filter__option-label{transition:transform var(--hover-dur) var(--ease-punch)}
 .c-filter__count{font-size:.68em;line-height:1;margin-top:-.1em;opacity:.7;font-variant-numeric:tabular-nums;transition:transform var(--hover-dur) var(--ease-punch)}
-/* the active option: full colour, with a small orange square in front */
+/* the active option: full colour, with a small accent-red square in front */
 .c-filter__option::before{content:"";position:absolute;left:16px;top:50%;width:6px;height:6px;margin-top:-3px;background:var(--accent);transform:scale(0);transition:transform var(--hover-dur) var(--ease-punch)}
 .c-filter__option[aria-pressed="true"]{color:var(--on-fg)}
 .c-filter__option[aria-pressed="true"]::before{transform:scale(1)}

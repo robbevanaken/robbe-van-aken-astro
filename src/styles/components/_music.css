@@ -1,15 +1,15 @@
 /* Album of the week (ui/Music.astro): fixed bottom left, its left edge on the page margin, on the theme toggle's line (--float-bottom).
-   Closed: a 36px quiet tile (--panel) with a record on it (22px: black vinyl, the cover as a small label). Open (.is-open:
+   Closed: a --tile (42px) quiet tile (--panel) with a record on it (26px: black vinyl, the cover as a small label). Open (.is-open:
    hover, keyboard focus, a first tap; scripts/global/music.js): the tile grows up and to the right (from its
    bottom left corner, punch ease) into a small deck; the record grows to 64px, slides to the right and spins (33⅓ rpm:
    1.8s a turn) off the album's sleeve, which stays put, and beside it, like a walkman's display: "Album of the week" with a little
    equalizer, the album (with the brand arrow) and the artist. Hidden during the loader, page swaps, with the menu open
    and while the cookie banner shows (bottom left on desktop too). Reduced motion: it opens, nothing spins or bounces. */
-.c-music{--s:22px;--x:7px;--y:7px;--out:0px;
+.c-music{--s:26px;--x:8px;--y:8px;--out:0px;
   position:fixed;left:var(--margin);bottom:var(--float-bottom);z-index:36; /* above the R canvases (35) */
-  display:block;width:36px;height:36px;background:var(--panel);color:var(--fg);text-decoration:none;overflow:hidden;
+  display:block;width:var(--tile);height:var(--tile);background:var(--panel);color:var(--fg);text-decoration:none;overflow:hidden;
   transition:width .7s var(--ease-punch),height .7s var(--ease-punch),opacity .4s var(--ease-out),visibility .4s}
-.c-music::before{content:"";position:absolute;inset:-4px} /* a 44px tap area (closed) */
+.c-music::before{content:"";position:absolute;inset:-4px} /* a 50px tap area (closed) */
 :is(.c-music.is-open,.c-site-header__menu.is-in .c-music--menu){--s:64px;--x:12px;--y:12px;--out:48px;width:310px;height:88px}
 
 /* the deck: the record slides off the album's sleeve to the right, uncovering it; the sleeve itself stays put (closed,

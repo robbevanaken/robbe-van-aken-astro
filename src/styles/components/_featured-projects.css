@@ -4,7 +4,7 @@
 .c-featured-projects{position:relative;padding-bottom:var(--space-section)}
 /* home: the pitch ends on its R anchor (with room around the R in it), so a smaller step to the head (the small R);
    below 1024px the pitch ends on the portrait: the full section spacing */
-.c-featured-projects:has(.c-projects-intro){padding-top:calc(var(--space-xl) * 1.5)}
+.c-featured-projects:has(.c-projects-intro){padding-top:var(--space-section)} /* it follows the services' pin */
 /* home: the section ends a step below the last project (room for the small R, which scrolls away with its end), then the
    button and the services follow on their own spacing */
 .c-featured-projects:has(.c-featured-projects__end){padding-bottom:var(--space-xl)}

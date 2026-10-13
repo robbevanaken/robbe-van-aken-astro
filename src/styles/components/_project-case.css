@@ -23,7 +23,8 @@
 .c-project-case__desktop{display:block;width:100%;height:auto;aspect-ratio:16 / 10;object-fit:cover}
 .c-project-case__pair{row-gap:var(--gutter)}
 .c-project-case__panel--phone{grid-column:span 6;aspect-ratio:4 / 5;padding:0}
-.c-project-case__mobile{display:block;height:84%;width:auto;aspect-ratio:1170 / 2532;object-fit:cover}
+/* the hairline marks the screen's edge: a screenshot in the panel's own tones would float on it otherwise */
+.c-project-case__mobile{display:block;height:84%;width:auto;aspect-ratio:1170 / 2532;object-fit:cover;border:1px solid var(--line)}
 /* no screenshots yet: the panels in the project's colours, with a quiet label */
 .c-project-case__panel--empty{aspect-ratio:16 / 10;color:var(--t);background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
 .c-project-case__panel--empty.c-project-case__panel--phone{aspect-ratio:4 / 5}
@@ -120,7 +121,7 @@
 }
 
 /* the site's long page in a 16:10 window on its panel, scrolling as you scroll (components/caseMotion.js) */
-.c-project-case__window{position:relative;width:100%;aspect-ratio:16 / 10;overflow:hidden;background:var(--panel)}
+.c-project-case__window{position:relative;width:100%;aspect-ratio:16 / 10;overflow:hidden;background:var(--panel);border:1px solid var(--line)} /* the hairline: a light site's page would melt into the panel */
 /* while the page loads: a tiny blurred copy of it (--lqip, a 24px webp), so the window is never empty */
 .c-project-case__window::before{content:"";position:absolute;inset:-20px;background:var(--lqip) center top / 100% auto no-repeat;filter:blur(14px);transform:translateZ(0)}
 .c-project-case__long{position:relative;display:block;width:calc(100% + 2px);max-width:none;height:auto;will-change:transform} /* 2px past the window's right edge (clipped): a rounded-down width let the blurred stand-in behind it show as a dark line */

@@ -6,11 +6,12 @@
    active one shows. The engine rebuilds the R into the active
    icon inside [data-service-slot]. Below 1024px: one centred column (icon, then count, name and text), the group
    centred on the screen, a progress line (one segment per service) at the bottom. */
-.c-services{padding-top:0} /* the room above comes from the button before it (its --mid), so it sits exactly in the middle */
+.c-services{padding-top:calc(var(--space-xl) * 1.5)} /* it follows the pitch, which ends on its R anchor */
+/* the R's landing spot between the pitch and the first icon: small, central, above the title (data-r-self) */
+.c-services__r{grid-column:1 / -1;justify-self:center;width:56px;height:56px;margin-bottom:var(--space-l);pointer-events:none}
 .c-services__head{row-gap:var(--space-s);padding-bottom:calc(var(--space-xl) * 1.5);align-items:end}
 .c-services__title.c-services__title{grid-column:1 / span 6;font-size:var(--fs-page);line-height:1;letter-spacing:-.04em}
 .c-services__intro.c-services__intro{grid-column:8 / span 5;font-size:var(--fs-lead);line-height:1.25;letter-spacing:-.01em}
-.c-services__hold{grid-column:1 / -1;height:0}
 
 .c-services__pin{height:calc(var(--services,4) * 100svh)}
 .c-services__stage{position:sticky;top:0;height:100svh;grid-template-rows:1fr;align-items:center}

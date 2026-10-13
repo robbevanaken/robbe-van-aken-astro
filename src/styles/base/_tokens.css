@@ -22,12 +22,13 @@
   --subtle:#8c827c;   /* tertiary: footer meta, counters */
   --line:#3a2f2a;
   --line-strong:#6e625b;
-  --accent:#ff4a00;
+  --accent:#c1121f;   /* a deep red (was: orange #ff4a00) */
   --card:#d8d2cc;
-  --ink:#170e0b;      /* dark text on orange (marquee, selection): the same in both themes */
+  --ink:#170e0b;      /* dark text on paper (the pricing's paper card): the same in both themes */
+  --on-accent:#f3eee8; /* text on the accent (marquee, selection, button hover): light paper, 5.6:1 on the red (dark ink only reached 2.9:1) */
   --on-fg:#170e0b;    /* text on an --fg background (buttons) */
   --surface:#1d1310;  /* panels above the page (cookie banner) */
-  --paper:#ffffff;    /* the filling marquee before the orange comes in */
+  --paper:#ffffff;    /* the filling marquee before the accent comes in */
   --grain:.07;        /* the paper grain over the site (_grain.css) */
   --page:var(--bg);   /* the page's background */
   --panel:color-mix(in srgb,var(--fg) 6%,var(--bg)); /* quiet panels a step off the page: the contact wizard, the mobile menu (follows the theme) */
@@ -72,10 +73,11 @@
   /* hover ease, same curve as GSAP CustomEase "punch" (M0,0 C0.19,1 0.22,1 1,1), registered in scripts/eases.js */
   --ease-punch:cubic-bezier(.19,1,.22,1);
   --hover-dur:.6s;
-  --marquee-h:48px;
+  --marquee-h:var(--tile); /* the band as tall as the tiles standing on it and the buttons (~42px; was 48) */
   /* the line the fixed tiles sit on (the theme toggle bottom right, the album of the week bottom left, the phones'
-     filter on /work): just above the orange band at the bottom of the home hero, at every screen size */
-  --float-bottom:calc(env(safe-area-inset-bottom,0px) + var(--marquee-h) + var(--space-xs));
+     filter on /work): standing right on the accent band at the bottom of the home hero, at every screen size */
+  --float-bottom:calc(env(safe-area-inset-bottom,0px) + var(--marquee-h)); /* standing right on the home hero's band at the top of the page (was: a small gap above it) */
+  --tile:42px; /* the fixed tiles (album, sound); was 36 */
 
   color-scheme:dark;
 }
@@ -99,7 +101,7 @@
 }
 
 /* the hidden third theme (an easter egg, global/theme.js: press R, or the toggle three times quickly; this visit only):
-   risograph inks, loud but one family. Ultramarine paper, yellow type, pink for the quieter text, the orange bands go
+   risograph inks, loud but one family. Ultramarine paper, yellow type, pink for the quieter text, the accent bands go
    fluorescent green, the R prints in orange and lilac (engine.js G / FINE / PALS .wild). Still readable: yellow on the
    blue 7.9:1, the pink 5.2:1. */
 :root[data-theme="wild"]{
@@ -110,6 +112,7 @@
   --line:#4646dc;
   --line-strong:#8a86ff;
   --accent:#3cf08a;
+  --on-accent:#170e0b; /* dark on the fluorescent green */
   --card:#3a3ae0;
   --on-fg:#2323c8;
   --surface:#2a2ad2;

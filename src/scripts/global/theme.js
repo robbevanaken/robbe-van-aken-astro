@@ -64,5 +64,5 @@ export function initTheme() {
     if ((e.key === 'r' || e.key === 'R') && !e.metaKey && !e.ctrlKey && !e.altKey && !e.repeat
       && !e.target.closest?.('input,textarea,select,[contenteditable]')) toggleWild();
   });
-  console.log('%cR', 'font:700 40px serif;color:#ff4a00', '\nLooking under the hood? Press R on the page for something else.');
+  console.log('%cR', 'font:700 40px serif;color:#c1121f', '\nLooking under the hood? Press R on the page for something else.');
 }

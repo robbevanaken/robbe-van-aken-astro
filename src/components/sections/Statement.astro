@@ -1,18 +1,18 @@
 ---
-// Statement (home, after the services): the story's last word before the footer, a pinned moment (after bymonolog.com's
-// gap section). The sticky screen holds the big staggered lines (two-tone like the page's other titles, small muted
-// words hung beside them, a funny GIF between them: ui/StatementLoop.astro) while the wrapper scrolls on; the lines
-// GIFs open from their centre first (scrubbed), then the words slide up through their line's mask (expo.out, a
-// time-based cascade once the pin lands: components/statementPin.js).
+// Statement (home, after the services): the story's last word before the footer. After the long held services stage it
+// deliberately FLOWS (no pin — two held, sparse screens in a row read as empty): the big staggered lines (two-tone like
+// the page's other titles, small muted words hung beside them, a funny GIF between them: ui/StatementLoop.astro) pass
+// in about a screen; as the section comes in, the GIFs open from their centre while the words slide up through their
+// line's mask (expo.out cascade, components/statementReveal.js), reversed on scrolling back out.
 // Styles: styles/components/_statement.css. Copy: statement in src/data/site.ts.
 import { statement } from '../../data/site';
 import Loop from '../ui/StatementLoop.astro';
 const text = statement.map((l) => [l.lead, l.big, l.small].filter(Boolean).join(' ')).join(' ');
 ---
-<section class="c-statement t-dark" data-statement-pin>
-  <div class="c-statement__sticky o-container o-grid">
-  <!-- the page's R, small and central at the top of the pinned screen (as above the projects): a stage-2 marker with
-       its own anchor (r-journey/engine.js, data-r-self); the end marker below holds it there for the whole pin -->
+<section class="c-statement t-dark" data-statement>
+  <div class="c-statement__inner o-container o-grid">
+  <!-- the page's R, small and central above the lines (as above the projects): a stage-2 marker with its own anchor
+       (r-journey/engine.js, data-r-self); it lands here as the statement passes, then jumps on into the footer -->
   <div class="c-statement__r" data-stage="2" data-r-self aria-hidden="true"></div>
   <p class="u-sr-only">{text}</p>
   {statement.map((l, i) => (
@@ -25,6 +25,4 @@ const text = statement.map((l) => [l.lead, l.big, l.small].filter(Boolean).join(
     </p>
   ))}
   </div>
-  <span class="c-statement__end" data-stage="2" data-r-self aria-hidden="true"></span>
 </section>
-

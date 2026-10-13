@@ -1,6 +1,6 @@
 /* Contact form (sections/ContactForm.astro, components/contactForm.js): numbered questions, one row each between thin
    lines. Each row: the number (a narrow first column), the question (lead size) and its field(s) below it. Fields
-   are underlined only: the line fills in from the left when focused (--u: the fill colour, orange when invalid).
+   are underlined only: the line fills in from the left when focused (--u: the fill colour, the accent red when invalid).
    Budget: square choice chips (radio buttons). The sent / mailto message replaces the form. */
 .c-contact-form{--num:3.5em;grid-column:6 / -1;grid-row:1}
 /* the wizard (and the thank-you that replaces it) on a quiet panel: a step lighter than the page (darker in the light

@@ -20,11 +20,10 @@ import { initServices } from './components/services.js';
 import { initCaseMotion } from './components/caseMotion.js';
 import { initTitleFrame } from './components/titleFrame.js';
 import { initLocalTime } from './components/localTime.js';
-import { initStatementLoops } from './components/statementLoops.js';
-import { initStatementPin } from './components/statementPin.js';
 import { initScrollTheme } from './global/scrollTheme.js';
 import { initSound } from './global/sound.js';
 import { initStackCards } from './components/stackCards.js';
+import { initPricing } from './components/pricing.js';
 import { initContactForm } from './components/contactForm.js';
 import { initWorkFilter } from './components/workFilter.js';
 import { initFilter } from './components/filter.js';
@@ -70,9 +69,8 @@ function mount() {
     initTitleFrame(root),
     initLocalTime(root),
     initScrollTheme(root),
-    initStatementLoops(root),
-    initStatementPin(root),
     initStackCards(root),
+    initPricing(root),
     initContactForm(root),
     initWorkFilter(root),
     initWorkLoop(root),

@@ -23,7 +23,10 @@ const rows = [...clients.map((c, i) => ({ c, i, copy: false })), ...clients.map(
           <li class:list={['c-trusted-by__item', { 'c-trusted-by__item--copy': copy }]} style={`--i:${i};--w:${c.width}`} aria-hidden={copy ? 'true' : undefined}>
             <Tag class="c-trusted-by__cell" href={c.url} target={c.url ? '_blank' : undefined} rel={c.url ? 'noopener' : undefined} tabindex={copy && c.url ? -1 : undefined}>
               <Corners />
-              <img class="c-trusted-by__logo" src={c.logo} alt={copy ? '' : c.name} {...size(c.logo)} loading="lazy" decoding="async" />
+              {/* the ink wrapper carries the theme's --logo-filter apart from the logo's own blur reveal: on one
+                  element the reveal's long, staggered filter transition made the logos hang white for ~2s after a
+                  dark-to-light theme fade */}
+              <span class="c-trusted-by__ink"><img class="c-trusted-by__logo" src={c.logo} alt={copy ? '' : c.name} {...size(c.logo)} loading="lazy" decoding="async" /></span>
             </Tag>
           </li>
         );

@@ -76,6 +76,27 @@ export const servicesIntro = {
   text: 'Development leads, design runs through all of it. For bigger projects I bring in people I trust, so the right skills are at the table.',
 };
 
+// home, after the projects: what it costs, three packages as a fanned hand of cards in the brand's three tones
+// (sections/Pricing.astro, after madewithgsap.com's colored-card fan). PRICES ARE PLACEHOLDERS: set the real numbers
+// before go-live. `price.value`: digits roll in like the title-frame counter, other characters stand still.
+// `tone`: paper | accent | panel (the card's ground).
+export const pricing = {
+  title: 'What it costs',
+  intro: 'Three honest ways to work together. Clear from the start, no surprises after.',
+  packages: [
+    { tone: 'paper', title: 'A website', text: 'Design and build, from first sketch to launch.',
+      items: ['Design & development', 'Craft CMS, pleasant to update', 'SEO, speed and hosting sorted'],
+      price: { label: 'From', value: '\u20ac6.500' } },
+    { tone: 'accent', title: 'Something custom', text: 'Platforms, portals and internal tools, built around the way you work.',
+      items: ['Scoped together first', 'Built in steps you can follow', 'Yours, no lock-in'],
+      price: { label: 'Price', value: 'On quote' } },
+    { tone: 'panel', title: 'Care & growth', text: 'Your site looked after: updates, fixes and improvements, month by month.',
+      items: ['Hosting & monitoring', 'Small changes within days', 'Advice when you need it'],
+      price: { label: 'From', value: '\u20ac95/m' } },
+  ],
+  note: 'Whatever you pick: built to last, made with care, yours to keep.',
+};
+
 // home, below the services: how I work, a horizontal reel of five cards; the R rides along below it as an arrow
 export const approach = {
   title: 'How I work',
@@ -89,7 +110,7 @@ export const approach = {
   ],
 };
 
-// home, after the services: the closing statement before the footer. Lines of big words (`muted`: in the grey) and small
+// PARKED (off the home page for now): the closing statement. Lines of big words (`muted`: in the grey) and small
 // ones hung beside them (`lead` before, `small` after); `gif`: a funny GIF between the big and the small words, a GIPHY id
 // (served from GIPHY's own CDN as its MP4 + still: media.giphy.com/media/<id>/giphy.mp4) and its crop focus in the 3:2 box
 export const statement = [

@@ -14,7 +14,7 @@
 .c-legal__list li{position:relative;padding-left:1.4em}
 .c-legal__list li::before{content:"";position:absolute;left:0;top:.8em;width:.7em;height:1px;background:var(--line-strong)}
 
-/* links and the cookie settings button: the text colour, a thin underline that turns orange on hover */
+/* links and the cookie settings button: the text colour, a thin underline that turns the accent red on hover */
 .c-legal__body a,.c-legal__body button{color:var(--fg);font:inherit;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:.2em;
   transition:text-decoration-color var(--hover-dur) var(--ease-punch),color var(--hover-dur) var(--ease-punch)}
 .c-legal__body a:hover,.c-legal__body button:hover,.c-legal__body a:focus-visible,.c-legal__body button:focus-visible{color:var(--accent);text-decoration-color:var(--accent)}

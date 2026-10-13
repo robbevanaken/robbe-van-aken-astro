@@ -1,7 +1,8 @@
 ---
 // The sound tile: bottom right on the page margin (the theme toggle's old spot), the album tile's mirror image.
-// Switches the site's light sounds (global/sound.js) on and off; off is the default on every page load (nothing is
-// stored; also off in this markup: no flash before JS): the waves drop and a slash shows. Hidden like
+// Switches the site's light sounds (global/sound.js) on and off; the page loads silent (off in this markup too: no
+// flash before JS), the visit's first click anywhere switches it on, and this tile can switch it back off — nothing
+// is stored: a slash draws through the speaker (which stays filled). Hidden like
 // the album tile (loader, swaps, menu open, while the cookie banner shows). Styles: styles/components/_sound-toggle.css.
 ---
 <button class="c-sound-toggle is-off" type="button" data-sound-toggle aria-pressed="false" aria-label="Sound">

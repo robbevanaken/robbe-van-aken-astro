@@ -1,4 +1,4 @@
-/* Button. Hover: turns orange, scales down, the label swaps for a copy that slides up from below,
+/* Button. Hover: turns the accent red (light text), scales down, the label swaps for a copy that slides up from below,
    the arrow flies out to the top right while a new one comes in from the bottom left (as on the project cards), and
    four corner brackets slide out of the button's corners.
    Label swap after Osmo Supply "Button 016": the copy is a text-shadow one duplicate-distance below the text,
@@ -16,7 +16,7 @@
 .c-button__icon .c-icon{grid-area:1 / 1;width:14px;height:12px;transform:rotate(-45deg);transition:translate var(--hover-dur) var(--ease-punch)}
 .c-button__arrow--next{translate:-32px 32px} /* fully outside the 40px cell (the arrow is ~18px across at 45°) */
 
-.c-button:hover,.c-button:focus-visible{transform:scale(.96);background-color:var(--accent);color:var(--ink);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px}
+.c-button:hover,.c-button:focus-visible{transform:scale(.96);background-color:var(--accent);color:var(--on-accent);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px}
 .c-button:hover .c-button__text,.c-button:focus-visible .c-button__text{translate:0 calc(var(--button-text-duplicate-distance) * -1) 0}
 .c-button:hover .c-button__arrow,.c-button:focus-visible .c-button__arrow{translate:32px -32px}
 .c-button:hover .c-button__arrow--next,.c-button:focus-visible .c-button__arrow--next{translate:0 0}

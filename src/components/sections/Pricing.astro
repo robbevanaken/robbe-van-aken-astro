@@ -1,0 +1,52 @@
+---
+// What it costs (home, after the projects, before the footer; the dark final act opens here, t-dark): three packages
+// as a fanned hand of cards in the brand's three tones — paper, accent red, panel — like cards laid out on the table
+// (after madewithgsap.com's colored-card fan, in this site's language: sharp corners, thin lines, the halftone R as a
+// stamp beside the price, the title-frame's odometer rolling the digits in). Desktop: the section pins and the cards
+// fly in one by one, each landing fanned beside the previous with a slight rotation (scripts/components/pricing.js);
+// once they all lie the prices roll. The page's R parks small and central above the head for the whole pin
+// (a stage-2 data-r-self marker), then launches into the footer. Below 1024px: no pin, the cards fade up in turn
+// (data-reveal), each rolling its price as it lands. Copy: `pricing` in src/data/site.ts (PRICES ARE PLACEHOLDERS).
+// Styles: styles/components/_pricing.css.
+import { pricing } from '../../data/site';
+import stamp from '../../assets/r-halftone.svg?raw';
+const pad = (n: number) => String(n).padStart(2, '0');
+// the stamp once as a symbol; every card references it with <use>
+const symbol = stamp.replace('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 350">', '<symbol id="r-stamp" viewBox="0 0 360 350">').replace('</svg>', '</symbol>');
+const DIGITS = [...'0123456789'];
+---
+<section class="c-pricing t-dark" id="pricing" data-pricing>
+  <svg class="u-sr-only" aria-hidden="true" set:html={symbol} />
+  <div class="c-pricing__pin" data-pricing-pin>
+    <div class="c-pricing__stage o-container o-grid">
+      <!-- the page's R parks here, small and central above the head, for the whole pin (stage 2 + data-r-self) -->
+      <div class="c-pricing__r" data-stage="2" data-r-self aria-hidden="true"></div>
+      <h2 class="c-pricing__title">{pricing.title}</h2>
+      <p class="c-pricing__intro u-text-muted">{pricing.intro}</p>
+      <div class="c-pricing__hand">
+        {pricing.packages.map((pk, i) => (
+          <article class:list={['c-pricing__card', `c-pricing__card--${pk.tone}`]} data-pricing-card data-reveal style={`--i:${i}`}>
+            <p class="c-pricing__num u-text-label">{pad(i + 1)}</p>
+            <h3 class="c-pricing__name">{pk.title}</h3>
+            <p class="c-pricing__text">{pk.text}</p>
+            <ul class="c-pricing__items u-text-ui" role="list">
+              {pk.items.map((it) => <li class="c-pricing__item">{it}</li>)}
+            </ul>
+            <div class="c-pricing__price">
+              <div class="c-pricing__amount">
+                <span class="c-pricing__from u-text-label">{pk.price.label}</span>
+                <span class="c-pricing__value" aria-label={pk.price.value}>
+                  {[...pk.price.value].map((ch) => /\d/.test(ch)
+                    ? <span class="c-pricing__roll" aria-hidden="true"><span class="c-pricing__roll-list" style={`--to:${ch}`}>{DIGITS.map((d) => <span>{d}</span>)}</span></span>
+                    : <span aria-hidden="true">{ch}</span>)}
+                </span>
+              </div>
+              <svg class="c-pricing__stamp" viewBox="0 0 360 350" aria-hidden="true"><use href="#r-stamp" /></svg>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p class="c-pricing__note u-text-label">{pricing.note}</p>
+    </div>
+  </div>
+</section>

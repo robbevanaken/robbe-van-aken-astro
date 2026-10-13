@@ -9,7 +9,7 @@ import TrustedBy from '../components/sections/TrustedBy.astro';
 import Pitch from '../components/sections/Pitch.astro';
 import Projects from '../components/sections/Projects.astro';
 import Services from '../components/sections/Services.astro';
-import Statement from '../components/sections/Statement.astro';
+import Pricing from '../components/sections/Pricing.astro';
 import Footer from '../components/sections/Footer.astro';
 ---
 <Base>
@@ -20,9 +20,9 @@ import Footer from '../components/sections/Footer.astro';
     <Marquee />
     <TrustedBy />
     <Pitch />
-    <Projects />
     <Services />
-    <Statement />
+    <Projects />
+    <Pricing />
   </main>
   <Footer />
   {import.meta.env.DEV && <GridOverlay />}{/* the dev HUD (layout/DevHud.astro) is off: render <DevHud /> here to bring it back */}

@@ -1,7 +1,8 @@
 // Scroll motion in a project's case study (sections/ProjectCase.astro), scrubbed with the scroll:
-// - [data-case-scroll]: a window on the site's home page (a long screenshot, from its top); it stays at the top until
-//   the window is mostly on screen (its top at 40% of the screen), then the page scrolls inside it until the window's
-//   bottom is at 30%, so the visitor always arrives at the top of the home page and sees its end before it leaves.
+// - [data-case-scroll]: a window on the site's home page (a long screenshot, from its top); it stays at the top while
+//   it comes in, then the page scrolls inside it over nearly the window's whole pass across the screen (top at 55%
+//   until its bottom reaches 10%), so the visitor arrives at the top of the home page and sees its end before it
+//   leaves — the long range keeps the inner scroll near the visitor's own pace (a short one made it run ~2× as fast).
 // - [data-case-strip] / [data-case-strip-track]: a row of stills wider than the screen drifts left while the strip
 //   crosses the screen, from its first still at the margin to its last one.
 // - [data-case-parallax]: an image a touch larger than its box, sliding slowly against the scroll.
@@ -30,7 +31,7 @@ export function initCaseMotion(root = document) {
     if (!img) return;
     tweens.push(gsap.fromTo(img, { y: 0 }, {
       y: () => -Math.max(0, img.offsetHeight - win.offsetHeight), ease: 'none',
-      scrollTrigger: { trigger: win, start: 'top 40%', end: 'bottom 30%', scrub: .6, invalidateOnRefresh: true },
+      scrollTrigger: { trigger: win, start: 'top 55%', end: 'bottom 10%', scrub: 1, invalidateOnRefresh: true },
     }));
     if (!img.complete) img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
   });

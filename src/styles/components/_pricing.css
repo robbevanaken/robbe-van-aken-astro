@@ -1,0 +1,94 @@
+/* What it costs (sections/Pricing.astro): three packages as a fanned hand of cards in the brand's three tones —
+   paper (ink text), the accent red (light text) and the quiet panel (page text) — on the dark final act's own background
+   (the section is t-dark and stays transparent: the page's one background does the work). Sharp corners, thin lines
+   between the items, the halftone R as a stamp beside the price, the title-frame's odometer rolling the digits.
+   Head in the chapter voice. Desktop: the section pins while the cards fly in and land fanned, slightly rotated and
+   overlapping like a hand of cards (scripts/components/pricing.js holds both the throw and the laid pose); past the deal the stage gets .is-priced and the prices roll. Below 1024px: no pin, the cards stack and
+   fade up in turn (data-reveal), each rolling its price as it lands. */
+.c-pricing{padding-bottom:var(--space-section)}
+.c-pricing__pin{overflow:clip} /* the flying cards wait below the screen: never over the footer */
+.c-pricing__stage{align-content:center;row-gap:0;padding-block:var(--space-l)}
+.c-pricing__r{grid-column:1 / -1;justify-self:center;width:56px;height:56px;margin-bottom:var(--space-l);pointer-events:none}
+
+/* the chapter voice, as the other heads */
+.c-pricing__title{grid-column:1 / span 6;margin:0;font-size:var(--fs-page);line-height:1;letter-spacing:-.04em;font-weight:400}
+.c-pricing__intro{grid-column:8 / span 5;align-self:end;margin:0;font-size:var(--fs-lead);line-height:1.25;letter-spacing:-.01em}
+
+/* the hand: three cards side by side, slightly overlapping; the rotation and the slight drop of the outer cards
+   (the laid pose) come from pricing.js */
+.c-pricing__hand{grid-column:1 / -1;display:flex;justify-content:center;margin-top:var(--space-l)}
+.c-pricing__card{position:relative;z-index:var(--i);flex:none;width:clamp(300px,25.5vw,380px);display:flex;flex-direction:column;
+  min-height:clamp(300px,42svh,500px);padding:clamp(22px,1.9vw,32px);
+  will-change:transform} /* the laid pose (rotation, drop) is pricing.js’s: CSS rotate/translate would stack onto GSAP’s transform */
+.c-pricing__card + .c-pricing__card{margin-left:calc(-1 * var(--space-s))}
+.c-pricing__card--paper{background:var(--paper);color:var(--ink);--soft:color-mix(in srgb,var(--ink) 58%,var(--paper));--card-line:color-mix(in srgb,var(--ink) 16%,var(--paper));--stamp:var(--accent)}
+.c-pricing__card--accent{background:var(--accent);color:var(--on-accent);--soft:color-mix(in srgb,var(--on-accent) 72%,var(--accent));--card-line:color-mix(in srgb,var(--on-accent) 30%,var(--accent));--stamp:var(--on-accent)}
+.c-pricing__card--panel{background:var(--panel);color:var(--fg);--soft:var(--muted);--card-line:var(--line);--stamp:var(--accent);outline:1px solid var(--line)} /* an edge: the panel tone sits close to the dark page */
+
+.c-pricing__num{margin:0;color:var(--soft)}
+.c-pricing__name{margin:var(--space-s) 0 0;font-size:var(--fs-lead);line-height:1.1;letter-spacing:-.02em;font-weight:400}
+.c-pricing__text{margin:var(--space-2xs) 0 0;color:var(--soft);line-height:1.5;text-wrap:pretty;max-width:24em}
+.c-pricing__items{margin:auto 0 0;padding:var(--space-m) 0 0;list-style:none}
+.c-pricing__item{padding-block:10px;border-top:1px solid var(--card-line)}
+.c-pricing__price{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-s);
+  margin-top:var(--space-2xs);padding-top:var(--space-s);border-top:1px solid var(--card-line)}
+.c-pricing__amount{display:grid;gap:6px;opacity:0;translate:0 8px;transition:opacity .5s var(--ease-out),translate .5s var(--ease-out)}
+.c-pricing.is-priced .c-pricing__amount{opacity:1;translate:0 0} /* hidden until the roll fires: half-rolled it read €0.000 */
+.c-pricing__from{color:var(--soft)}
+.c-pricing__value{font-size:clamp(26px,2.2vw,36px);line-height:1;letter-spacing:-.02em;font-feature-settings:'tnum';white-space:nowrap}
+.c-pricing__stamp{width:28px;height:auto;flex:none;color:var(--stamp)}
+
+/* the odometer (the title-frame's): every digit its own masked column, rolling from 0 up to its own number */
+.c-pricing__roll{display:inline-block;height:1em;width:1ch;overflow:hidden;vertical-align:top}
+.c-pricing__roll-list{display:block;transform:translateY(0)}
+.c-pricing__roll-list > span{display:block;height:1em}
+.c-pricing.is-priced .c-pricing__roll-list{transform:translateY(calc(var(--to) * -1em));transition:transform .9s var(--ease-out)}
+
+.c-pricing__note{grid-column:1 / -1;justify-self:center;margin:var(--space-l) 0 0;color:var(--muted)}
+
+@media (min-width:1024px){
+  .c-pricing__pin{height:calc(100svh * 2.4)} /* the pin: one screen held while the cards fly in (pricing.js) */
+  /* short windows: the same screen, tighter — head, hand and note must share it */
+  @media (max-height:880px){
+    .c-pricing__stage{padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 28px)}
+    .c-pricing__r{margin-bottom:var(--space-s)}
+    .c-pricing__hand{margin-top:var(--space-m)}
+    .c-pricing__note{margin-top:var(--space-m)}
+    .c-pricing__items{padding-top:var(--space-s)}
+    .c-pricing__item{padding-block:8px}
+  }
+  /* clear of the fixed header and its scrim, which washed the head out */
+  .c-pricing__stage{position:sticky;top:0;height:100svh;padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 44px)}
+}
+@media (max-width:1023px){
+  .c-pricing{padding-top:var(--space-section)}
+  .c-pricing__stage{padding-block:0}
+  .c-pricing__title,.c-pricing__intro{grid-column:1 / -1}
+  .c-pricing__intro{margin-top:var(--space-s);font-size:var(--fs-body-l)}
+  .c-pricing__hand{display:block;margin-top:var(--space-xl)}
+  .c-pricing__card{width:100%;min-height:0;padding:clamp(24px,4vw,40px);rotate:0deg;translate:0 0}
+  .c-pricing__card + .c-pricing__card{margin-left:0;margin-top:var(--gutter)}
+  .c-pricing__items{margin-top:var(--space-l)}
+  /* no pin: the cards fade up in turn (global/reveal.js adds .is-in), each rolling its price as it lands */
+  .c-pricing__card[data-reveal]{opacity:0;translate:0 28px;transition:opacity .9s var(--ease-out),translate .9s var(--ease-out);transition-delay:calc(var(--i) * .1s)}
+  .c-pricing__card[data-reveal].is-in{opacity:1;translate:0 0}
+  .c-pricing__card.is-in .c-pricing__roll-list{transform:translateY(calc(var(--to) * -1em));transition:transform .9s var(--ease-out);transition-delay:calc(var(--i) * .1s + .35s)}
+  .c-pricing__card.is-in .c-pricing__amount{opacity:1;translate:0 0;transition-delay:calc(var(--i) * .1s + .25s)}
+  .c-pricing__note{margin-top:var(--space-l)}
+}
+@media (max-width:639px){
+  .c-pricing__r{margin-bottom:var(--space-m)}
+  .c-pricing__title{text-align:center}
+  .c-pricing__intro{text-align:center;justify-self:center;max-width:30ch}
+}
+/* without the pin or any motion: everything simply there, prices on their number */
+html.no-js .c-pricing .c-pricing__roll-list{transform:translateY(calc(var(--to) * -1em));transition:none}
+html.no-js .c-pricing__card[data-reveal]{opacity:1;translate:0 0;transition:none}
+html.no-js .c-pricing__amount{opacity:1;translate:0 0;transition:none}
+@media (prefers-reduced-motion:reduce){
+  .c-pricing__pin{height:auto}
+  .c-pricing__stage{position:static;height:auto}
+  .c-pricing__card[data-reveal]{opacity:1;translate:0 0;transition:none}
+  .c-pricing__roll-list{transform:translateY(calc(var(--to) * -1em))!important;transition:none!important}
+  .c-pricing__amount{opacity:1!important;translate:0 0!important;transition:none!important}
+}

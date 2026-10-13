@@ -13,13 +13,17 @@
   --corner-dur:1.1s;--corner-delay:calc(var(--i) * .12s);
   --pull-x:34cqw;--pull-y:26cqh;--corner-opacity:0;
 }
+/* the theme's ink on its own wrapper, easing along with the page's .6s theme fade — kept apart from the logo's
+   blur reveal below: on one element the reveal's long, staggered filter transition made the logos hang white for
+   ~2s when a dark chapter faded back to the light one */
+.c-trusted-by__ink{display:block;line-height:0;filter:var(--logo-filter);transition:filter .6s var(--ease-out)}
 /* logo width is its Figma width @1440, scaled with the viewport */
 .c-trusted-by__logo{width:clamp(calc(var(--w) * .72px),calc(var(--w) * 100vw / 1440),calc(var(--w) * 1.3px));height:auto;
-  opacity:0;filter:blur(8px) var(--logo-filter);transform:scale(.94);
+  opacity:0;filter:blur(8px);transform:scale(.94);
   transition:opacity .9s var(--ease-out),filter .9s var(--ease-out),transform 1.1s var(--ease-out);
   transition-delay:calc(var(--i) * .12s + .35s)}
 .c-trusted-by__list.is-in .c-trusted-by__cell{--pull-x:0px;--pull-y:0px;--corner-opacity:1}
-.c-trusted-by__list.is-in .c-trusted-by__logo{opacity:1;filter:blur(0) var(--logo-filter);transform:none}
+.c-trusted-by__list.is-in .c-trusted-by__logo{opacity:1;filter:blur(0);transform:none}
 
 /* phones: an endless band, edge to edge, sliding left; the list is in twice, so moving it by half loops seamlessly
    (spacing as padding on each item, not gap, so half is exact). Reduced motion: still, scrollable by hand. */
