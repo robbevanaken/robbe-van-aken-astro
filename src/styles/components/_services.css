@@ -25,7 +25,7 @@
 
 /* desktop: the staircase of panels */
 @media (min-width:1024px){
-  .c-services{--step:5svh; /* overridden by services.js to fit the screen */--cw4:calc((100vw - 2 * var(--margin) - 3 * var(--gutter)) / 4);--sz:clamp(72px,min(9vw,14svh),150px)} /* the icon: a fixed size, big enough on every screen */
+  .c-services{--step:5svh; /* overridden by services.js to fit the screen */--cw4:calc((100vw - 2 * var(--margin) - 3 * var(--gutter)) / 4);--sz:clamp(96px,min(14vw,22svh),240px)} /* the letter as an initial; services.js sizes it to the room above the content */
   .c-services__stage{grid-template-rows:auto 1fr;row-gap:var(--space-l);
     padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 76px);padding-bottom:calc(var(--float-bottom) + var(--tile) + var(--space-s))}
   .c-services__list{grid-column:1 / -1;grid-row:2;align-self:stretch;display:grid;grid-template-columns:subgrid;height:100%}
@@ -38,20 +38,20 @@
   .c-services__roll{display:none}
   .c-services__name.c-services__name{margin-top:var(--space-2xs);font-size:clamp(22px,1.9vw,32px)}
   .c-services__text.c-services__text{font-size:var(--fs-body);line-height:1.45;max-width:28em}
-  /* the R's slot: aimed at the active panel's top left corner (inside its padding), travelling with the staircase;
+  /* the R's slot: aimed at the active panel's top right corner (inside its padding), travelling with the staircase;
      the panels keep that room free above their content (padding-top), so the icon never meets the text (tried: a
      slot sized to the room left above the text — on short screens it shrank to nothing) */
   .c-services__slot{grid-column:1 / -1;grid-row:2;align-self:start;justify-self:start;width:var(--sz);z-index:1;
-    margin-left:calc(var(--sv,0) * (var(--cw4) + var(--gutter)) + var(--space-s));
+    margin-left:calc(var(--sv,0) * (var(--cw4) + var(--gutter)) + var(--cw4) - var(--sz) - var(--space-s)); /* the card's top RIGHT corner */
     margin-top:calc(var(--sv,0) * var(--step) * var(--p,0) + var(--space-s));--corner-offset:6px}
-  .c-services__item{padding-top:calc(var(--sz) + var(--space-s) * 2)}
+  .c-services__item{padding-top:calc(var(--sz) + var(--space-s) * 1.5)}
 }
 
 /* below 1024px: the cards in one horizontal row; as the pin runs it slides so the active card sits in the middle
    (--sv from the script, the hold between services makes it settle on each), the active one in the accent, the icon
    on its top left corner, pills at the bottom (tried: one centred column switching per service) */
 @media (max-width:1023px){
-  .c-services{--cwm:min(78vw,420px);--sz:clamp(72px,24vw,120px);padding-bottom:var(--space-xl)}
+  .c-services{--cwm:min(78vw,420px);--sz:clamp(84px,40vw,200px);padding-bottom:var(--space-xl)}
   .c-services__title.c-services__title{grid-column:1 / -1;grid-row:1;text-align:left;font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}
   .c-services__intro.c-services__intro{grid-column:1 / -1;grid-row:2;justify-self:start;text-align:left;max-width:32ch;margin-top:var(--space-2xs);font-size:clamp(18px,4.6vw,28px);line-height:1.2}
   .c-services__stage{grid-template-rows:auto auto 1fr;row-gap:0;align-items:center;overflow:hidden;
@@ -69,9 +69,9 @@
   .c-services__roll{display:none}
   .c-services__name.c-services__name{margin-top:var(--space-2xs);font-size:clamp(22px,6vw,30px);line-height:var(--lh-heading)}
   .c-services__text.c-services__text{font-size:var(--fs-body);line-height:1.45}
-  /* the icon on the active card's top left corner (it always settles against the container's left edge) */
+  /* the icon on the active card's top right corner (it always settles against the container's left edge) */
   .c-services__slot{grid-column:1 / -1;grid-row:3;align-self:center;justify-self:start;width:var(--sz);z-index:1;
-    margin-left:var(--space-s);
+    margin-left:calc(var(--cwm) - var(--sz) - var(--space-s)); /* the card's top right corner */
     translate:0 calc(-1 * min(52svh,440px) / 2 + var(--sz) / 2 + var(--space-s));--corner-offset:6px}
 }
 @media (prefers-reduced-motion:reduce){.c-services__item>*,.c-services__roll-list,.c-services__item{transition:none!important}.c-services__item>*{transform:none!important}}

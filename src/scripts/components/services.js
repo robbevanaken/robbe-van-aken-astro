@@ -48,18 +48,27 @@ export function initServices(root = document) {
   let raf = 0;
   const queue = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); }); };
   addEventListener('scroll', queue, { passive: true, signal: ac.signal });
-  // desktop staircase: the step depth fits the screen — the shortest (last) panel must still hold the icon's room and
-  // its content (on short screens the steps get shallower, never the content squeezed under the icon)
+  // the letter as an initial: as big as the room above the content allows (the shortest panel's room on desktop,
+  // where the staircase shortens the panels; the card's on phones), within a share of the card's width. Desktop also
+  // sets the step depth: as deep as the screen allows (max 5vh) once the letter has a decent size.
   const list = el.querySelector('.c-services__list'), wide = matchMedia('(min-width: 1024px)');
   const fitSteps = () => {
-    if (!wide.matches || !list || items.length < 2) { el.style.removeProperty('--step'); return; }
-    const need = Math.max(...items.map((it) => {
+    el.style.removeProperty('--step'); el.style.removeProperty('--sz');
+    if (!list || !items.length) return;
+    const pad = parseFloat(getComputedStyle(items[0]).paddingBottom) || 16, w = items[0].clientWidth;
+    const content = Math.max(...items.map((it) => {
       const cs = getComputedStyle(it), kids = [...it.children];
-      return parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + parseFloat(cs.rowGap || cs.gap || 0) * (kids.length - 1)
+      return parseFloat(cs.paddingBottom) + parseFloat(cs.rowGap || cs.gap || 0) * (kids.length - 1)
         + kids.reduce((s, k) => s + k.offsetHeight + parseFloat(getComputedStyle(k).marginTop), 0);
     }));
-    const step = Math.max(0, Math.min(innerHeight * .05, (list.clientHeight - need) / (items.length - 1)));
-    el.style.setProperty('--step', `${step.toFixed(1)}px`);
+    const cardH = wide.matches ? list.clientHeight : items[0].clientHeight, n = items.length;
+    const maxSz = Math.min(w * (wide.matches ? .5 : .46), 220), minSz = wide.matches ? 104 : 80;
+    let step = wide.matches && n > 1 ? innerHeight * .05 : 0;
+    let sz = cardH - step * (n - 1) - content - pad * 3.5;
+    if (sz < minSz && step) { step = Math.max(0, (cardH - content - pad * 3.5 - minSz) / (n - 1)); sz = minSz; }
+    sz = Math.max(minSz, Math.min(maxSz, sz));
+    if (wide.matches) el.style.setProperty('--step', `${step.toFixed(1)}px`);
+    el.style.setProperty('--sz', `${Math.round(sz)}px`);
   };
   fitSteps();
   document.fonts?.ready.then(() => { if (!ac.signal.aborted) fitSteps(); });

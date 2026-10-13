@@ -205,7 +205,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const vc=H/2,cs=stages.map(e=>{const r=e.getBoundingClientRect();return r.top+r.height/2});
     if(vc<=cs[0]){selfOn=isSelf[0];return SV[0]}
     for(let i=0;i<cs.length-1;i++){if(vc<=cs[i+1]){selfOn=isSelf[i]||isSelf[i+1];const f=cs[i+1]-cs[i]<1?1:(vc-cs[i])/(cs[i+1]-cs[i]),t=clamp((f-.18)/.64,0,1);
-      if(Math.abs(SV[i+1]-SV[i])>1){jump={a:SV[i],b:SV[i+1],f:t};return t<.5?SV[i]:SV[i+1]}
+      if(Math.abs(SV[i+1]-SV[i])>1){const tj=SV[i+1]===3?clamp((f-.05)/.55,0,1):t; /* into the services: done well before the pin, so the first letter stands when it locks */
+        jump={a:SV[i],b:SV[i+1],f:tj};return tj<.5?SV[i]:SV[i+1]}
       return SV[i]+(SV[i+1]-SV[i])*t}}
     selfOn=isSelf[cs.length-1];return SV[cs.length-1];
   }
@@ -253,7 +254,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
         o[0]=x;o[1]=y}}
   }
   // colours per theme (global/theme.js): light = dark crosses / pixels on the light page
-  const PALS={dark:['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'],light:['#e6ded6','#cfc5bc','#a3978e','#6f6560','#3d302a','#1f1511'],
+  // paper: the services' letter on the accent panel — the face in paper, the side walls in darker reds, so the letter's
+  // shape reads on the red (walls in paper tones too filled its counters: a white blob)
+  const PALS={paper:['#7d0a13','#930f19','#ab131e','#e9dcd6','#f4ece7','#ffffff'],dark:['#2b211d','#43362f','#655750','#8f837c','#bcb2ab','#ece6e1'],light:['#e6ded6','#cfc5bc','#a3978e','#6f6560','#3d302a','#1f1511'],
     wild:['#2c2ccc','#4a3fdc','#7a5cf0','#c160d8','#ff5ab4','#ff7a45']}; // wild: the easter egg theme (global/theme.js)
   const LX=-.35,LY=-.55,LZ=.76;
   const DENS=[.8,.82,1.12,1,1.08,1.12,1];
@@ -266,7 +269,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // bright]; line / pad: cross stroke width and inset, as a share of the cell. Light needs more: dark on light reads
   // thinner and greyer than white on dark, so more full crosses, heavier strokes, and a paler dim tone so the shaded
   // sides fall back and the front face (the shape) stands out.
-  const G={dark:{gamma:2,colors:['#8d817a','#ffffff'],line:.32,pad:.23},light:{gamma:3,colors:['#c2b8af','#140b08'],line:.37,pad:.21},wild:{gamma:2,colors:['#7c6cff','#ff6b3d'],line:.32,pad:.23}},BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+  const G={paper:{gamma:2,colors:['#a3101b','#ffffff'],line:.32,pad:.23},dark:{gamma:2,colors:['#8d817a','#ffffff'],line:.32,pad:.23},light:{gamma:3,colors:['#c2b8af','#140b08'],line:.37,pad:.21},wild:{gamma:2,colors:['#7c6cff','#ff6b3d'],line:.32,pad:.23}},BAYER4=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
   function sprites(cell,mode){
     const key=cell+'@'+DPR+mode;if(spriteCache.has(key))return spriteCache.get(key);
     const gs=G[mode],px=Math.max(2,Math.round(cell*DPR)),out=gs.colors.map(col=>{
@@ -279,7 +282,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // cell size per stage, in particle pitches: about one particle per cell; the two biggest R's (pitch, footer) a step
   // coarser, so their crosses still read as crosses
   const FCELL=LK.cell?[0,1,2,3,4,5,6].map(i=>i===1||i===4?LK.cell[1]:LK.cell[0]):[1.12,1.3,1.12,1.12,1.3,1.12,1.12];
-  const FINE={dark:['#5a4f49','#8d817a','#cbc2bc','#ffffff'],light:['#d9d0c8','#ab9f96','#5f514a','#140b08'],wild:['#5a4be6','#9a7cff','#ff5ab4','#ff6b3d']}; // wild: lilac walls, pink and orange on the face
+  const FINE={paper:['#8e0c16','#a3101b','#bd1622','#ffffff'],dark:['#5a4f49','#8d817a','#cbc2bc','#ffffff'],light:['#d9d0c8','#ab9f96','#5f514a','#140b08'],wild:['#5a4be6','#9a7cff','#ff5ab4','#ff6b3d']}; // wild: lilac walls, pink and orange on the face
   function spritesFine(cell,mode){
     const key='f'+cell+'@'+DPR+mode;if(spriteCache.has(key))return spriteCache.get(key);
     const gs=G[mode],px=Math.max(2,Math.round(cell*DPR)),mk=(col,sq)=>{
@@ -298,7 +301,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const x=(col)=>{const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');const pad=px*(gs.pad-.06);g.strokeStyle=col;g.lineWidth=Math.max(1,px*gs.line);g.lineCap=px<6?'butt':'round';
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c};
     const out=shape==='x'?FINE[mode].map(x):shape==='sq'?FINE[mode].map(c=>sq(c,.58)):shape==='dot'?FINE[mode].map(c=>sq(c,.42)):
-      [.44,.56,.68,.8].map((fr,i)=>{const bt=mode==='light'?0:mode[0]==='b'?+mode.slice(1)/8:1;return sq(FINE[mode][3],fr+([.3,.42,.54,.66][i]-fr)*bt)}); // half: the darkest tone, four sizes, eased from the light sizes (more ink on paper) to the dark ones with the blend
+      [.44,.56,.68,.8].map((fr,i)=>{const bt=mode==='light'||mode==='paper'?0:mode[0]==='b'?+mode.slice(1)/8:1;return sq(FINE[mode][3],fr+([.3,.42,.54,.66][i]-fr)*bt)}); // half: the darkest tone, four sizes, eased from the light sizes (more ink on paper) to the dark ones with the blend
     spriteCache.set(key,out);return out;
   }
   const modeBtn=cull?null:scope.querySelector('#mode');
@@ -397,8 +400,10 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const themeMode=theme.mode,dkT=themeMode==='dark'?1:0;
     dkB+=(dkT-dkB)*(slow?.22:.12);if(Math.abs(dkB-dkT)<.02)dkB=dkT;
     const BQ=Math.round(dkB*8);
-    const mode=themeMode==='wild'?'wild':BQ===0?'light':BQ===8?'dark':'b'+BQ;
-    if(mode[0]==='b'&&!PALS[mode]){const t=BQ/8,mixA=(a,b)=>a.map((c,i)=>mixHex(c,b[i],t));
+    // the services' letter stands on the accent panel: drawn in paper while stage 3 dominates (not in the wild theme)
+    const svcW=(i0===3?1-f:0)+(i1===3?f:0);
+    const mode=themeMode==='wild'?'wild':svcW>.5?'paper':BQ===0?'light':BQ===8?'dark':'b'+BQ;
+    if(mode[0]==='b'&&mode!=='paper'&&!PALS[mode]){const t=BQ/8,mixA=(a,b)=>a.map((c,i)=>mixHex(c,b[i],t));
       PALS[mode]=mixA(PALS.light,PALS.dark);FINE[mode]=mixA(FINE.light,FINE.dark);
       G[mode]={gamma:3-t,colors:mixA(G.light.colors,G.dark.colors),line:.37-.05*t,pad:.21+.02*t}}
     ctx.clearRect(0,0,W,H);
