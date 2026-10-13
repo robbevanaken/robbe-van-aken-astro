@@ -16,7 +16,8 @@
 .c-contact-form__row{display:grid;grid-template-columns:var(--num) minmax(0,1fr);column-gap:var(--gutter);row-gap:var(--space-s);padding-block:var(--space-m) var(--space-l);border-top:1px solid var(--line)}
 /* the number sits level with the question's first line */
 .c-contact-form__num{grid-column:1;grid-row:1;align-self:start;margin-top:calc((var(--fs-lead) * 1.35 - var(--fs-label) * 1.3) / 2);color:var(--subtle)}
-.c-contact-form__question{grid-column:2;grid-row:1;color:var(--fg)}
+.c-contact-form__question{grid-column:2;grid-row:1;color:var(--fg);font-weight:500;letter-spacing:-.02em} /* medium, the statements' voice (the project openings, the pitch, the popup's title) */
+.c-contact-form__done-title{font-weight:500;letter-spacing:-.03em}
 .c-contact-form__fields{grid-column:2;grid-row:2}
 .c-contact-form__fields--pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter)}
 
@@ -80,9 +81,10 @@
 .c-contact-form__form.is-wizard.is-first .c-contact-form__back{display:none}
 
 /* sent / handed to the email app: replaces the form, comes up softly */
-.c-contact-form__done{display:grid;gap:var(--space-m);padding-top:var(--space-l);border-top:1px solid var(--line);outline:none}
+.c-contact-form__done{display:grid;gap:var(--space-s);padding-top:var(--space-l);border-top:1px solid var(--line);outline:none}
 .c-contact-form__done:not([hidden]){animation:c-contact-form-in 1s var(--ease-punch) both}
-.c-contact-form__done-text{color:var(--muted);max-width:32em}
+.c-contact-form__done-text{margin:0;color:var(--muted);max-width:32em;line-height:1.5} /* the thank-you at the questions' size (lead), its text at body: it was h2 + body-l, far too big in the popup */
+.c-contact-form__done-title{margin:0}
 @keyframes c-contact-form-in{from{opacity:0;transform:translateY(16px)}}
 
 @media (max-width:1023px){ .c-contact-form{grid-column:1 / -1} }

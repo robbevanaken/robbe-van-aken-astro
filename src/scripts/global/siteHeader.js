@@ -54,12 +54,17 @@ export function initSiteHeader(root = document) {
     links.forEach((l) => {
       l.addEventListener('pointerenter', () => { if (!picked) to(l); }, { signal });
       l.addEventListener('focus', () => { if (!picked) to(l); }, { signal });
-      l.addEventListener('click', () => { picked = l; to(l); }, { signal });
+      l.addEventListener('click', () => { if (l === contactLink) return; picked = l; to(l); }, { signal });
     });
     // (not while the theme switch cross-fades: its overlay takes the pointer for a moment, which isn't leaving the nav)
-    list.addEventListener('pointerleave', () => { if (!picked && !document.documentElement.classList.contains('is-theme-fading')) to(current); }, { signal });
-    list.addEventListener('focusout', (e) => { if (!picked && !list.contains(e.relatedTarget)) to(current); }, { signal });
-    addEventListener('resize', () => to(current, true), { signal });
+    list.addEventListener('pointerleave', () => { if (!picked && !document.documentElement.classList.contains('is-theme-fading')) to(contactOpen ? contactLink : current); }, { signal });
+    list.addEventListener('focusout', (e) => { if (!picked && !list.contains(e.relatedTarget)) to(contactOpen ? contactLink : current); }, { signal });
+    addEventListener('resize', () => to(contactOpen ? contactLink : current, true), { signal });
+    // the contact popup (global/contactModal.js): while it's open, "Contact" is the active link
+    const contactLink = links.find((l) => l.pathname.replace(/\.html$/, '') === '/contact');
+    let contactOpen = false;
+    document.addEventListener('contact:open', () => { contactOpen = true; header.classList.remove('is-hidden'); contactLink?.setAttribute('aria-current', 'page'); to(contactLink); }, { signal });
+    document.addEventListener('contact:close', () => { contactOpen = false; if (contactLink !== current) contactLink?.removeAttribute('aria-current'); if (!picked) to(current); }, { signal });
     document.fonts?.ready.then(() => { if (!signal.aborted) to(current, true); });
   }
 

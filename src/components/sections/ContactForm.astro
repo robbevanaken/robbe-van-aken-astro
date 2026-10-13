@@ -93,11 +93,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   <!-- shown instead of the form once it is sent (endpoint) or handed to the email app (no endpoint) -->
   <div class="c-contact-form__done" tabindex="-1" hidden data-contact-done="sent">
-    <p class="c-contact-form__done-title u-text-h2">{f.sent.title}</p>
-    <p class="c-contact-form__done-text u-text-body-l">{f.sent.text}</p>
+    <p class="c-contact-form__done-title u-text-lead">{f.sent.title}</p>
+    <p class="c-contact-form__done-text">{f.sent.text}</p>
   </div>
   <div class="c-contact-form__done" tabindex="-1" hidden data-contact-done="mailto">
-    <p class="c-contact-form__done-title u-text-h2">{f.mailto.title}</p>
-    <p class="c-contact-form__done-text u-text-body-l">{f.mailto.text} <a href={`mailto:${meta.email}`}>{meta.email}</a>.</p>
+    <p class="c-contact-form__done-title u-text-lead">{f.mailto.title}</p>
+    <p class="c-contact-form__done-text">{f.mailto.text} <a href={`mailto:${meta.email}`}>{meta.email}</a>.</p>
   </div>
 </div>

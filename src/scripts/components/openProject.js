@@ -14,6 +14,7 @@
 // (same spot: no movement, no turn) once that has happened.
 // Only transforms, opacity and the copy's box are animated; the copy is removed at the end.
 import gsap from 'gsap';
+import { releaseIntro } from './maskReveal.js';
 import { rIntro } from '../r-journey/engine.js';
 import { setScrollTheme } from '../global/theme.js';
 
@@ -121,8 +122,11 @@ export const openProject = {
       copy?.remove();
       gsap.set(visual, { clearProps: 'opacity,visibility' });
     }
-    const intro = [...document.querySelectorAll('[data-page-intro] > *')];
-    const rest = targets.filter((t) => !intro.includes(t));
+    const all = [...document.querySelectorAll('[data-page-intro] > *')];
+    const split = all.filter((el) => el.matches('[data-split]')), intro = all.filter((el) => !split.includes(el));
+    const rest = targets.filter((t) => !all.includes(t));
+    gsap.set(split, { clearProps: 'opacity,visibility' }); // their lines rise out of their masks instead (maskReveal.js)
+    releaseIntro();
     gsap.fromTo(intro, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: .9, ease: 'expo.out', stagger: .08, clearProps: 'all' });
     await gsap.to(rest, { autoAlpha: 1, duration: .7, ease: 'power2.out', delay: .05, clearProps: 'opacity,visibility' });
     gsap.set(visual, { clearProps: 'opacity,visibility' });

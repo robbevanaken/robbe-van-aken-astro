@@ -1,19 +1,18 @@
 ---
-// The case study on a project's detail page, below its visual:
-//   the intro (the context, as a lead, highlighted letter by letter on scroll) with the facts beside it (client, stack,
-//   status, a collaboration, website); a first visual (a photo, or the site's long page scrolling inside a 16:10
-//   window as you scroll: [data-case-scroll]); the brand (logo on panels in the brand's colours, if any); the
-//   challenge and the approach; the project's own moment (`moment`: a strip of stills drifting sideways, a grid of
-//   photos of the work, or the suite's parts as columns); two portrait visuals; the result, ending on the page's
-//   "All projects" button (slot "end"). The next project's visual (ScrollNext) follows straight after.
-// Scroll motion: components/caseMotion.js (reduced motion: none).
-// Visuals are the site's screenshots on quiet panels (--panel), or photos filling their boxes (projects whose screens
-// can't be shown), or panels in the project's colours ("Visuals coming soon"). Blocks fade up as they come into view
-// ([data-reveal], global/reveal.js). Copy: src/data/projects.ts (dummy for now), labels in projectPage
-// (src/data/pages.ts). Styles: styles/components/_project-case.css
+// The case study on a project's detail page, below its visual (after naughtyduk.com's project pages, in this site's
+// language; the context itself opens the page, above the main visual: pages/work/[slug].astro): 1. a row of fact
+// cards — real facts only: client, year, what it's built with, and the measured result or the collaboration where there is one;
+// 2. the story beside a panel that stays put while it's read: the challenge, the approach (and the parts of a suite),
+// then the facts as label / value rows and "Visit site"; 3. a dense mosaic of the work on a tight grid, made from
+// what the project has (the long home page scrolling in its window, the phone screens, crops further down the home
+// page, stills, photos, the brand on its colours); 4. the result as the closing statement, with the back button.
+// The next project's visual (ScrollNext) follows straight after.
+// Scroll motion: components/caseMotion.js (the window, reduced motion: none). Media open from their centre
+// ([data-reveal="media"], global/reveal.js). Copy: src/data/projects.ts, labels in projectPage (src/data/pages.ts).
+// Styles: styles/components/_project-case.css
 import ProjectImage from '../ui/ProjectImage.astro';
-import { getImage } from 'astro:assets';
 import Button from '../ui/Button.astro';
+import { getImage } from 'astro:assets';
 import type { Project } from '../../data/projects';
 import { projectPage } from '../../data/pages';
 interface Props { project: Project }
@@ -21,119 +20,130 @@ const { project: p } = Astro.props;
 const s = p.story, sc = p.screens, ph = p.photos, m = p.moment, l = projectPage;
 const svgs = import.meta.glob<string>('/src/assets/projects/**/*.svg', { query: '?raw', import: 'default', eager: true });
 const logo = p.brand ? svgs[`/src/assets${p.brand.logo}`] : null;
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// the fact cards: a label, the value big, a quiet line under it — never an invented number
+const cards = [
+  p.client && { label: l.facts.client, value: p.client, note: p.service },
+  { label: 'Year', value: String(p.year), note: p.status ?? 'Live' },
+  p.stack?.length && { label: l.facts.stack, value: p.stack[0], note: p.stack.slice(1).join(', ') || ' ' },
+  p.outcome ? { label: 'Result', value: p.outcome.value, note: p.outcome.label }
+    : p.parts?.length ? { label: l.story.parts, value: pad(p.parts.length), note: p.parts.map((x) => x.title).join(', ') }
+    : p.credit ? { label: p.credit.label, value: p.credit.value, note: ' ' } : null,
+].filter(Boolean) as { label: string; value: string; note: string }[];
+// the facts at the foot of the story
 const facts = [
-  p.client && { label: l.facts.client, value: p.client },
-  // (service and year: already at the top of the page)
+  { label: l.facts.services, value: p.service },
   p.stack?.length && { label: l.facts.stack, value: p.stack.join(', ') },
   p.credit && p.credit,
   p.status && { label: l.facts.status, value: p.status },
 ].filter(Boolean) as { label: string; value: string }[];
-const tint = `--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`;
-const pad = (n: number) => String(n).padStart(2, '0');
-// the images' sizes on screen: screenshots inside their panels (less the padding), photos filling their boxes
-const DESKTOP = { sizes: '(max-width: 639px) 86vw, 84vw', widths: [640, 960, 1280, 1600, 2000, 2560] };
-const MOBILE = { sizes: '(max-width: 639px) 52vw, (max-width: 1023px) 30vw, 22vw', widths: [360, 540, 720, 960] };
-const WIDE = { sizes: '92vw', widths: [640, 960, 1280, 1600, 2000, 2560, 2880] };
-const HALF = { sizes: '(max-width: 639px) 92vw, 46vw', widths: [480, 720, 960, 1280] };
-const STILL = { sizes: '(max-width: 639px) 70vw, 34vw', widths: [480, 720, 960, 1280] };
+
+// the images' sizes on screen
+const WIDE = { sizes: '(max-width: 1023px) 92vw, 56vw', widths: [640, 960, 1280, 1600, 2000] };
+const NARROW = { sizes: '(max-width: 1023px) 92vw, 40vw', widths: [480, 720, 960, 1280] };
+const PHONE = { sizes: '(max-width: 639px) 46vw, 20vw', widths: [360, 540, 720] };
 const THIRD = { sizes: '(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 30vw', widths: [400, 600, 800, 1200] };
-// the long page: a tiny blurred copy shows at once (a few hundred bytes), the real one fades in over it
-const LONG = { sizes: '(max-width: 639px) 86vw, 84vw', widths: [720, 1080, 1440, 1920, 2560] };
+const LONG = { sizes: '(max-width: 1023px) 86vw, 50vw', widths: [720, 1080, 1440, 1920] };
 const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/projects/**/*.{jpg,jpeg,png,webp}', { eager: true });
 const lqip = sc ? (await getImage({ src: files[`/src/assets${sc.desktop}`].default, width: 24, format: 'webp', quality: 40 })).src : '';
-const empty = (cls = '') => `c-project-case__panel c-project-case__panel--empty ${cls}`;
+
+// the panel beside the story: the brand's mark, a phone screen, or a photo
+const side = logo ? 'brand' : sc ? 'phone' : ph ? 'photo' : null;
 ---
 {s && (
   <section class="c-project-case" aria-label={p.title}>
-    <div class="c-project-case__overview o-container o-grid">
-      <p class="c-project-case__intro u-text-lead" data-highlight-text>{s.intro}</p>
-      <div class="c-project-case__aside" data-reveal>
+    <!-- 1. the fact cards (the context itself opens the page: PageIntro in pages/work/[slug].astro) -->
+    <div class="c-project-case__lead o-container o-grid">
+      <ul class="c-project-case__cards" role="list" style={`--n:${cards.length}`}>
+        {cards.map((c, i) => (
+          <li class="c-project-case__card" data-reveal style={`--i:${i}`}>
+            <span class="u-text-label u-text-muted">{c.label}</span>
+            <span class="c-project-case__card-value">{c.value}</span>
+            <span class="c-project-case__card-note u-text-label u-text-muted">{c.note}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- 2. the story beside a panel that stays put -->
+    <div class="c-project-case__story o-container o-grid">
+      {side && (
+        <div class="c-project-case__side">
+          {side === 'brand' && p.brand && (
+            <div class="c-project-case__side-panel c-project-case__side-panel--brand" style={`background:${p.brand.swatches[0].bg};color:${p.brand.swatches[0].fg}`} data-reveal="media" role="img" aria-label={`${p.title} logo`}>
+              <span class="c-project-case__logo" aria-hidden="true" set:html={logo} />
+            </div>
+          )}
+          {side === 'phone' && sc && (
+            <div class="c-project-case__side-panel" data-reveal="media"><ProjectImage class="c-project-case__phone" src={sc.mobile[0]} alt={`${p.title}: the website on a phone`} {...PHONE} /></div>
+          )}
+          {side === 'photo' && ph && (
+            <div class="c-project-case__side-panel c-project-case__side-panel--photo" data-reveal="media"><ProjectImage class="c-project-case__img" src={ph[0]} alt="" data-case-parallax {...NARROW} /></div>
+          )}
+        </div>
+      )}
+      <div class="c-project-case__text">
+        <div class="c-project-case__block" data-reveal><h2 class="c-project-case__title u-text-label u-text-muted">{l.story.challenge}</h2><p class="c-project-case__body">{s.challenge}</p></div>
+        <div class="c-project-case__block" data-reveal><h2 class="c-project-case__title u-text-label u-text-muted">{l.story.approach}</h2><p class="c-project-case__body">{s.approach}</p></div>
+        {p.parts?.length && (
+          <ol class="c-project-case__parts" role="list">
+            {p.parts.map((part, i) => (
+              <li class="c-project-case__part" data-reveal style={`--i:${i}`}><span class="u-text-label u-text-muted">{pad(i + 1)}</span><h3 class="c-project-case__part-title">{part.title}</h3><p class="c-project-case__part-text">{part.text}</p></li>
+            ))}
+          </ol>
+        )}
+        {p.brand && <div class="c-project-case__block" data-reveal><h2 class="c-project-case__title u-text-label u-text-muted">{l.story.brand}</h2><p class="c-project-case__body">{p.brand.text}</p></div>}
         <dl class="c-project-case__facts">
-          {facts.map((f) => (
-            <div class="c-project-case__fact"><dt class="u-text-label u-text-muted">{f.label}</dt><dd class="u-text-ui">{f.value}</dd></div>
-          ))}
+          {facts.map((f) => <div class="c-project-case__fact"><dt class="u-text-label u-text-muted">{f.label}</dt><dd class="u-text-label">{f.value}</dd></div>)}
         </dl>
         {p.url && <Button class="c-project-case__visit" href={p.url} target="_blank" rel="noopener">{l.facts.visit}<span class="u-sr-only"> ({p.title}, opens in a new tab)</span></Button>}
       </div>
     </div>
 
-    <div class="c-project-case__screen o-container o-grid" data-reveal="media">
-      {p.mockup ? <div class="c-project-case__photo c-project-case__photo--wide"><ProjectImage class="c-project-case__img" src={p.mockup} alt={`${p.title}: the website on a device`} position={p.position} {...WIDE} /></div>
-        : ph ? <div class="c-project-case__photo c-project-case__photo--wide"><ProjectImage class="c-project-case__img" src={ph[0]} alt="" data-case-parallax {...WIDE} /></div>
-        : sc ? <div class="c-project-case__panel"><div class="c-project-case__window" style={`--lqip:url(${lqip})`} data-case-scroll><ProjectImage class="c-project-case__long" src={sc.desktop} alt={`${p.title}: the website's home page on a desktop screen`} {...LONG} /></div></div>
-        : <div class={empty()} style={tint}><span class="u-text-label">{l.screens}</span></div>}
-    </div>
-
-    {p.brand && logo && (
-      <>
-        <div class="c-project-case__text o-container o-grid">
-          <div class="c-project-case__row" data-reveal><h2 class="c-project-case__title u-text-body-l">{l.story.brand}</h2><p class="c-project-case__body u-text-body-l">{p.brand.text}</p></div>
-        </div>
-        <div class="c-project-case__logos o-container o-grid" role="img" aria-label={`${p.title} logo`}>
-          {p.brand.swatches.map((c, i) => (
-            <div class:list={['c-project-case__swatch', { 'c-project-case__swatch--big': i === 0 }]} style={`background:${c.bg};color:${c.fg};--i:${i}`} data-reveal="media">
-              <span class="c-project-case__logo" aria-hidden="true" set:html={logo} />
-            </div>
-          ))}
-        </div>
-      </>
-    )}
-
-    <div class="c-project-case__text o-container o-grid">
-      <div class="c-project-case__row" data-reveal><h2 class="c-project-case__title u-text-body-l">{l.story.challenge}</h2><p class="c-project-case__body u-text-body-l">{s.challenge}</p></div>
-      <div class="c-project-case__row" data-reveal><h2 class="c-project-case__title u-text-body-l">{l.story.approach}</h2><p class="c-project-case__body u-text-body-l">{s.approach}</p></div>
-    </div>
-
-    {m && (
-      <div class:list={['c-project-case__moment', `c-project-case__moment--${m.kind}`]}>
-        <div class="c-project-case__moment-head o-container o-grid">
-          <h2 class="c-project-case__moment-title u-text-h2">{m.title}</h2>
-          <p class="c-project-case__moment-text u-text-body-l">{m.text}</p>
-        </div>
-        {m.kind === 'strip' && m.images && (
-          <div class="c-project-case__strip" data-case-strip data-reveal="media">
-            <div class="c-project-case__strip-track" data-case-strip-track>
-              {m.images.map((src) => <div class="c-project-case__still"><ProjectImage class="c-project-case__img" src={src} alt="" {...STILL} /></div>)}
-            </div>
+    <!-- 3. the mosaic: what the project has, on a tight grid -->
+    <div class="c-project-case__mosaic o-container o-grid">
+      {sc && (
+        <>
+          <div class="c-project-case__tile c-project-case__tile--wide c-project-case__tile--panel" data-reveal="media">
+            <div class="c-project-case__window" style={`--lqip:url(${lqip})`} data-case-scroll><ProjectImage class="c-project-case__long" src={sc.desktop} alt={`${p.title}: the website's home page on a desktop screen`} {...LONG} /></div>
           </div>
-        )}
-        {m.kind === 'grid' && m.images && (
-          <div class="c-project-case__grid o-container o-grid">
-            {m.images.map((src, i) => <div class="c-project-case__work" style={`--i:${i % 3}`} data-reveal><ProjectImage class="c-project-case__img" src={src} alt="" {...THIRD} /></div>)}
+          <div class="c-project-case__tile c-project-case__tile--narrow c-project-case__tile--panel c-project-case__tile--phone" data-reveal="media" style="--i:1">
+            <ProjectImage class="c-project-case__phone" src={sc.mobile[1]} alt={`${p.title}: another page on a phone`} {...PHONE} />
           </div>
-        )}
-        {m.kind === 'suite' && p.parts?.length && (
-          <div class="c-project-case__suite o-container o-grid">
-            <ol class="c-project-case__nodes">
-              {p.parts.map((part, i) => (
-                <li class="c-project-case__node" data-reveal style={`--i:${i}`}>
-                  <span class="u-text-label u-text-muted" aria-hidden="true">{pad(i + 1)}</span>
-                  <h3 class="c-project-case__part-title u-text-lead">{part.title}</h3>
-                  <p class="c-project-case__part-text">{part.text}</p>
-                </li>
-              ))}
-            </ol>
+          {side === 'phone'
+            ? <div class="c-project-case__tile c-project-case__tile--narrow c-project-case__tile--crop" data-reveal="media"><ProjectImage class="c-project-case__img" src={sc.desktop} alt="" position="30% 40%" {...NARROW} /></div>
+            : <div class="c-project-case__tile c-project-case__tile--narrow c-project-case__tile--panel c-project-case__tile--phone" data-reveal="media"><ProjectImage class="c-project-case__phone" src={sc.mobile[0]} alt="" {...PHONE} /></div>}
+          <div class="c-project-case__tile c-project-case__tile--wide c-project-case__tile--crop" data-reveal="media" style="--i:1">
+            <ProjectImage class="c-project-case__img" src={sc.desktop} alt="" position="50% 72%" {...WIDE} />
           </div>
-        )}
-      </div>
-    )}
-
-    <div class="c-project-case__pair o-container o-grid">
-      {sc ? sc.mobile.map((m, i) => (
-          <div class="c-project-case__panel c-project-case__panel--phone" data-reveal="media" style={`--i:${i}`}>
-            <ProjectImage class="c-project-case__mobile" src={m} alt={`${p.title}: the website on a phone`} {...MOBILE} />
-          </div>))
-        : ph ? [ph[1], ph[2]].map((src, i) => (
-          <div class="c-project-case__photo c-project-case__photo--half" data-reveal="media" style={`--i:${i}`}><ProjectImage class="c-project-case__img" src={src} alt="" {...HALF} /></div>))
-        : [0, 1].map((i) => <div class={empty('c-project-case__panel--phone')} data-reveal style={`${tint};--i:${i}`}><span class="u-text-label">{l.screens}</span></div>)}
+        </>
+      )}
+      {ph && [ph[1], ph[2], ph[3]].map((src, i) => (
+        <div class:list={['c-project-case__tile', ['c-project-case__tile--wide', 'c-project-case__tile--narrow', 'c-project-case__tile--full'][i], 'c-project-case__tile--photo']} data-reveal="media" style={`--i:${i % 2}`}>
+          <ProjectImage class="c-project-case__img" src={src} alt="" {...(i === 1 ? NARROW : WIDE)} />
+        </div>
+      ))}
+      {m?.images?.map((src, i) => (
+        <div class="c-project-case__tile c-project-case__tile--third c-project-case__tile--still" data-reveal="media" style={`--i:${i % 3}`}>
+          <ProjectImage class="c-project-case__img" src={src} alt="" {...THIRD} />
+        </div>
+      ))}
+      {p.brand && logo && p.brand.swatches.map((c, i) => (
+        <div class="c-project-case__tile c-project-case__tile--third c-project-case__tile--swatch" style={`background:${c.bg};color:${c.fg};--i:${i}`} data-reveal="media" aria-hidden="true">
+          <span class="c-project-case__logo" set:html={logo} />
+        </div>
+      ))}
+      {!sc && !ph && [0, 1].map((i) => (
+        <div class="c-project-case__tile c-project-case__tile--half c-project-case__tile--empty" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-reveal><span class="u-text-label">{l.screens}</span></div>
+      ))}
     </div>
 
-    <div class="c-project-case__text o-container o-grid">
-      <div class="c-project-case__row" data-reveal>
-        <h2 class="c-project-case__title u-text-body-l">{l.story.result}</h2><p class="c-project-case__body u-text-body-l">{s.result}</p>
-        <div class="c-project-case__end"><slot name="end" /></div><!-- where the story ends: the page's "All projects" button -->
-      </div>
+    <!-- 4. the result, the closing statement -->
+    <div class="c-project-case__close o-container o-grid">
+      <span class="c-project-case__title u-text-label u-text-muted">{l.story.result}</span>
+      <p class="c-project-case__statement c-project-case__statement--close" data-highlight-text>{s.result}</p>
+      <div class="c-project-case__end"><slot name="end" /></div><!-- where the story ends: the page's "All projects" button -->
     </div>
-
   </section>
 )}

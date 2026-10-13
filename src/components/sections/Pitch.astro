@@ -1,13 +1,12 @@
 ---
 // Pitch with the exploded R. Styles: styles/components/_pitch.css
-import Icon from '../ui/Icon.astro';
 import { pitch } from '../../data/site';
 ---
 <section class="c-pitch o-container o-grid" id="about" data-stage="1">
   <!-- R anchor: the exploded R sits on the left half -->
   <div class="c-pitch__r-anchor" id="a-pitch"></div>
   <div class="c-pitch__body">
-    <p class="c-pitch__quote u-text-lead" data-highlight-text><Icon name="arrow" class="c-pitch__arrow" />{pitch.quote}</p>
+    <p class="c-pitch__quote u-text-lead" data-highlight-text>{pitch.quote}</p>
     <!-- the placeholder only shows in `npm run dev`: a build without the portrait leaves it out -->
     {(pitch.portrait.image || import.meta.env.DEV) && <figure class="c-pitch__portrait">
       {pitch.portrait.image

@@ -27,6 +27,8 @@ export interface Project {
   // only real, checked numbers: without one the row shows its facts only
   outcome?: { value: string; label: string };
   // the case study on the detail page (sections/ProjectCase.astro). DUMMY copy for now: replace with the real story.
+  // `intro` opens the detail page above the main visual: keep it to two short sentences (~110 characters), so a
+  // piece of the visual still shows when the page lands, on every screen
   story?: { intro: string; challenge: string; approach: string; result: string };
   // what was made, as columns (e.g. the parts of a product suite), between the approach and the result
   parts?: { title: string; text: string }[];
@@ -62,7 +64,7 @@ export const projects: Project[] = [
     // measured: Lighthouse on woonpact.gent, mobile, median of three runs, 12 Oct 2026 (89 / 93 / 96)
     outcome: { value: '93', label: 'Lighthouse performance score on mobile, measured October 2026' },
     story: {
-      intro: 'Ghent needs more affordable homes than the city can build alone. The housing pact brings owners, developers and residents to the table, and it needed a voice of its own to do that.',
+      intro: 'Ghent needs more affordable homes than the city can build alone. Its housing pact needed a voice of its own.',
       challenge: 'There was no imagery to work with, and the city chose not to use photos on purpose: glossy pictures of homes would make the pact look like a sales pitch, not a shared effort. Add a lot of information, many audiences and a subject that can feel heavy, and the design had to carry all of it without a single picture.',
       approach: 'So the identity does the work photos usually do. The brand came first, made together with Nick Slemsbrouck of Studio Uruku: bold type, warm pale colours and loose outlined shapes that give every page something to look at. The site grew out of it: a clearly structured Craft CMS setup, with news, a timeline and video as building blocks the city\'s team can combine and keep up to date themselves.',
       result: 'An identity that feels like a campaign, not an advert, and a site that works like a reference: easy to read on every screen, quick to update, and built to grow with the pact.',
@@ -79,7 +81,7 @@ export const projects: Project[] = [
     description: 'A redesign of the website of a video and photography studio.', service: 'Design & development', year: 2026,
     colors: { a: '#1c1a19', b: '#c9744a', t: '#f4e7dd' }, url: 'https://www.imagoo.be', client: 'Imagoo', stack: ['Craft CMS', 'Vimeo', 'GSAP'],
     story: {
-      intro: 'Imagoo makes video and photography for brands, and its work had outgrown its website. The redesign had one job: let the footage do the talking, and make the content package easy to say yes to.',
+      intro: 'Imagoo makes video and photography for brands, and its work had outgrown its website.',
       challenge: 'The old site no longer matched the work. The footage had to carry the site, and the content package, their key offer, had to be clear to companies that are new to working with a studio.',
       approach: 'Keeping what worked, rethinking the rest: a wide wordmark and a calm grid around big, full-bleed video, the package in its own spot from the first screen, the services as short, scannable blocks, and the work itself always one scroll away.',
       result: 'A site that sells the studio the way the studio sells its clients: by showing, not telling.',
@@ -95,7 +97,7 @@ export const projects: Project[] = [
     // measured: Lighthouse on dewilde-braems.be, mobile, 100 in all three runs (main content in 1.1 s), 12 Oct 2026
     outcome: { value: '100', label: 'Lighthouse performance score on mobile, measured October 2026' },
     story: {
-      intro: 'De Wilde-Braems builds homes in and around Wachtebeke, a family business now in its fourth generation. Most of their clients find them through people they built for; the website had to feel just as trustworthy.',
+      intro: 'A family builder in its fourth generation, found mostly through word of mouth. The site had to feel just as trustworthy.',
       challenge: 'Their best argument is the work itself. The site had to show it at its best, make the three services easy to tell apart, and lead straight to a conversation, without the noise of a typical builder\'s site.',
       approach: 'A calm layout in their own deep blue, big photography of finished projects, and a portfolio grouped by style, so visitors quickly find homes like the one they have in mind. Contact is never more than a tap away.',
       result: 'A site as solid and straightforward as the company behind it, easy for them to fill with new projects.',
@@ -107,7 +109,7 @@ export const projects: Project[] = [
     description: 'The Toran Suite: planning software and a mobile app for a helicopter operator and flight school.', service: 'Development', year: 2026,
     colors: { a: '#12233d', b: '#6f93c2', t: '#e8eef7' }, client: 'Toran Heli Services & Academy', stack: ['Laravel', 'React Native', 'Craft CMS'], status: 'In progress',
     story: {
-      intro: 'A helicopter operator and flight school runs on planning: aircraft, instructors, students and weather, all depending on each other. Toran wanted one system for it, instead of a dozen spreadsheets.',
+      intro: 'A helicopter school runs on planning. Toran wanted one system for it, not a dozen spreadsheets.',
       challenge: 'Flights, students, instructors, aircraft and bookings all depend on each other, and they lived in spreadsheets, inboxes and separate tools. The software had to bring them together: strict where safety and planning demand it, quick everywhere else.',
       approach: 'One Laravel core with two faces. The web app came first, built step by step alongside the people who plan the flights every day; the mobile app follows on the same data, so a change in the planning reaches a student\'s pocket the moment it\'s made.',
       result: 'Less double work, fewer surprises, and a single source of truth from the first booking to the last entry in the logbook.',

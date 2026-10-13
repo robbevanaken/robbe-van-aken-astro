@@ -4,12 +4,6 @@
    left, privacy and cookie settings on the right, on one line; phones: two short rows on the left, tight. */
 .c-site-footer{min-height:clamp(560px,100svh,1200px);display:flex;flex-direction:column}
 .c-site-footer__main{position:relative;flex:1;align-items:center;padding-block:var(--space-l)} /* a step tighter than the sections: the screen's room goes to the R */
-/* the system under the craft: the page's column grid, shown once, as faint lines between the columns (in the middle of
-   each gutter, and half a gutter outside the outer columns), fading out at the top and bottom; the R draws over them */
-.c-site-footer__lines{position:absolute;inset:0 calc(var(--margin) - var(--gutter) / 2);grid-area:auto;pointer-events:none; /* grid-area auto: measured from the footer, not from a grid area */
-  background:linear-gradient(to right,var(--line) 1px,transparent 1px) 0 0 / calc(100% / var(--cols)) 100% repeat-x;border-right:1px solid var(--line);
-  -webkit-mask-image:linear-gradient(transparent,#000 25%,#000 75%,transparent);mask-image:linear-gradient(transparent,#000 25%,#000 75%,transparent)}
-.c-site-footer__main > :not(.c-site-footer__lines){position:relative}
 .c-site-footer__cta{grid-column:1 / span 6;grid-row:1;display:grid;grid-template-columns:subgrid;align-content:start}
 .c-site-footer__cta > *{grid-column:1 / -1;justify-self:start}
 .c-site-footer__title{grid-column:1 / span 6}

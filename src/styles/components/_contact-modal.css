@@ -1,0 +1,104 @@
+/* Contact popup (sections/ContactModal.astro, global/contactModal.js). A fixed layer over everything but the loader (z 40, above the header: the
+   header with "Contact" active shows dimmed through the veil): a backdrop dimming the page, and a large panel centred on
+   the screen, as wide as 10 columns allow, its own scroll. In (.is-in): the
+   backdrop fades in, the panel opens from its centre (clip-path, the site's media reveal, rising a touch), then its
+   parts follow in a short cascade. Out (.is-out): the panel sinks a touch and fades, the backdrop
+   fades just behind it; then the layer hides. Inside: the head (place + local time, the title as a two-tone statement, the intro) and
+   a close button, then the details (cols 1–4) and the form wizard (cols 6–12), as on the contact page. While it's open
+   the page's R canvases and the fixed tiles fade out (html.is-contact-open). Reduced motion: no motion. */
+.c-contact-modal{position:fixed;inset:0;z-index:40;--ease-reveal:cubic-bezier(.16,1,.3,1)}
+.c-contact-modal[hidden]{display:none}
+.c-contact-modal__backdrop{position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 42%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .6s var(--ease-out)} /* a dark veil: the paper panel lies clearly on top (a paper-tinted veil let its edges melt into the page) */
+.c-contact-modal__panel{position:absolute;left:50%;top:50%;translate:-50% calc(-50% + 24px);
+  width:min(1280px,calc(100vw - 2 * var(--margin)));height:min(960px,calc(100svh - 48px)); /* centred on the screen, as tall as it allows */
+  background:var(--bg);outline:1px solid var(--line);
+  clip-path:inset(50% 50% 50% 50%);transition:clip-path 1s var(--ease-reveal),translate 1s var(--ease-reveal),opacity .35s var(--ease-out)}
+/* its own scroll, the native bar hidden: the custom one is a thin line with a thumb (global/contactModal.js sizes it) */
+.c-contact-modal__scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.c-contact-modal__scroll::-webkit-scrollbar{display:none}
+.c-contact-modal__scroll:focus{outline:0}
+.c-contact-modal__bar{position:absolute;top:var(--space-m);bottom:var(--space-m);right:10px;width:1px;background:var(--line);pointer-events:none;opacity:0;transition:opacity .4s var(--ease-out)}
+.c-contact-modal__bar.is-on{opacity:1}
+.c-contact-modal__bar i{position:absolute;left:-1px;right:-1px;top:0;height:var(--th,40px);translate:0 var(--ty,0px);background:var(--fg)}
+.c-contact-modal__panel{--pad:clamp(32px,3.3vw,48px)} /* the panel's one padding, every edge (and the close button's inset) */
+.c-contact-modal__inner{position:relative;min-height:100%;padding:var(--pad);row-gap:var(--space-m);align-items:start;
+  grid-template-columns:repeat(12,minmax(0,1fr))}
+/* the parts follow the panel in a short cascade */
+.c-contact-modal__head,.c-contact-modal__close,.c-contact-modal .c-contact__details,.c-contact-modal .c-contact-form{
+  opacity:0;translate:0 16px;transition:opacity .6s var(--ease-out),translate .8s var(--ease-reveal)}
+.c-contact-modal.is-in .c-contact-modal__backdrop{opacity:1}
+.c-contact-modal.is-in .c-contact-modal__panel{clip-path:inset(0 0 0 0);translate:-50% -50%}
+.c-contact-modal.is-in :is(.c-contact-modal__head,.c-contact-modal__close,.c-contact__details,.c-contact-form){opacity:1;translate:0 0}
+.c-contact-modal.is-in .c-contact-modal__head{transition-delay:.22s}
+.c-contact-modal.is-in .c-contact-modal__close{transition-delay:.3s}
+.c-contact-modal.is-in .c-contact-form{transition-delay:.32s}
+.c-contact-modal.is-in .c-contact__details{transition-delay:.42s}
+/* out: short and soft, the panel whole (tried: shrinking into its centre over the veil: it read as a square
+   collapsing on a blank backdrop): it sinks a touch and fades, the veil fading just behind it */
+.c-contact-modal.is-out .c-contact-modal__panel{clip-path:inset(0 0 0 0);opacity:0;translate:-50% calc(-50% + 18px);transition:opacity .35s var(--ease-out),translate .45s cubic-bezier(.4,0,.2,1)}
+.c-contact-modal.is-out .c-contact-modal__backdrop{transition-duration:.45s;transition-delay:.08s}
+
+/* two columns, so it fits one screen: on the left the head (place + time, the title as one two-tone statement, the
+   intro) with the details under it; on the right the form wizard from the top, compact (tighter padding and steps
+   than on the contact page); the close button in the top right corner */
+.c-contact-modal__inner{grid-template-rows:auto 1fr}
+.c-contact-modal__head{grid-column:1 / span 5;grid-row:1;display:grid;gap:var(--space-s)}
+.c-contact-modal__note{margin:0}
+.c-contact-modal__title{margin:0;font-size:clamp(28px,2.9vw,44px);line-height:1.08;letter-spacing:-.03em;font-weight:500;text-wrap:balance}
+.c-contact-modal__intro{margin:0;max-width:34ch;font-size:var(--fs-body);line-height:1.5}
+/* close: the label + a cross (the menu toggle's language), in the panel's top right corner */
+.c-contact-modal__close{position:absolute;top:var(--pad);right:var(--pad);grid-area:auto; /* auto: placed from the panel's edge, not from a grid area (the grid's children span its content box) */
+  z-index:1;display:inline-flex;align-items:center;gap:12px;
+  padding:0;border:0;background:none;color:var(--fg);font:inherit;cursor:pointer}
+.c-contact-modal__close::before{content:"";position:absolute;inset:-14px -12px} /* a 44px tap area */
+/* the label swap on hover, as the menu toggle's: a copy one line below (text-shadow) slides up into the clip */
+.c-contact-modal__label{display:inline-block;overflow:hidden;line-height:1.3;contain:paint}
+.c-contact-modal__text{display:inline-block;text-shadow:0 1.3em 0 currentColor;transition:translate var(--hover-dur) var(--ease-punch)}
+.c-contact-modal__close:hover .c-contact-modal__text,.c-contact-modal__close:focus-visible .c-contact-modal__text{translate:0 -1.3em}
+.c-contact-modal__x{position:relative;width:16px;height:16px}
+.c-contact-modal__x i{position:absolute;left:0;right:0;top:50%;height:1px;background:currentColor;rotate:45deg;transition:rotate var(--hover-dur) var(--ease-punch)}
+.c-contact-modal__x i+i{rotate:-45deg}
+.c-contact-modal__close:hover .c-contact-modal__x i,.c-contact-modal__close:focus-visible .c-contact-modal__x i{rotate:135deg}
+.c-contact-modal__close:hover .c-contact-modal__x i+i,.c-contact-modal__close:focus-visible .c-contact-modal__x i+i{rotate:45deg}
+/* the details under the head, the form beside them from the top */
+.c-contact-modal .c-contact__details{grid-column:1 / span 5;grid-row:2;align-self:end;grid-template-columns:repeat(2,max-content);column-gap:var(--space-xl);row-gap:var(--space-m)} /* details and socials side by side: the column stays short */
+.c-contact-modal .c-contact__portrait{grid-column:1 / -1}
+.c-contact-modal .c-contact__portrait{width:min(160px,40%)}
+.c-contact-modal .c-contact__list{font-size:var(--fs-body)}
+.c-contact-modal .c-contact-form{grid-column:7 / -1;grid-row:1 / span 2;margin-top:36px} /* clear of the close button */
+.c-contact-modal .c-contact-form:has(.is-wizard){padding:var(--space-m)}
+.c-contact-modal .c-contact-form__form.is-wizard .c-contact-form__row{padding-block:var(--space-m) var(--space-s)}
+
+/* while it's open: the page's R canvases and the fixed tiles step back */
+html.is-contact-open .c-r-canvas{opacity:0;transition:opacity .4s var(--ease-out)}
+html.is-contact-open .c-music:not(.c-music--menu),html.is-contact-open .c-sound-toggle{opacity:0;visibility:hidden}
+
+@media (max-width:1023px){
+  .c-contact-modal__panel{--pad:var(--space-m)}
+  .c-contact-modal__inner{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:none;padding:var(--pad)}
+  .c-contact-modal__head{grid-column:1 / span 5}
+  .c-contact-modal .c-contact-form{grid-column:1 / -1;grid-row:2;margin-top:0}
+  .c-contact-modal .c-contact__details{grid-column:1 / -1;grid-row:3;align-self:start}
+  .c-contact-modal .c-contact__details{grid-template-columns:repeat(2,max-content)}
+}
+@media (max-width:639px){
+  /* phones: the panel is the screen below the header, as a sheet */
+  .c-contact-modal__panel{width:calc(100vw - 32px);height:min(720px,calc(100svh - 112px))} /* phones: a card, the page's edges still showing around it (tried: nearly the whole screen) */
+  .c-contact-modal__inner{grid-template-columns:repeat(4,minmax(0,1fr));padding:104px var(--space-m) var(--space-xl)} /* room on top for the R and the close button, with air (68px felt cramped) */
+  .c-contact-modal__head{grid-column:1 / -1}
+  .c-contact-modal__close{top:34px;right:var(--pad)} /* level with the R's spot, on the panel's side padding */
+  .c-contact-modal .c-contact__portrait{width:50%}
+}
+@media (prefers-reduced-motion:reduce){
+  .c-contact-modal *,.c-contact-modal{transition:none!important}
+}
+
+/* phones: the R's spot at the top centre of the panel; the page's R (the intro canvas) flies here and back, drawn
+   above the popup while it does (html.is-contact-r, global/contactModal.js) */
+.c-contact-modal__r{display:none;position:absolute;top:24px;left:50%;translate:-50% 0;width:40px;height:40px;pointer-events:none}
+.c-contact-modal.is-out{pointer-events:none}
+.c-contact-modal.is-prep{pointer-events:none}
+@media (max-width:639px){
+  .c-contact-modal__r{display:block} /* after the rule above that hides it on wider screens */
+  html.is-contact-r .c-r-canvas[data-r-intro]{opacity:1!important;z-index:41}
+}

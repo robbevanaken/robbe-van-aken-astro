@@ -26,6 +26,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getLenis } from './lenis.js';
 import { handOff, arrive } from '../components/scrollNext.js';
+import { releaseIntro } from '../components/maskReveal.js';
 import { openProject } from '../components/openProject.js';
 import { rIntro } from '../r-journey/engine.js';
 import { setScrollTheme } from './theme.js';
@@ -280,6 +281,8 @@ export function initPageTransitions({ mount, unmount }) {
   swup.hooks.on('visit:start', (visit) => {
     if (visit.trigger.el?.closest('[data-scroll-next-link]')) visit.animation.name = 'next-project';
     else if (f && (card = visit.trigger.el?.closest('[data-fp-card]'))) visit.animation.name = 'open-project'; // f: not with reduced motion
+    // the arrivals show the new page's intro themselves: its masked line reveal (components/maskReveal.js) waits for them
+    if (visit.animation.name === 'next-project' || visit.animation.name === 'open-project') document.documentElement.classList.add('is-intro-held');
     // no scrolling while a transition runs
     getLenis()?.stop();
   });
@@ -325,6 +328,7 @@ export function initPageTransitions({ mount, unmount }) {
   });
 
   swup.hooks.on('visit:end', () => {
+    releaseIntro(); // never left held (an arrival that bailed)
     getLenis()?.start();
     getLenis()?.resize();
     ScrollTrigger.refresh();

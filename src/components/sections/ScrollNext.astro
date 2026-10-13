@@ -10,7 +10,7 @@ import ProjectVisual from '../ui/ProjectVisual.astro';
 interface Props { project: Project; label: string }
 const { project, label } = Astro.props; // label: for the link's accessible name
 ---
-<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next" data-next-title={project.title} data-next-service={project.service} data-next-desc={project.description} data-next-year={project.year}>
+<section data-scroll-next-wrap data-scroll-start="top top" data-scroll-end="bottom bottom" class="c-scroll-next" data-next-title={project.title} data-next-service={project.service} data-next-desc={project.description} data-next-intro={project.story?.intro ?? project.description} data-next-year={project.year}>
   <a data-scroll-next-link href={`/work/${project.slug}`} class="c-scroll-next__inner" aria-label={`${label}: ${project.title}`}>
     <div class="c-scroll-next__stage">
       <!-- where the visual starts, partly below the fold (the box below is laid over it by the script) -->

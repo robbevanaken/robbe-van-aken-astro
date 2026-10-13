@@ -1,5 +1,6 @@
 ---
-// Contact: the hero (sections/ContactIntro.astro), then the details (portrait, contact + business details, socials; left, sticky) and the form
+// Contact (the no-JS fallback; with JS every link to /contact opens the popup, sections/ContactModal.astro, and a
+// direct visit here goes to /?contact): the hero (sections/ContactIntro.astro), then the details (portrait, contact + business details, socials; left, sticky) and the form
 // (right). Phones: form first, details below. Styles: styles/components/_contact.css + _contact-form.css.
 import Page from '../layouts/Page.astro';
 import ContactIntro from '../components/sections/ContactIntro.astro';
@@ -7,7 +8,9 @@ import ContactDetails from '../components/sections/ContactDetails.astro';
 import ContactForm from '../components/sections/ContactForm.astro';
 import { contactPage as p } from '../data/pages';
 ---
-<Page title="Contact" description={p.intro}>
+<Page title="Contact" description={p.intro} contact={false}>
+  <!-- with JavaScript, contact is a popup (sections/ContactModal.astro): a direct visit opens it on home -->
+  <script is:inline>location.replace('/?contact')</script>
   <ContactIntro />
   <section class="c-contact o-container o-grid">
     <ContactDetails />

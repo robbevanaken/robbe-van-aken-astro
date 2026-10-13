@@ -1,0 +1,37 @@
+---
+// Contact as a popup (replaces the contact page for JS visitors; pages/contact.astro stays as the no-JS fallback): a
+// layer UNDER the site header (z 29), so the header stays on top with "Contact" active in the nav while it's open, and
+// any other nav link still works (it closes the popup on its way). The page dims behind a backdrop; a large panel opens
+// from its centre (the site's media reveal) with its content following in a short cascade. Inside: the title as a
+// two-tone statement (like the project pages' openings), his place and local time, the details (portrait, email,
+// phone, socials) and the form wizard — everything the contact page had.
+// Lives in Base.astro OUTSIDE #swup, so it persists across page swaps (a half-filled form survives navigating).
+// Behaviour: scripts/global/contactModal.js (+ contactForm.js / localTime.js, initialised once on it).
+// Styles: styles/components/_contact-modal.css (+ _contact.css, _contact-form.css). Copy: contactPage in src/data/pages.ts.
+import ContactDetails from './ContactDetails.astro';
+import ContactForm from './ContactForm.astro';
+import { contactPage as p } from '../../data/pages';
+---
+<div class="c-contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" hidden data-contact-modal>
+  <div class="c-contact-modal__backdrop" data-contact-close></div>
+  <div class="c-contact-modal__panel" data-contact-panel>
+    <!-- phones: the R's spot while it's open (the page's R flies here, as it does to the mobile menu's corner) -->
+    <span class="c-contact-modal__r" aria-hidden="true" data-contact-r></span>
+    <div class="c-contact-modal__scroll" tabindex="-1" data-lenis-prevent data-contact-scroll>
+    <div class="c-contact-modal__inner o-grid">
+      <div class="c-contact-modal__head">
+        <p class="c-contact-modal__note u-text-label u-text-muted">{p.frameNote.place} <time data-local-time={p.frameNote.timeZone}></time></p>
+        <h2 class="c-contact-modal__title" id="contact-modal-title">{p.title.map((t) => <span class:list={{ 'u-text-muted': t.muted }}>{t.text}</span>)}</h2>
+        <p class="c-contact-modal__intro u-text-muted">{p.intro}</p>
+      </div>
+      <button class="c-contact-modal__close u-text-ui" type="button" data-contact-close>
+        <span class="c-contact-modal__label"><span class="c-contact-modal__text">Close</span></span><span class="c-contact-modal__x" aria-hidden="true"><i></i><i></i></span>
+      </button>
+      <ContactDetails />
+      <ContactForm />
+    </div>
+    </div>
+    <!-- the scrollbar: a thin line with a thumb (the progress lines' language), instead of the native one -->
+    <div class="c-contact-modal__bar" aria-hidden="true" data-contact-scrollbar><i data-contact-thumb></i></div>
+  </div>
+</div>

@@ -7,35 +7,31 @@
 .c-page-intro__text{grid-column:1 / span 5;color:var(--muted)}
 .c-page-intro__action{grid-column:1 / -1;justify-self:start}
 
-/* project detail: the title on one line at the hero size (--fs-hero, as the contact page's), smaller only when a long
-   name wouldn't fit (--len: its number of characters, set on the intro); same top room as every subpage; the visual
-   below it, a step apart (tried: the visual sliding over the title's lower part); the visual (_project-detail.css) sliding up over its lower part
-   (cols 3–12). Beside the visual, on the left (cols 1–2): the description and the facts (service, year), hung below
-   the intro (absolute: they take no room, the visual sets the height). Below 1024px the visual spans the width and
-   still overlaps the title; the specs follow under it (a second copy, .c-page-intro__aside--below, in the page). */
-.c-page-intro--project{--frame-pad:var(--space-m); /* the title frame's padding (_title-frame.css) */
-  --fs:min(var(--fs-hero),calc((100vw - 2 * var(--margin) - 2 * var(--frame-pad)) / var(--len,10) * 1.7));position:relative;row-gap:0}
-.c-page-intro--project .c-page-intro__title{grid-column:1 / -1;grid-row:1;font-size:var(--fs);line-height:1;letter-spacing:-.03em;white-space:nowrap}
-.c-page-intro__aside{position:absolute;grid-column:1 / span 2;grid-row:1;top:100%;left:0;width:100%; /* absolute in its grid area: cols 1–2, under the title's row */
-  display:grid;gap:var(--space-m);padding-top:var(--space-xl)} /* level with the visual's top (_project-detail.css) */
-.c-page-intro__aside--below{display:none}
-.c-page-intro__desc{margin:0;color:var(--muted);line-height:1.5}
-.c-page-intro__facts{margin:0;display:grid;gap:var(--space-xs)}
-.c-page-intro__fact{display:grid;gap:2px;padding-top:var(--space-xs);border-top:1px solid var(--line)}
-.c-page-intro__fact dt{color:var(--muted)}
-.c-page-intro__fact dd{margin:0}
 
 @media (max-width:1023px){
   .c-page-intro__title,.c-page-intro__text{grid-column:1 / -1}
-  .c-page-intro--project .c-page-intro__title{grid-column:1 / -1}
-  .c-page-intro__aside{display:none}
-  .c-page-intro__aside.c-page-intro__aside--below{display:grid;position:static;grid-column:1 / -1;grid-row:auto;width:auto;grid-template-columns:minmax(0,1fr);gap:var(--space-l);padding-top:var(--space-l)} /* the description, then the facts under each other */
-  .c-page-intro__desc{max-width:34em}
-  .c-page-intro__facts{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gutter);row-gap:var(--space-m)} /* two columns of facts, label over value, each under its thin line */
-  .c-page-intro__fact{padding-top:var(--space-xs)}
 }
-@media (max-width:639px){
-  .c-page-intro__desc{font-size:15px}
-  /* phones: a long name wraps at the full size instead of shrinking to fit one line */
-  .c-page-intro--project .c-page-intro__title{white-space:normal;font-size:var(--fs-hero);text-wrap:balance}
+
+/* project detail's opening (pages/work/[slug].astro, after naughtyduk.com): the meta line (number, service, year), then
+   the title and the context as ONE two-tone statement at the h2 size in medium (the title in the grey, like the
+   footer's title), cols 1–8, the main visual under it (_project-detail.css) */
+.c-page-intro--case{row-gap:0;align-content:start}
+/* desktop: tall enough that the main visual's top edge lands exactly on the fixed tiles' line (album bottom left,
+   sound bottom right): on landing they sit in the visual's top corners (the visual follows at --space-xl:
+   _project-detail.css). Not below 1024px: on a tall phone it left a screen of empty paper above the visual. */
+@media (min-width:1024px){ .c-page-intro--case{min-height:calc(100svh - var(--float-bottom) - var(--tile) - var(--space-xl))} }
+.c-page-intro--case .c-page-intro__meta{grid-column:1 / -1;grid-row:1;display:flex;flex-wrap:wrap;gap:6px;margin:0 0 var(--space-m)}
+.c-page-intro--case .c-page-intro__meta>span{padding:5px 10px;background:var(--panel)} /* quiet chips (the nav tile's language) */
+.c-page-intro--case .c-page-intro__meta>span:first-child{color:var(--fg);font-variant-numeric:tabular-nums}
+.c-page-intro--case .c-page-intro__title.u-text-display,.c-page-intro--case .c-page-intro__text{grid-column:1 / span 8;margin:0;font-size:var(--fs-h2);line-height:1.08;letter-spacing:-.03em;font-weight:500;text-wrap:balance}
+.c-page-intro--case .c-page-intro__title.u-text-display{grid-row:2;color:var(--muted)}
+.c-page-intro--case .c-page-intro__text{grid-row:3;color:var(--fg)}
+@media (max-width:1023px){
+  .c-page-intro--case .c-page-intro__title.u-text-display,.c-page-intro--case .c-page-intro__text{grid-column:1 / -1;font-size:clamp(26px,5.6vw,40px)}
 }
+
+/* the opening statement's masked line reveal (components/maskReveal.js): hidden until split (no flash of the unsplit
+   text; !important: the page-arrival fades set an inline visibility), then each line slides up out of its own mask */
+html:not(.no-js) [data-split="heading"]:not(.is-split){visibility:hidden!important}
+@media (prefers-reduced-motion:reduce){ html:not(.no-js) [data-split="heading"]:not(.is-split){visibility:visible!important} }
+[data-split="heading"] .line{padding-bottom:.08em;margin-bottom:-.08em} /* the mask clears the descenders (g, p, y) */

@@ -4,10 +4,12 @@ import '../styles/main.css';
 import { meta, nav, socials } from '../data/site';
 import Music from '../components/ui/Music.astro';
 import SoundToggle from '../components/ui/SoundToggle.astro';
+import ContactModal from '../components/sections/ContactModal.astro';
 import PageTransition from '../components/layout/PageTransition.astro';
 // noindex: pages search engines should skip (404)
-interface Props { title?: string; description?: string; noindex?: boolean }
-const { title = meta.title, description = meta.description, noindex = false } = Astro.props;
+// contact={false}: no contact popup (the contact page itself, the no-JS fallback that holds the same form)
+interface Props { title?: string; description?: string; noindex?: boolean; contact?: boolean }
+const { title = meta.title, description = meta.description, noindex = false, contact = true } = Astro.props;
 // structured data: who this site is about (search engines)
 const person = { '@context': 'https://schema.org', '@type': 'Person', name: nav.name, jobTitle: nav.role, url: Astro.site?.href, email: `mailto:${meta.email}`,
   address: { '@type': 'PostalAddress', addressLocality: 'Ghent', addressCountry: 'BE' }, sameAs: socials.map((s) => s.href) };
@@ -74,6 +76,8 @@ const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':ne
     <Music />
     <!-- the sound tile, fixed bottom right (outside #swup too) -->
     <SoundToggle />
+    <!-- the contact popup (outside #swup: it survives page swaps, a half-filled form too) -->
+    {contact && <ContactModal />}
     <!-- the paper grain over everything (_grain.css) -->
     <div class="c-grain" aria-hidden="true"></div>
     <script>

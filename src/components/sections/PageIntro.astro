@@ -11,12 +11,14 @@ import Corners from '../ui/Corners.astro';
 interface Props { label?: string; title: string; intro?: string; modifier?: string; style?: string; frame?: boolean; count?: { i: number; n: number } }
 const { label, title, intro, modifier, style, frame = false, count } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
+// the project detail's opening statement reveals line by line (components/maskReveal.js)
+const split = modifier === 'case' ? { 'data-split': 'heading', 'data-split-reveal': 'lines' } : {};
 ---
 <header class:list={['c-page-intro o-container o-grid', modifier && `c-page-intro--${modifier}`]} style={style} data-page-intro>
   {label && <p class="c-page-intro__label u-text-label"><Icon name="arrow" class="c-page-intro__arrow" /><span data-page-intro-label>{label}</span></p>}
   {frame
     ? <h1 class="c-page-intro__title u-text-display"><span class="c-title-frame" data-title-frame><span data-page-intro-title>{title}</span>{count && <span class="c-title-frame__note u-text-label" aria-hidden="true"><span class="c-title-frame__in">{[0, 1].map((d) => <span class="c-title-frame__roll" style={`--i:${d};--to:${count.i - 1}`}><span class="c-title-frame__roll-list">{Array.from({ length: count.i }, (_, k) => <span>{pad(k + 1)[d]}</span>)}</span></span>)}{[...` / ${pad(count.n)}`].map((c, k) => <span class="c-title-frame__ch" style={`--i:${k + 2}`}><span>{c}</span></span>)}</span></span>}<Corners /></span></h1>
-    : <h1 class="c-page-intro__title u-text-display" data-page-intro-title>{title}</h1>}
-  {intro && <p class="c-page-intro__text u-text-body-l" data-page-intro-text>{intro}</p>}
+    : <h1 class="c-page-intro__title u-text-display" data-page-intro-title {...split}>{title}</h1>}
+  {intro && <p class="c-page-intro__text u-text-body-l" data-page-intro-text {...split}>{intro}</p>}
   <slot />
 </header>

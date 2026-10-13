@@ -32,5 +32,8 @@ export const SMALLS = {
   grid:  { label: 'E · Fine pixels with a hairline gap', min: 3, fill: .72, walls: true },
   pixel: { label: 'F · Pixels (~30 tall), small gap', min: 3, rows: 30, fill: .84, walls: true },
   chunk: { label: 'G · Pixels (~30 tall), face only, small gap', min: 3, rows: 30, fill: .84, walls: false },
+  // the big R's air at a small size: a visible gap between the squares (fill under 1), so it reads as a halftone,
+  // not a solid black stamp
+  airf:  { label: 'J · Halftone squares (~36 tall), soft gap', min: 3, rows: 36, fill: .76, walls: true },
 };
-export const SMALL = 'fine'; // C: chosen side by side on a lab page (since removed)
+export const SMALL = 'airf'; // J: halftone squares with a soft gap, so the small R has the big one's air (Oct 2026; was C, solid cells: read as a black stamp; tried H and I: more air, too grey)

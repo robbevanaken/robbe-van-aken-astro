@@ -9,8 +9,6 @@ import { footer, meta, nav } from '../../data/site';
 <footer class="c-site-footer" id="contact" data-stage="4" data-site-footer>
   <Marquee text={footer.marquee} icon="together" />
   <div class="c-site-footer__main o-container o-grid">
-    <!-- the grid it's built on, shown once: faint lines between the columns behind the big R -->
-    <div class="c-site-footer__lines" aria-hidden="true"></div>
     <div class="c-site-footer__cta">
       <h2 class="c-site-footer__title u-text-display" data-highlight-text>{footer.title.map((p) => <span class:list={{ 'u-text-muted': p.muted }}>{p.text}</span>)}</h2>
       <a class="c-site-footer__mail u-text-lead" href={`mailto:${meta.email}`}>{meta.email}</a>

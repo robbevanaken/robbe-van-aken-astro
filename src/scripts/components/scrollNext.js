@@ -8,6 +8,7 @@
 // shows it in at the top (measured with a hidden copy of this page's intro filled with the next project's text),
 // so when the page swaps (global/pageTransitions.js) the visual is carried over and only the rest fades in.
 import gsap from 'gsap';
+import { releaseIntro } from './maskReveal.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { scrollToY, easeInOut } from '../global/lenis.js';
 
@@ -28,6 +29,7 @@ function measureTarget(root, wrap) {
   put('[data-page-intro-service]', wrap.dataset.nextService);
   put('[data-page-intro-desc]', wrap.dataset.nextDesc);
   put('[data-page-intro-year]', wrap.dataset.nextYear);
+  put('[data-page-intro-text]', wrap.dataset.nextIntro); // the opening statement: its length moves the visual down
   if (wrap.dataset.nextTitle) i.style.setProperty('--len', wrap.dataset.nextTitle.length); // the title's size follows its length
   v.style.setProperty('--len', wrap.dataset.nextTitle?.length ?? '');
   probe.append(i, v);
@@ -207,8 +209,11 @@ export const arrive = {
       ]);
     }
     copy?.remove();
-    const intro = [...document.querySelectorAll('[data-page-intro] > *')];
-    const rest = targets.filter((t) => !intro.includes(t));
+    const all = [...document.querySelectorAll('[data-page-intro] > *')];
+    const split = all.filter((el) => el.matches('[data-split]')), intro = all.filter((el) => !split.includes(el));
+    const rest = targets.filter((t) => !all.includes(t));
+    gsap.set(split, { clearProps: 'opacity,visibility' }); // their lines rise out of their masks instead (maskReveal.js)
+    releaseIntro();
     gsap.fromTo(intro, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .9, ease: 'expo.out', stagger: .08, clearProps: 'all' });
     await gsap.to(rest, { autoAlpha: 1, duration: .8, ease: 'power2.out', delay: .15, clearProps: 'opacity,visibility' });
   },

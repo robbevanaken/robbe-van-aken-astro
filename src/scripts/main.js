@@ -22,9 +22,11 @@ import { initTitleFrame } from './components/titleFrame.js';
 import { initLocalTime } from './components/localTime.js';
 import { initScrollTheme } from './global/scrollTheme.js';
 import { initSound } from './global/sound.js';
+import { initContactModal } from './global/contactModal.js';
 import { initStackCards } from './components/stackCards.js';
 import { initPricing } from './components/pricing.js';
 import { initContactForm } from './components/contactForm.js';
+import { initMaskReveal } from './components/maskReveal.js';
 import { initWorkFilter } from './components/workFilter.js';
 import { initFilter } from './components/filter.js';
 import { initWorkIntro } from './components/workIntro.js';
@@ -83,7 +85,7 @@ function mount() {
   ];
   Promise.all([document.fonts.ready, whenUncovered()]).then(() => {
     if (id !== page) return; // swapped away in the meantime
-    cleanups.push(initHighlight(root), initTextHover(root));
+    cleanups.push(initHighlight(root), initTextHover(root), initMaskReveal(root));
   });
 }
 
@@ -95,6 +97,7 @@ function unmount() {
 
 initTheme();
 initSound();
+initContactModal();
 
 initMusic();
 initSmoothScroll();

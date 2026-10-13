@@ -1,7 +1,6 @@
 ---
-// Project detail page: the title in big type across the page with the visual sliding over its lower part (the
-// description, service and year beside it, on the left), the visual, the case study (sections/ProjectCase.astro), the back
-// button ("All projects"), then "scroll to next project".
+// Project detail page: a meta line, the title + the context as one statement, the main visual, the case study
+// (sections/ProjectCase.astro), the back button ("All projects"), then "scroll to next project".
 // Styles: styles/components/_project-detail.css
 import Page from '../../layouts/Page.astro';
 import PageIntro from '../../components/sections/PageIntro.astro';
@@ -18,40 +17,18 @@ export function getStaticPaths() {
 interface Props { project: Project; index: number }
 const { project, index } = Astro.props;
 const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
-// every fact, for the specs block under the visual on smaller screens
-const allFacts = [
-  { label: projectPage.service, value: project.service },
-  { label: projectPage.year, value: String(project.year) },
-  project.client && { label: projectPage.facts.client, value: project.client },
-  project.stack?.length && { label: projectPage.facts.stack, value: project.stack.join(', ') },
-  project.credit,
-  project.status && { label: projectPage.facts.status, value: project.status },
-].filter(Boolean) as { label: string; value: string }[];
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <Page title={project.title} description={project.description} footer={false}>
-  <PageIntro title={project.title} modifier="project" frame count={{ i: index + 1, n: projects.length }} style={`--len:${project.title.length}`}>
-    <div class="c-page-intro__aside">
-      <p class="c-page-intro__desc" data-page-intro-desc>{project.description}</p>
-      <dl class="c-page-intro__facts">
-        <div class="c-page-intro__fact"><dt class="u-text-label">{projectPage.service}</dt><dd class="u-text-ui" data-page-intro-service>{project.service}</dd></div>
-        <div class="c-page-intro__fact"><dt class="u-text-label">{projectPage.year}</dt><dd class="u-text-ui" data-page-intro-year>{project.year}</dd></div>
-      </dl>
-    </div>
+  <!-- the opening (after naughtyduk.com's project pages): a meta line (number, service, year), then the title and the
+       context as one two-tone statement (the title in the grey, like the footer's title), then the main visual -->
+  <PageIntro title={project.title} intro={project.story?.intro ?? project.description} modifier="case">
+    <p class="c-page-intro__meta u-text-label u-text-muted"><span>{pad(index + 1)} / {pad(projects.length)}</span><span data-page-intro-service>{project.service}</span><span data-page-intro-year>{project.year}</span></p>
   </PageIntro>
-  <div class="c-project-detail__visual o-container o-grid" style={`--len:${project.title.length}`} data-project-visual>
+  <div class="c-project-detail__visual o-container o-grid" data-project-visual>
     {project.shot || project.image
       ? <ProjectVisual class="c-project-detail__media" project={project} alt={`${project.title}: ${project.description}`} eager data-project-media />
       : <div class="c-project-detail__media c-project-detail__placeholder" data-project-media style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}>{project.label}</div>}
-  </div>
-  <!-- below 1024px the specs sit under the visual (the title overlaps the visual there too), all of them in one block
-       (the case study's own fact list is hidden there); the intro's copy is hidden -->
-  <div class="c-project-detail__specs o-container o-grid">
-    <div class="c-page-intro__aside c-page-intro__aside--below">
-      <p class="c-page-intro__desc">{project.description}</p>
-      <dl class="c-page-intro__facts">
-        {allFacts.map((f) => <div class="c-page-intro__fact"><dt class="u-text-label">{f.label}</dt><dd class="u-text-ui">{f.value}</dd></div>)}
-      </dl>
-    </div>
   </div>
   {project.story
     ? <ProjectCase project={project}><Button slot="end" back href="/work">{projectPage.back}</Button></ProjectCase>
