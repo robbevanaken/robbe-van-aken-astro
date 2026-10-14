@@ -1,25 +1,59 @@
 ---
-// Featured projects on home: the first `work.featured` projects as stories, one per row (sections/ProjectGlobe.astro,
-// layout "stories"): the intro above them, the button below. The chapter is dark (t-dark, global/scrollTheme.js), as the
-// services before it: one long dark act from the services to the footer.
-// The small R stays at the top of the screen while they pass (stage 2 from the sticky head down to the end marker), then
-// scrolls away with the section's end; "View all projects" follows outside it, so the R never lands on it.
-// Styles: styles/components/_projects-intro.css + _featured-projects.css
+// Featured projects on home as a list with a cursor preview (after Osmo's "Image Preview Cursor Follower", in this
+// site's language). The head as the services' and pricing's (title h2 cols 1–6, the intro cols 7–12 in the pitch
+// quote's voice), then a label row and one row per project between thin lines — the name big (cols 1–6), the service
+// (cols 7–10) and the year (cols 11–12) — compact rows. Hovering a row (fine pointers,
+// desktop): a preview follows the cursor, the project's home page as a screenshot on a plain paper field (Toran,
+// whose screens can't be shown: its mood photo), sliding in from below or above as you move down or up the list,
+// with "View project" on it; the other rows dim. Below 1024px: the preview sits above each row instead (two per row
+// on tablet, one on phones). The page's R stays small at the top centre while the list passes (#a-craft + an end
+// marker). Dark chapter (t-dark). Behaviour: components/previewFollower.js. Styles: _work-list.css.
 import Button from '../ui/Button.astro';
-import ProjectGlobe from './ProjectGlobe.astro';
+import ProjectImage from '../ui/ProjectImage.astro';
 import { work } from '../../data/site';
 import { projects } from '../../data/projects';
+const featured = projects.slice(0, work.featured);
+const files = import.meta.glob('/src/assets/projects/**/home.jpg');
+const home = (slug: string) => (files[`/src/assets/projects/${slug}/home.jpg`] ? `/projects/${slug}/home.jpg` : null);
+const PREVIEW = { sizes: '(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 30vw', widths: [480, 720, 960, 1280] };
 ---
 <div class="t-dark">
-<ProjectGlobe projects={projects.slice(0, work.featured)} label="Featured projects" layout="stories">
-  <div class="c-featured-projects__head" slot="head" data-stage="2"><div class="c-featured-projects__r" id="a-craft"></div></div>
-  <div class="c-projects-intro" id="work" slot="intro">
-    <h2 class="c-projects-intro__title u-text-h2">{work.title}</h2>
-    <p class="c-projects-intro__text u-text-body-l u-text-muted" data-highlight-text>{work.intro}</p>
+<section class="c-work-list" aria-label="Featured projects" data-follower-wrap>
+  <div class="c-work-list__head" data-stage="2" aria-hidden="true"><div class="c-work-list__r" id="a-craft"></div></div>
+  <div class="c-work-list__intro o-container o-grid" id="work">
+    <h2 class="c-work-list__title">{work.title}</h2>
+    <p class="c-work-list__text" data-highlight-text>{work.intro}</p>
   </div>
-  <!-- the R stays in stage 2 down to here; the section (and the sticky R with it) ends a step below the last project,
-       so the R scrolls away before the button comes up to it -->
-  <div class="c-featured-projects__end" data-stage="2" aria-hidden="true"></div>
-</ProjectGlobe>
+  <div class="c-work-list__body o-container o-grid">
+    <div class="c-work-list__labels u-text-label u-text-muted" aria-hidden="true"><span>Project</span><span>Service</span><span>Year</span></div>
+    <ol class="c-work-list__list" role="list" data-follower-collection>
+      {featured.map((p) => {
+        const shot = home(p.slug);
+        return (
+          <li class="c-work-list__item" data-follower-item>
+            <a class="c-work-list__link" href={`/work/${p.slug}`}>
+              <span class="c-work-list__row">
+                <h3 class="c-work-list__name">{p.title}</h3>
+                <span class="c-work-list__service">{p.service}</span>
+                <span class="c-work-list__year">{p.year}</span>
+              </span>
+              <span class="c-work-list__visual" data-follower-visual>
+                {shot
+                  ? <ProjectImage class="c-work-list__shot" src={shot} alt={`${p.title}: the website's home page`} {...PREVIEW} />
+                  : <ProjectImage class="c-work-list__bg" src={p.image!} alt="" position={p.position} {...PREVIEW} />}
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+  <div class="c-work-list__follower" aria-hidden="true" data-follower-cursor>
+    <div class="c-work-list__follower-inner" data-follower-cursor-inner>
+      <span class="c-work-list__follower-label u-text-ui">{work.cursor}</span>
+    </div>
+  </div>
+  <div class="c-work-list__end" data-stage="2" aria-hidden="true"></div>
+</section>
 <div class="c-featured-projects__foot o-container o-grid"><Button href={work.cta.href} class="c-featured-projects__all">{work.cta.label}</Button></div>
 </div>

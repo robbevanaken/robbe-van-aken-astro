@@ -4,7 +4,7 @@
 // Hooks: [data-services] on the section, [data-services-pin] on the tall pin track, [data-service] on each item,
 // Sets --sv (0 … n-1) and --p (0 → 1)
 // on the section every frame for the desktop staircase and the R's slot (_services.css).
-const HOLD = .3; // part of each screen at the start and at the end where the shape holds still (the morph: the 40% between)
+const HOLD = .06; // part of each screen at the start and at the end where the shape holds still: almost none, the scroll flows on from service to service (was .3: a pause on every service)
 
 // the count and the pin never change per section: cached (serviceProgress runs every engine frame and every scroll)
 const geo = new WeakMap();
@@ -52,9 +52,11 @@ export function initServices(root = document) {
   // where the staircase shortens the panels; the card's on phones), within a share of the card's width. Desktop also
   // sets the step depth: as deep as the screen allows (max 5vh) once the letter has a decent size.
   const list = el.querySelector('.c-services__list'), wide = matchMedia('(min-width: 1024px)');
+  const low = matchMedia('(min-width: 1024px) and (max-height: 740px), (max-width: 1023px) and (max-height: 600px)'); // not pinned there (_services.css)
   const fitSteps = () => {
     el.style.removeProperty('--step'); el.style.removeProperty('--sz');
     if (!list || !items.length) return;
+    if (low.matches) { el.style.setProperty('--step', '0px'); el.style.setProperty('--sz', wide.matches ? '104px' : '96px'); return; }
     const pad = parseFloat(getComputedStyle(items[0]).paddingBottom) || 16, w = items[0].clientWidth;
     const content = Math.max(...items.map((it) => {
       const cs = getComputedStyle(it), kids = [...it.children];

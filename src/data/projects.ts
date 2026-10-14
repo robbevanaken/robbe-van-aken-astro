@@ -9,7 +9,9 @@ export interface Project {
                        // split it on "&" and ",")
   year: number;        // shown next to the service on the detail page
   // the main visual (ui/ProjectVisual.astro), the same on the card (home, /work), the detail page and the scroll-next
-  // section: `image`, a photo filling the box (a device mockup, src/assets/projects/<slug>/mockup.jpg; Toran: a photo),
+  // section: `image`, a MOOD photo filling the box (src/assets/projects/<slug>/mood.jpg: the client's world, never a
+  // screen; all four graded to one look — muted, warm, lifted blacks: -modulate 102,50,100, a 14% #9a6a44 tint,
+  // +level 8%,94% — so they read as one set; mockups and screens only in the case study, Oct 2026, after raviklaassens.com),
   // focus `position`. Also possible: `shot` (a flat screenshot, 16:10) on a `field` colour (tried for the cards and
   // dropped: the mockups felt better)
   shot?: string;
@@ -57,7 +59,7 @@ const screens = (slug: string): Project['screens'] => ({
 // DUMMY: the stories, parts, stacks and years below are placeholder copy to fill the detail pages; replace them.
 export const projects: Project[] = [
   {
-    slug: 'woonpact-gent', title: 'Woonpact Gent', label: 'Woonpact', image: '/projects/woonpact-gent/mockup.jpg', position: '50% 36%',
+    slug: 'woonpact-gent', title: 'Woonpact Gent', label: 'Woonpact', image: '/projects/woonpact-gent/mood.jpg', position: '50% 62%', mockup: '/projects/woonpact-gent/mockup.jpg', // mood: a quiet residential street (public domain, a stand-in: REPLACE with a photo from Ghent / the pact)
     description: 'A brand and website for the City of Ghent\'s housing pact.', service: 'Branding, design & development', year: 2026,
     colors: { a: '#3f5a2c', b: '#cfd8b4', t: '#f3efe2' }, url: 'https://woonpact.gent', client: 'Stad Gent', stack: ['Craft CMS', 'Twig', 'Vite'],
     credit: { label: 'Design with', value: 'Nick Slemsbrouck, Studio Uruku' },
@@ -77,7 +79,7 @@ export const projects: Project[] = [
     screens: screens('woonpact-gent'),
   },
   {
-    slug: 'imagoo', title: 'Imagoo', label: 'Imagoo', image: '/projects/imagoo/mockup.jpg', position: '50% 54%',
+    slug: 'imagoo', title: 'Imagoo', label: 'Imagoo', image: '/projects/imagoo/mood.jpg', position: '50% 55%', mockup: '/projects/imagoo/mockup.jpg', // mood: their camera rig, behind the scenes (imagoo.be)
     description: 'A redesign of the website of a video and photography studio.', service: 'Design & development', year: 2026,
     colors: { a: '#1c1a19', b: '#c9744a', t: '#f4e7dd' }, url: 'https://www.imagoo.be', client: 'Imagoo', stack: ['Craft CMS', 'Vimeo', 'GSAP'],
     story: {
@@ -91,7 +93,7 @@ export const projects: Project[] = [
     screens: screens('imagoo'),
   },
   {
-    slug: 'dewilde-braems', title: 'De Wilde-Braems', label: 'De Wilde-Braems', image: '/projects/dewilde-braems/mockup.jpg', position: '50% 22%',
+    slug: 'dewilde-braems', title: 'De Wilde-Braems', label: 'De Wilde-Braems', image: '/projects/dewilde-braems/mood.jpg', position: '55% 60%', mockup: '/projects/dewilde-braems/mockup.jpg', // mood: one of their homes (dewilde-braems.be)
     description: 'A clear, calm website for a family-run construction company.', service: 'Design & development', year: 2025,
     colors: { a: '#0b2f57', b: '#9db7d6', t: '#eef3f9' }, url: 'https://dewilde-braems.be', client: 'De Wilde-Braems BV', stack: ['WordPress', 'Tailwind CSS'],
     // measured: Lighthouse on dewilde-braems.be, mobile, 100 in all three runs (main content in 1.1 s), 12 Oct 2026
@@ -105,7 +107,7 @@ export const projects: Project[] = [
     screens: screens('dewilde-braems'),
   },
   {
-    slug: 'toran', title: 'Toran Heli-Academy', label: 'Toran', image: '/projects/toran/mockup.jpg', position: '42% 44%',
+    slug: 'toran', title: 'Toran Heli-Academy', label: 'Toran', image: '/projects/toran/mood.jpg', position: '50% 50%', // mood: one of their helicopters over the fields (toran.be)
     description: 'The Toran Suite: planning software and a mobile app for a helicopter operator and flight school.', service: 'Development', year: 2026,
     colors: { a: '#12233d', b: '#6f93c2', t: '#e8eef7' }, client: 'Toran Heli Services & Academy', stack: ['Laravel', 'React Native', 'Craft CMS'], status: 'In progress',
     story: {

@@ -25,6 +25,7 @@ import { initSound } from './global/sound.js';
 import { initContactModal } from './global/contactModal.js';
 import { initStackCards } from './components/stackCards.js';
 import { initPricing } from './components/pricing.js';
+import { initPreviewFollower } from './components/previewFollower.js';
 import { initContactForm } from './components/contactForm.js';
 import { initMaskReveal } from './components/maskReveal.js';
 import { initWorkFilter } from './components/workFilter.js';
@@ -73,6 +74,7 @@ function mount() {
     initScrollTheme(root),
     initStackCards(root),
     initPricing(root),
+    initPreviewFollower(root),
     initContactForm(root),
     initWorkFilter(root),
     initWorkLoop(root),

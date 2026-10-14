@@ -1,5 +1,5 @@
 // Site header: hides on scroll down, returns on scroll up; full-screen menu on phones.
-// Hooks: [data-site-header], [data-menu-toggle], [data-menu]. State classes: is-hidden, is-scrolled, is-open, html.is-menu-open.
+// Hooks: [data-site-header], [data-menu-toggle], [data-menu]. State classes: is-scrolled, is-open, html.is-menu-open.
 // While the menu is open the rest of the page is inert (focus stays in the header + menu); Escape closes it and puts
 // focus back on the toggle. The menu animates in (.is-in) and out (.is-out; styles/components/_site-header.css).
 // The R is never lost: opening the menu flies the page's R (the engine with data-r-intro, through rIntro, as the page
@@ -63,17 +63,16 @@ export function initSiteHeader(root = document) {
     // the contact popup (global/contactModal.js): while it's open, "Contact" is the active link
     const contactLink = links.find((l) => l.pathname.replace(/\.html$/, '') === '/contact');
     let contactOpen = false;
-    document.addEventListener('contact:open', () => { contactOpen = true; header.classList.remove('is-hidden'); contactLink?.setAttribute('aria-current', 'page'); to(contactLink); }, { signal });
+    document.addEventListener('contact:open', () => { contactOpen = true; contactLink?.setAttribute('aria-current', 'page'); to(contactLink); }, { signal });
     document.addEventListener('contact:close', () => { contactOpen = false; if (contactLink !== current) contactLink?.removeAttribute('aria-current'); if (!picked) to(current); }, { signal });
     document.fonts?.ready.then(() => { if (!signal.aborted) to(current, true); });
   }
 
-  // hide on scroll down, show on scroll up (always shown near the top or while the menu is open)
+  // the header stays put (tried: hidden on scroll down, shown on scroll up); is-scrolled marks a scrolled page
   addEventListener('scroll', () => {
     const y = scrollY, dy = y - lastY;
     if (Math.abs(dy) < 4) return;
     // a jump of more than a screen is not the visitor scrolling (e.g. the endless list on /work looping back): keep the state
-    if (Math.abs(dy) < innerHeight) header.classList.toggle('is-hidden', !open && dy > 0 && y > 120);
     header.classList.toggle('is-scrolled', y > 40);
     lastY = y;
   }, { passive: true, signal });

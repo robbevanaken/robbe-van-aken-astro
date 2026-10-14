@@ -1,0 +1,6 @@
+/* The big typographic block on home (sections/Manifesto.astro): two paragraphs at the page size across the full width,
+   the first line of the first indented to the third column; highlighted on scroll. On paper. */
+.c-manifesto{padding-block:var(--space-section);row-gap:calc(var(--space-xl) * .75)}
+.c-manifesto__text{grid-column:1 / -1;margin:0;font-size:clamp(34px,5.6vw,104px);line-height:1.04;letter-spacing:-.035em;font-weight:400;text-wrap:pretty}
+.c-manifesto__indent{display:inline-block;width:calc((100% - 11 * var(--gutter)) / 12 * 2 + 2 * var(--gutter))}
+@media (max-width:639px){ .c-manifesto__text{font-size:clamp(30px,8.6vw,44px);line-height:1.08} .c-manifesto__indent{width:calc((100% - 3 * var(--gutter)) / 4 + var(--gutter))} }

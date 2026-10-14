@@ -76,6 +76,13 @@ export const servicesIntro = {
   text: 'Development leads, design runs through all of it. For bigger projects I bring in people I trust, so the right skills are at the table.',
 };
 
+// home, between the projects and the pricing: a big typographic block (sections/Manifesto.astro), two short paragraphs
+// set large, the first line indented; highlighted on scroll. Plain and honest, never "works alone".
+export const manifesto = [
+  'Robbe Van Aken is a freelance developer with a designer\u2019s eye, building websites and software from Ghent.',
+  'Solid code and careful design, shaped around the people who use it, with trusted people at the table when a project asks for more. Looked after long after launch.',
+];
+
 // home, after the projects: what it costs, three packages as a fanned hand of cards in the brand's three tones
 // (sections/Pricing.astro, after madewithgsap.com's colored-card fan). PRICES ARE PLACEHOLDERS: set the real numbers
 // before go-live. `price.value`: digits roll in like the title-frame counter, other characters stand still.

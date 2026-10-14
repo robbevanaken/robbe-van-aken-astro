@@ -74,4 +74,19 @@
     margin-left:calc(var(--cwm) - var(--sz) - var(--space-s)); /* the card's top right corner */
     translate:0 calc(-1 * min(52svh,440px) / 2 + var(--sz) / 2 + var(--space-s));--corner-offset:6px}
 }
+
+/* very low screens (a laptop with the browser's bars, a phone turned): head + panels don't fit one screen, so no pin
+   and no staircase — the four panels side by side scroll by like any section, the R as the first letter on the
+   first one (services.js gives the letter a fixed size here; tried: pinned anyway, the panels ran over the next section) */
+@media (min-width:1024px) and (max-height:740px){
+  .c-services__pin{height:auto}
+  .c-services__stage{position:relative;height:auto;padding-bottom:var(--space-section)}
+  .c-services__list{height:auto}
+  .c-services__item{height:auto;min-height:calc(var(--sz) + 220px)}
+}
+@media (max-width:1023px) and (max-height:600px){
+  .c-services__pin{height:auto}
+  .c-services__stage{height:auto;position:relative;overflow:visible;padding-bottom:var(--space-xl)}
+  .c-services__list{margin-top:var(--space-l)}
+}
 @media (prefers-reduced-motion:reduce){.c-services__item>*,.c-services__roll-list,.c-services__item{transition:none!important}.c-services__item>*{transform:none!important}}

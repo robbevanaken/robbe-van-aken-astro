@@ -31,14 +31,14 @@
 @import "./_scroll-next.css";
 @import "./_services.css";
 @import "./_site-footer.css";
-@import "./_progressive-blur.css";
 @import "./_site-header.css";
 @import "./_skip-link.css";
 @import "./_socials.css";
 @import "./_sound-toggle.css";
-@import "./_stories.css";
 @import "./_title-frame.css";
 @import "./_transition.css";
 @import "./_trusted-by.css";
 @import "./_visual.css";
 @import "./_work-intro.css";
+@import "./_work-list.css";
+@import "./_manifesto.css";

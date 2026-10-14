@@ -1,0 +1,10 @@
+---
+// A big typographic block on home, between the projects and the pricing (after raviklaassens.com's "R—K is an
+// independent design and development practice…" block, in this site's type): two short paragraphs set large, the
+// first line of the first indented to the third column; the letters light up as they scroll by (data-highlight-text).
+// On paper (light), leading into the pricing. Copy: `manifesto` in src/data/site.ts. Styles: _manifesto.css.
+import { manifesto } from '../../data/site';
+---
+<section class="c-manifesto o-container o-grid" aria-label="About">
+  {manifesto.map((t, i) => <p class="c-manifesto__text" data-highlight-text>{i === 0 && <span class="c-manifesto__indent" aria-hidden="true"></span>}{t}</p>)}
+</section>

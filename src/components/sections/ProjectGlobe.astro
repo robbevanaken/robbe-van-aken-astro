@@ -36,7 +36,7 @@ import ProjectVisual from '../ui/ProjectVisual.astro';
               <Corners />
             </span>
             <span class="c-stories__body" data-stack-card-body>
-              <span class="c-stories__top u-text-label"><span class="c-stories__num">{pad(i + 1)}<span class="c-stories__of"> / {pad(projects.length)}</span></span><span class="c-stories__service">{p.service}</span></span>
+              <span class="c-stories__top u-text-label"><span class="c-stories__num">{pad(i + 1)}<span class="c-stories__of"> / {pad(projects.length)}</span></span><span class="c-stories__service">{p.service}</span><span class="c-stories__year">{p.year}</span></span>
               <span class="c-featured-projects__caption-row c-stories__head"><Title class="c-featured-projects__caption-title c-stories__title">{p.title}</Title><span class="c-featured-projects__arrows" aria-hidden="true"><Icon name="arrow" class="c-featured-projects__arrow" /><Icon name="arrow" class="c-featured-projects__arrow c-featured-projects__arrow--next" /></span></span>
               <span class="c-stories__text u-text-body-l">{p.description}</span>
             </span>

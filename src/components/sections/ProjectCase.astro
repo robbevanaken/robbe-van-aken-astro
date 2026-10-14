@@ -103,6 +103,11 @@ const side = logo ? 'brand' : sc ? 'phone' : ph ? 'photo' : null;
 
     <!-- 3. the mosaic: what the project has, on a tight grid -->
     <div class="c-project-case__mosaic o-container o-grid">
+      {p.mockup && (
+        <div class="c-project-case__tile c-project-case__tile--full c-project-case__tile--photo" data-reveal="media">
+          <ProjectImage class="c-project-case__img" src={p.mockup} alt={`${p.title}: the website on a device`} {...WIDE} />
+        </div>
+      )}
       {sc && (
         <>
           <div class="c-project-case__tile c-project-case__tile--wide c-project-case__tile--panel" data-reveal="media">

@@ -7,19 +7,19 @@
    case study's media reveal, global/reveal.js). Hover (the whole row): the corner brackets come in around the image
    only (around the row, a fast hover carried them into the next row's), the image zooms a touch (the cards' own), and
    the arrow turns. Below 1024px: the image above its story, full width. */
-.c-featured-projects--stories .c-projects-intro{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-items:end;row-gap:var(--space-s)}
+.c-featured-projects--stories .c-projects-intro{grid-column:1 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-items:start;row-gap:var(--space-s)}
 .c-featured-projects--stories .c-projects-intro > *{grid-column:auto}
-.c-featured-projects--stories .c-projects-intro__title.c-projects-intro__title{grid-column:1 / span 6;margin:0;font-size:var(--fs-page);line-height:1;letter-spacing:-.04em} /* the page's chapter size (86 @1440, as /work's title): the h2 read too small over the big cards */
-.c-featured-projects--stories .c-projects-intro__text.c-projects-intro__text{grid-column:8 / span 5;max-width:none;margin:0;font-size:var(--fs-lead);line-height:1.25;letter-spacing:-.01em}
+.c-featured-projects--stories .c-projects-intro__title.c-projects-intro__title{grid-column:1 / span 6;margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em} /* as the services' and pricing's head (tried: the page size, 86 @1440) */
+.c-featured-projects--stories .c-projects-intro__text.c-projects-intro__text{grid-column:7 / -1;max-width:none;margin:0;color:var(--fg);font-size:clamp(26px,2.7778vw,52px);line-height:1.08;letter-spacing:-.03em;font-weight:500} /* the pitch quote's columns and voice, as the services' intro */
 .c-featured-projects--stories .c-featured-projects__list{grid-row:2;row-gap:0;margin-top:var(--space-l)}
 
-.c-featured-projects--stories .c-featured-projects__item{grid-column:1 / -1;border-top:1px solid var(--line)} /* over the spread rules (cols 8–11 / 2–5) */
+.c-featured-projects--stories .c-featured-projects__item{grid-column:1 / -1} /* a panel card each (below), no rules between */
 /* stacking cards (after Osmo's "Stacking cards parallax", components/stackCards.js): every row is a card as tall as its
    content (tried: at least a screen: too tall), on the page's paper; the next one scrolls up over it while the one beneath
    sinks back at half the speed (parallax) and its image lifts a little, its story fading. Flat, no 3D.
    Each next card lies on top (z-index in DOM order). The cards stay in the grid's columns; the paper spans the page. */
-.c-featured-projects--stories .c-stories__item{position:relative;display:flex;align-items:center;background:var(--bg);
-  box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)}
+.c-featured-projects--stories .c-stories__item{position:relative;display:flex;align-items:center;
+  margin-top:var(--gutter)}
 /* desktop (where the stack parallax transforms them, components/stackCards.js): each card on its own layer, so the
    viewport-wide paper strip moves by compositing instead of repainting every frame */
 @media (min-width:1024px){ .c-featured-projects--stories .c-stories__item,.c-featured-projects--stories .c-stories__media{will-change:transform} } /* the paper to the screen's edges, not past the card's top / bottom */
@@ -28,20 +28,23 @@
 .c-featured-projects--stories .c-stories__item:nth-child(4){z-index:4}
 .c-featured-projects--stories .c-stories__item:nth-child(5){z-index:5}
 .c-featured-projects--stories .c-stories__row{width:100%}
-.c-stories__item:last-child{border-bottom:1px solid var(--line)}
-.c-stories__row{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));column-gap:var(--gutter);padding-block:var(--space-l)}
-.c-stories__frame{grid-column:1 / span 5;position:relative;display:block;align-self:start} /* the image + its corner brackets (the card's --corner-* settings) */
+/* the card: a quiet panel, as the services' (hover: the accent, as the services' active card) */
+.c-stories__row{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));column-gap:var(--gutter);padding:var(--space-s);background:var(--panel);transition:background-color .5s var(--ease-out),color .5s var(--ease-out)}
+.c-stories__row:hover,.c-stories__row:focus-visible{background:var(--accent);color:var(--on-accent)}
+.c-stories__row:hover .c-stories__text,.c-stories__row:focus-visible .c-stories__text{color:color-mix(in srgb,var(--on-accent) 72%,var(--accent))}
+.c-stories__frame{grid-column:1 / span 6;position:relative;display:block;align-self:start} /* the image: the card's left half */
 .c-stories__media{display:grid;aspect-ratio:4 / 3} /* (tried: square: the cards ran too tall) */
-.c-stories__body{grid-column:8 / span 5;display:flex;flex-direction:column;min-height:100%}
+.c-stories__body{grid-column:7 / -1;display:flex;flex-direction:column;justify-content:flex-end;min-height:100%;padding:var(--space-xs) var(--space-xs) var(--space-xs) 0} /* the content at the card's foot, as the services' panels */
 /* the meta row: the number and the service as quiet chips on the panel tone (the nav tile's language), so the row
    reads as a label strip over the image and the air around it */
-.c-stories__top{display:flex;justify-content:space-between;align-items:center;gap:var(--space-2xs);color:var(--muted)}
-.c-stories__num,.c-stories__service{padding:5px 10px;background:var(--panel)}
+.c-stories__top{display:flex;flex-wrap:wrap;align-items:center;gap:6px;color:var(--fg);order:-1;margin-bottom:auto} /* the chips at the card's top, the title and text at its foot */
+.c-stories__num,.c-stories__service,.c-stories__year{padding:5px 10px;background:color-mix(in srgb,var(--fg) 9%,var(--panel));transition:background-color .5s var(--ease-out)} /* label chips, as the services' and the project pages' */
+.c-stories__row:hover :is(.c-stories__num,.c-stories__service,.c-stories__year),.c-stories__row:focus-visible :is(.c-stories__num,.c-stories__service,.c-stories__year){background:color-mix(in srgb,var(--on-accent) 18%,var(--accent))}
 .c-stories__num{color:var(--fg);font-variant-numeric:tabular-nums}
-.c-stories__of{color:var(--muted)}
+.c-stories__of{color:inherit;opacity:.7}
 .c-stories__head{margin-top:var(--space-m)}
-.c-stories__title.c-stories__title{font-size:calc(var(--fs-lead) * 1.25);line-height:1.1;letter-spacing:-.02em} /* 40 @1440 */
-.c-stories__text{margin-top:var(--space-s);color:var(--muted);max-width:26em}
+.c-stories__title.c-stories__title{font-size:calc(var(--fs-lead) * 1.25);line-height:1.1;letter-spacing:-.02em;font-weight:500} /* 40 @1440, medium: the statements' voice */
+.c-stories__text{margin-top:var(--space-s);color:var(--muted);max-width:26em;transition:color .5s var(--ease-out)}
 
 /* the image opens from its centre as it comes into view (global/reveal.js), settling from a touch larger */
 .c-stories__media[data-reveal]{clip-path:inset(50% 50% 50% 50%);transition:clip-path 1.4s cubic-bezier(.16,1,.3,1)} /* opens from its centre */
@@ -67,8 +70,8 @@ html.no-js .c-stories__media[data-reveal] .c-visual{scale:1}
    with more air; the image stretches to the text column's full height (tried: Monolog's full-width square image on
    top: too much card, too little list) */
 @media (max-width:639px){
-  .c-featured-projects--stories .c-projects-intro{text-align:center;justify-items:center}
-  .c-featured-projects--stories .c-projects-intro__text.c-projects-intro__text{max-width:30ch}
+  .c-featured-projects--stories .c-projects-intro__title.c-projects-intro__title{font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}
+  .c-featured-projects--stories .c-projects-intro__text.c-projects-intro__text{font-size:clamp(18px,4.6vw,28px);line-height:1.2;max-width:32ch} /* as the services' head on phones (tried: centred) */
   .c-stories__title.c-stories__title{font-size:var(--fs-lead)}
   .c-stories__row{row-gap:var(--space-m)}
   .c-stories__frame{align-self:stretch}

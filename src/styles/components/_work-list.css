@@ -1,0 +1,65 @@
+/* Home's featured projects as a list with a cursor preview (sections/Projects.astro, components/previewFollower.js;
+   after Osmo's "Image Preview Cursor Follower"). The head as the services' and pricing's; a label row, then one row
+   per project between thin lines — the name at the h2 size, the service, the year — compact rows. Hover (fine
+   pointers, 1024px+): a 4:5 preview follows the cursor — the project's home page as a screenshot on a plain paper
+   field (Toran: its mood photo), "View project" on it — the other rows dim. Square corners, the site's label for
+   the "View" (tried: a round button as in the reference). Below 1024px: the preview above each row, no follower.
+   (Tried: a staggered row of mood photos; panel cards turning red on hover; story rows; a pinned reel.) */
+.c-work-list{position:relative;padding-top:var(--space-section);padding-bottom:var(--space-xl)}
+.c-work-list__head{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);z-index:2;display:flex;justify-content:center;height:56px;margin-bottom:-56px;pointer-events:none}
+.c-work-list__r{width:56px;height:56px}
+.c-work-list__end{height:1px}
+.c-work-list__intro{row-gap:var(--space-s);align-items:start}
+.c-work-list__title{grid-column:1 / span 6;margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em;font-weight:400}
+.c-work-list__text{grid-column:7 / -1;margin:0;font-size:clamp(26px,2.7778vw,52px);line-height:1.08;letter-spacing:-.03em;font-weight:500}
+.c-work-list__body{margin-top:var(--space-xl)}
+.c-work-list__labels,.c-work-list__row{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:center}
+.c-work-list__labels>:nth-child(1){grid-column:1 / span 6}
+.c-work-list__labels>:nth-child(2){grid-column:7 / span 4}
+.c-work-list__labels>:nth-child(3){grid-column:11 / -1;justify-self:end}
+.c-work-list__labels{padding-bottom:var(--space-s)}
+.c-work-list__list{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;margin:0;padding:0;list-style:none}
+.c-work-list__item{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;border-top:1px solid var(--line);transition:opacity .3s var(--ease-out)}
+.c-work-list__item:last-child{border-bottom:1px solid var(--line)}
+.c-work-list__link{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;text-decoration:none;color:inherit}
+.c-work-list__row{padding-block:var(--space-s)} /* compact (tried: the rows filling the screen — too big) */
+.c-work-list__name{grid-column:1 / span 6;margin:0;font-size:var(--fs-h2);line-height:1.05;letter-spacing:-.03em;font-weight:400} /* tried: the page size, 86 @1440 — too big */
+.c-work-list__service{grid-column:7 / span 4;color:var(--muted);font-size:var(--fs-body-l)}
+.c-work-list__year{grid-column:11 / -1;justify-self:end;color:var(--muted);font-size:var(--fs-body-l);font-variant-numeric:tabular-nums}
+/* the preview: the site's home page on a paper field (Toran: its mood photo alone) */
+.c-work-list__visual{position:relative;display:none;aspect-ratio:4 / 5;overflow:hidden;background:#f3eee8} /* a plain paper field: the screenshot stands out on the dark page (tried: the mood photo behind it — too busy) */
+.c-work-list__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.c-work-list__shot{position:absolute;left:10%;top:50%;width:80%;height:auto;translate:0 -50%;box-shadow:0 14px 34px rgb(46 36 32 / .22)}
+/* the follower (desktop, fine pointers) */
+.c-work-list__follower{position:fixed;top:0;left:0;z-index:40;width:clamp(240px,21vw,340px);aspect-ratio:4 / 5;pointer-events:none;overflow:hidden;display:none}
+.c-work-list__follower [data-follower-visual]{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.c-work-list__follower-inner{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%;opacity:0;transform:scale(0);
+  transition:opacity .1s ease,transform .6s cubic-bezier(.65,.1,0,1)}
+.c-work-list__follower-label{position:absolute;z-index:2;padding:10px 16px;background:var(--fg);color:var(--on-fg);opacity:0;transform:translateY(100%);
+  transition:opacity .1s ease,transform .6s cubic-bezier(.65,.1,0,1)}
+@media (hover:hover) and (pointer:fine) and (min-width:1024px){
+  .c-work-list__follower{display:block}
+  body:has(.c-work-list__list:hover) .c-work-list__follower-inner{opacity:1;transform:scale(1)}
+  body:has(.c-work-list__list:hover) .c-work-list__follower-label{opacity:1;transform:translateY(0)}
+  .c-work-list__list:has(.c-work-list__item:hover) .c-work-list__item:not(:hover){opacity:.35}
+}
+@media (max-width:1023px){
+  .c-work-list__title,.c-work-list__text{grid-column:1 / -1}
+  .c-work-list__title{font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}
+  .c-work-list__text{font-size:clamp(18px,4.6vw,28px);line-height:1.2;max-width:32ch}
+  .c-work-list__head{top:calc(env(safe-area-inset-top,0px) + var(--nav-top));height:40px;margin-bottom:-40px}
+  .c-work-list__r{width:40px;height:40px}
+  .c-work-list__labels{display:none}
+  .c-work-list__list{row-gap:var(--space-xl);column-gap:var(--gutter)}
+  .c-work-list__item,.c-work-list__item:last-child{grid-column:span 3;border:0}
+  .c-work-list__link{display:flex;flex-direction:column-reverse;gap:var(--space-s)}
+  .c-work-list__visual{display:block}
+  .c-work-list__row{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px var(--space-s);min-height:0;padding:0}
+  .c-work-list__name{flex:1 1 100%;font-size:clamp(22px,4.6vw,32px);letter-spacing:-.025em}
+  .c-work-list__service,.c-work-list__year{font-size:var(--fs-body)}
+  .c-work-list__year::before{content:"\00b7";margin-right:var(--space-s)}
+}
+@media (max-width:639px){
+  .c-work-list__item,.c-work-list__item:last-child{grid-column:1 / -1}
+  .c-work-list__list{row-gap:var(--space-l)}
+}
