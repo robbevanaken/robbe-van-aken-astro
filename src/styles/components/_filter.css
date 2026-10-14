@@ -24,14 +24,14 @@
 .c-filter__option{position:relative;display:flex;align-items:flex-start;gap:3px;width:100%;padding:8px 44px 8px 16px;border:0;background:none;font:inherit;text-align:left;cursor:pointer;
   color:color-mix(in srgb,var(--on-fg) 55%,transparent);-webkit-appearance:none;appearance:none;border-radius:0;white-space:nowrap;
   transition:color var(--hover-dur) var(--ease-punch)}
-.c-filter__option-label{transition:transform var(--hover-dur) var(--ease-punch)}
-.c-filter__count{font-size:.68em;line-height:1;margin-top:-.1em;opacity:.7;font-variant-numeric:tabular-nums;transition:transform var(--hover-dur) var(--ease-punch)}
-/* the active option: full colour, with a small accent-red square in front */
-.c-filter__option::before{content:"";position:absolute;left:16px;top:50%;width:6px;height:6px;margin-top:-3px;background:var(--accent);transform:scale(0);transition:transform var(--hover-dur) var(--ease-punch)}
+/* the label + count on a tile when active: the nav's and the mobile menu's current-page tile (a quiet step off the
+   panel, room around the word), not a marker of its own (tried: a small red square in front, used nowhere else) */
+.c-filter__option-text{display:inline-flex;align-items:flex-start;gap:3px;margin:-4px -8px;padding:4px 8px;background:color-mix(in srgb,var(--on-fg) 0%,transparent);
+  transition:background-color var(--hover-dur) var(--ease-punch),transform var(--hover-dur) var(--ease-punch)}
+.c-filter__count{font-size:.68em;line-height:1;margin-top:-.1em;opacity:.7;font-variant-numeric:tabular-nums}
 .c-filter__option[aria-pressed="true"]{color:var(--on-fg)}
-.c-filter__option[aria-pressed="true"]::before{transform:scale(1)}
-.c-filter__option[aria-pressed="true"] .c-filter__option-label,.c-filter__option[aria-pressed="true"] .c-filter__count{transform:translateX(14px)}
-/* hover: full colour, shifts right (as the mobile menu items) */
+.c-filter__option[aria-pressed="true"] .c-filter__option-text{background:color-mix(in srgb,var(--on-fg) 14%,transparent)}
+/* hover: full colour, shifts right (as the mobile menu items); the active one stays on its tile */
 .c-filter__option:hover,.c-filter__option:focus-visible{color:var(--on-fg)}
-.c-filter__option:hover .c-filter__option-label,.c-filter__option:hover .c-filter__count{transform:translateX(14px)}
+.c-filter__option:not([aria-pressed="true"]):hover .c-filter__option-text{transform:translateX(8px)}
 .c-filter__option:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}

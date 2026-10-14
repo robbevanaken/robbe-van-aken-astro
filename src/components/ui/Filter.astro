@@ -19,7 +19,7 @@ const { filters, label, toggle, class: cls } = Astro.props;
         {filters.map((f, i) => (
           <li class="c-filter__item">
             <button class="c-filter__option u-text-ui" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-work-filter={f.key} data-label={f.label}>
-              <span class="c-filter__option-label">{f.label}</span><sup class="c-filter__count">{f.n}</sup>
+              <span class="c-filter__option-text"><span class="c-filter__option-label">{f.label}</span><sup class="c-filter__count">{f.n}</sup></span>
             </button>
           </li>
         ))}
