@@ -1,0 +1,17 @@
+Cloister Black
+==============
+
+Used for: the blackletter band on the home page (public/fonts/cloister-black.woff2, a subset of CloisterBlack.ttf:
+basic latin + · — ’) and, pre-rendered, the R and the service letters.
+
+Author (as listed): Dieter Steffmann (steffmann.de)
+Copyright in the font file: "Copyright (c) Typographer Mediengestaltung, 2001. All rights reserved.
+Full character set added by Dieter Steffmann."
+Based on Cloister Black by Morris Fuller Benton (ATF, 1904).
+
+Source: https://www.dafont.com/cloister-black.font
+Licence as listed there: "100% Free"
+Checked: 14 October 2026 (screenshot of the page: docs/licenses/cloister-black-dafont-2026-10-14.jpg in the repo)
+
+Note: dafont's FAQ says the licence shown "is just an indication" and points to the readme in the archive or the
+author's website for the details. The archive (cloister_black.zip) holds only the .ttf, no readme.

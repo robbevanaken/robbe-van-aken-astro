@@ -1,8 +1,8 @@
 // Image preview cursor follower (Osmo Supply's "Image Preview Cursor Follower", its logic kept as delivered; wrapped in
 // the site's mount / cleanup pattern): over a [data-follower-item] the item's [data-follower-visual] is cloned into the
 // [data-follower-cursor] that trails the pointer, the old one sliding out and the new one in (down the list: from
-// below, up: from above). sections/Projects.astro, styles in _work-list.css (the show / hide is CSS, fine pointers and
-// 1024px+ only).
+// below, up: from above). Home's strips (sections/Projects.astro), styles in _work-strips.css (the show / hide is CSS,
+// fine pointers and 1024px+ only).
 import gsap from 'gsap';
 
 export function initPreviewFollower(root = document) {

@@ -27,7 +27,7 @@
 @media (min-width:1024px){
   .c-services{--step:5svh; /* overridden by services.js to fit the screen */--cw4:calc((100vw - 2 * var(--margin) - 3 * var(--gutter)) / 4);--sz:clamp(96px,min(14vw,22svh),240px)} /* the letter as an initial; services.js sizes it to the room above the content */
   .c-services__stage{grid-template-rows:auto 1fr;row-gap:var(--space-l);
-    padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 76px);padding-bottom:calc(var(--float-bottom) + var(--tile) + var(--space-s))}
+    padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 120px);padding-bottom:calc(var(--float-bottom) + var(--tile) + var(--space-s))}
   .c-services__list{grid-column:1 / -1;grid-row:2;align-self:stretch;display:grid;grid-template-columns:subgrid;height:100%}
   .c-services__item{grid-column:span 3;grid-row:1;align-self:end;display:flex;flex-direction:column;justify-content:flex-end;gap:var(--space-2xs);
     height:calc(100% - var(--i) * var(--step) * var(--p,0));padding:var(--space-s);background:var(--panel);
@@ -55,7 +55,7 @@
   .c-services__title.c-services__title{grid-column:1 / -1;grid-row:1;text-align:left;font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}
   .c-services__intro.c-services__intro{grid-column:1 / -1;grid-row:2;justify-self:start;text-align:left;max-width:32ch;margin-top:var(--space-2xs);font-size:clamp(18px,4.6vw,28px);line-height:1.2}
   .c-services__stage{grid-template-rows:auto auto 1fr;row-gap:0;align-items:center;overflow:hidden;
-    padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 60px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--float-bottom) + var(--space-s))}
+    padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 96px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--float-bottom) + var(--space-s))}
   .c-services__list{grid-column:1 / -1;grid-row:3;display:flex;gap:var(--gutter);width:max-content;
     margin-inline:calc(-1 * var(--margin));padding-inline:var(--margin) calc(100vw - var(--cwm) - var(--margin)); /* the active card against the container's left edge */
     transform:translateX(calc(-1 * var(--sv,0) * (var(--cwm) + var(--gutter))));will-change:transform}

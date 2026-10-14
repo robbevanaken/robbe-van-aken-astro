@@ -53,6 +53,11 @@ export const marquee = {
   text: 'Taking on new projects, from Ghent to anywhere',
 };
 
+// the big blackletter band between the services and the projects (sections/CraftBand.astro), in Cloister Black
+export const craftBand = {
+  text: 'Solid code · thoughtful design · genuine care for the craft ·',
+};
+
 export const trustedBy = {
   label: 'Trusted by',
 };
@@ -78,10 +83,14 @@ export const servicesIntro = {
 
 // home, between the projects and the pricing: a big typographic block (sections/Manifesto.astro), two short paragraphs
 // set large, the first line indented; highlighted on scroll. Plain and honest, never "works alone".
-export const manifesto = [
-  'Robbe Van Aken is a freelance developer with a designer\u2019s eye, building websites and software from Ghent.',
-  'Solid code and careful design, shaped around the people who use it, with trusted people at the table when a project asks for more. Looked after long after launch.',
-];
+export const manifesto = {
+  text: [
+    'Robbe Van Aken is a freelance developer with a designer\u2019s eye, building websites and software from Ghent.',
+    'Solid code and careful design, shaped around the people who use it, with trusted people at the table when a project asks for more. Looked after long after launch.',
+  ],
+  // beside the second paragraph (cols 1–2, under the R); without an image only `npm run dev` shows the placeholder
+  portrait: { image: '', alt: 'Robbe Van Aken', placeholder: 'Portrait' },
+};
 
 // home, after the projects: what it costs, three packages as a fanned hand of cards in the brand's three tones
 // (sections/Pricing.astro, after madewithgsap.com's colored-card fan). PRICES ARE PLACEHOLDERS: set the real numbers

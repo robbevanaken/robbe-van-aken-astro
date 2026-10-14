@@ -1,10 +1,22 @@
 ---
 // A big typographic block on home, between the projects and the pricing (after raviklaassens.com's "R—K is an
 // independent design and development practice…" block, in this site's type): two short paragraphs set large, the
-// first line of the first indented to the third column; the letters light up as they scroll by (data-highlight-text).
+// first line of the first indented to the third column, the page's R standing in that indent, left of the first word
+// (a stage-2 data-r-self marker: it glides there from the projects' top centre; an end marker holds it on the text
+// while the block scrolls by, so it never crosses the words, then it glides on to the pricing's top centre); the
+// letters light up as they scroll by (data-highlight-text). A portrait (cols 1–2) stands beside the second paragraph,
+// which starts in col 3, so the R and the face share the left column.
 // On paper (light), leading into the pricing. Copy: `manifesto` in src/data/site.ts. Styles: _manifesto.css.
 import { manifesto } from '../../data/site';
+const { portrait } = manifesto;
 ---
 <section class="c-manifesto o-container o-grid" aria-label="About">
-  {manifesto.map((t, i) => <p class="c-manifesto__text" data-highlight-text>{i === 0 && <span class="c-manifesto__indent" aria-hidden="true"></span>}{t}</p>)}
+  {manifesto.text.map((t, i) => <p class:list={['c-manifesto__text', i > 0 && 'c-manifesto__text--next']} data-highlight-text>{i === 0 && <span class="c-manifesto__indent" aria-hidden="true"><span class="c-manifesto__r" data-stage="2" data-r-self></span></span>}{t}</p>)}
+  <!-- the portrait beside the second paragraph, under the R; the placeholder only shows in `npm run dev` -->
+  {(portrait.image || import.meta.env.DEV) && <figure class="c-manifesto__portrait" data-reveal="media">
+    {portrait.image
+      ? <img src={portrait.image} alt={portrait.alt} loading="lazy" decoding="async" />
+      : <figcaption class="u-text-label">{portrait.placeholder}</figcaption>}
+  </figure>}
+  <span class="c-manifesto__end" data-stage="2" data-r-self="hold" aria-hidden="true"></span>
 </section>

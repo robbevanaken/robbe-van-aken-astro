@@ -146,6 +146,8 @@ function initScrollToNextPage(root) {
   if (word) tl.fromTo(word, { autoAlpha: 0 }, { autoAlpha: 1, duration: .25 }, .75);
   // the labels on the visual go just before the end (the visual lands bare, as on the next page)
   if (hud) tl.fromTo(hud, { autoAlpha: 1 }, { autoAlpha: 0, duration: .07 }, .9);
+  // the thumbnail keeps the labels' band clear above it, and moves up into its place on the next page as they go
+  if (bg) tl.fromTo(bg, { '--visual-bare': 0 }, { '--visual-bare': 1, duration: .2, ease: 'power2.inOut' }, .8);
   // page furniture just above the section (the "All projects" button): fades out as the rising visual comes up to it
   // (over the last 48px), so it never travels up past the visual, and stays clickable until then
   const fades = [...root.querySelectorAll('[data-scroll-next-fade]')];

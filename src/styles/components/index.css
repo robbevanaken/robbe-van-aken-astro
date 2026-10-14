@@ -6,6 +6,7 @@
 @import "./_contact-modal.css";
 @import "./_contact.css";
 @import "./_corners.css";
+@import "./_craft-band.css";
 @import "./_debug-grid.css";
 @import "./_dev-hud.css";
 @import "./_featured-projects.css";
@@ -40,5 +41,5 @@
 @import "./_trusted-by.css";
 @import "./_visual.css";
 @import "./_work-intro.css";
-@import "./_work-list.css";
+@import "./_work-strips.css";
 @import "./_manifesto.css";

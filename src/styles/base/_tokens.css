@@ -3,6 +3,7 @@
 @property --bg{syntax:"<color>";inherits:true;initial-value:#170e0b}
 @property --fg{syntax:"<color>";inherits:true;initial-value:#ffffff}
 @property --muted{syntax:"<color>";inherits:true;initial-value:#b2b2b2}
+@property --thumb{syntax:"<color>";inherits:true;initial-value:#f3eee8}
 @property --subtle{syntax:"<color>";inherits:true;initial-value:#8c827c}
 @property --line{syntax:"<color>";inherits:true;initial-value:#3a2f2a}
 @property --line-strong{syntax:"<color>";inherits:true;initial-value:#6e625b}
@@ -29,6 +30,7 @@
   --on-fg:#170e0b;    /* text on an --fg background (buttons) */
   --surface:#1d1310;  /* panels above the page (cookie banner) */
   --paper:#ffffff;    /* the filling marquee before the accent comes in */
+  --thumb:#f3eee8;    /* the field behind a project thumbnail (its home page's screenshot): the page's opposite, for contrast */
   --grain:.07;        /* the paper grain over the site (_grain.css) */
   --page:var(--bg);   /* the page's background */
   --panel:color-mix(in srgb,var(--fg) 6%,var(--bg)); /* quiet panels a step off the page: the contact wizard, the mobile menu (follows the theme) */
@@ -96,6 +98,7 @@
   --surface:#fbf8f5;
   --grain:.1;
   --logo-filter:brightness(0);
+  --thumb:#2e2420;
   --panel:color-mix(in srgb,var(--fg) 8%,var(--bg)); /* a stronger step than dark's 6%: small differences in light tones are harder to see */
   color-scheme:light;
 }
@@ -118,6 +121,7 @@
   --surface:#2a2ad2;
   --grain:.1;
   --paper:#ffe94a;
+  --thumb:#ffe94a;
   --panel:#3434dc;
   --logo-filter:brightness(0) invert(1) sepia(1) saturate(6) hue-rotate(5deg); /* the white logos printed in the yellow */
   color-scheme:dark;

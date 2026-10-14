@@ -1,0 +1,27 @@
+/* The blackletter band (sections/CraftBand.astro): Cloister Black squeezed between two hairlines on its x-height and
+   baseline, the capitals and ascenders sticking out above, the descenders below. The font's metrics (per 1000):
+   ascent 953, descent 216, x-height 498, caps 690, descenders to −143; with line-height 1 the baseline sits at
+   .8685em, the x-line at .3705em, the capitals' top at .1785em and the descenders end at ~1em.
+   Centred between the services and the projects: the gap from the end of the services' pin (its stage's bottom
+   padding, --sb) to the capitals equals the gap from the descenders to the top of "Recent work"'s capitals (Inter
+   Tight's cap top at .1365em of the title). Both gaps are --g, at least a section's spacing. The type a quiet tone (the page's colour mixed in, 34% --fg; full --fg was too loud). (Tried: on the accent red —
+   the red already carries the hero's band and the active cards; between two dark chapters it read as a stop sign.) */
+.c-craft-band{--fs:clamp(120px,18vw,340px);
+  --sb:calc(var(--float-bottom) + var(--tile) + var(--space-s)); /* desktop, pinned: .c-services__stage padding-bottom */
+  --g:max(var(--space-section),calc(var(--sb) + var(--fs) * .1785));
+  position:relative;overflow:hidden;font-family:"Cloister Black",serif;font-size:var(--fs);font-weight:400;line-height:1;white-space:nowrap;color:color-mix(in srgb,var(--fg) 34%,var(--bg));
+  margin-block:calc(var(--g) - var(--sb) - .1785em) var(--g)}
+.c-craft-band::before,.c-craft-band::after{content:"";position:absolute;left:0;right:0;height:1px;background:var(--line);pointer-events:none}
+.c-craft-band::before{top:.3705em}
+.c-craft-band::after{top:.8685em}
+.c-craft-band__track{display:inline-flex;will-change:transform}
+.c-craft-band__item{padding-right:.3em;word-spacing:.06em}
+/* the projects follow straight on: their own top spacing is the band's bottom margin */
+.c-craft-band-wrap + .t-dark .c-work-strips{padding-top:0}
+.c-craft-band-wrap + .t-dark .c-work-strips__title{margin-top:-.1365em}
+
+@media (min-width:1024px) and (max-height:740px){ .c-craft-band{--sb:var(--space-section)} } /* services not pinned */
+@media (max-width:1023px){
+  .c-craft-band{--fs:clamp(96px,30vw,200px);--sb:calc(env(safe-area-inset-bottom,0px) + var(--float-bottom) + var(--space-s) + var(--space-xl))} /* stage padding + .c-services padding-bottom */
+}
+@media (max-width:1023px) and (max-height:600px){ .c-craft-band{--sb:calc(var(--space-xl) * 2)} }

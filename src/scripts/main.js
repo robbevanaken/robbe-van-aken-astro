@@ -6,7 +6,8 @@
 // Order matters: the pinned projects before the R engine (the pin changes where the R anchors sit),
 // text effects once the fonts are in (they split text into lines) and the page is visible (whenUncovered).
 import './global/eases.js';
-import { initSmoothScroll } from './global/lenis.js';
+import { initSmoothScroll, getLenis } from './global/lenis.js';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initSiteHeader } from './global/siteHeader.js';
 import { initReveal } from './global/reveal.js';
 import { initCookieConsent } from './global/cookieConsent.js';
@@ -25,6 +26,7 @@ import { initSound } from './global/sound.js';
 import { initContactModal } from './global/contactModal.js';
 import { initStackCards } from './components/stackCards.js';
 import { initPricing } from './components/pricing.js';
+import { initWorkStrips } from './components/workStrips.js';
 import { initPreviewFollower } from './components/previewFollower.js';
 import { initContactForm } from './components/contactForm.js';
 import { initMaskReveal } from './components/maskReveal.js';
@@ -52,11 +54,11 @@ function whenUncovered() {
 }
 
 // every init only looks inside the page's own container (root)
-function mount() {
+function mount({ remount = false } = {}) {
   const id = ++page, root = document.getElementById('swup');
   // a page view for Google Tag Manager on every page swap (the first load counts itself; trigger in GTM: custom event
   // "page_view_swap"); harmless without GTM
-  if (id > 1) (window.dataLayer = window.dataLayer || []).push({ event: 'page_view_swap', page_path: location.pathname, page_title: document.title });
+  if (id > 1 && !remount) (window.dataLayer = window.dataLayer || []).push({ event: 'page_view_swap', page_path: location.pathname, page_title: document.title });
   syncThemeMeta();
   cleanups = [
     initSiteHeader(root),
@@ -74,6 +76,7 @@ function mount() {
     initScrollTheme(root),
     initStackCards(root),
     initPricing(root),
+    initWorkStrips(root),
     initPreviewFollower(root),
     initContactForm(root),
     initWorkFilter(root),
@@ -109,3 +112,29 @@ if (document.documentElement.classList.contains('is-loading')) {
   mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 } else initCookieConsent();
 initPageTransitions({ mount, unmount });
+
+// crossing a breakpoint (phone ↔ tablet ↔ desktop, by resizing or turning a tablet) remounts the page: several inits
+// choose their behaviour once at setup (the pricing's pin and throw, the services' staircase vs the row, the strips'
+// accordion, the pins' lengths), so a resize alone left them in the other layout's state. Unmount + mount puts every
+// one in its own layout, the visitor stays on the same spot (same share of the page). Not while a page swap runs.
+const BREAKPOINTS = ['(min-width: 640px)', '(min-width: 1024px)'];
+let remountTimer = 0;
+const remount = () => {
+  const html = document.documentElement;
+  if (html.classList.contains('is-transitioning') || html.classList.contains('is-loading')) { remountTimer = setTimeout(remount, 300); return; }
+  const max = () => Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  const at = scrollY / max();
+  unmount();
+  mount({ remount: true });
+  ScrollTrigger.refresh();
+  const y = Math.round(at * max());
+  getLenis()?.scrollTo(y, { immediate: true, force: true });
+  if (!getLenis()) scrollTo(0, y);
+};
+const layout = () => BREAKPOINTS.map((q) => +matchMedia(q).matches).join('');
+let shownLayout = layout();
+// on resize (matchMedia's change events don't reach a page that isn't rendering, e.g. an inactive tab), settled
+addEventListener('resize', () => {
+  clearTimeout(remountTimer);
+  remountTimer = setTimeout(() => { const now = layout(); if (now !== shownLayout) { shownLayout = now; remount(); } }, 250);
+});

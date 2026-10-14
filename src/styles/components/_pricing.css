@@ -19,7 +19,7 @@
 
 /* the hand: three cards side by side, slightly overlapping; the rotation and the slight drop of the outer cards
    (the laid pose) come from pricing.js */
-.c-pricing__hand{grid-column:1 / -1;display:flex;justify-content:center;margin-top:var(--space-l)}
+.c-pricing__hand{grid-column:1 / -1;display:flex;justify-content:center;margin-top:calc(var(--space-l) * 1.5)} /* more air under the head (was space-l) */
 .c-pricing__card{position:relative;z-index:var(--i);flex:none;width:clamp(300px,25.5vw,380px);display:flex;flex-direction:column;
   min-height:clamp(300px,42svh,500px);padding:clamp(22px,1.9vw,32px);
   will-change:transform} /* the laid pose (rotation, drop) is pricing.js’s: CSS rotate/translate would stack onto GSAP’s transform */
@@ -52,14 +52,14 @@
   .c-pricing__pin{height:calc(100svh * 2.4)} /* the pin: one screen held while the cards fly in (pricing.js) */
   /* short windows: the same screen, tighter — head, hand and note must share it */
   @media (max-height:880px){
-    .c-pricing__stage{padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 76px)}
-    .c-pricing__hand{margin-top:var(--space-m)}
+    .c-pricing__hand{margin-top:var(--space-l)}
     .c-pricing__note{margin-top:var(--space-m)}
     .c-pricing__items{padding-top:var(--space-s)}
     .c-pricing__item{padding-block:8px}
   }
   /* clear of the fixed header and its scrim, which washed the head out */
-  .c-pricing__stage{position:sticky;top:0;height:100svh;padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 96px)} /* clear of the header and the R on its line */
+  .c-pricing__stage{position:sticky;top:0;height:100svh;padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 140px)} /* clear of the header and the R on its line, with air (was 96) */
+  @media (max-height:880px){ .c-pricing__stage{padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 108px)} } /* after the base rule, or it never applies */
 }
 @media (max-width:1023px){
   .c-pricing{padding-top:var(--space-section)}
@@ -67,7 +67,7 @@
   .c-pricing__title,.c-pricing__intro{grid-column:1 / -1}
   .c-pricing__title{font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}
   .c-pricing__intro{margin-top:var(--space-2xs);font-size:clamp(18px,4.6vw,28px);line-height:1.2;max-width:32ch} /* as the services' head below 1024px */
-  .c-pricing__hand{display:block;margin-top:var(--space-xl)}
+  .c-pricing__hand{display:block;margin-top:calc(var(--space-xl) * 1.25)}
   .c-pricing__card{width:100%;min-height:0;padding:clamp(24px,4vw,40px);rotate:0deg;translate:0 0}
   .c-pricing__card + .c-pricing__card{margin-left:0;margin-top:var(--gutter)}
   .c-pricing__items{margin-top:var(--space-l)}
@@ -79,7 +79,7 @@
   .c-pricing__note{margin-top:var(--space-l)}
 }
 @media (max-width:639px){
-  .c-pricing__r{width:40px;height:40px;margin-bottom:var(--space-m)} /* the projects' R size on phones */
+  .c-pricing__r{width:40px;height:40px;margin-bottom:var(--space-xl)} /* the projects' R size on phones */
 }
 /* without the pin or any motion: everything simply there, prices on their number */
 html.no-js .c-pricing .c-pricing__roll-list{transform:translateY(calc(var(--to) * -1em));transition:none}

@@ -1,6 +1,7 @@
 /* Project detail page (/work/<slug>). */
 .c-project-detail__visual{position:relative;margin-top:var(--space-xl)} /* under the opening statement, with room */
 .c-project-detail__media{grid-column:1 / -1;aspect-ratio:16 / 9;width:100%} /* ui/ProjectVisual.astro, the full width under the statement (tried: cols 3–12 beside the description; bleeding to the screen's edge) */
+.c-project-detail__media:has(.c-visual__shot){aspect-ratio:400 / 271} /* with a screenshot: the box exactly fits it with the side margin all round — h = (100 − 2×7)cqw / 1.6 + 2×7cqw = 67.75cqw (16:9 was lower: the bottom edge ran off) */
 @media (max-width:1023px){ .c-project-detail__visual{margin-top:var(--space-l)} .c-project-detail__media{grid-column:1 / -1} }
 .c-project-detail__placeholder{display:grid;place-items:center;font-size:clamp(28px,4.4vw,72px);letter-spacing:-.03em;color:var(--t);
   background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}

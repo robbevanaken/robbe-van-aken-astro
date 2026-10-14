@@ -1,0 +1,91 @@
+/* Home's featured projects as an accordion of strips (sections/Projects.astro, components/workStrips.js). No pin.
+   The strips take the pricing cards' tones (--tone / --tone-fg / --soft); the open one (.is-open, set by the script on
+   hover / focus / a first tap; :hover without JS) grows, the others narrow and set their name upright; the
+   thumbnail trails the cursor in the follower. */
+.c-work-strips{position:relative;padding-block:var(--space-section) var(--space-xl)} /* the bottom: the "View all projects" foot counts on it (_featured-projects.css) */
+.c-work-strips__head{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);z-index:2;display:flex;justify-content:center;height:56px;margin-bottom:-56px;pointer-events:none}
+.c-work-strips__r{width:56px;height:56px}
+.c-work-strips__end{height:1px}
+.c-work-strips__top{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-s)}
+.c-work-strips__title{margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em;font-weight:400}
+.c-work-strips__count{margin:0;color:var(--muted)}
+
+/* the strips: the gap is each strip's own padding, so the pointer never falls between two of them */
+.c-work-strips__list{--h:clamp(460px,72svh,780px);grid-column:1 / -1;display:flex;height:var(--h);margin:var(--space-l) 0 0;padding:0;list-style:none}
+.c-work-strips__item{--open:0;--narrow:0;flex:1 1 0;min-width:0;position:relative;transition:flex-grow .9s var(--ease-punch)}
+.c-work-strips__item + .c-work-strips__item{padding-left:max(8px,calc(var(--gutter) * .5))}
+.c-work-strips__item.is-open{--open:1;flex-grow:4.2}
+.c-work-strips__list.has-open .c-work-strips__item:not(.is-open){--narrow:1}
+html.no-js .c-work-strips__list:hover .c-work-strips__item:not(:hover){--narrow:1}
+html.no-js .c-work-strips__item:hover{--open:1;flex-grow:4.2}
+
+.c-work-strips__item--paper{--tone:var(--paper);--tone-fg:var(--ink);--soft:color-mix(in srgb,var(--ink) 58%,var(--paper))}
+.c-work-strips__item--accent{--tone:var(--accent);--tone-fg:var(--on-accent);--soft:color-mix(in srgb,var(--on-accent) 72%,var(--accent))}
+.c-work-strips__item--panel{--tone:var(--panel);--tone-fg:var(--fg);--soft:var(--muted);--edge:var(--line)}
+
+.c-work-strips__link{position:relative;display:block;height:100%;overflow:hidden;background:var(--tone);color:var(--tone-fg);text-decoration:none;
+  box-shadow:inset 0 0 0 1px var(--edge,transparent);outline-offset:4px}
+.c-work-strips__link:focus-visible{outline:1px solid var(--fg)}
+.c-work-strips__bar{position:absolute;top:var(--space-s);left:var(--space-s);right:var(--space-s);z-index:2;display:flex;justify-content:space-between;gap:var(--space-s);white-space:nowrap}
+.c-work-strips__num{font-variant-numeric:tabular-nums}
+.c-work-strips__meta{color:var(--soft);overflow:hidden;text-overflow:ellipsis;opacity:calc(1 - var(--narrow));transition:opacity .4s}
+
+/* the thumbnail (the site's home screen on its own light colour, --tb; Toran: the photo filling it): hidden in the strips
+   on desktop, cloned into the follower by previewFollower.js; below 1024px it shows in place, beside the text */
+.c-work-strips__media{display:none}
+.c-work-strips__follower .c-work-strips__media,.c-work-strips__media{position:absolute;inset:0;overflow:hidden;background:var(--tb)}
+.c-work-strips__follower .c-work-strips__media{display:block}
+.c-work-strips__shot{position:absolute;left:50%;top:50%;width:82%;height:auto;translate:-50% -50%;box-shadow:0 12px 32px rgb(23 14 11 / .2)}
+.c-work-strips__shot--photo{inset:0;width:100%;height:100%;translate:none;object-fit:cover;box-shadow:none}
+
+/* the follower (Osmo's "Image Preview Cursor Follower"): a window trailing the pointer, popping in over the list */
+.c-work-strips__follower{position:fixed;top:0;left:0;z-index:25;width:clamp(300px,26vw,500px);aspect-ratio:16 / 10;overflow:hidden;pointer-events:none;display:none}
+.c-work-strips__follower-inner{position:relative;width:100%;height:100%;display:flex;justify-content:center;align-items:center;
+  opacity:0;transform:scale(0);transition:opacity .1s ease,transform .6s cubic-bezier(.65,.1,0,1)}
+.c-work-strips__follower-label{position:relative;z-index:2;padding:10px 14px;background:var(--fg);color:var(--on-fg);white-space:nowrap;
+  opacity:0;transform:translateY(100%);transition:opacity .1s ease,transform .6s cubic-bezier(.65,.1,0,1)}
+@media (hover:hover) and (pointer:fine) and (min-width:1024px){
+  .c-work-strips__follower{display:block}
+  .c-work-strips:has(.c-work-strips__list:hover) .c-work-strips__follower-inner{opacity:1;transform:scale(1)}
+  .c-work-strips:has(.c-work-strips__list:hover) .c-work-strips__follower-label{opacity:1;transform:translateY(0)}
+}
+
+/* the name: across at rest and open, upright when narrowed */
+.c-work-strips__name{position:absolute;left:var(--space-s);right:var(--space-s);bottom:var(--space-s);z-index:2;display:flex;align-items:center;gap:.3em;margin:0;
+  font-size:clamp(26px,2.7vw,44px);font-weight:500;line-height:1;letter-spacing:-.03em;white-space:nowrap;
+  opacity:calc(1 - var(--narrow));translate:0 calc(var(--narrow) * 24px);transition:opacity .35s,translate .6s var(--ease-punch)}
+.c-work-strips__arrow{flex:none;width:.5em;height:.5em;transition:rotate var(--hover-dur) var(--ease-punch)}
+.c-work-strips__item.is-open .c-work-strips__arrow{rotate:-45deg}
+.c-work-strips__upright{position:absolute;left:var(--space-s);bottom:var(--space-s);z-index:2;writing-mode:vertical-rl;rotate:180deg;
+  font-size:var(--fs-lead);font-weight:500;line-height:1;letter-spacing:-.025em;white-space:nowrap;
+  opacity:var(--narrow);translate:0 calc((1 - var(--narrow)) * -24px);transition:opacity .35s,translate .6s var(--ease-punch)}
+.c-work-strips__list.has-open .c-work-strips__item:not(.is-open) .c-work-strips__upright{transition-delay:.2s}
+
+.c-work-strips__total,.c-work-strips__desc{display:none}
+
+/* below 1024px: rows between thin lines (after bymonolog.com's success stories, in this site's language): the
+   thumbnail on the left (4:5, the screen on its colour), on the right "01 / 03" as a quiet chip, the name, the
+   description and service · year; no tones, no accordion (tried: the accordion turned 90°, one band always open) */
+@media (max-width:1023px){
+  .c-work-strips__head{top:calc(env(safe-area-inset-top,0px) + var(--nav-top));height:40px;margin-bottom:-40px}
+  .c-work-strips__r{width:40px;height:40px}
+  .c-work-strips__title{font-size:clamp(28px,7vw,40px)}
+  .c-work-strips__list{display:block;height:auto;margin-top:var(--space-m)}
+  .c-work-strips__item,.c-work-strips__item.is-open{--open:1;--narrow:0;padding:0}
+  .c-work-strips__item + .c-work-strips__item{padding-left:0;margin-top:var(--space-m);padding-top:var(--space-m);border-top:1px solid var(--line)}
+  .c-work-strips__link{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto auto auto 1fr;column-gap:var(--gutter);
+    align-items:start;height:auto;background:none;color:var(--fg);box-shadow:none}
+  .c-work-strips__bar{display:contents}
+  .c-work-strips__media{position:relative;inset:auto;display:block;grid-column:1;grid-row:1 / -1;aspect-ratio:4 / 5}
+  .c-work-strips__shot{width:88%;box-shadow:0 8px 20px rgb(23 14 11 / .2)}
+  .c-work-strips__num{grid-column:2;grid-row:1;justify-self:start;padding:4px 8px;background:var(--panel);color:var(--fg)}
+  .c-work-strips__total{display:inline;color:var(--muted)}
+  .c-work-strips__name{position:static;grid-column:2;grid-row:2;margin-top:var(--space-s);font-size:clamp(20px,5.6vw,32px);line-height:1.05;white-space:normal;opacity:1;translate:none}
+  .c-work-strips__arrow{display:none}
+  .c-work-strips__desc{display:block;grid-column:2;grid-row:3;margin-top:var(--space-2xs);color:var(--muted);font-size:clamp(14px,3.8vw,18px);line-height:1.3;text-wrap:pretty}
+  .c-work-strips__meta{grid-column:2;grid-row:4;align-self:end;color:var(--muted);white-space:normal;opacity:1}
+  .c-work-strips__upright{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .c-work-strips__item,.c-work-strips__follower-inner,.c-work-strips__follower-label,.c-work-strips__name,.c-work-strips__upright,.c-work-strips__meta{transition:none}
+}

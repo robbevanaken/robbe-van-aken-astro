@@ -2,6 +2,7 @@
 // page (/work/<slug>). Cards show the image (the same one as on the detail page), then the title and description.
 export interface Project {
   slug: string;        // URL of the detail page: /work/<slug>
+  hidden?: boolean;    // left out everywhere (home, /work, its page, the sitemap) until it's ready to show again
   title: string;       // shown in the caption, e.g. "Woonpact Gent"
   label: string;       // big word on the placeholder visual
   description: string;
@@ -48,6 +49,14 @@ export interface Project {
 }
 
 // filter categories on /work: the parts of the service ("Branding, design & development" → Branding, Design, Development)
+// a project's thumbnail: its site's home page (`home.jpg`, the top of `desktop-long.jpg`), when there is one (Toran: none)
+const homeFiles = import.meta.glob('/src/assets/projects/**/home.jpg');
+export const homeShot = (slug: string) => (homeFiles[`/src/assets/projects/${slug}/home.jpg`] ? `/projects/${slug}/home.jpg` : null);
+
+// its site's home page as a long screenshot (`desktop-long.jpg`, three screens from the top), when there is one
+const longFiles = import.meta.glob('/src/assets/projects/**/desktop-long.jpg');
+export const longShot = (slug: string) => (longFiles[`/src/assets/projects/${slug}/desktop-long.jpg`] ? `/projects/${slug}/desktop-long.jpg` : null);
+
 export const projectTags = (p: Project) => p.service.split(/[&,]/).map((s) => s.trim()).filter(Boolean).map((s) => s[0].toUpperCase() + s.slice(1));
 
 // screenshots of a project's site, by convention in src/assets/projects/<slug>/
@@ -57,7 +66,7 @@ const screens = (slug: string): Project['screens'] => ({
 });
 
 // DUMMY: the stories, parts, stacks and years below are placeholder copy to fill the detail pages; replace them.
-export const projects: Project[] = [
+const allProjects: Project[] = [
   {
     slug: 'woonpact-gent', title: 'Woonpact Gent', label: 'Woonpact', image: '/projects/woonpact-gent/mood.jpg', position: '50% 62%', mockup: '/projects/woonpact-gent/mockup.jpg', // mood: a quiet residential street (public domain, a stand-in: REPLACE with a photo from Ghent / the pact)
     description: 'A brand and website for the City of Ghent\'s housing pact.', service: 'Branding, design & development', year: 2026,
@@ -107,7 +116,7 @@ export const projects: Project[] = [
     screens: screens('dewilde-braems'),
   },
   {
-    slug: 'toran', title: 'Toran Heli-Academy', label: 'Toran', image: '/projects/toran/mood.jpg', position: '50% 50%', // mood: one of their helicopters over the fields (toran.be)
+    slug: 'toran', hidden: true, title: 'Toran Heli-Academy', label: 'Toran', image: '/projects/toran/mood.jpg', position: '50% 50%', // mood: one of their helicopters over the fields (toran.be)
     description: 'The Toran Suite: planning software and a mobile app for a helicopter operator and flight school.', service: 'Development', year: 2026,
     colors: { a: '#12233d', b: '#6f93c2', t: '#e8eef7' }, client: 'Toran Heli Services & Academy', stack: ['Laravel', 'React Native', 'Craft CMS'], status: 'In progress',
     story: {
@@ -126,3 +135,6 @@ export const projects: Project[] = [
     photos: ['/projects/toran/photo-1.jpg', '/projects/toran/photo-2.jpg', '/projects/toran/photo-3.jpg', '/projects/toran/photo-4.jpg'],
   },
 ];
+
+// every project that shows (Toran is hidden for now: `hidden: true` on its entry)
+export const projects = allProjects.filter((p) => !p.hidden);
