@@ -6,7 +6,7 @@
    padding, --sb) to the capitals equals the gap from the descenders to the top of "Recent work"'s capitals (Inter
    Tight's cap top at .1365em of the title). Both gaps are --g, at least a section's spacing. The type a quiet tone (the page's colour mixed in, 34% --fg; full --fg was too loud). (Tried: on the accent red —
    the red already carries the hero's band and the active cards; between two dark chapters it read as a stop sign.) */
-.c-craft-band{--fs:clamp(120px,18vw,340px);
+.c-craft-band{--fs:clamp(120px,18vw,340px);--corner-size-b:clamp(12px,1.2vw,20px);
   --sb:calc(var(--float-bottom) + var(--tile) + var(--space-s)); /* desktop, pinned: .c-services__stage padding-bottom */
   --g:max(var(--space-section),calc(var(--sb) + var(--fs) * .1785));
   position:relative;overflow:hidden;font-family:"Cloister Black",serif;font-size:var(--fs);font-weight:400;line-height:1;white-space:nowrap;color:color-mix(in srgb,var(--fg) 34%,var(--bg));
@@ -15,7 +15,10 @@
 /* the four corner brackets (ui/Corners.astro), margin to margin, from just above the capitals to the descenders' foot,
    in the type's own quiet tone; the line runs through them (tried: two hairlines on the x-height and baseline) */
 .c-craft-band__frame{position:absolute;z-index:1;left:var(--margin);right:var(--margin);top:calc(.1785em - .08em);bottom:calc(.12em - .0115em - .08em);pointer-events:none; /* .08em clear of the capitals above and the descenders below */
-  --corner-color:color-mix(in srgb,var(--fg) 45%,var(--bg));--corner-size:clamp(12px,1.2vw,20px)}
+  --corner-color:color-mix(in srgb,var(--fg) 45%,var(--bg));--corner-size:var(--corner-size-b)}
+/* the line runs full width, crisp to the screen's edges, through the brackets (tried: a window just inside them with
+   a soft fade at its edges — it lost the contrast of type running edge to edge) */
+.c-craft-band__window{display:contents}
 .c-craft-band__track{display:inline-flex;will-change:transform}
 .c-craft-band__item{padding-right:.3em;word-spacing:.06em}
 /* the band's margins stay inside its dark wrapper (flow-root: no collapsing through it), so the scroll theme never
