@@ -15,7 +15,7 @@
 
 /* the chapter voice, as the other heads */
 .c-pricing__title{grid-column:1 / span 6;margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em;font-weight:400} /* as the services' title */
-.c-pricing__intro{grid-column:7 / -1;margin:0;color:var(--fg);font-size:clamp(26px,2.7778vw,52px);line-height:1.08;letter-spacing:-.03em;font-weight:500} /* as the services' intro: the pitch quote's columns and voice */
+.c-pricing__intro{grid-column:7 / -1;align-self:end;margin:0;max-width:24em;color:var(--muted);font-size:clamp(18px,1.6667vw,30px);line-height:1.25;letter-spacing:-.015em;font-weight:400} /* a step quieter than the services' statement voice: right after the manifesto's big type, two statements in a row competed */
 
 /* the hand: three cards side by side, slightly overlapping; the rotation and the slight drop of the outer cards
    (the laid pose) come from pricing.js */
@@ -66,7 +66,7 @@
   .c-pricing__stage{padding-block:0}
   .c-pricing__title,.c-pricing__intro{grid-column:1 / -1}
   .c-pricing__title{font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}
-  .c-pricing__intro{margin-top:var(--space-2xs);font-size:clamp(18px,4.6vw,28px);line-height:1.2;max-width:32ch} /* as the services' head below 1024px */
+  .c-pricing__intro{margin-top:var(--space-2xs);font-size:clamp(16px,4.2vw,20px);line-height:1.3;max-width:34ch} /* quieter than the services' head (see above) */
   .c-pricing__hand{display:block;margin-top:calc(var(--space-xl) * 1.25)}
   .c-pricing__card{width:100%;min-height:0;padding:clamp(24px,4vw,40px);rotate:0deg;translate:0 0}
   .c-pricing__card + .c-pricing__card{margin-left:0;margin-top:var(--gutter)}

@@ -18,7 +18,7 @@ export const nav = {
   name: 'Robbe Van Aken',
   role: 'Freelancer', // header + loader + JSON-LD; the hero says "Digital craftsman"
   links: [
-    { label: 'Pitch', href: '/' }, // home: the page is the pitch
+    { label: 'Home', href: '/' }, // was "Pitch": as the home page's label it read oddly
     { label: 'Work', href: '/work' },
     { label: 'Contact', href: '/contact' },
   ],
@@ -102,13 +102,13 @@ export const pricing = {
   packages: [
     { tone: 'paper', title: 'A website', text: 'Design and build, from first sketch to launch.',
       items: ['Design & development', 'Craft CMS, pleasant to update', 'SEO, speed and hosting sorted'],
-      price: { label: 'From', value: '\u20ac6.500' } },
+      price: { label: 'Starting from', value: '\u20ac3.500' } },
     { tone: 'accent', title: 'Something custom', text: 'Platforms, portals and internal tools, built around the way you work.',
       items: ['Scoped together first', 'Built in steps you can follow', 'Yours, no lock-in'],
       price: { label: 'Price', value: 'On quote' } },
     { tone: 'panel', title: 'Care & growth', text: 'Your site looked after: updates, fixes and improvements, month by month.',
       items: ['Hosting & monitoring', 'Small changes within days', 'Advice when you need it'],
-      price: { label: 'From', value: '\u20ac95/m' } },
+      price: { label: 'Starting from', value: '\u20ac115/m' } },
   ],
   note: 'Whatever you pick: built to last, made with care, yours to keep.',
 };

@@ -2,26 +2,26 @@
 // Featured projects on home as an ACCORDION OF STRIPS (grown from the lab's proposal 4; no pin: the section simply
 // scrolls by). The head ("Recent work" + the count), then the projects side by side as tall strips in the pricing
 // cards' three tones — paper (ink text), the accent red (light text), the quiet panel (page text, a hairline edge).
-// At rest: equal strips, each with its number, service · year and name. Hover / focus (desktop): that strip opens wide,
-// the others narrow (their name turns upright), and the project's THUMBNAIL — one screen of the site (`home.jpg` on
+// At rest: equal strips, each with its number, service · year and its upright name. Hover / focus (desktop): that strip opens wide,
+// the others narrow (the names stand upright throughout, never turning), and the project's THUMBNAIL — one screen of the site (`home.jpg` on
 // its own light colour; Toran: its mood photo) — trails the cursor in a preview window (Osmo's "Image Preview Cursor
 // Follower", components/previewFollower.js: moving to another strip the old image slides out, the new one in), with
 // "View project" on it. Touch on a wide screen: the first tap opens,
 // the second goes. Below 1024px: rows between thin lines (after bymonolog.com's success stories): the thumbnail on the
 // left, "01 / 03", the name, the description and service · year on the right (tried: the accordion turned 90°, one
 // band always open — the one open project read oddly). The page's R stays small at the
-// top centre (#a-craft + an end marker). Dark chapter (t-dark). components/workStrips.js, _work-strips.css.
+// top centre (#a-craft + an end marker). A click opens the project with the open-project flight (components/
+// openProject.js): the preview window under the cursor (desktop) or the row's thumbnail grows into the project page's
+// visual — the same ProjectVisual, so the same image file hands over. Dark chapter (t-dark). components/workStrips.js, _work-strips.css.
 // (Tried: a pinned showreel, and this accordion driven by a scroll pin on the projects' own colours — the pin felt
 // forced, the colours odd next to the rest of the site.)
 import Button from '../ui/Button.astro';
-import Icon from '../ui/Icon.astro';
-import ProjectImage from '../ui/ProjectImage.astro';
+import ProjectVisual from '../ui/ProjectVisual.astro';
 import { work } from '../../data/site';
-import { projects, homeShot } from '../../data/projects';
+import { projects } from '../../data/projects';
 const featured = projects.slice(0, work.featured);
 const pad = (n: number) => String(n).padStart(2, '0');
-const TONES = ['paper', 'accent', 'panel'];
-const SIZES = { sizes: '(max-width: 1023px) 80vw, 30vw', widths: [480, 720, 960, 1280, 1600] };
+const TONES = ['paper', 'panel', 'accent']; // the red last: right after the services' red card it fought for attention
 ---
 <div class="t-dark">
 <section class="c-work-strips" aria-labelledby="work-title" data-strips data-follower-wrap>
@@ -33,21 +33,15 @@ const SIZES = { sizes: '(max-width: 1023px) 80vw, 30vw', widths: [480, 720, 960,
     </div>
     <ol class="c-work-strips__list" role="list" data-strips-list data-follower-collection>
       {featured.map((p, i) => {
-        const shot = homeShot(p.slug);
         return (
           <li class={`c-work-strips__item c-work-strips__item--${TONES[i % TONES.length]}`} data-strip={i} data-follower-item>
-            <a class="c-work-strips__link" href={`/work/${p.slug}`} aria-label={`${p.title}: ${p.description}`} data-strip-link>
+            <a class="c-work-strips__link" href={`/work/${p.slug}`} data-fp-card aria-label={`${p.title}: ${p.description}`} data-strip-link>
               <span class="c-work-strips__bar" aria-hidden="true">
                 <span class="c-work-strips__num u-text-label">{pad(i + 1)}<span class="c-work-strips__total"> / {pad(featured.length)}</span></span>
                 <span class="c-work-strips__meta u-text-label">{p.service} · {p.year}</span>
               </span>
-              <span class:list={['c-work-strips__media', { 'c-work-strips__media--photo': !shot }]} aria-hidden="true" style={`--tb:${p.colors.b}`} data-follower-visual>
-                {shot
-                  ? <ProjectImage class="c-work-strips__shot" src={shot} alt="" {...SIZES} />
-                  : <ProjectImage class="c-work-strips__shot c-work-strips__shot--photo" src={p.image!} alt="" position={p.position} {...SIZES} />}
-              </span>
-              <span class="c-work-strips__upright" aria-hidden="true">{p.title}</span>
-              <h3 class="c-work-strips__name">{p.title}<Icon name="arrow" class="c-work-strips__arrow" /></h3>
+              <ProjectVisual project={p} class="c-work-strips__media" aria-hidden="true" data-follower-visual data-fp-media />
+              <h3 class="c-work-strips__name">{p.title}</h3>
               <span class="c-work-strips__desc" aria-hidden="true">{p.description}</span>
             </a>
           </li>

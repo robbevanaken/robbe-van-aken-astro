@@ -16,6 +16,9 @@
 .c-craft-band::after{top:.8685em}
 .c-craft-band__track{display:inline-flex;will-change:transform}
 .c-craft-band__item{padding-right:.3em;word-spacing:.06em}
+/* the band's margins stay inside its dark wrapper (flow-root: no collapsing through it), so the scroll theme never
+   finds a gap between the services, the band and the projects (it flashed light there) */
+.c-craft-band-wrap{display:flow-root}
 /* the projects follow straight on: their own top spacing is the band's bottom margin */
 .c-craft-band-wrap + .t-dark .c-work-strips{padding-top:0}
 .c-craft-band-wrap + .t-dark .c-work-strips__title{margin-top:-.1365em}

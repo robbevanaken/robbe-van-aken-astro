@@ -204,7 +204,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   let jump=null;
   function computeS(){
     jump=null;a2b=undefined;
-    const vc=H/2,cs=stages.map(e=>{const r=e.getBoundingClientRect();return r.top+r.height/2});
+    const vc=H/2,cs=stages.map(e=>{const r=e.getBoundingClientRect();return r.top+r.height/2-(e.hasAttribute('data-r-early')?H*.24:0)}); // data-r-early: the R arrives while its spot is still in the lower half (the manifesto's indent: it floated above the words otherwise)
     if(vc<=cs[0]){a2a=ANC[0];return SV[0]}
     for(let i=0;i<cs.length-1;i++){if(vc<=cs[i+1]){const f=cs[i+1]-cs[i]<1?1:(vc-cs[i])/(cs[i+1]-cs[i]),t=clamp((f-.18)/.64,0,1);
       if(SV[i]===2&&SV[i+1]===2){a2a=ANC[i];if(ANC[i+1]!==ANC[i]){a2b=ANC[i+1];a2t=t}}else a2a=SV[i]===2?ANC[i]:SV[i+1]===2?ANC[i+1]:(ANC[i]||ANC[i+1]);
@@ -420,7 +420,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       const small=clamp((140-rh)/60,0,1); // white boost for the small R, so it reads white instead of grey
       const minCell=3/DPR; // glyphs of at least 3 device px (1.5 css px on retina): smaller and the crosses blur to grey
       const pitchF=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f;
-      const smCell=SM.fill?Math.max(SM.min/DPR,SM.rows?Math.round(rh/SM.rows*DPR)/DPR:0):0; // small R in an SM look: its own cell size
+      const smLo=DPR<1.5&&rh<80; // non-retina screens, the tiniest R's (header, projects, loader; not the services' letters, ~100px+, which read fine): the halftone's sub-pixel gaps blurred them into a smudge, so they get whole 2px cells, solid (the four tones carry the shape)
+      const smCell=SM.fill?(smLo?2:Math.max(SM.min/DPR,SM.rows?Math.round(rh/SM.rows*DPR)/DPR:0)):0; // small R in an SM look: its own cell size
       const CELL=rh<140?(SM.fill?Math.min(baseCell,smCell):Math.min(baseCell,Math.max(minCell,Math.round(rh/36*2)/2))):fine?Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*DPR)/DPR):baseCell,cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1,NN=cols*rows;
       if(!grid.GC||grid.GC.length<NN)Object.assign(grid,{GC:new Float32Array(NN),GS:new Float32Array(NN),GN:new Uint16Array(NN),OCC:new Uint32Array(NN)});
       ({GC,GS,GN,OCC}=grid);nOcc=0;
@@ -459,12 +460,12 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       }else if(SM.fill&&rh<140){
         // small R (looks.js SMALLS): solid cells in four tones, one path per tone; the face lit / shaded in the two
         // strongest tones, the walls in the two quietest (or left out), so the counters and hairlines stay open
-        const tones=FINE[mode],sq=CELL*SM.fill,off=(CELL-sq)/2;
+        const lo=DPR<1.5&&rh<80,tones=FINE[mode],sq=lo?CELL:CELL*SM.fill,off=(CELL-sq)/2;
         for(let lv=0;lv<4;lv++){
           ctx.fillStyle=tones[lv];ctx.beginPath();let any=false;
           for(let o=0;o<nOcc;o++){
             const ci=OCC[o],cap=GC[ci]>0;if(!cap&&!SM.walls)continue;
-            const l=cap?(GC[ci]>.42?3:2):(GS[ci]>.5?1:0);if(l!==lv)continue;
+            const l=cap?(GC[ci]>.42?3:2)-(lo?1:0):(GS[ci]>.5?1:0);if(l!==lv)continue; // non-retina: solid cells, the face a tone quieter so it keeps the halftone's weight, not a black stamp
             const r=(ci/cols)|0,q=ci-r*cols;ctx.rect(q*CELL+off,r*CELL+off,sq,sq);any=true;
           }
           if(any)ctx.fill();

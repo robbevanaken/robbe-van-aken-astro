@@ -12,8 +12,8 @@
 @media (max-width:1023px){
   .c-pitch{row-gap:var(--space-l)}
   .c-pitch__body{display:contents}
-  .c-pitch__quote{grid-row:1}
+  .c-pitch__quote{grid-row:2} /* below the R: coming down from the hero the R never passes over the text */
   .c-pitch__quote.c-pitch__quote{font-size:clamp(25px,4.8vw,40px);line-height:1.14}
-  .c-pitch__r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(260px,46vh,560px)}
+  .c-pitch__r-anchor{grid-column:1 / -1;grid-row:1;height:clamp(260px,46vh,560px)}
   .c-pitch__portrait{grid-row:3;margin-top:0}
 }

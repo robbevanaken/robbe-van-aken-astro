@@ -53,15 +53,31 @@ function releaseR() {
   document.documentElement.classList.remove('is-opening');
 }
 
+// home's strips: with a preview window trailing the cursor (previewFollower.js) the visual the visitor sees is the
+// window's, so that one flies (the strip's own is faded out then)
+function followerMedia(card) {
+  const cursor = card?.closest('[data-follower-wrap]')?.querySelector('[data-follower-cursor]');
+  const inner = cursor?.querySelector('[data-follower-cursor-inner]');
+  if (!inner || getComputedStyle(cursor).display === 'none' || +getComputedStyle(inner).opacity < .5) return null;
+  const vis = [...inner.querySelectorAll('[data-follower-visual]')].pop();
+  if (vis) { gsap.killTweensOf(vis); gsap.set(vis, { yPercent: 0 }); } // mid-slide: settled before it's measured
+  return vis || null;
+}
+
 export const openProject = {
   async leave(card) {
     document.documentElement.classList.add('is-opening');
     setScrollTheme('light'); // opening from the dark projects chapter: the page eases to the light the project page starts in
     holdR();
-    const media = card?.querySelector('[data-fp-media]');
+    const fromFollower = followerMedia(card);
+    let media = fromFollower || card?.querySelector('[data-fp-media]');
+    if (media && !media.getClientRects().length) media = null; // not shown (home's strips on a wide touch screen): just the fade
     if (!media) { await gsap.to(pageParts(), { autoAlpha: 0, duration: .4 }); return null; }
     const r = media.getBoundingClientRect(), copy = media.cloneNode(true);
     copy.removeAttribute('data-fp-media');
+    copy.removeAttribute('data-follower-visual');
+    if (fromFollower) copy.style.setProperty('--band', '0px'); // centred as in the window; --visual-bare eases it to the page's margin on the way
+    gsap.set(copy, { clearProps: 'transform' }); // a follower clone carries its slide's transform
     copy.classList.add('c-featured-projects__media--carried');
     copy.setAttribute('aria-hidden', 'true');
     Object.assign(copy.style, { top: `${r.top}px`, left: `${r.left}px`, width: `${r.width}px`, height: `${r.height}px` });
@@ -112,7 +128,7 @@ export const openProject = {
       await Promise.all([
         gsap.to(copy, { top: r.top, left: r.left, width: r.width, height: r.height, duration: .85, ease: 'expo.inOut' }),
         // the screenshot leaves the card's tag band and settles with the page's even margins, in step with the box
-        copy.querySelector('[data-visual]') ? gsap.to(copy.querySelector('[data-visual]'), { '--visual-bare': 1, duration: .85, ease: 'expo.inOut' }) : null,
+        (vis => vis ? gsap.to(vis, { '--visual-bare': 1, duration: .85, ease: 'expo.inOut' }) : null)(copy.matches('[data-visual]') ? copy : copy.querySelector('[data-visual]')),
         copy.querySelector('img') ? gsap.to(copy.querySelector('img'), { scale: 1, duration: .85, ease: 'expo.inOut' }) : null,
         media.decode ? media.decode().catch(() => {}) : null,
       ]);

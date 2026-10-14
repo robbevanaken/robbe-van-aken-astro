@@ -7,7 +7,7 @@
 .c-manifesto__end{grid-column:1 / -1;height:0}
 .c-manifesto__r{display:block;width:.8em;height:.8em}
 .c-manifesto__indent{display:inline-block;vertical-align:baseline;width:calc((100% - 11 * var(--gutter)) / 12 * 2 + 2 * var(--gutter))}
-@media (max-width:639px){ .c-manifesto{--mf:clamp(30px,8.6vw,44px)} .c-manifesto__text{line-height:1.08} .c-manifesto__indent{width:calc((100% - 3 * var(--gutter)) / 4 + var(--gutter))} }
+@media (max-width:639px){ .c-manifesto{--mf:clamp(26px,7.4vw,40px)} .c-manifesto__text{line-height:1.08} .c-manifesto__indent{width:calc((100% - 3 * var(--gutter)) / 4 + var(--gutter))} }
 /* the second paragraph from col 3, the portrait beside it in cols 1–2 (under the R), its top on the first line's
    capitals; it opens from its centre as it comes into view (global/reveal.js, the case media's reveal) */
 .c-manifesto__text--next{grid-column:3 / -1;grid-row:2}
@@ -20,10 +20,11 @@
 .c-manifesto__portrait[data-reveal].is-in{clip-path:inset(0 0 0 0)}
 .c-manifesto__portrait[data-reveal].is-in img{scale:1}
 html.no-js .c-manifesto__portrait[data-reveal]{clip-path:none}
-/* phones: the portrait above the second paragraph, two of the four columns */
+/* phones: the text runs on uninterrupted (a step smaller, so the block stays near one and a half screens), the portrait
+   after it, two of the four columns (tried: between the paragraphs — it broke the reading) */
 @media (max-width:639px){
-  .c-manifesto__portrait{grid-row:2;margin:0}
-  .c-manifesto__text--next{grid-column:1 / -1;grid-row:3}
+  .c-manifesto__text--next{grid-column:1 / -1;grid-row:2}
+  .c-manifesto__portrait{grid-row:3;margin:0}
   .c-manifesto__end{grid-row:4}
 }
 @media (prefers-reduced-motion:reduce){ .c-manifesto__portrait[data-reveal]{clip-path:none;transition:none} .c-manifesto__portrait[data-reveal] img{scale:1;transition:none} }
