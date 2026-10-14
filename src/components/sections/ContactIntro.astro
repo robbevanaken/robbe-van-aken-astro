@@ -7,5 +7,5 @@ import Corners from '../ui/Corners.astro';
 import { contactPage as p } from '../../data/pages';
 ---
 <header class="c-contact-intro o-container o-grid">
-  <h1 class="c-contact-intro__title u-text-hero"><span class="c-title-frame" data-title-frame>{p.title.map((t) => <span class:list={['c-contact-intro__line', { 'u-text-muted': t.muted }]}>{t.text}</span>)}<span class="c-title-frame__note u-text-label" aria-hidden="true"><span class="c-title-frame__in">{[...`${p.frameNote.place} `].map((c, k) => <span class="c-title-frame__ch" style={`--i:${k}`}><span>{c}</span></span>)}<time data-local-time={p.frameNote.timeZone} data-ch-offset={p.frameNote.place.length + 1}></time></span></span><Corners /></span></h1>
+  <h1 class="c-contact-intro__title u-text-hero"><span class="c-title-frame" data-title-frame>{p.title.map((t, i) => <span class:list={['c-contact-intro__line', { 'u-text-muted': t.muted }]}>{i === 0 ? <><span class="u-initial">{t.text[0]}</span>{t.text.slice(1)}</> : t.text}</span>)}<span class="c-title-frame__note u-text-label" aria-hidden="true"><span class="c-title-frame__in">{[...`${p.frameNote.place} `].map((c, k) => <span class="c-title-frame__ch" style={`--i:${k}`}><span>{c}</span></span>)}<time data-local-time={p.frameNote.timeZone} data-ch-offset={p.frameNote.place.length + 1}></time></span></span><Corners /></span></h1>
 </header>

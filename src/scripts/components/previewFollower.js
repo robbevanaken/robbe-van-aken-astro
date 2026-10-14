@@ -30,10 +30,15 @@ export function initPreviewFollower(root = document) {
     gsap.set(follower, { xPercent: -50, yPercent: -50 });
     const xTo = gsap.quickTo(follower, 'x', { duration: 0.6, ease: 'power3' });
     const yTo = gsap.quickTo(follower, 'y', { duration: 0.6, ease: 'power3' });
-    addEventListener('mousemove', (e) => { xTo(e.clientX); yTo(e.clientY); }, on);
+    // placed on the pointer the first time it's seen (a mousemove or the pointer entering an item: scrolling the list
+    // under a still cursor gives no mousemove, and the window used to show in the top left corner), followed after that
+    let placed = false;
+    const place = (e) => { if (placed) { xTo(e.clientX); yTo(e.clientY); return; } gsap.set(follower, { x: e.clientX, y: e.clientY }); xTo(e.clientX); yTo(e.clientY); placed = true; };
+    addEventListener('mousemove', place, on);
 
     items.forEach((item, index) => {
-      item.addEventListener('mouseenter', () => {
+      item.addEventListener('mouseenter', (e) => {
+        place(e);
         const forward = prevIndex === null || index > prevIndex;
         prevIndex = index;
         follower.querySelectorAll('[data-follower-visual]').forEach((el) => {

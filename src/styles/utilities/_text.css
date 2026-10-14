@@ -7,3 +7,8 @@
 .u-text-ui{font-size:var(--fs-ui);line-height:1.3}
 .u-text-label{font-size:var(--fs-label);font-weight:500;line-height:1.3}
 .u-text-muted{color:var(--muted)}
+
+/* a blackletter initial (Cloister Black, the R's typeface) on a title's first letter: the /contact page's title (not the popup's: too small, in the grey), /work's title,
+   and every word of the type band (its own .c-craft-band__cap). Kept rare on purpose: with the logo, the R and the
+   services' letters, these are the only places the blackletter speaks */
+.u-initial{font-family:"Cloister Black",serif;font-weight:400;letter-spacing:0;margin-right:-.05em}
