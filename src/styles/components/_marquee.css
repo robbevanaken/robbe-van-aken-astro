@@ -1,8 +1,10 @@
-/* The accent band (deep red, light text). Moved by components/marquee.js (constant loop, faster while scrolling). */
-.c-marquee{position:relative;z-index:1;display:flex;align-items:center;height:var(--marquee-h);overflow:hidden;white-space:nowrap;background:var(--accent);color:var(--on-accent);font-size:var(--fs-body);font-weight:400;line-height:1;text-transform:uppercase;letter-spacing:.02em}
+/* The accent band (deep red, light text) in the site's type: sentence case, tight, the parts split by a middle dot (tried:
+   small uppercase, letter-spaced, with an icon between: it read as a stock ticker). Moved by components/marquee.js
+   (constant loop, faster while scrolling). */
+.c-marquee{position:relative;z-index:1;display:flex;align-items:center;height:var(--marquee-h);overflow:hidden;white-space:nowrap;background:var(--accent);color:var(--on-accent);font-size:var(--fs-body-l);font-weight:400;line-height:1;letter-spacing:-.015em}
 .c-marquee__track{display:inline-flex;will-change:transform}
 .c-marquee__item{display:inline-flex;align-items:center;gap:var(--space-m);padding-right:var(--space-m)}
-.c-marquee__item .c-icon{width:23px;height:23px}
+.c-marquee__sep{opacity:.7}
 /* fill: white first (dark ink), the accent fills it from the left (scaleX of the fill, set by a script) */
 .c-marquee--fill{background:var(--paper);color:var(--ink)}
 .c-marquee__fill{position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left}
