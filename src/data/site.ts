@@ -55,7 +55,7 @@ export const marquee = {
 
 // the big blackletter band between the services and the projects (sections/CraftBand.astro), in Cloister Black
 export const craftBand = {
-  text: 'Solid code · thoughtful design · genuine care for the craft ·',
+  text: 'Thoughtful design · genuine care ·',
 };
 
 export const trustedBy = {

@@ -1,6 +1,7 @@
 ---
-// A big blackletter band between the services and the projects (after pensatori-irrazionali.com's type band): one
-// line in Cloister Black, the R's own typeface, framed by the site's four corner brackets, margin to margin (as
+// A big type band between the services and the projects: one line in Inter Tight with the FIRST LETTER of every word
+// in Cloister Black, the R's own typeface (so the blackletter stays the logo's: whole words in it were too much),
+// framed by the site's four corner brackets, margin to margin (as
 // the title frame); the line runs full width through them, crisp to the screen's edges (tried: a window just inside
 // them with a soft fade at its edges; tried: two hairlines on its x-height and baseline, squeezing it — full
 // rules appear nowhere else on the site), centred between the services and the projects, moved
@@ -10,13 +11,16 @@
 import Corners from '../ui/Corners.astro';
 import { craftBand } from '../../data/site';
 const items = Array.from({ length: 4 });
+// every word's first letter as a blackletter CAPITAL, an initial in the old sense (its lowercase was too small and odd
+// next to Inter's ascenders); the separators stay as they are
+const words = craftBand.text.split(' ').map((w) => (/^[\p{L}]/u.test(w) ? { cap: w[0].toUpperCase(), rest: w.slice(1) } : { rest: w }));
 ---
 <div class="t-dark c-craft-band-wrap">
   <section class="c-craft-band" role="note" aria-label={craftBand.text.replace(/\s*·\s*$/, '')} data-marquee data-marquee-speed="90" data-marquee-boost=".25">
     <span class="c-craft-band__frame" aria-hidden="true"><Corners /></span>
     <div class="c-craft-band__window">
       <div class="c-craft-band__track" aria-hidden="true" data-marquee-track>
-        {items.map(() => <span class="c-craft-band__item">{craftBand.text}</span>)}
+        {items.map(() => <span class="c-craft-band__item">{words.map((w, i) => <>{i > 0 && ' '}{w.cap && <span class="c-craft-band__cap">{w.cap}</span>}{w.rest}</>)}</span>)}
       </div>
     </div>
   </section>

@@ -22,7 +22,7 @@
 }
 
 /* Cloister Black (Typographer Mediengestaltung / Dieter Steffmann, free on dafont), the R's own typeface: only the
-   blackletter band between the services and the projects (sections/CraftBand.astro). Subset to basic latin + · — ’,
+   initials of the type band between the services and the projects (sections/CraftBand.astro). Subset to basic latin + · — ’,
    not preloaded (below the fold). */
 @font-face{
   font-family:"Cloister Black";font-style:normal;font-weight:400;font-display:swap;
