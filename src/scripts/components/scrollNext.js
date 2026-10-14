@@ -197,9 +197,11 @@ export function handOff() {
 }
 
 // Page swap, step 2 (new page, scrolled to the top): the copy glides onto the real visual (normally it's already
-// there), then disappears on top of it while the header, intro and the rest of the page fade in.
+// there), then disappears on top of it while the intro and the rest of the page fade in (the header stays put).
+// The header (and its R) is NOT among them: it sits on the same spot on both pages, so it simply stays (it used to fade
+// out with the swap and back in, a ~1.4s blink of the whole header).
 const fadeTargets = () => [
-  ...document.querySelectorAll('[data-site-header], [data-r-canvas], [data-page-intro] > *'),
+  ...document.querySelectorAll('[data-r-canvas]:not([data-r-intro]), [data-page-intro] > *'),
   ...[...document.querySelectorAll('[data-project-visual] ~ *')],
 ];
 export const arrive = {
