@@ -34,7 +34,7 @@
 .c-pricing__items{margin:auto 0 0;padding:var(--space-m) 0 0;list-style:none}
 .c-pricing__item{padding-block:10px;border-top:1px solid var(--card-line)}
 .c-pricing__price{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-s);
-  margin-top:var(--space-2xs);padding-top:var(--space-s);border-top:1px solid var(--card-line)}
+  margin-top:0;padding-top:var(--space-s);border-top:1px solid var(--card-line)} /* no margin: the last item's own padding is the gap above this line, the same as between the items (an extra 8px made the last row taller below than above) */
 .c-pricing__amount{display:grid;gap:6px;opacity:0;translate:0 8px;transition:opacity .5s var(--ease-out),translate .5s var(--ease-out)}
 .c-pricing.is-priced .c-pricing__amount{opacity:1;translate:0 0} /* hidden until the roll fires: half-rolled it read €0.000 */
 .c-pricing__from{color:var(--soft)}
