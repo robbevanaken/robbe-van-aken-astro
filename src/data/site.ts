@@ -4,7 +4,7 @@
 export const meta = {
   title: "Robbe Van Aken, developer with a designer's eye",
   description: 'Digital craftsman in Ghent: Craft CMS sites, Laravel software and AI workflows, developed with a designer\'s eye.',
-  email: 'robbe.vanaken@gmail.com',
+  email: 'hello@robbevanaken.be',
   image: '/og.png', // social preview (1200×630), in /public
 };
 

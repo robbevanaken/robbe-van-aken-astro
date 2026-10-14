@@ -21,7 +21,7 @@ export const contactPage = {
   // left column (below the form on phones); an item with href is a link
   details: [
     { label: 'Contact details', items: [
-      { text: 'robbe.vanaken@gmail.com', href: 'mailto:robbe.vanaken@gmail.com' },
+      { text: 'hello@robbevanaken.be', href: 'mailto:hello@robbevanaken.be' },
       { text: '+32 494 48 77 62', href: 'tel:+32494487762' },
     ] },
   ],
@@ -72,7 +72,7 @@ export const privacyPage = {
   intro: 'What this site knows about you, why, and for how long. The short version: very little.',
   description: 'How robbevanaken.be handles your data: the contact form, cookies and your rights.',
   updated: { label: 'Last updated', date: '5 October 2026' },
-  company: { name: 'Robbe Van Aken BV', address: '', number: '', place: 'Ghent, Belgium', email: 'robbe.vanaken@gmail.com' },
+  company: { name: 'Robbe Van Aken BV', address: '', number: '', place: 'Ghent, Belgium', email: 'hello@robbevanaken.be' },
   sections: [
     { title: 'Who is responsible',
       blocks: [
