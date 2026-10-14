@@ -1,5 +1,5 @@
-/* The blackletter band (sections/CraftBand.astro): Cloister Black squeezed between two hairlines on its x-height and
-   baseline, the capitals and ascenders sticking out above, the descenders below. The font's metrics (per 1000):
+/* The blackletter band (sections/CraftBand.astro): Cloister Black inside the site's four corner brackets, margin to
+   margin. The font's metrics (per 1000):
    ascent 953, descent 216, x-height 498, caps 690, descenders to −143; with line-height 1 the baseline sits at
    .8685em, the x-line at .3705em, the capitals' top at .1785em and the descenders end at ~1em.
    Centred between the services and the projects: the gap from the end of the services' pin (its stage's bottom
@@ -10,10 +10,12 @@
   --sb:calc(var(--float-bottom) + var(--tile) + var(--space-s)); /* desktop, pinned: .c-services__stage padding-bottom */
   --g:max(var(--space-section),calc(var(--sb) + var(--fs) * .1785));
   position:relative;overflow:hidden;font-family:"Cloister Black",serif;font-size:var(--fs);font-weight:400;line-height:1;white-space:nowrap;color:color-mix(in srgb,var(--fg) 34%,var(--bg));
-  margin-block:calc(var(--g) - var(--sb) - .1785em) var(--g)}
-.c-craft-band::before,.c-craft-band::after{content:"";position:absolute;left:0;right:0;height:1px;background:var(--line);pointer-events:none}
-.c-craft-band::before{top:.3705em}
-.c-craft-band::after{top:.8685em}
+  padding-bottom:.12em; /* room under the descenders (they end at ~1.01em) for the frame's gap */
+  margin-block:calc(var(--g) - var(--sb) - .1785em) calc(var(--g) - .1085em)}
+/* the four corner brackets (ui/Corners.astro), margin to margin, from just above the capitals to the descenders' foot,
+   in the type's own quiet tone; the line runs through them (tried: two hairlines on the x-height and baseline) */
+.c-craft-band__frame{position:absolute;z-index:1;left:var(--margin);right:var(--margin);top:calc(.1785em - .08em);bottom:calc(.12em - .0115em - .08em);pointer-events:none; /* .08em clear of the capitals above and the descenders below */
+  --corner-color:color-mix(in srgb,var(--fg) 45%,var(--bg));--corner-size:clamp(12px,1.2vw,20px)}
 .c-craft-band__track{display:inline-flex;will-change:transform}
 .c-craft-band__item{padding-right:.3em;word-spacing:.06em}
 /* the band's margins stay inside its dark wrapper (flow-root: no collapsing through it), so the scroll theme never

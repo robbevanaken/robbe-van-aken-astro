@@ -1,15 +1,18 @@
 ---
 // A big blackletter band between the services and the projects (after pensatori-irrazionali.com's type band): one
-// line in Cloister Black, the R's own typeface, squeezed between two hairlines on its x-height and baseline (the
-// capitals and ascenders stick out above, the descenders below), centred between the services and the projects, moved
+// line in Cloister Black, the R's own typeface, framed by the site's four corner brackets, margin to margin (as
+// the title frame; the text runs through them; tried: two hairlines on its x-height and baseline, squeezing it — full
+// rules appear nowhere else on the site), centred between the services and the projects, moved
 // by components/marquee.js: a slow constant drift (90px/s; was ~600) that only picks up a little while scrolling (a quarter of the
 // accent band's boost). Dark chapter (t-dark).
 // Copy: `craftBand` in site.ts. Styles: _craft-band.css.
+import Corners from '../ui/Corners.astro';
 import { craftBand } from '../../data/site';
 const items = Array.from({ length: 4 });
 ---
 <div class="t-dark c-craft-band-wrap">
   <section class="c-craft-band" role="note" aria-label={craftBand.text.replace(/\s*·\s*$/, '')} data-marquee data-marquee-speed="90" data-marquee-boost=".25">
+    <span class="c-craft-band__frame" aria-hidden="true"><Corners /></span>
     <div class="c-craft-band__track" aria-hidden="true" data-marquee-track>
       {items.map(() => <span class="c-craft-band__item">{craftBand.text}</span>)}
     </div>

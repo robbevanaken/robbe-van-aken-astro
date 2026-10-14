@@ -63,6 +63,9 @@
 }
 @media (max-width:1023px){
   .c-pricing{padding-top:var(--space-section)}
+  /* the R between the manifesto and the cards: bigger and against the right margin, the pitch's R mirrored (there
+     it stands on the left, here on the right; was: small and centred, 40px on phones) */
+  .c-pricing__r{justify-self:end;width:clamp(96px,26vw,128px);height:clamp(96px,26vw,128px);margin-bottom:var(--space-l)}
   .c-pricing__stage{padding-block:0}
   .c-pricing__title,.c-pricing__intro{grid-column:1 / -1}
   .c-pricing__title{font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}
@@ -79,7 +82,7 @@
   .c-pricing__note{margin-top:var(--space-l)}
 }
 @media (max-width:639px){
-  .c-pricing__r{width:40px;height:40px;margin-bottom:var(--space-xl)} /* the projects' R size on phones */
+
 }
 /* without the pin or any motion: everything simply there, prices on their number */
 html.no-js .c-pricing .c-pricing__roll-list{transform:translateY(calc(var(--to) * -1em));transition:none}
