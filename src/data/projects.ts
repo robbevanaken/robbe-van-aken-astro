@@ -102,6 +102,19 @@ const allProjects: Project[] = [
     screens: screens('imagoo'),
   },
   {
+    // on home's Recent work (one of the first three: work.featured), in De Wilde-Braems' place since Oct 2026
+    slug: 'oreya', title: 'Oreya', label: 'Oreya', image: '/projects/oreya/mood.jpg', position: '50% 60%', mockup: '/projects/oreya/mockup.jpg', // mood: a biofilter bed (oreya.be); mockup: the phone in a hand (the Toran PSD, unused while Toran is hidden)
+    description: 'A launch website for smart odour-control software, built against the clock.', service: 'Design & development', year: 2026, // CHECK: service + year
+    colors: { a: '#0f4a6e', b: '#e7a597', t: '#f6ece9' }, url: 'https://oreya.be', client: 'Odoro', stack: ['Craft CMS', 'Swup'], // CHECK: stack (read from the live site)
+    story: {
+      intro: 'Oreya decides, minute by minute, when an odour filter can ease off. Its website had to be ready in weeks.',
+      challenge: 'Oreya was about to launch, and the site had to be live within a very short time: a new product, a technical subject, and an audience of plant managers who want to know what it saves before anything else. No room for a long design process, and no room for a site that looked rushed.',
+      approach: 'One strong page instead of many. A calm structure in Oreya\u2019s deep blue and coral explains the idea in three steps: how it works, where it applies, what it saves. At its heart sits a quick scan, three questions that return an indication of the yearly saving and the CO\u2082 it avoids, with a detailed calculation one click further. In Dutch and English, on Craft CMS, so the team keeps it current themselves.',
+      result: 'Live on time, with a site that turns a technical product into one clear question: how much could you save?',
+    },
+    screens: screens('oreya'),
+  },
+  {
     slug: 'dewilde-braems', title: 'De Wilde-Braems', label: 'De Wilde-Braems', image: '/projects/dewilde-braems/mood.jpg', position: '55% 60%', mockup: '/projects/dewilde-braems/mockup.jpg', // mood: one of their homes (dewilde-braems.be)
     description: 'A clear, calm website for a family-run construction company.', service: 'Design & development', year: 2025,
     colors: { a: '#0b2f57', b: '#9db7d6', t: '#eef3f9' }, url: 'https://dewilde-braems.be', client: 'De Wilde-Braems BV', stack: ['WordPress', 'Tailwind CSS'],

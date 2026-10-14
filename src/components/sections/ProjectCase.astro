@@ -3,9 +3,9 @@
 // language; the context itself opens the page, above the main visual: pages/work/[slug].astro): 1. a row of fact
 // cards — real facts only: client, year, what it's built with, and the measured result or the collaboration where there is one;
 // 2. the story beside a panel that stays put while it's read: the challenge, the approach (and the parts of a suite),
-// then the facts as label / value rows and "Visit site"; 3. a dense mosaic of the work on a tight grid, made from
-// what the project has (the long home page scrolling in its window, the phone screens, crops further down the home
-// page, stills, photos, the brand on its colours); 4. the result as the closing statement, with the back button.
+// then the facts as label / value rows and "Visit site"; 3. the work, only the images that say something: the
+// device mockup full width, then the long home page scrolling in its window beside another page on a phone (Toran:
+// its photos; tried: a dense mosaic with crops, stills and swatches — filler); 4. the result as the closing statement, with the back button.
 // The next project's visual (ScrollNext) follows straight after.
 // Scroll motion: components/caseMotion.js (the window, reduced motion: none). Media open from their centre
 // ([data-reveal="media"], global/reveal.js). Copy: src/data/projects.ts, labels in projectPage (src/data/pages.ts).
@@ -17,7 +17,7 @@ import type { Project } from '../../data/projects';
 import { projectPage } from '../../data/pages';
 interface Props { project: Project }
 const { project: p } = Astro.props;
-const s = p.story, sc = p.screens, ph = p.photos, m = p.moment, l = projectPage;
+const s = p.story, sc = p.screens, ph = p.photos, l = projectPage;
 const svgs = import.meta.glob<string>('/src/assets/projects/**/*.svg', { query: '?raw', import: 'default', eager: true });
 const logo = p.brand ? svgs[`/src/assets${p.brand.logo}`] : null;
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -43,7 +43,6 @@ const facts = [
 const WIDE = { sizes: '(max-width: 1023px) 92vw, 56vw', widths: [640, 960, 1280, 1600, 2000] };
 const NARROW = { sizes: '(max-width: 1023px) 92vw, 40vw', widths: [480, 720, 960, 1280] };
 const PHONE = { sizes: '(max-width: 639px) 46vw, 20vw', widths: [360, 540, 720] };
-const THIRD = { sizes: '(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 30vw', widths: [400, 600, 800, 1200] };
 const LONG = { sizes: '(max-width: 1023px) 86vw, 50vw', widths: [720, 1080, 1440, 1920] };
 const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/projects/**/*.{jpg,jpeg,png,webp}', { eager: true });
 const lqip = sc ? (await getImage({ src: files[`/src/assets${sc.desktop}`].default, width: 24, format: 'webp', quality: 40 })).src : '';
@@ -101,7 +100,9 @@ const side = logo ? 'brand' : sc ? 'phone' : ph ? 'photo' : null;
       </div>
     </div>
 
-    <!-- 3. the mosaic: what the project has, on a tight grid -->
+    <!-- 3. the work, thinned to the images that say something: the device mockup, the home page scrolling in its
+         window beside another page on a phone (Toran: its photos). Tried: a dense mosaic with crops further down the
+         home page, the second phone, Imagoo's reel stills and Woonpact's logo on its swatches — filler -->
     <div class="c-project-case__mosaic o-container o-grid">
       {p.mockup && (
         <div class="c-project-case__tile c-project-case__tile--full c-project-case__tile--photo" data-reveal="media">
@@ -116,27 +117,11 @@ const side = logo ? 'brand' : sc ? 'phone' : ph ? 'photo' : null;
           <div class="c-project-case__tile c-project-case__tile--narrow c-project-case__tile--panel c-project-case__tile--phone" data-reveal="media" style="--i:1">
             <ProjectImage class="c-project-case__phone" src={sc.mobile[1]} alt={`${p.title}: another page on a phone`} {...PHONE} />
           </div>
-          {side === 'phone'
-            ? <div class="c-project-case__tile c-project-case__tile--narrow c-project-case__tile--crop" data-reveal="media"><ProjectImage class="c-project-case__img" src={sc.desktop} alt="" position="30% 40%" {...NARROW} /></div>
-            : <div class="c-project-case__tile c-project-case__tile--narrow c-project-case__tile--panel c-project-case__tile--phone" data-reveal="media"><ProjectImage class="c-project-case__phone" src={sc.mobile[0]} alt="" {...PHONE} /></div>}
-          <div class="c-project-case__tile c-project-case__tile--wide c-project-case__tile--crop" data-reveal="media" style="--i:1">
-            <ProjectImage class="c-project-case__img" src={sc.desktop} alt="" position="50% 72%" {...WIDE} />
-          </div>
         </>
       )}
       {ph && [ph[1], ph[2], ph[3]].map((src, i) => (
         <div class:list={['c-project-case__tile', ['c-project-case__tile--wide', 'c-project-case__tile--narrow', 'c-project-case__tile--full'][i], 'c-project-case__tile--photo']} data-reveal="media" style={`--i:${i % 2}`}>
           <ProjectImage class="c-project-case__img" src={src} alt="" {...(i === 1 ? NARROW : WIDE)} />
-        </div>
-      ))}
-      {m?.images?.map((src, i) => (
-        <div class="c-project-case__tile c-project-case__tile--third c-project-case__tile--still" data-reveal="media" style={`--i:${i % 3}`}>
-          <ProjectImage class="c-project-case__img" src={src} alt="" {...THIRD} />
-        </div>
-      ))}
-      {p.brand && logo && p.brand.swatches.map((c, i) => (
-        <div class="c-project-case__tile c-project-case__tile--third c-project-case__tile--swatch" style={`background:${c.bg};color:${c.fg};--i:${i}`} data-reveal="media" aria-hidden="true">
-          <span class="c-project-case__logo" set:html={logo} />
         </div>
       ))}
       {!sc && !ph && [0, 1].map((i) => (

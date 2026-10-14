@@ -142,7 +142,11 @@ function initScrollToNextPage(root) {
       0);
   }
   // a slow settle of the image inside its box (ends at 1, as on the next page)
-  if (bg) tl.fromTo(bg, { scale: 1.15 }, { scale: 1, duration: 1 }, 0);
+  // (a thumbnail: only its screenshot settles, from 1.06, so the field keeps its margin all round; scaling the whole
+  // visual by 1.15 pushed the screenshot almost onto the box's edges)
+  const shot = bg?.matches('.c-visual--thumb') ? bg.querySelector('.c-visual__shot') : null;
+  if (shot) tl.fromTo(shot, { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
+  else if (bg) tl.fromTo(bg, { scale: 1.15 }, { scale: 1, duration: 1 }, 0);
   if (word) tl.fromTo(word, { autoAlpha: 0 }, { autoAlpha: 1, duration: .25 }, .75);
   // the labels on the visual go just before the end (the visual lands bare, as on the next page)
   if (hud) tl.fromTo(hud, { autoAlpha: 1 }, { autoAlpha: 0, duration: .07 }, .9);
