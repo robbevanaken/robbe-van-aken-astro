@@ -16,7 +16,7 @@
    the title and the context as ONE two-tone statement at the h2 size in medium (the title in the grey, like the
    footer's title), cols 1–8, the main visual under it (_project-detail.css) */
 .c-page-intro--case{row-gap:0;align-content:start}
-/* no minimum height: the visual simply follows the statement at a fixed distance (--space-xl, _project-detail.css)
+/* no minimum height: the visual simply follows the statement at a fixed distance (--space-l, _project-detail.css)
    (tried: tall enough that the visual's top edge landed on the fixed tiles' line, the tiles in its corners — it left a
    gap of empty paper and didn't look right) */
 .c-page-intro--case .c-page-intro__meta{grid-column:1 / -1;grid-row:1;display:flex;flex-wrap:wrap;gap:6px;margin:0 0 var(--space-m)}

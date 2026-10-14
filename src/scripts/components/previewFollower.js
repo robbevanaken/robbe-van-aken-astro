@@ -1,7 +1,8 @@
 // Image preview cursor follower (Osmo Supply's "Image Preview Cursor Follower", its logic kept as delivered; wrapped in
 // the site's mount / cleanup pattern): over a [data-follower-item] the item's [data-follower-visual] is cloned into the
 // [data-follower-cursor] that trails the pointer, the old one sliding out and the new one in (down the list: from
-// below, up: from above). Home's strips (sections/Projects.astro), styles in _work-strips.css (the show / hide is CSS,
+// below, up: from above; with data-follower-axis="x" on the wrap it slides sideways instead: to the right, from the
+// right — home's strips stand side by side). Home's strips (sections/Projects.astro), styles in _work-strips.css (the show / hide is CSS,
 // fine pointers and 1024px+ only).
 import gsap from 'gsap';
 
@@ -24,6 +25,7 @@ export function initPreviewFollower(root = document) {
     const offset = 100; // The animation distance in %
     const duration = 0.5; // The animation duration of all visual transforms
     const ease = 'power2.inOut';
+    const P = wrap.dataset.followerAxis === 'x' ? 'xPercent' : 'yPercent'; // the slide's axis
 
     gsap.set(follower, { xPercent: -50, yPercent: -50 });
     const xTo = gsap.quickTo(follower, 'x', { duration: 0.6, ease: 'power3' });
@@ -36,21 +38,21 @@ export function initPreviewFollower(root = document) {
         prevIndex = index;
         follower.querySelectorAll('[data-follower-visual]').forEach((el) => {
           gsap.killTweensOf(el);
-          gsap.to(el, { yPercent: forward ? -offset : offset, duration, ease, overwrite: 'auto', onComplete: () => el.remove() });
+          gsap.to(el, { [P]: forward ? -offset : offset, duration, ease, overwrite: 'auto', onComplete: () => el.remove() });
         });
         const visual = item.querySelector('[data-follower-visual]');
         if (!visual) return;
         const clone = visual.cloneNode(true);
         clone.querySelectorAll('img').forEach((img) => { img.loading = 'eager'; });
         followerInner.appendChild(clone);
-        if (!firstEntry) gsap.fromTo(clone, { yPercent: forward ? offset : -offset }, { yPercent: 0, duration, ease, overwrite: 'auto' });
+        if (!firstEntry) gsap.fromTo(clone, { [P]: forward ? offset : -offset }, { [P]: 0, duration, ease, overwrite: 'auto' });
         else firstEntry = false;
       }, on);
       item.addEventListener('mouseleave', () => {
         const el = follower.querySelector('[data-follower-visual]');
         if (!el) return;
         gsap.killTweensOf(el);
-        gsap.to(el, { yPercent: -offset, duration, ease, overwrite: 'auto', onComplete: () => el.remove() });
+        gsap.to(el, { [P]: -offset, duration, ease, overwrite: 'auto', onComplete: () => el.remove() });
       }, on);
     });
 

@@ -60,7 +60,7 @@ function followerMedia(card) {
   const inner = cursor?.querySelector('[data-follower-cursor-inner]');
   if (!inner || getComputedStyle(cursor).display === 'none' || +getComputedStyle(inner).opacity < .5) return null;
   const vis = [...inner.querySelectorAll('[data-follower-visual]')].pop();
-  if (vis) { gsap.killTweensOf(vis); gsap.set(vis, { yPercent: 0 }); } // mid-slide: settled before it's measured
+  if (vis) { gsap.killTweensOf(vis); gsap.set(vis, { xPercent: 0, yPercent: 0 }); } // mid-slide: settled before it's measured
   return vis || null;
 }
 
