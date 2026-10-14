@@ -6,7 +6,7 @@
    staircase on neutomni.com; tried: one service at a time in a row under the icon, centred or in the intro's
    columns; all services as rows with an R-quarter mark; on paper as a printer's proof.) Below 1024px: the head
    centred, then one centred column (icon, count, name, text) switching per service, pills at the bottom. */
-.c-services{padding-top:calc(var(--space-xl) * 1.5)} /* it follows the pitch, which ends on its R anchor */
+.c-services{padding-top:var(--space-xl)} /* it follows the pitch, which ends on its R anchor (was 1.5 × --space-xl: a touch too far, with the smaller portrait) */
 .c-services__title.c-services__title{grid-column:1 / span 6;grid-row:1;align-self:start;margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em}
 .c-services__intro.c-services__intro{grid-column:7 / -1;grid-row:1;margin:0;font-size:clamp(26px,2.7778vw,52px);line-height:1.08;letter-spacing:-.03em;font-weight:500} /* the pitch quote's columns and voice (40 @1440, medium) */
 .c-services__pin{height:calc(var(--services,4) * 100svh)}

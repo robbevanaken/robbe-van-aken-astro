@@ -1,4 +1,4 @@
-/* Pitch: exploded R on cols 1–6, quote on cols 7–12 (big: one of the page's typographic moments), portrait on cols 7–9. Spacing on top only, like every home
+/* Pitch: exploded R on cols 1–6, quote on cols 7–12 (big: one of the page's typographic moments), portrait on cols 7–8 (two full columns; was 7–9 at 82%: a touch too wide). Spacing on top only, like every home
    section: the R anchor ends the section and the projects' head (the small R) follows right after it.
    Below 1024px: quote, R, portrait, so the R sits in the middle of the section, where it is when the section is. */
 .c-pitch{padding-top:var(--space-section)}
@@ -6,7 +6,7 @@
 .c-pitch__body{grid-column:7 / -1;grid-row:1;display:grid;grid-template-columns:subgrid;align-content:start}
 .c-pitch__body:not(:has(.c-pitch__portrait)){align-self:center} /* no portrait yet (builds leave the placeholder out): the quote level with the R */
 .c-pitch__quote.c-pitch__quote{grid-column:1 / -1;font-size:clamp(26px,2.7778vw,52px);line-height:1.08;letter-spacing:-.03em;font-weight:500} /* a statement: 40 @1440, between the lead and the h2, set tight; doubled: .u-text-lead is imported later */
-.c-pitch__portrait{grid-column:1 / span 3;width:82%;margin:var(--space-xl) 0 0;aspect-ratio:315 / 372;background:var(--panel);color:var(--fg);display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}
+.c-pitch__portrait{grid-column:1 / span 2;width:100%;margin:var(--space-xl) 0 0;aspect-ratio:315 / 372;background:var(--panel);color:var(--fg);display:flex;align-items:flex-end;padding:var(--space-xs);overflow:hidden}
 .c-pitch__portrait-img{width:100%;height:100%;object-fit:cover;margin:calc(-1 * var(--space-xs))}
 
 @media (max-width:1023px){
