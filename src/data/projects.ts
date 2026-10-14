@@ -89,13 +89,16 @@ const allProjects: Project[] = [
   },
   {
     slug: 'imagoo', title: 'Imagoo', label: 'Imagoo', image: '/projects/imagoo/mood.jpg', position: '50% 55%', mockup: '/projects/imagoo/mockup.jpg', // mood: their camera rig, behind the scenes (imagoo.be)
-    description: 'A redesign of the website of a video and photography studio.', service: 'Design & development', year: 2026,
+    description: 'A full renovation of a video and photography studio\u2019s website.', service: 'Design & development', year: 2026,
     colors: { a: '#1c1a19', b: '#c9744a', t: '#f4e7dd' }, url: 'https://www.imagoo.be', client: 'Imagoo', stack: ['Craft CMS', 'Vimeo', 'GSAP'],
+    // a RENOVATION: the original site was built by the agency SKINN; the whole site was reworked from it (the case to
+    // show that renovations are on the table too)
+    credit: { label: 'Original site by', value: 'SKINN' },
     story: {
-      intro: 'Imagoo makes video and photography for brands, and its work had outgrown its website.',
-      challenge: 'The old site no longer matched the work. The footage had to carry the site, and the content package, their key offer, had to be clear to companies that are new to working with a studio.',
-      approach: 'Keeping what worked, rethinking the rest: a wide wordmark and a calm grid around big, full-bleed video, the package in its own spot from the first screen, the services as short, scannable blocks, and the work itself always one scroll away.',
-      result: 'A site that sells the studio the way the studio sells its clients: by showing, not telling.',
+      intro: 'Imagoo\u2019s website, first built by SKINN, had served the studio well. Its work had outgrown it.',
+      challenge: 'The original site, made by the agency SKINN, had a solid base, but it no longer matched the work. The footage had to carry the site, and the content package, the studio\u2019s key offer, had to be clear to companies new to working with a studio. Starting from zero would have thrown away what still worked.',
+      approach: 'A renovation, not a demolition. The parts of SKINN\u2019s original that still held up stayed; the whole site was reworked around them: a wide wordmark and a calm grid around big, full-bleed video, the package in its own spot from the first screen, the services as short, scannable blocks, and the work itself always one scroll away.',
+      result: 'Proof that a site doesn\u2019t have to start over to feel new: the same studio, now with a website that sells it the way it sells its clients, by showing, not telling.',
     },
     moment: { kind: 'strip', title: 'The footage first', text: 'Their hero is a reel of their own work, no stock, no slogans: every visit starts with what the studio actually makes.',
       images: [1, 2, 3, 4, 5, 6].map((n) => `/projects/imagoo/still-${n}.jpg`) },
