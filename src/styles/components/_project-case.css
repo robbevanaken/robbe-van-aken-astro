@@ -9,7 +9,7 @@
    4. the result as the closing statement.
    Media open from their centre as they come into view (global/reveal.js). Below 1024px everything stacks: the cards
    two by two, the panel above the text (not pinned), the tiles full width (thirds two by two). */
-.c-project-case{padding-top:var(--space-xl)}
+.c-project-case{padding-top:var(--gutter)} /* the fact cards right under the main visual, a gutter apart, as the cards among themselves (was --space-xl: they floated loose from it) */
 .c-project-case>*+*{margin-top:var(--space-section)}
 
 /* 1. statement + cards */

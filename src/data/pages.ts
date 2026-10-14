@@ -94,7 +94,7 @@ export const privacyPage = {
         { list: [
           'Answering your message and preparing a proposal: steps taken at your request before a possible contract.',
           'Keeping the site safe and working: my legitimate interest in a secure, reliable website.',
-          'Analytics (Google Analytics, through Google Tag Manager): only with your consent, which you can withdraw at any time.',
+          'Analytics (Google Analytics): only with your consent, which you can withdraw at any time.',
           'Keeping business records of projects: a legal obligation.',
         ] },
       ] },
@@ -102,7 +102,7 @@ export const privacyPage = {
       blocks: [
         { p: 'This site stores as little as it can in your browser. There are no advertising cookies.' },
         { rows: [...cookies.necessary, ...cookies.analytics] }, // the same list as the cookie preferences (cookies.ts)
-        { p: 'With your permission, this site uses Google Tag Manager to load Google Analytics, which tells me how the site is used (pages visited, rough location, device), never who you are. It only runs after you allow analytics. You can change your choice at any time in the <button type="button" data-cookie-settings>cookie settings</button>.' },
+        { p: 'With your permission, this site uses Google Analytics, which tells me how the site is used (pages visited, rough location, device), never who you are. It only runs after you allow analytics. You can change your choice at any time in the <button type="button" data-cookie-settings>cookie settings</button>.' },
         { p: 'The fonts are served from this site itself, so no request goes to Google Fonts or any other font service. Links to Instagram and LinkedIn are plain links: those sites only see you once you click through.' },
       ] },
     { title: 'Who else sees it',
@@ -110,7 +110,7 @@ export const privacyPage = {
         { p: 'A small number of service providers, only as far as they need to for their part:' },
         { list: [
           'The hosting provider that serves this site and delivers the contact form to my mailbox.',
-          'Google (Analytics and Tag Manager, only with your consent; Gmail, where my mailbox lives). Google may process data outside the European Economic Area; it does so under the EU–US Data Privacy Framework and standard contractual clauses.',
+          'Google (Analytics, only with your consent; Gmail, where my mailbox lives). Google may process data outside the European Economic Area; it does so under the EU–US Data Privacy Framework and standard contractual clauses.',
           'People I bring into a project, when your enquiry concerns them, and only what they need.',
         ] },
         { p: 'Beyond that I only share data when the law requires it.' },

@@ -17,15 +17,17 @@ const person = { '@context': 'https://schema.org', '@type': 'Person', name: nav.
 // without the .html of the build's file format and without a trailing slash, as the links and the sitemap
 const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/').replace(/(.)\/$/, '$1'), Astro.site);
 const image = new URL(meta.image, Astro.site);
-// Google Tag Manager: production builds only (`live`), and it only runs once the visitor allows analytics in the cookie banner
-// (vanilla-cookieconsent runs scripts with type="text/plain" data-category="analytics" on consent). Consent mode v2
-// defaults are set first (everything denied), and global/cookieConsent.js updates them with the visitor's choice.
-const GTM = 'GTM-PHRBR9CS';
+// Google Analytics (GA4, the gtag.js tag straight from Google, no Tag Manager): production builds only (`live`), and it
+// only loads once the visitor allows analytics in the cookie banner (vanilla-cookieconsent runs scripts with
+// type="text/plain" data-category="analytics" on consent: the tag is injected from there, never pasted as is, which
+// would load it before any consent). Consent mode v2 defaults are set first (everything denied), and
+// global/cookieConsent.js updates them with the visitor's choice. Page swaps send their own page_view (main.js).
+const GA = 'G-DHBL6P1E1P';
 // production builds only (NODE_ENV: import.meta.env in this file trips Vite's dev transform)
 const live = process.env.NODE_ENV === 'production';
 // as strings (set:html): braces written straight inside a conditional script tag would be read as template expressions (and never write the tag itself in a comment here: dev reads it as a script)
 const consentDefaults = "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});";
-const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','" + GTM + "');";
+const gaSnippet = "(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=" + GA + "';document.head.appendChild(s)})();window.__ga='" + GA + "';gtag('js',new Date());gtag('config','" + GA + "');";
 ---
 <!doctype html>
 <html lang="en" class="no-js" data-theme="light">
@@ -35,7 +37,7 @@ const gtmSnippet = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':ne
     <meta name="description" content={description} />
     <title>{title}</title>
     {live && <script is:inline set:html={consentDefaults} />}
-    {live && <script is:inline type="text/plain" data-category="analytics" set:html={gtmSnippet} />}
+    {live && <script is:inline type="text/plain" data-category="analytics" set:html={gaSnippet} />}
     <!-- theme (scripts/global/theme.js): light (dark sections are set per section), or the hidden "wild" one if it was found in this visit, set before the first paint -->
     <script is:inline>document.documentElement.classList.remove('no-js');try{if(sessionStorage.getItem('wild'))document.documentElement.dataset.theme='wild'}catch(e){}</script>
     <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless);

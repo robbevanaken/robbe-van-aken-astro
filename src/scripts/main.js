@@ -27,6 +27,7 @@ import { initContactModal } from './global/contactModal.js';
 import { initStackCards } from './components/stackCards.js';
 import { initPricing } from './components/pricing.js';
 import { initWorkStrips } from './components/workStrips.js';
+import { initCraftBand } from './components/craftBand.js';
 import { initPreviewFollower } from './components/previewFollower.js';
 import { initContactForm } from './components/contactForm.js';
 import { initMaskReveal } from './components/maskReveal.js';
@@ -56,9 +57,9 @@ function whenUncovered() {
 // every init only looks inside the page's own container (root)
 function mount({ remount = false } = {}) {
   const id = ++page, root = document.getElementById('swup');
-  // a page view for Google Tag Manager on every page swap (the first load counts itself; trigger in GTM: custom event
-  // "page_view_swap"); harmless without GTM
-  if (id > 1 && !remount) (window.dataLayer = window.dataLayer || []).push({ event: 'page_view_swap', page_path: location.pathname, page_title: document.title });
+  // a page view for Google Analytics on every page swap (the first load counts itself via gtag's config); only once
+  // analytics has been allowed (window.__ga is set by the tag in layouts/Base.astro), so nothing queues up before
+  if (id > 1 && !remount && window.__ga && typeof window.gtag === 'function') window.gtag('event', 'page_view', { page_location: location.href, page_path: location.pathname, page_title: document.title });
   syncThemeMeta();
   cleanups = [
     initSiteHeader(root),
@@ -77,6 +78,7 @@ function mount({ remount = false } = {}) {
     initStackCards(root),
     initPricing(root),
     initWorkStrips(root),
+    initCraftBand(root),
     initPreviewFollower(root),
     initContactForm(root),
     initWorkFilter(root),

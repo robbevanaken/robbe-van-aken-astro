@@ -90,14 +90,11 @@ Other performance notes (done):
 - Lighthouse locally (mobile): 97–100 on every category, every page.
 - The repo's `.htaccess` leaves `Strict-Transport-Security` out on purpose: add it (as above) once HTTPS works on the domain.
 
-## Analytics (Google Tag Manager)
+## Analytics (Google Analytics)
 
-- Container `GTM-PHRBR9CS`, only in production builds (`layouts/Base.astro`, `process.env.NODE_ENV`), and it only runs
-  once a visitor accepts analytics in the cookie banner (consent mode v2: denied by default).
-- **To set up in GTM**: the site changes pages without reloading. Add a trigger on the custom event `page_view_swap`
-  (pushed with `page_path` and `page_title`) and fire the GA4 page view on it, next to the normal first page view.
-- Keep the privacy notice (`privacyPage` in `src/data/pages.ts`) in step with what GTM loads (GA4 now; anything else
-  added later must be named there too).
+- GA4 `G-DHBL6P1E1P` via gtag.js, no Tag Manager (`layouts/Base.astro`, production builds only); it only loads once a
+  visitor accepts analytics in the cookie banner (consent mode v2: denied by default). Setup + test: `ANALYTICS.md`.
+- Keep the privacy notice (`privacyPage` in `src/data/pages.ts`) in step with what loads.
 
 ## Before going live
 

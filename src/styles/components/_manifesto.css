@@ -7,7 +7,12 @@
 .c-manifesto__end{grid-column:1 / -1;height:0}
 .c-manifesto__r{display:block;width:.8em;height:.8em}
 .c-manifesto__indent{display:inline-block;vertical-align:baseline;width:calc((100% - 11 * var(--gutter)) / 12 * 2 + 2 * var(--gutter))}
-@media (max-width:639px){ .c-manifesto{--mf:clamp(26px,7.4vw,40px)} .c-manifesto__text{line-height:1.08} .c-manifesto__indent{width:calc((100% - 3 * var(--gutter)) / 4 + var(--gutter))} }
+@media (max-width:639px){
+  .c-manifesto{--mf:clamp(26px,7.4vw,40px)} .c-manifesto__text{line-height:1.08} .c-manifesto__indent{position:relative;width:calc((100% - 3 * var(--gutter)) / 4 + var(--gutter))}
+  /* the R bigger than the capitals here (as tall as two of them; at cap height it read as a speck on a phone), standing
+     on the baseline and rising into the room above the first line: out of the flow, so the line keeps its height */
+  .c-manifesto__r{position:absolute;left:0;bottom:-.04em;width:1.7em;height:1.7em}
+}
 /* the second paragraph from col 3, the portrait beside it in cols 1–2 (under the R), its top on the first line's
    capitals; it opens from its centre as it comes into view (global/reveal.js, the case media's reveal) */
 .c-manifesto__text--next{grid-column:3 / -1;grid-row:2}

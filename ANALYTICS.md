@@ -1,49 +1,29 @@
 # Google Analytics: setup checklist
 
-Already in the code: the GTM container `GTM-PHRBR9CS` (`layouts/Base.astro`, production builds only), consent mode v2
-(denied by default, updated from the cookie banner in `global/cookieConsent.js`), `_ga*` cookies cleared when analytics
-is switched off, the privacy notice naming Google Analytics, and a `page_view_swap` event pushed to `dataLayer` on
-every page swap (`mount()` in `scripts/main.js`, with `page_path` and `page_title`). What's left happens in the GA and
-GTM interfaces.
+In the code (since 14 Oct 2026): the GA4 tag `G-DHBL6P1E1P` loaded straight with gtag.js, no Tag Manager
+(`layouts/Base.astro`, production builds only). It only loads once a visitor accepts analytics in the cookie banner:
+consent mode v2 is denied by default and updated from the banner (`global/cookieConsent.js`), `_ga*` cookies are
+cleared when analytics is switched off, and the privacy notice names Google Analytics. The first page view is sent by
+gtag's `config`; every page swap sends its own `page_view` (`mount()` in `scripts/main.js`).
 
-## 1. GA4 property (analytics.google.com)
+Don't paste the snippet GA shows ("Install manually") into the site: it's already in, behind the consent. Pasted as is
+it would load before any consent and count every visit twice.
 
-- [ ] Admin → Create → Property; data stream: Web, `https://robbevanaken.be`
-- [ ] Note the **Measurement ID** (`G-XXXXXXXXXX`)
+## In GA4 (analytics.google.com)
+
+- [x] Property + web data stream for `https://robbevanaken.be`, Measurement ID `G-DHBL6P1E1P`
 - [ ] Data stream → **Enhanced measurement** → gear → switch **"Page changes based on browser history events" off**
-      (the site changes pages without reloading and sends its own event; with this on every page counts twice)
+      (the site changes pages without reloading and sends its own page view; with this on every page counts twice)
 
-## 2. GTM (tagmanager.google.com → container GTM-PHRBR9CS)
+## Test
 
-Variables (Variables → New → Data Layer Variable):
+- [x] Locally (`npm run build` + `npx serve dist`): nothing goes to Google before consent; after "Accept all" gtag.js
+      loads and a hit is sent, and a page swap sends one more (checked 14 Oct 2026)
+- [ ] On the live site: GA4 → **Reports → Realtime** shows the visits; click through a few pages
 
-- [ ] `dlv - page_path`, variable name `page_path`
-- [ ] `dlv - page_title`, variable name `page_title`
+## GTM
 
-Tag A, the first page view:
-
-- [ ] Type **Google Tag**, Tag ID: the `G-…`
-- [ ] Trigger: **Initialization – All Pages**
-
-Tag B, page swaps:
-
-- [ ] Trigger: Triggers → New → **Custom Event**, event name `page_view_swap`
-- [ ] Tag: **Google Analytics: GA4 Event**, Measurement ID: the same `G-…`, event name `page_view`
-- [ ] Event parameters:
-  - `page_location` → `{{Page URL}}`
-  - `page_path` → `{{dlv - page_path}}`
-  - `page_title` → `{{dlv - page_title}}`
-- [ ] **Submit → Publish**
-
-## 3. Test
-
-- [ ] GTM doesn't load in `npm run dev`: test on the live site, or locally with `npm run build` + `npx serve dist`
-- [ ] GTM → **Preview**, open the site, **accept analytics** in the cookie banner (without consent GTM doesn't load, on
-      purpose)
-- [ ] Click through to /work and a project: Tag Assistant shows `page_view_swap` with Tag B fired on every swap
-- [ ] GA4 → **Reports → Realtime** shows the visits
-
-## Later
-
-- Anything else loaded through GTM goes into the privacy notice (`privacyPage` in `src/data/pages.ts`) and
-  `src/data/cookies.ts` too.
+- The GTM container `GTM-PHRBR9CS` is no longer used by the site: it can be deleted or left empty in
+  tagmanager.google.com.
+- Anything else added later (another analytics or ads tag) goes into the privacy notice (`privacyPage` in
+  `src/data/pages.ts`) and `src/data/cookies.ts` too.

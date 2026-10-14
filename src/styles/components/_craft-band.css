@@ -29,8 +29,14 @@
 .c-craft-band-wrap + .t-dark .c-work-strips{padding-top:0}
 .c-craft-band-wrap + .t-dark .c-work-strips__title{margin-top:-.1365em}
 
+/* desktop: more air on both sides (1.8 × the section spacing, both gaps stay equal) */
+@media (min-width:1024px){ .c-craft-band{--g:max(calc(var(--space-section) * 1.8),calc(var(--sb) + var(--fs) * .118))} }
 @media (min-width:1024px) and (max-height:740px){ .c-craft-band{--sb:var(--space-section)} } /* services not pinned */
 @media (max-width:1023px){
   .c-craft-band{--fs:clamp(96px,30vw,200px);--sb:calc(env(safe-area-inset-bottom,0px) + var(--float-bottom) + var(--space-s) + var(--space-xl))} /* stage padding + .c-services padding-bottom */
 }
 @media (max-width:1023px) and (max-height:600px){ .c-craft-band{--sb:calc(var(--space-xl) * 2)} }
+
+/* on a project's page, under the fact cards (sections/ProjectCase.astro): no services to centre against, the case
+   study's own section spacing (.c-project-case > * + *) places it; the frame's top bracket sits at the box's top */
+.c-craft-band--case{margin-block:calc(.08em - .118em) 0}

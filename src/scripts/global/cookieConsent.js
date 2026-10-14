@@ -1,5 +1,5 @@
 // Cookie consent (vanilla-cookieconsent v3), themed in styles/vendor/_cookieconsent.css.
-// Categories: "necessary" (always on) and "analytics" (off until accepted): Google Tag Manager (layouts/Base.astro,
+// Categories: "necessary" (always on) and "analytics" (off until accepted): Google Analytics (gtag.js, layouts/Base.astro,
 // production only) is a <script type="text/plain" data-category="analytics">, so it only runs after consent.
 // The footer button [data-cookie-settings] reopens the preferences (delegated, so it keeps working after page swaps).
 // The library and its CSS load on their own, once the browser is idle (they're not needed for the first paint).
@@ -45,7 +45,7 @@ function run(CookieConsent) {
     },
     categories: {
       necessary: { enabled: true, readOnly: true },
-      // Google Tag Manager (production only, layouts/Base.astro); its cookies are cleared when analytics is switched off
+      // Google Analytics (production only, layouts/Base.astro); its cookies are cleared when analytics is switched off
       analytics: { autoClear: { cookies: [{ name: /^_ga/ }] } }, // GA4 sets _ga and _ga_<id> (data/cookies.ts)
     },
     language: {
@@ -69,7 +69,7 @@ function run(CookieConsent) {
             sections: [
               { description: 'Choose which cookies you allow. Necessary cookies are always on because the site needs them.' },
               { title: 'Necessary', description: 'Needed for the site to work: your cookie choice, your theme and whether the opening animation has played. Nothing here is used to track you.', linkedCategory: 'necessary', cookieTable: table(cookies.necessary) },
-              { title: 'Analytics', description: 'Google Analytics, loaded through Google Tag Manager: shows me how the site is used (pages visited, rough location, device), never who you are. Only set when you allow it.', linkedCategory: 'analytics', cookieTable: table(cookies.analytics) },
+              { title: 'Analytics', description: 'Google Analytics: shows me how the site is used (pages visited, rough location, device), never who you are. Only set when you allow it.', linkedCategory: 'analytics', cookieTable: table(cookies.analytics) },
               { title: 'More information', description: 'Read the <a href="/privacy">privacy notice</a> or mail me with any questions.' },
             ],
           },

@@ -8,15 +8,20 @@
 // by components/marquee.js: a slow constant drift (90px/s; was ~600) that only picks up a little while scrolling (a quarter of the
 // accent band's boost). Dark chapter (t-dark).
 // Copy: `craftBand` in site.ts. Styles: _craft-band.css.
+// Also under the fact cards on a project's page (sections/ProjectCase.astro): `text` = the project's name, `dark={false}`
+// (it takes the page's own tone), class c-craft-band--case (plain section spacing instead of the services' maths).
 import Corners from '../ui/Corners.astro';
 import { craftBand } from '../../data/site';
-const items = Array.from({ length: 4 });
+interface Props { text?: string; dark?: boolean; class?: string }
+const { text = craftBand.text, dark = true, class: cls } = Astro.props;
+// enough copies that half the track (the loop's length) is wider than the screen, also for a short name
+const items = Array.from({ length: Math.max(4, Math.ceil(32 / text.length) * 2) });
 // every word's first letter as a blackletter CAPITAL, an initial in the old sense (its lowercase was too small and odd
 // next to Inter's ascenders); the separators stay as they are
-const words = craftBand.text.split(' ').map((w) => (/^[\p{L}]/u.test(w) ? { cap: w[0].toUpperCase(), rest: w.slice(1) } : { rest: w }));
+const words = text.split(' ').map((w) => (/^[\p{L}]/u.test(w) ? { cap: w[0].toUpperCase(), rest: w.slice(1) } : { rest: w }));
 ---
-<div class="t-dark c-craft-band-wrap">
-  <section class="c-craft-band" role="note" aria-label={craftBand.text.replace(/\s*·\s*$/, '')} data-marquee data-marquee-speed="90" data-marquee-boost=".25">
+<div class:list={[dark && 't-dark', 'c-craft-band-wrap']}>
+  <section class:list={['c-craft-band', cls]} role="note" aria-label={text.replace(/\s*·\s*$/, '')} data-marquee data-marquee-speed="90" data-marquee-boost=".25">
     <span class="c-craft-band__frame" aria-hidden="true"><Corners /></span>
     <div class="c-craft-band__window">
       <div class="c-craft-band__track" aria-hidden="true" data-marquee-track>

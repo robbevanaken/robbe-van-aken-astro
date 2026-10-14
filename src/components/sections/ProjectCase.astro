@@ -1,8 +1,8 @@
 ---
 // The case study on a project's detail page, below its visual (after naughtyduk.com's project pages, in this site's
 // language; the context itself opens the page, above the main visual: pages/work/[slug].astro): 1. a row of fact
-// cards — real facts only: client, year, what it's built with, and the measured result or the collaboration where there is one;
-// 2. the story beside a panel that stays put while it's read: the challenge, the approach (and the parts of a suite),
+// cards — real facts only: client, year, what it's built with, and the measured result or the collaboration where there is one,
+// then the home's type band (CraftBand) with the project's name; 2. the story beside a panel that stays put while it's read: the challenge, the approach (and the parts of a suite),
 // then the facts as label / value rows and "Visit site"; 3. the work, only the images that say something: the
 // device mockup full width, then the long home page scrolling in its window beside another page on a phone (Toran:
 // its photos; tried: a dense mosaic with crops, stills and swatches — filler); 4. the result as the closing statement, with the back button.
@@ -12,6 +12,7 @@
 // Styles: styles/components/_project-case.css
 import ProjectImage from '../ui/ProjectImage.astro';
 import Button from '../ui/Button.astro';
+import CraftBand from './CraftBand.astro';
 import { getImage } from 'astro:assets';
 import type { Project } from '../../data/projects';
 import { projectPage } from '../../data/pages';
@@ -64,6 +65,9 @@ const side = logo ? 'brand' : sc ? 'phone' : ph ? 'photo' : null;
         ))}
       </ul>
     </div>
+
+    <!-- the home's type band (sections/CraftBand.astro) under the cards, the project's name running through it -->
+    <CraftBand text={`${p.title} ·`} dark={false} class="c-craft-band--case" />
 
     <!-- 2. the story beside a panel that stays put -->
     <div class="c-project-case__story o-container o-grid">

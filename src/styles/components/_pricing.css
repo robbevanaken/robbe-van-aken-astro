@@ -62,7 +62,7 @@
   @media (max-height:880px){ .c-pricing__stage{padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 108px)} } /* after the base rule, or it never applies */
 }
 @media (max-width:1023px){
-  .c-pricing{padding-top:var(--space-section)}
+  .c-pricing{padding-top:var(--space-xl)} /* a touch closer to the manifesto (was --space-section) */
   /* the R between the manifesto and the cards: bigger and against the right margin, the pitch's R mirrored (there
      it stands on the left, here on the right; was: small and centred, 40px on phones) */
   .c-pricing__r{justify-self:end;width:clamp(96px,26vw,128px);height:clamp(96px,26vw,128px);margin-bottom:var(--space-l)}
