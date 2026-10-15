@@ -9,6 +9,9 @@
 .c-contact-modal{position:fixed;inset:0;z-index:40;--ease-reveal:cubic-bezier(.16,1,.3,1)}
 .c-contact-modal[hidden]{display:none}
 .c-contact-modal__backdrop{position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 42%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .6s var(--ease-out)} /* a dark veil: the paper panel lies clearly on top (a paper-tinted veil let its edges melt into the page) */
+/* on a dark page the dark veil hardly changed it, and the panel (in the page's own dark) didn't stand out: there the
+   veil is a light wash instead, so the panel reads as a block on top (light: unchanged) */
+:root[data-theme="dark"] .c-contact-modal__backdrop{background:color-mix(in srgb,var(--fg) 16%,transparent)}
 .c-contact-modal__panel{position:absolute;left:50%;top:50%;translate:-50% calc(-50% + 24px);
   width:min(1280px,calc(100vw - 2 * var(--margin)));height:min(960px,calc(100svh - 48px)); /* centred on the screen, as tall as it allows */
   background:var(--bg);outline:1px solid var(--line);

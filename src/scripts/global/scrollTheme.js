@@ -5,11 +5,11 @@
 // set instantly, so nothing fades on a fresh page. The wild theme pauses it (setScrollTheme ignores it).
 // The zones are measured once (and again on resize / load / once everything has settled), so the scroll handler does
 // no layout work at all: it compares cached ranges against scrollY, coalesced to one check per frame.
-import { setScrollTheme } from './theme.js';
+import { setScrollTheme, BASE, CHAPTER } from './theme.js';
 
 export function initScrollTheme(root = document) {
   const els = [...root.querySelectorAll('.t-dark, [data-site-footer]')];
-  if (!els.length) { setScrollTheme('light', true); return; }
+  if (!els.length) { setScrollTheme(BASE, true); return; }
   const ac = new AbortController();
   let ranges = [], raf = 0, settle = 0;
 
@@ -19,7 +19,7 @@ export function initScrollTheme(root = document) {
   const check = () => {
     raf = 0;
     const y = scrollY + innerHeight * .55;
-    setScrollTheme(ranges.some(([a, b]) => a <= y && b > y) ? 'dark' : 'light');
+    setScrollTheme(ranges.some(([a, b]) => a <= y && b > y) ? CHAPTER : BASE);
   };
   const queue = () => { if (!raf) raf = requestAnimationFrame(check); };
   const remeasure = () => { measure(); queue(); };
@@ -30,6 +30,6 @@ export function initScrollTheme(root = document) {
   settle = setTimeout(remeasure, 1500); // fonts and images in: heights are final
   measure();
   const y = scrollY + innerHeight * .55;
-  setScrollTheme(ranges.some(([a, b]) => a <= y && b > y) ? 'dark' : 'light', true);
+  setScrollTheme(ranges.some(([a, b]) => a <= y && b > y) ? CHAPTER : BASE, true);
   return () => { ac.abort(); cancelAnimationFrame(raf); clearTimeout(settle); };
 }

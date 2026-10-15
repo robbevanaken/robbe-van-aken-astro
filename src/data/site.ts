@@ -14,6 +14,11 @@ export const socials = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/robbe-van-aken/?skipRedirect=true' },
 ];
 
+// the page's theme as you scroll: `base` for most of the page, `chapter` for the marked chapters (.t-dark: the
+// services + projects, and the footer); flip them to reverse the whole site (tried Oct 2026: a dark base with light
+// chapters — light stays the default)
+export const pageTheme = { base: 'light', chapter: 'dark' } as const;
+
 export const nav = {
   name: 'Robbe Van Aken',
   role: 'Freelancer', // header + loader + JSON-LD; the hero says "Digital craftsman"

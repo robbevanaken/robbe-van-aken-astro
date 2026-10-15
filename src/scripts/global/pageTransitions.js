@@ -29,7 +29,7 @@ import { handOff, arrive } from '../components/scrollNext.js';
 import { releaseIntro } from '../components/maskReveal.js';
 import { openProject } from '../components/openProject.js';
 import { rIntro } from '../r-journey/engine.js';
-import { setScrollTheme } from './theme.js';
+import { setScrollTheme, BASE } from './theme.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -191,7 +191,7 @@ async function cover(f) {
   f.count.textContent = '000';
   f.counter.style.setProperty('--p', 0);
   root.classList.add('is-transitioning');
-  setScrollTheme('light'); // leaving from a dark chapter: the page (and the overlay on it) ease back to the light the next page starts in
+  setScrollTheme(BASE); // leaving from a chapter: the page (and the overlay on it) ease back to the base theme the next page starts in
   // the style recalculation of showing the overlay lands in this frame, before anything moves
   await nextFrame();
   // the R already sits small in the mobile menu's corner (t is 1): it travels from there to the middle on a moving anchor

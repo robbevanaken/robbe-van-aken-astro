@@ -5,6 +5,8 @@
 // goes back. The switch fades: a view transition cross-fades the page (the R canvas too); browsers without view
 // transitions ease the colour tokens instead (html.is-theming). Reduced motion: instant. The footer's bottom row hints
 // at it (Footer.astro), and so does the console.
+import { pageTheme } from '../../data/site';
+export const BASE = pageTheme.base, CHAPTER = pageTheme.chapter; // the scroll theme's two sides (data/site.ts)
 const WILD = 'wild'; // sessionStorage: '1' while the hidden theme is on
 const FADE = .6; // s, same as the ::view-transition rule and html.is-theming in styles/base/_document.css
 const META = { dark: '#170e0b', light: '#f3eee8', wild: '#2323c8' }; // --bg of each theme, for the browser UI
@@ -12,7 +14,7 @@ let fading = null; // the running view transition (a quick next switch skips it)
 
 // read by the R engine every frame (glyph colours)
 const initial = document.documentElement.dataset.theme;
-export const theme = { mode: initial === 'wild' ? initial : 'light' };
+export const theme = { mode: initial === 'wild' ? initial : BASE };
 
 
 // the browser UI colour; swup's head plugin puts the page's own <meta> back on every swap, so mount() calls this again
@@ -42,7 +44,7 @@ function setTheme(mode) {
   setTimeout(() => html.classList.remove('is-theming'), FADE * 1000 + 50);
 }
 
-const toggleWild = () => setTheme(theme.mode === WILD ? 'light' : WILD);
+const toggleWild = () => setTheme(theme.mode === WILD ? BASE : WILD);
 
 // The scroll theme (global/scrollTheme.js): as a dark chapter reaches the middle of the screen the whole page eases to
 // the dark palette and back (html.is-theming transitions every colour token, _document.css; the R blends its own

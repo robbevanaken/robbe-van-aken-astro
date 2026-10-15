@@ -1,7 +1,7 @@
 ---
 // HTML shell for every page: styles, font preloads and the single script entry (scripts/main.js).
 import '../styles/main.css';
-import { meta, nav, socials } from '../data/site';
+import { meta, nav, socials, pageTheme } from '../data/site';
 import Music from '../components/ui/Music.astro';
 import SoundToggle from '../components/ui/SoundToggle.astro';
 import ContactModal from '../components/sections/ContactModal.astro';
@@ -30,7 +30,7 @@ const consentDefaults = "window.dataLayer=window.dataLayer||[];function gtag(){d
 const gaSnippet = "(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=" + GA + "';document.head.appendChild(s)})();window.__ga='" + GA + "';gtag('js',new Date());gtag('config','" + GA + "');";
 ---
 <!doctype html>
-<html lang="en" class="no-js" data-theme="light">
+<html lang="en" class="no-js" data-theme={pageTheme.base}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -62,7 +62,7 @@ const gaSnippet = "(function(){var s=document.createElement('script');s.async=tr
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#f3eee8" />
+    <meta name="theme-color" content={pageTheme.base === "dark" ? "#170e0b" : "#f3eee8"} />
     <!-- self-hosted Inter Tight (styles/base/_fonts.css): preload the two files every page needs -->
     <link rel="preload" href="/fonts/inter-tight-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-tight-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -85,5 +85,5 @@ const gaSnippet = "(function(){var s=document.createElement('script');s.async=tr
     <script>
       import '../scripts/main.js';
     </script>
-  </body>
+</body>
 </html>
