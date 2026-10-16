@@ -53,7 +53,15 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   // the CSS size follows innerWidth/innerHeight exactly (100vh is taller than the visible area on iOS while the toolbar shows,
   // which would stretch the drawing)
   // at most 2 device pixels per css pixel, 1.5 on touch screens (phones: 3 is a lot of glyphs per frame)
-  function resize(){DPR=Math.min(window.devicePixelRatio||1,matchMedia('(pointer: coarse)').matches?1.5:2);W=innerWidth;H=innerHeight;cvs.width=W*DPR;cvs.height=H*DPR;cvs.style.width=W+'px';cvs.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0)}
+  // touch screens: the full device resolution (was capped at 1.5: the R read soft and low-res on phones); a phone that
+  // can't keep up steps down to 2, then 1.5, before the slow mode (every other frame) kicks in
+  const coarse=matchMedia('(pointer: coarse)').matches;let dprCap=coarse?3:2;
+  // the bitmap only grows in height: on phones the toolbar sliding in and out fires resize while scrolling, and
+  // reallocating a full-resolution canvas then stuttered the scroll
+  let aW=0,aH=0,aD=0;
+  function resize(){DPR=Math.min(window.devicePixelRatio||1,dprCap);W=innerWidth;H=innerHeight;
+    if(W!==aW||DPR!==aD||H>aH){aH=W===aW&&DPR===aD?Math.max(H,aH):H;aW=W;aD=DPR;cvs.width=W*DPR;cvs.height=aH*DPR;cvs.style.width=W+'px';cvs.style.height=aH+'px'}
+    ctx.setTransform(DPR,0,0,DPR,0,0)}
   addEventListener('resize',resize,{signal});resize();
 
   let {mx,my,smx,smy}=mouse,mpx=-9999,mpy=-9999;
@@ -353,7 +361,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     if(cull){
       const r=(scope===document?document.documentElement:scope).getBoundingClientRect();
       const off=r.bottom<-200||r.top>innerHeight+200;
-      if(off){if(!culled){ctx.clearRect(0,0,W,H);culled=true}return}
+      if(off){if(!culled){ctx.clearRect(0,0,W,aH);culled=true}return}
       culled=false;
     }
     time=ts/1000;const tm=time*motion;
@@ -433,7 +441,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     if(mode[0]==='b'&&mode!=='paper'&&!PALS[mode]){const t=BQ/8,mixA=(a,b)=>a.map((c,i)=>mixHex(c,b[i],t));
       PALS[mode]=mixA(PALS.light,PALS.dark);FINE[mode]=mixA(FINE.light,FINE.dark);
       G[mode]={gamma:3-t,colors:mixA(G.light.colors,G.dark.colors),line:.37-.05*t,pad:.21+.02*t}}
-    ctx.clearRect(0,0,W,H);
+    ctx.clearRect(0,0,W,aH);
     // small R's (the header's, the projects', the manifesto's, the loader's) are drawn as the LOGO: the real R path,
     // solid and crisp, its side walls as stacked copies behind it, placed by an affine fit of the face particles (so it
     // follows them through every flight and turn). The particles fade out under ~150px and are gone under ~110px; only
@@ -560,7 +568,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const idx=Math.round(s);if(idx!==lastIdx){if(hudName)hudName.textContent=NAMES[idx];lastIdx=idx}
     if(hudBar)hudBar.style.width=(s/4*100)+'%';
     if(inIntro&&rIntro.onDraw){const cb=rIntro.onDraw;rIntro.onDraw=null;cb()}
-    cost+=(performance.now()-fStart-cost)*.05;if(!(inIntro&&rIntro.t<1))slow=cost>10?true:cost<6?false:slow; // never switches while the R flies in or out of the loader
+    cost+=(performance.now()-fStart-cost)*.05;if(!(inIntro&&rIntro.t<1)){if(cost>10&&coarse&&dprCap>1.5&&DPR>1.5){dprCap=DPR>2?2:1.5;resize();cost=7}else slow=cost>10?true:cost<6?false:slow} // never switches while the R flies in or out of the loader
   }
 
   build().then(() => { if (alive) raf = requestAnimationFrame(frame); });
