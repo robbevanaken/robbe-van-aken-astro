@@ -13,6 +13,7 @@ import { LOOKS, LOOK, SMALLS, SMALL } from './looks.js';
 import { serviceProgress } from '../components/services.js';
 import { theme } from '../global/theme.js';
 import { createGL } from './gl.js';
+const GLR = new WeakMap(); // canvas → its WebGL renderer
 
 // The WebGL renderer (r-journey/gl.js, Oct 2026) is the default: it draws the same cells as the 2D canvas, but on the
 // GPU, so the R carries ~4–5× the particles (its shape sharp: the hairlines, points and counters of the logo) for about
@@ -60,8 +61,12 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const ac=new AbortController(),signal=ac.signal;let alive=true,raf=0;
 
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,motion=reduce?0:1;
-  const cvs=canvas;let glr=null;
-  if(RQ.gl)try{glr=createGL(cvs)}catch(e){console.warn('R: WebGL failed',e);glr=null}
+  let cvs=canvas,glr=null;
+  // a canvas that once gave out a WebGL context never gives a 2D one: when WebGL fails half-way (a shader that doesn't
+  // compile on some GPU), a fresh copy of the canvas takes its place for the 2D fallback
+  // one renderer per canvas: a remount (crossing a breakpoint) runs a new engine on the same canvas, which has only
+  // the one WebGL context — a second renderer, or the old one losing it, left the new R blank (Oct 2026)
+  if(RQ.gl)try{glr=GLR.get(cvs)||createGL(cvs);if(glr)GLR.set(cvs,glr)}catch(e){console.warn('R: WebGL failed',e);glr=null;const c=cvs.cloneNode(false);cvs.replaceWith(c);cvs=c}
   const ctx=glr?null:cvs.getContext('2d');
   let W=0,H=0,DPR=1;
   // the CSS size follows innerWidth/innerHeight exactly (100vh is taller than the visible area on iOS while the toolbar shows,
@@ -115,13 +120,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
   // particles: [0,NC) = front/back cap cells, [NC,N) = side-wall cells
   let BR,N=0,NC=0,GH=0,U,V,DZ,NX,NY,EDGE,BY,CH,K,X,Y,IU,IV,IZ,INX,INY,IE,LV,NI=1;
-  let CU,CV,CC,CS,OX,OY,OZ,ICON_G=96,inited=false;
+  let CU,CV,CC,CS,OX,OY,OZ,ICON_G=96,ICONS=null,inited=false;
   const DEPTH=.075; // half thickness, in glyph heights
 
   async function build(){
     const gh=RQ.gh||(glr?(innerWidth<760?220:260):(innerWidth<760?84:112)); // WebGL (tested Oct 2026, at 4× CPU throttle on a phone: 220 ≈ 5ms a frame, the 2D canvas at 84 ≈ 7–11ms)
-    if(char){const g=charGeo.get(char+gh);if(g){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI}=g);return ready()}}
-    else if(geo&&geo.GH===gh){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI}=geo);return ready()}
+    if(char){const g=charGeo.get(char+gh);if(g){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI,ICONS}=g);return ready()}}
+    else if(geo&&geo.GH===gh){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI,ICONS}=geo);return ready()}
     GH=gh;let GW=Math.round(GH*103/99),o,oc;
     if(char){
       // the character's ink box fills the grid's height, like the R's
@@ -175,7 +180,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     // the letters at that size come from the font itself (Cloister Black, self-hosted; on home the type band loads it
     // anyway), fitted onto the masks' box; the 96px masks stay as the 2D look and the fallback
     let fontOK=false;
-    if(IG>96)try{const f='400 100px "Cloister Black"';await Promise.race([document.fonts.load(f),new Promise(r=>setTimeout(r,1500))]);fontOK=document.fonts.check(f)}catch{}
+    if(IG>96||glr)try{const f='400 100px "Cloister Black"';await Promise.race([document.fonts.load(f),new Promise(r=>setTimeout(r,1500))]);fontOK=document.fonts.check(f)}catch{}
     const P=(g,pts)=>{g.beginPath();g.moveTo(pts[0],pts[1]);for(let k=2;k<pts.length;k+=2)g.lineTo(pts[k],pts[k+1]);g.closePath();g.fill()};
     const CUT=(g,fn)=>{g.globalCompositeOperation='destination-out';fn();g.globalCompositeOperation='source-over'};
     // the services' first letters in Cloister Black, the R's own typeface (Oct 2026; tried: a gothic window, a split
@@ -188,12 +193,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const GL=(b64,ch)=>g=>{
       const M=96,bin=atob(b64),on=i=>bin.charCodeAt(i>>3)&(1<<(i&7)),im=new ImageData(M,M);let x0=M,y0=M,x1=-1,y1=-1;
       for(let i=0;i<M*M;i++)if(on(i)){im.data[i*4]=im.data[i*4+1]=im.data[i*4+2]=im.data[i*4+3]=255;const x=i%M,y=(i/M)|0;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+      const S=g.canvas.width; // the raster's size (IG, or the crisp renderer's 512)
       g.save();g.setTransform(1,0,0,1,0,0);
-      if(IG===M)g.putImageData(im,0,0);
-      else if(!fontOK){const t=document.createElement('canvas');t.width=t.height=M;t.getContext('2d').putImageData(im,0,0);g.imageSmoothingEnabled=false;g.drawImage(t,0,0,IG,IG)}
+      if(S===M)g.putImageData(im,0,0);
+      else if(!fontOK){const t=document.createElement('canvas');t.width=t.height=M;t.getContext('2d').putImageData(im,0,0);g.imageSmoothingEnabled=false;g.drawImage(t,0,0,S,S)}
       else{ // the glyph, fitted (and centred) onto the mask's ink box
-        g.font=`400 ${IG}px "Cloister Black"`;const m=g.measureText(ch),L=m.actualBoundingBoxLeft,Rt=m.actualBoundingBoxRight,As=m.actualBoundingBoxAscent,De=m.actualBoundingBoxDescent;
-        const k=IG/M,sc=Math.min((x1-x0+1)*k/(L+Rt),(y1-y0+1)*k/(As+De)),cx=(x0+x1+1)/2*k,cy=(y0+y1+1)/2*k;
+        g.font=`400 ${S}px "Cloister Black"`;const m=g.measureText(ch),L=m.actualBoundingBoxLeft,Rt=m.actualBoundingBoxRight,As=m.actualBoundingBoxAscent,De=m.actualBoundingBoxDescent;
+        const k=S/M,sc=Math.min((x1-x0+1)*k/(L+Rt),(y1-y0+1)*k/(As+De)),cx=(x0+x1+1)/2*k,cy=(y0+y1+1)/2*k;
         g.setTransform(sc,0,0,sc,cx-(Rt-L)/2*sc,cy+(As-De)/2*sc);g.fillStyle='#fff';g.fillText(ch,0,0)}
       g.restore()};
     const drawIcon=[
@@ -206,7 +212,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       g=>{g.beginPath();g.moveTo(11,2);g.quadraticCurveTo(21,5,29.5,15);g.quadraticCurveTo(21,25,11,28);g.quadraticCurveTo(16,15,11,2);g.fill();g.fillRect(1.5,12.4,13,5.2);
         CUT(g,()=>{g.beginPath();g.moveTo(17,9);g.quadraticCurveTo(21.5,11,24.5,15);g.quadraticCurveTo(21.5,19,17,21);g.quadraticCurveTo(19,15,17,9);g.fill()})}
     ];
-    const icons=drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=IG;const g=c.getContext('2d');g.scale(IG/30,IG/30);g.fillStyle='#fff';fn(g);
+    // the letters' sharp corners softened like the R's (Oct 2026): blurred by ~1.2% of the raster, then thresholded back
+    // (convex points rounded, inner corners filled a touch); skipped where canvas filters aren't supported
+    const soften=(c)=>{const g=c.getContext('2d');if(!('filter' in g))return c;const t=document.createElement('canvas');t.width=c.width;t.height=c.height;
+      const h=t.getContext('2d');h.filter=`blur(${(c.width*.012).toFixed(1)}px)`;h.drawImage(c,0,0);const id=h.getImageData(0,0,t.width,t.height),dd=id.data;
+      for(let i=3;i<dd.length;i+=4){const a=Math.max(0,Math.min(255,(dd[i]-128)*3+128));dd[i]=a;dd[i-1]=dd[i-2]=dd[i-3]=255}
+      g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);g.putImageData(id,0,0);return c};
+    const icons=drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=IG;const g=c.getContext('2d');g.scale(IG/30,IG/30);g.fillStyle='#fff';fn(g);soften(c);
       const id=g.getImageData(0,0,IG,IG).data,ins=(x,y)=>x>=0&&y>=0&&x<IG&&y<IG&&id[(y*IG+x)*4+3]>120,cap=[],bd=[];
       for(let y=0;y<IG;y++)for(let x=0;x<IG;x++){if(!ins(x,y))continue;const u=(x+.5)/IG-.5,v=(y+.5)/IG-.5;
         let nx=0,ny=0,o=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if((dx||dy)&&!ins(x+dx,y+dy)){nx+=dx;ny+=dy;o++}
@@ -215,6 +227,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     // every particle has a place in every icon (icon q at [q*N, q*N+N)): the whole R becomes icon 0, then morphs from
     // icon to icon. Both sides are sorted top to bottom, so the top of one shape becomes the top of the next.
     ICON_G=IG;NI=icons.length;const ILAY=6;
+    // the crisp renderer's letters: the same icons at 512px, as textures (gl.js setIcons)
+    ICONS=glr?drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.scale(512/30,512/30);g.fillStyle='#fff';fn(g);return soften(c)}):null;
     IU=new Float32Array(NI*N);IV=new Float32Array(NI*N);IZ=new Float32Array(NI*N);INX=new Float32Array(NI*N);INY=new Float32Array(NI*N);IE=new Uint8Array(NI*N);
     const srt=(a,b)=>(V[a]-V[b])||(U[a]-U[b]),capP=[],sideP=[];for(let k=0;k<N;k++)(k<NC?capP:sideP).push(k);capP.sort(srt);sideP.sort(srt);
     for(let q=0;q<NI;q++){
@@ -225,12 +239,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
     for(let i=0;i<N;i++)K[i]=motion?(.055+r()*.09+CH[i]*.004):1;
     K2=new Float32Array(N);for(let i=0;i<N;i++)K2[i]=1-(1-K[i])**2; // the same spring over two frames (half-rate mode)
-    const g={GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI};
+    const g={GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI,ICONS};
     if(char)charGeo.set(char+GH,g);else geo=g;
     ready();
   }
   // per-engine particle state; the intro R takes over the previous page's positions during a page swap
   function ready(){
+    if(glr&&ICONS)glr.setIcons(ICONS);
     X=new Float32Array(N);Y=new Float32Array(N);LV=new Uint8Array(N);BR=new Float32Array(N);
     if(intro){if(carry&&carry.N===N&&rIntro.t>0){X.set(carry.X);Y.set(carry.Y)}carry=null}
     inited=true;
@@ -364,16 +379,24 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const ch=(sh)=>Math.round(((A>>sh&255)*(1-t)+(B>>sh&255)*t));
     return '#'+((1<<24)+(ch(16)<<16)+(ch(8)<<8)+ch(0)).toString(16).slice(1)};
   const RP=new Path2D(R_PATH);
-  function drawLogo(alpha,mode,rh,hc){
-    // least squares: screen = (ax·u + bx·v + cx, ay·u + by·v + cy) over the face particles
+  // least squares: screen = (ax·u + bx·v + cx, ay·u + by·v + cy) over the face particles, from their place in a shape
+  // (SU / SV at offset o: the R's U / V, or an icon's IU / IV at q·N); null when degenerate
+  function fit(SU,SV,o,hc){
     let n=0,mu=0,mv=0,mx_=0,my_=0;
-    for(let p=0;p<NC;p+=3){mu+=U[p];mv+=V[p];mx_+=X[p];my_+=Y[p];n++}
-    if(!n)return;mu/=n;mv/=n;mx_/=n;my_/=n;
+    for(let p=0;p<NC;p+=3){mu+=SU[o+p];mv+=SV[o+p];mx_+=X[p];my_+=Y[p];n++}
+    if(!n)return null;mu/=n;mv/=n;mx_/=n;my_/=n;
     let uu=0,uv=0,vv=0,ux=0,vx=0,uy=0,vy=0;
-    for(let p=0;p<NC;p+=3){const u=U[p]-mu,v=V[p]-mv,x=X[p]-mx_,y=Y[p]-my_;uu+=u*u;uv+=u*v;vv+=v*v;ux+=u*x;vx+=v*x;uy+=u*y;vy+=v*y}
-    const det=uu*vv-uv*uv;if(Math.abs(det)<1e-9)return;
+    for(let p=0;p<NC;p+=3){const u=SU[o+p]-mu,v=SV[o+p]-mv,x=X[p]-mx_,y=Y[p]-my_;uu+=u*u;uv+=u*v;vv+=v*v;ux+=u*x;vx+=v*x;uy+=u*y;vy+=v*y}
+    const det=uu*vv-uv*uv;if(Math.abs(det)<1e-9)return null;
     const ax=(ux*vv-vx*uv)/det,bx=(vx*uu-ux*uv)/det,ay=(uy*vv-vy*uv)/det,by=(vy*uu-uy*uv)/det;
-    const cx=mx_-ax*mu-bx*mv+hc,cy=my_-ay*mu-by*mv+hc;
+    return [ax,bx,ay,by,mx_-ax*mu-bx*mv+hc,my_-ay*mu-by*mv+hc];
+  }
+  // the R's fit as a path-units affine (R.svg, 103 × 99)
+  function fitR(hc){const F=fit(U,V,0,hc);if(!F)return null;const [ax,bx,ay,by,cx,cy]=F;
+    const GW=Math.round(GH*103/99),k=Math.min(GW*.96/103,GH*.96/99)/GH,ta=ax*k,tb=ay*k,tc=bx*k,td=by*k;
+    return [ta,tb,tc,td,cx-ta*51.5-tc*49.5,cy-tb*51.5-td*49.5]}
+  function drawLogo(alpha,mode,rh,hc){
+    const F=fit(U,V,0,hc);if(!F)return;const [ax,bx,ay,by,cx,cy]=F;
     // the path's units (R.svg, 103 × 99) into the particles' u / v (see build)
     const GW=Math.round(GH*103/99),k=Math.min(GW*.96/103,GH*.96/99)/GH;
     const ta=ax*k,tb=ay*k,tc=bx*k,td=by*k,te=cx-ta*51.5-tc*49.5,tf=cy-tb*51.5-td*49.5;
@@ -490,13 +513,30 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       if(vecA<1){
         const rh=rhV,baseCell=size<1.1?3:clamp(Math.round(size*1.35),4,7),minCell=3/DPR,pitchF=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f;
         const smLo=DPR<1.5&&rh<80,small=rh<140&&!!SM.fill,smCell=SM.fill?(smLo?2:Math.max(SM.min/DPR,SM.rows?Math.round(rh/(SM.rows*1.8)*DPR)/DPR:0)):0; // 1.8× the rows: the services' letters (~100px, the small look) show their detail; the header's R is at the finest cell already
-        const CMAX=Math.round((W<640?4:5)*1*DPR)/DPR,CELL=small?Math.min(baseCell,smCell):Math.min(Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*(RQ.cell||LOOKCELL)*DPR)/DPR),Math.max(CMAX,Math.ceil(pitchF*1.3*DPR)/DPR)); // at most CMAX (but never under 1.3 particle pitches, or the face shows holes): the big R's (pitch, footer) otherwise got blocks of ~10px beside the hero's ~4; 2: cells of ~2.5 particle pitches, so the finer particles still read as halftone pixels, not a grey tint
+        const CMAX=Math.round((W<640?4:5)*DPR)/DPR,CELL=small?Math.min(baseCell,smCell):Math.min(Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*(RQ.cell||LOOKCELL)*DPR)/DPR),Math.max(CMAX,Math.ceil(pitchF*1.3*DPR)/DPR)); // at most CMAX (but never under 1.3 particle pitches, or the face shows holes): the big R's (pitch, footer) otherwise got blocks of ~10px beside the hero's ~4; 2: cells of ~2.5 particle pitches, so the finer particles still read as halftone pixels, not a grey tint
         const bt=mode==='light'||mode==='paper'?0:mode[0]==='b'?+mode.slice(1)/8:1,lb=themeMode==='wild'?0:.9*(1-dkB);
-                glr.cells({X,Y,BR,LV,N,NC,hc:size/2,cell:CELL,DPR,W,H,mode:small?1:0,tones:FINE[mode],lb,
+        const period=Math.max(3,Math.round((small?clamp(rh/28,1.5,3):W<640?2.5:3)*DPR));
+        // CRISP (gl.js): while the shape is rigid — a plain R stage, or a service's letter at rest — it's drawn from the
+        // vector (the R path / the letter at 512px) placed by a fit of the particles, its walls as layers stepping back;
+        // the particles take over (cross-faded) only while it comes apart or morphs (the pitch, the services' morphs, jumps)
+        let rig=0,shapes=null,faceD=.8;
+        if(RQ.engrave&&!char){ // a character (the 404's 4s) has no vector here: particles
+          const ssm=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)},wR=sw(0)+sw(2)+sw(4)+sw(5),q3=sg<.5?sq0:sq1,wI=sw(3)*(1-ssm(.03,.1,Math.min(sg,1-sg)));
+          const rR=ssm(.8,1,wR),rI=ssm(.8,1,wI),hc=size/2;
+          if(rR>0){const m=fitR(hc);if(m){const zs=MB[8]>=0?1:-1,dx=-MB[2]*2*zs*DEPTH*rh,dy=-MB[5]*2*zs*DEPTH*rh;
+            shapes=[{tex:'R',m,box:[103,99],dx,dy,n:Math.min(24,Math.ceil(Math.hypot(dx,dy)*DPR/1.5))}];rig=rR;faceD=clamp(((.2+.8*capL)*4+.22+lb)/4.4,.35,1)}}
+          else if(rI>0&&glr){const F=fit(IU,IV,q3*N,hc);if(F){const [ax,bx,ay,by,cx,cy]=F,bx2=Sh*SB,dx=-MS[2]*.2*SS*bx2,dy=-MS[5]*.2*SS*bx2;
+            shapes=[{tex:q3,m:[ax,ay,bx,by,cx-.5*ax-.5*bx,cy-.5*ay-.5*by],box:[1,1],dx,dy,n:Math.min(24,Math.ceil(Math.hypot(dx,dy)*DPR/1.5))}];rig=rI;
+            faceD=clamp(((.1+.62*Math.max(0,(MS[2]*LX+MS[5]*LY+MS[8]*LZ)*SS))*4+.22+lb)/4.4,.35,1)}}
+        }
+        if(rig<1)glr.cells({X,Y,BR,LV,N,NC,hc:size/2,cell:CELL,DPR,W,H,mode:small?1:0,tones:FINE[mode],lb,
           // the face's halftone squares: light and dark a step bigger than the 2D look (a blacker R on paper, a brighter one on the dark)
-          sizes:[.5,.62,.74,.86].map((fr,i)=>fr+([.4,.52,.64,.76][i]-fr)*bt),fill:SM.fill,walls:SM.walls,lo:smLo,gaps:!small,alpha:1-vecA,engrave:RQ.engrave,
+          sizes:[.5,.62,.74,.86].map((fr,i)=>fr+([.4,.52,.64,.76][i]-fr)*bt),fill:SM.fill,walls:SM.walls,lo:smLo,gaps:!small,alpha:(1-vecA)*(1-rig),engrave:RQ.engrave,
           // the line screen's period: ~3px (phones 2.5), the small R's finer (~28 lines tall); never under 3 device px
-          period:Math.max(3,Math.round((small?clamp(rh/28,1.5,3):W<640?2.5:3)*DPR))});
+          period});
+        if(rig>0){const w4=sw(4),pr=A[4].S*.24;
+          glr.crisp(shapes,{W,alpha:(1-vecA)*rig,period,faceD,wallD:.42,tones:FINE[mode],
+            push:w4>.5&&motion&&mpx>-999?[mpx*DPR,mpy*DPR,pr*DPR,.95*w4]:null});}
       }
     }else{
     ctx.clearRect(0,0,W,aH);
@@ -626,7 +666,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   build().then(() => { if (alive) raf = requestAnimationFrame(frame); });
   return () => {
     alive = false; cancelAnimationFrame(raf); ac.abort();
-    if (glr) setTimeout(() => glr.destroy(), 3000); // a little later: the page swap may still take a still of the canvas
+    if (glr) setTimeout(() => { if (!cvs.isConnected) { glr.destroy(); GLR.delete(cvs); } }, 3000); // a little later (a page swap may still take a still of the canvas), and only once the canvas is gone: a remount reuses it
     if (intro && inited && rIntro.t > 0) carry = { N, X, Y }; // page swap: the next page's R goes on from here
   };
 }

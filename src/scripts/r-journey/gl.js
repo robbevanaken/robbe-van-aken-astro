@@ -83,8 +83,28 @@ void main(){
 }`;
 // the logo: a textured quad, placed by a 2×3 affine (path units → css px), in one colour
 const VS_LOGO = `#version 300 es
-in vec2 a;uniform mat3 m;uniform vec2 view;out vec2 uv;
-void main(){uv=a;vec2 s=(m*vec3(a.x*103.,a.y*99.,1.)).xy;gl_Position=vec4(s.x/view.x*2.-1.,1.-s.y/view.y*2.,0.,1.);}`;
+in vec2 a;uniform mat3 m;uniform vec2 view,box;out vec2 uv;
+void main(){uv=a;vec2 s=(m*vec3(a*box,1.)).xy;gl_Position=vec4(s.x/view.x*2.-1.,1.-s.y/view.y*2.,0.,1.);}`;
+// CRISP (Oct 2026): whenever the shape is rigid (the R in the hero, the header, the footer, the loader; a service's
+// letter at rest) it is drawn from the vector itself instead of the particles: the face and its wall layers go into a
+// mask at full resolution (R = face, G = walls, MAX blending), and the engraving's line screen is clipped by it, so the
+// contour is as sharp as the logo file. The footer's cursor push is redone here as a warp of the mask.
+const FS_MASK = `#version 300 es
+precision mediump float;uniform sampler2D T;uniform vec3 col;in vec2 uv;out vec4 o;
+void main(){o=vec4(col*texture(T,uv).a,1.);}`;
+const FS_CRISP = `#version 300 es
+precision highp float;uniform sampler2D M;uniform float canvasH,alpha,period,faceD,wallD;uniform vec3 tone[4];uniform vec4 push;out vec4 o;
+float line(float s,float P,float w){float d=abs(fract(s/P)-.5)*P;return clamp(w*.5-d+.5,0.,1.);}
+void main(){
+  vec2 p=vec2(gl_FragCoord.x,canvasH-gl_FragCoord.y),q=p;
+  if(push.z>0.){ // the crater: find the point the push carried here (fixed point), nothing where it opened up
+    vec2 s=p;for(int i=0;i<4;i++){vec2 dv=s-push.xy;float d=length(dv);float pu=max(0.,1.-d/push.z);s=p-(d>0.?dv/d:vec2(0.))*pu*pu*push.z*push.w;}
+    vec2 dv=s-push.xy;float d=length(dv),pu=max(0.,1.-d/push.z);vec2 back=s+(d>0.?dv/d:vec2(0.))*pu*pu*push.z*push.w;
+    if(length(back-p)>1.5)discard;q=s;}
+  vec4 m=texelFetch(M,ivec2(q.x,canvasH-q.y),0);float f=m.r,w=m.g*(1.-m.r);if(f+w<=.003)discard;
+  float lf=line(p.y,period,period*mix(.16,.74,faceD))*f,lw=line(p.y,period,period*mix(.16,.74,wallD))*w;
+  float a=(lf+lw)*alpha;if(a<=.003)discard;o=vec4((tone[3]*lf+tone[1]*lw)*alpha,a);
+}`;
 const FS_LOGO = `#version 300 es
 precision mediump float;uniform sampler2D T;uniform vec3 col;uniform float alpha;in vec2 uv;out vec4 o;
 void main(){float a=texture(T,uv).a*alpha;o=vec4(col*a,a);}`;
@@ -96,7 +116,7 @@ export function createGL(canvas) {
   if (!gl) return null;
   const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
   const prog = (vs, fs) => { const p = gl.createProgram(); gl.attachShader(p, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs)); gl.bindAttribLocation(p, 0, 'a'); gl.linkProgram(p); if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p)); const u = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS); for (let i = 0; i < n; i++) { const nm = gl.getActiveUniform(p, i).name.replace('[0]', ''); u[nm] = gl.getUniformLocation(p, nm); } return { p, u }; };
-  const bin = prog(VS_BIN, FS_BIN), cells = prog(VS_QUAD, FS_CELLS), logo = prog(VS_LOGO, FS_LOGO);
+  const bin = prog(VS_BIN, FS_BIN), cells = prog(VS_QUAD, FS_CELLS), logo = prog(VS_LOGO, FS_LOGO), maskP = prog(VS_LOGO, FS_MASK), crispP = prog(VS_QUAD, FS_CRISP);
 
   const pBuf = gl.createBuffer(), pVao = gl.createVertexArray();
   gl.bindVertexArray(pVao); gl.bindBuffer(gl.ARRAY_BUFFER, pBuf); gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
@@ -110,16 +130,18 @@ export function createGL(canvas) {
   const tex = gl.createTexture(), fb = gl.createFramebuffer();let tw = 0, th = 0;
   gl.bindTexture(gl.TEXTURE_2D, tex);
   for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
-  // the logo texture: the R path at 1024px, mipmapped so it stays smooth from the loader's 40px up
-  const lTex = gl.createTexture();
-  {
-    const c = document.createElement('canvas'); c.width = 1030; c.height = 990; const g = c.getContext('2d');
-    g.scale(10, 10); g.fillStyle = '#fff'; g.fill(new Path2D(R_PATH));
-    gl.bindTexture(gl.TEXTURE_2D, lTex); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  // shape textures, mipmapped so they stay smooth from the loader's 40px up: the R path at 2048px (sharp at the
+  // footer's size too), and the services' letters (setIcons)
+  const upload = (c) => { const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c); gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  }
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; };
+  const lTex = (() => { const c = document.createElement('canvas'); c.width = 2060; c.height = 1980; const g = c.getContext('2d'); g.scale(20, 20); g.fillStyle = '#fff'; g.fill(new Path2D(R_PATH)); return upload(c); })();
+  let iTex = [];
+  // the mask (canvas size, grown as needed)
+  const mTex = gl.createTexture(), mFb = gl.createFramebuffer();let mw = 0, mh = 0;
+  gl.bindTexture(gl.TEXTURE_2D, mTex);
+  for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
   let data = new Float32Array(0);
   const tones = new Map(), toneOf = (list) => { const k = list.join(); let t = tones.get(k); if (!t) { t = new Float32Array(list.flatMap(hex)); tones.set(k, t); } return t; };
 
@@ -156,11 +178,34 @@ export function createGL(canvas) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, canvas.width, canvas.height);
       gl.enable(gl.BLEND); gl.blendEquation(gl.FUNC_ADD); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       const u = logo.u; gl.useProgram(logo.p); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, lTex); gl.uniform1i(u.T, 0);
-      gl.uniform2f(u.view, W, canvas.height / (canvas.width / W)); gl.uniform1f(u.alpha, alpha); gl.bindVertexArray(lVao);
+      gl.uniform2f(u.view, W, canvas.height / (canvas.width / W)); gl.uniform2f(u.box, 103, 99); gl.uniform1f(u.alpha, alpha); gl.bindVertexArray(lVao);
       for (const l of layers) {
         gl.uniformMatrix3fv(u.m, false, [m[0], m[1], 0, m[2], m[3], 0, m[4] + l.dx, m[5] + l.dy, 1]);
         gl.uniform3fv(u.col, hex(l.col)); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
+    },
+    setIcons(cs) { if (!iTex.length) iTex = cs.map(upload); },
+    // the crisp shape: shapes = [{ tex: 'R' | icon index, m: [a, b, c, d, e, f] (texture box → css px), box: [w, h],
+    // dx, dy, n (the wall layers stepping back) }], o = { W, alpha, period, faceD, wallD, tones, push: [x, y, r, s] (device px) | null }
+    crisp(shapes, o) {
+      if (canvas.width > mw || canvas.height > mh) { mw = Math.max(mw, canvas.width); mh = Math.max(mh, canvas.height); gl.bindTexture(gl.TEXTURE_2D, mTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, mw, mh, 0, gl.RGBA, gl.UNSIGNED_BYTE, null); gl.bindFramebuffer(gl.FRAMEBUFFER, mFb); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, mTex, 0); }
+      gl.bindFramebuffer(gl.FRAMEBUFFER, mFb); gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.enable(gl.BLEND); gl.blendEquation(gl.MAX); gl.blendFunc(gl.ONE, gl.ONE);
+      const u = maskP.u; gl.useProgram(maskP.p); gl.activeTexture(gl.TEXTURE0); gl.uniform1i(u.T, 0); gl.bindVertexArray(lVao);
+      gl.uniform2f(u.view, o.W, canvas.height / (canvas.width / o.W));
+      for (const sh of shapes) {
+        const t = sh.tex === 'R' ? lTex : iTex[sh.tex]; if (!t) continue; gl.bindTexture(gl.TEXTURE_2D, t); gl.uniform2f(u.box, sh.box[0], sh.box[1]);
+        const m = sh.m, at = (k) => gl.uniformMatrix3fv(u.m, false, [m[0], m[1], 0, m[2], m[3], 0, m[4] + sh.dx * k, m[5] + sh.dy * k, 1]);
+        gl.uniform3f(u.col, 0, 1, 0); for (let l = sh.n; l > 0; l--) { at(l / sh.n); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); }
+        gl.uniform3f(u.col, 1, 0, 0); at(0); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.blendEquation(gl.FUNC_ADD); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      const c = crispP.u; gl.useProgram(crispP.p); gl.bindTexture(gl.TEXTURE_2D, mTex); gl.uniform1i(c.M, 0);
+      gl.uniform1f(c.canvasH, canvas.height); gl.uniform1f(c.alpha, o.alpha); gl.uniform1f(c.period, o.period); gl.uniform1f(c.faceD, o.faceD); gl.uniform1f(c.wallD, o.wallD);
+      gl.uniform3fv(c.tone, toneOf(o.tones)); gl.uniform4fv(c.push, o.push || [0, 0, 0, 0]);
+      gl.bindVertexArray(qVao); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
     destroy() { gl.getExtension('WEBGL_lose_context')?.loseContext(); },
   };

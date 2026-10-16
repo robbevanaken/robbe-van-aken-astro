@@ -91,7 +91,7 @@ export const servicesIntro = {
 export const manifesto = {
   text: [
     'Robbe Van Aken is a freelance developer with a designer\u2019s eye, building websites and software from Ghent.',
-    'Solid code and careful design, shaped around the people who use it, with trusted people at the table when a project asks for more. Looked after long after launch.',
+    'Solid code and careful design, shaped around the people who use it, with trusted people at the table when a project asks for more. And I stick around after launch.',
   ],
   // beside the second paragraph (cols 1–2, under the R); without an image only `npm run dev` shows the placeholder
   portrait: { image: '', alt: 'Robbe Van Aken', placeholder: 'Portrait' },
