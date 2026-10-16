@@ -12,6 +12,15 @@ import { R_PATH } from './r-shape.js';
 import { LOOKS, LOOK, SMALLS, SMALL } from './looks.js';
 import { serviceProgress } from '../components/services.js';
 import { theme } from '../global/theme.js';
+import { createGL } from './gl.js';
+
+// The WebGL renderer (r-journey/gl.js, Oct 2026) is the default: it draws the same cells as the 2D canvas, but on the
+// GPU, so the R carries ~4–5× the particles (its shape sharp: the hairlines, points and counters of the logo) for about
+// the same frame cost. Without WebGL 2 the 2D canvas takes over at its old detail. To compare (dev): ?r=2d / ?r=gl, ?gh=
+// the particle grid's height, ?cell= a factor on the cell size; kept in sessionStorage.
+const RQ=(()=>{const o={gl:true,gh:0,cell:0};try{const q=new URLSearchParams(location.search),ss=sessionStorage;
+  for(const k of ['r','gh','cell'])if(q.has(k))ss.setItem('rq-'+k,q.get(k));
+  o.gl=ss.getItem('rq-r')!=='2d';o.gh=+ss.getItem('rq-gh')||0;o.cell=+ss.getItem('rq-cell')||0}catch{}return o})();
 
 // The page loader and page swaps (global/pageTransitions.js) borrow the page's R: while `rIntro.t` is 1 the engine with
 // `intro` draws it as the small R on `rIntro.el` (state 5, a copy of stage 2 on its own anchor); as t goes to 0 it
@@ -48,20 +57,23 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const ac=new AbortController(),signal=ac.signal;let alive=true,raf=0;
 
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,motion=reduce?0:1;
-  const cvs=canvas,ctx=cvs.getContext('2d');
+  const cvs=canvas;let glr=null;
+  if(RQ.gl)try{glr=createGL(cvs)}catch(e){console.warn('R: WebGL failed',e);glr=null}
+  const ctx=glr?null:cvs.getContext('2d');
   let W=0,H=0,DPR=1;
   // the CSS size follows innerWidth/innerHeight exactly (100vh is taller than the visible area on iOS while the toolbar shows,
   // which would stretch the drawing)
   // at most 2 device pixels per css pixel, 1.5 on touch screens (phones: 3 is a lot of glyphs per frame)
   // touch screens: the full device resolution (was capped at 1.5: the R read soft and low-res on phones); a phone that
   // can't keep up steps down to 2, then 1.5, before the slow mode (every other frame) kicks in
+  const hdrR=scope!==document&&!!scope?.matches?.('[data-site-header]'); // the subpages' header R
   const coarse=matchMedia('(pointer: coarse)').matches;let dprCap=coarse?3:2;
   // the bitmap only grows in height: on phones the toolbar sliding in and out fires resize while scrolling, and
   // reallocating a full-resolution canvas then stuttered the scroll
   let aW=0,aH=0,aD=0;
   function resize(){DPR=Math.min(window.devicePixelRatio||1,dprCap);W=innerWidth;H=innerHeight;
     if(W!==aW||DPR!==aD||H>aH){aH=W===aW&&DPR===aD?Math.max(H,aH):H;aW=W;aD=DPR;cvs.width=W*DPR;cvs.height=aH*DPR;cvs.style.width=W+'px';cvs.style.height=aH+'px'}
-    ctx.setTransform(DPR,0,0,DPR,0,0)}
+    ctx?.setTransform(DPR,0,0,DPR,0,0)}
   addEventListener('resize',resize,{signal});resize();
 
   let {mx,my,smx,smy}=mouse,mpx=-9999,mpy=-9999;
@@ -103,7 +115,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const DEPTH=.075; // half thickness, in glyph heights
 
   async function build(){
-    const gh=innerWidth<760?84:112;
+    const gh=RQ.gh||(glr?(innerWidth<760?220:260):(innerWidth<760?84:112)); // WebGL (tested Oct 2026, at 4× CPU throttle on a phone: 220 ≈ 5ms a frame, the 2D canvas at 84 ≈ 7–11ms)
     if(char){const g=charGeo.get(char+gh);if(g){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI}=g);return ready()}}
     else if(geo&&geo.GH===gh){({GH,N,NC,U,V,DZ,NX,NY,EDGE,BY,CH,K,K2,IU,IV,IZ,INX,INY,IE,CU,CV,CC,CS,OX,OY,OZ,ICON_G,NI}=geo);return ready()}
     GH=gh;let GW=Math.round(GH*103/99),o,oc;
@@ -154,7 +166,12 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
     // service icons: bold, simple shapes that get extruded like the R. Drawn in a 30-unit box, rasterised at IG px
     // (96: about as many cap pixels as the R has cap particles, so the big icon is filled without gaps)
-    const IG=96;
+    // WebGL: rasterised as fine as the R's own grid (the many more particles then show the letters' detail too)
+    const IG=glr?Math.min(260,Math.max(96,GH)):96;
+    // the letters at that size come from the font itself (Cloister Black, self-hosted; on home the type band loads it
+    // anyway), fitted onto the masks' box; the 96px masks stay as the 2D look and the fallback
+    let fontOK=false;
+    if(IG>96)try{const f='400 100px "Cloister Black"';await Promise.race([document.fonts.load(f),new Promise(r=>setTimeout(r,1500))]);fontOK=document.fonts.check(f)}catch{}
     const P=(g,pts)=>{g.beginPath();g.moveTo(pts[0],pts[1]);for(let k=2;k<pts.length;k+=2)g.lineTo(pts[k],pts[k+1]);g.closePath();g.fill()};
     const CUT=(g,fn)=>{g.globalCompositeOperation='destination-out';fn();g.globalCompositeOperation='source-over'};
     // the services' first letters in Cloister Black, the R's own typeface (Oct 2026; tried: a gothic window, a split
@@ -164,12 +181,22 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       C:'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAEAAAAAAAAAAAAAwAcAAAAAAAAAAAAA4B8AAAAAAAAAAAAA8H8AAAAAAAAAAAAA+P8BAAAAAAAAAAAA/v8PAAAAAAAAAAAA////AQAAAAAAAACA/////wEAAAAAAHDA/////wAAAAAAAHzg////fwAAAAAAAB/w////PwAAAAAAgA/8////HwAAAAAAwAf+////DwAAAAAA8AP//v//BwAAAAAA+IF/Pv//AwAAAAAA/ME/Pvj/AQAAAAAA/uA/PsD/AAAAAAAAf/A/PgB+AAAAAACAP/w/PgAwAAAAAADAH/4/PgAAAAAAAADAH/8/PgAAAAAAAADgD/8/PgAAAAAAAADwB/8/PgAAAAAAAADwB/8/PgAAAAAAAAD4B/8/PgAAAAAAAAD8A/8/PgAAAAAAAAD8A/8/PgAAAAAAAAD+A/8/PgAAAAAAAAD+Af8/PgAAAAAAAAD/Af8/PgAAAAAAAAD/Af8/PgAAAAAAAAD/Af8/PgAAAAAAAID/Af8/PgAAAAAAAID/Af8/PgAAAAAAAID/AP8/PgAAAAAAAID/AP8/PgAAAAAAAMD/AP8/PgAAAAAAAMD/AP8/PgAAAAAAAMD/Af8/PgAAAAAAAMD/Af8/PgAAAAAAAOD/Af8/PgAAAAAAAOD/Af8/PgAAAAAAAOD/Af8/PgAAAAAAAOD/Af8fPgAAAAAAAOD/Af8fPAAAAAAAAOD/A/8fPAAAAAAAAOD/A/8fPAAAAAAAAOD/A/8PPAAAAAAAAOD/B/8PPAAAAAAAAOD/B/8HPAAAAAAAAOD/B/8HPAAAAAAAAOD/D/8DPAAAAAAAAMD/D/8BPAAAAAAAAMD/H/8APAAAAAAAAMD/P38APAAAAAAAAMD/Pz8APAAAAAAAAMD//z8APAAAAAAAAID//x8APAAAAAAAAID//w8APAAAAAAAAAD//wcAPAAAAAQAAAD//wMAPAAAAAYAAAD//wcAPAAAgAcAAAD+/w8APAAAwAMAAAD+/x8APAAA4AMAAAD8/38APAAA+AMAAAD4//8APAAA/gEAAAD4//8BPACA/wAAAADw//8HPADA/wAAAADg//8fPAD4fwAAAADg////PwD/PwAAAADA////////HwAAAACA////////DwAAAAAA////////BwAAAAAA/v//////AwAAAAAA+P//////AQAAAAAA8P//////AAAAAAAA4P////8/AAAAAAAAgP////8fAAAAAAAAAP7///8HAAAAAAAAAPj///8AAAAAAAAAAID//x8AAAAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
       A:'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAMAAAAAAAD/AwAA8AMAAAAAAPj//wAA/AEAAAAAAP///wMA/gAAAAAAwP///w8AfwAAAAAA8P///z/APwAAAAAA/P/////gHwAAAAAA/v/////zHwAAAACA////////DwAAAADA////////DwAAAADg////////BwAAAADw////////BwAAAADw/w/A////BwAAAAD4/wEA/P//AwAAAAD8fwAA8P//AwAAAAD8HwAA4P//AwAAAAD+DwAA8P//AwAAAAD+AwB++P//AwAAAAD/AcD///7/AwAAAAD/APD///z/AwAAAAB/APz/f/z/AwAAAIA/AP7/P/j/AwAAAIA/AP//P/j/AwAAAIAfgP//H/j/AwAAAIAfwP//D/j/AwAAAIAPwP//D/j/AwAAAMAPwAf4B/j/AwAAAMAPwAPwA/j/AwAAAMAPwAH4Afj/AwAAAMAHwAD4Afj/AwAAAMAHQAD8APj/AwAAAMAHAAB+APj/AwAAAIAHAAB+APj/AwAAAIAHAAA/APj/AwAAAIAPAIAfAPj/AwAAAIAPAIAfAPj/AwAAAAAPAMAPAPj/AwAAAAAPAOAHAPj/AwAAAAAfAOAHAPj/AwAAAAAeAPADAPj/AwAAAAA+APgBAPj/AwAAAAA8APwBAPj/AwAAAAB8APwAAPj/AwAAAAB4AH4AAPj/AwAAAADwAD8AAPj/AwAAAADwAT8AAPj/AwAAAADgg///////AwAAAADAx///////AwAAAACA3///////AwAAAAAA////////AwAAAAAA/v//////AwAAAAAA/P//////AwAAAAAA+P//////AwAAAAAA/P//////AwAAAAAA/v//////AwAAAAAA/v//////AwAAAAAAPwAAAPj/AwAAAACAHwAAAPD/AwAAAACAHwAAAPD/AwAAAADADwAAAPD/AwAAAADgDwAAAPD/AwAAAADgDwAAAPD/AwAAAADwPwAAAPD/AwAAAAD4/wAAAPD/AwAAAAD4/wMAAPD/AwAAAAD8/w8AAPj/BwAAAAD+/z8AAP7/BwAAAAD+//8AAP//DwMAAAD///8DgP//jwcAAAD///8fwPf//wcAAID///9/8PP//wcAAIAH////+eD//wMAAMAH/P//f+D//wEAAMAD+P//P8D//wAAAOAH4P//D8D/PwAAAOAHgP//B4D/HwAAAOAHAP7/A4D/DwAAAOAHAPj/AAD/BwAAAOAHAOB/AAD+AwAAAOAHAMA/AAD+AQAAAMAHAAAPAAB4AAAAAAABAAAEAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
       B:'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADA/wEAAAD8AQAAAADw/x8A/4D/BwAAAAD8///wP+D/DwAAAAD+////H/j/PwAAAAD/////B/7/fwAAAID/////g///fwAAAID/////4f///wAAAMD///9/8A///wEAAMD///8/+AP+/wEAAOAH/v8f/gH8/wEAAOAB4P8P/wH4/wEAAOAAAPCP/wDw/wEAAGAAAPyHfwDw/wEAAGAAAP7DfwDg/wEAAAAAAP/jfwDg/wEAAAAAgP/jfwDg/wAAAAAAgP/xfwDg/wAAAAAAwP/xfwDA/wAAAAAA4P/xfwDAfwAAAAAA4P/xfwDgfwAAAAAA8P/xfwDgPwAAAAAA8P/xfwDgHwAAAAAA8P/xfxzgHwAAAAAA+P/xfxzwDwAAAAAA+P/xfxzwBwAAAAAA+P/xfxz4AwAAAAAA+P/xfxz4AQAAAAAA+P/xfxz8AAAAAAAA///xfxx+AAAAAADg///xfxz/AAAAAAD4///xf5z/BwAAAAD8///xf/z/PwAAAAD////xf/z/fwAAAID////xf/z5/wAAAID////xf/zg/wEAAMD////xf3zg/wMAAMD////xfxzA/wMAAMAP/v/wfxzA/wcAAOAB/P/wfxzA/wcAAEAA8P/wfxzA/wcAAAAA8P/wfxzA/wcAAAAA4P/wf/zw/wcAAAAA4P/wf/z//wcAAAAAwP/wf/z//wcAAAAA+P/wf5z//wcAAAAA///wfxyA/wcAAADA///4PxyA/wcAAADg///4PxyA/wcAAADw///4PxyA/wcAAAD4///4HxyA/wcAAAD8///8D/z//wcAAAD8/3/8D/z//wcAAAD8+H/+B/z//wcAAAAc4H//A/z4/wcAAAAI4D//AByA/wcAAAAA4J9/AByA/wcAAAAA4N8/AByA/wcAAAAA4O8PAByA/wcAAAAA8P//fxyA/wcAAAAA8P///x+A/wcAAAAA+P///x/g/wMAAAAA/P/////4HwAAAAAA/v//////AwAAAAAA/v////9/AAAAAAAA//////8fAAAAAACA//////8HAAAAAADA//////8BAAAAAADgfwDw/38AAAAAAADwBwCA/z8AAAAAAAD4AQAA/A8AAAAAAAB8AAAA4AMAAAAAAAB8AAAAAAAAAAAAAAA+AAAAAAAAAAAAAAA+AAAAAAAAAAAAAAA+AAAAAAAAAAAAAAA+AAAAAAAAAAAAAAB+AAAAAAAAAAAAAAB+AAAAAAAAAAAAAAB+AAAAAAAAAAAAAAB+AAAAAAAAAAAAAAB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'};
-    const GL=(b64)=>g=>{const bin=atob(b64),im=g.createImageData(IG,IG);for(let i=0;i<IG*IG;i++)if(bin.charCodeAt(i>>3)&(1<<(i&7)))im.data[i*4]=im.data[i*4+1]=im.data[i*4+2]=im.data[i*4+3]=255;g.putImageData(im,0,0)};
+    const GL=(b64,ch)=>g=>{
+      const M=96,bin=atob(b64),on=i=>bin.charCodeAt(i>>3)&(1<<(i&7)),im=new ImageData(M,M);let x0=M,y0=M,x1=-1,y1=-1;
+      for(let i=0;i<M*M;i++)if(on(i)){im.data[i*4]=im.data[i*4+1]=im.data[i*4+2]=im.data[i*4+3]=255;const x=i%M,y=(i/M)|0;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+      g.save();g.setTransform(1,0,0,1,0,0);
+      if(IG===M)g.putImageData(im,0,0);
+      else if(!fontOK){const t=document.createElement('canvas');t.width=t.height=M;t.getContext('2d').putImageData(im,0,0);g.imageSmoothingEnabled=false;g.drawImage(t,0,0,IG,IG)}
+      else{ // the glyph, fitted (and centred) onto the mask's ink box
+        g.font=`400 ${IG}px "Cloister Black"`;const m=g.measureText(ch),L=m.actualBoundingBoxLeft,Rt=m.actualBoundingBoxRight,As=m.actualBoundingBoxAscent,De=m.actualBoundingBoxDescent;
+        const k=IG/M,sc=Math.min((x1-x0+1)*k/(L+Rt),(y1-y0+1)*k/(As+De)),cx=(x0+x1+1)/2*k,cy=(y0+y1+1)/2*k;
+        g.setTransform(sc,0,0,sc,cx-(Rt-L)/2*sc,cy+(As-De)/2*sc);g.fillStyle='#fff';g.fillText(ch,0,0)}
+      g.restore()};
     const drawIcon=[
-      GL(GLYPHS.W), // Websites
-      GL(GLYPHS.C), // Custom software
-      GL(GLYPHS.A), // AI workflows
-      GL(GLYPHS.B), // Branding
+      GL(GLYPHS.W,'W'), // Websites
+      GL(GLYPHS.C,'C'), // Custom software
+      GL(GLYPHS.A,'A'), // AI workflows
+      GL(GLYPHS.B,'B'), // Branding
       // not a service: the arrow of stage 6 (how I work), pointing right, in the icons' gothic hand: a pointed-arch head
       // with a pointed arch cut out of it (like the window) on a broad shaft. Always the last one (index NI-1)
       g=>{g.beginPath();g.moveTo(11,2);g.quadraticCurveTo(21,5,29.5,15);g.quadraticCurveTo(21,25,11,28);g.quadraticCurveTo(16,15,11,2);g.fill();g.fillRect(1.5,12.4,13,5.2);
@@ -346,6 +373,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const ta=ax*k,tb=ay*k,tc=bx*k,td=by*k,te=cx-ta*51.5-tc*49.5,tf=cy-tb*51.5-td*49.5;
     // the side walls: copies stepping back along the depth axis, in the walls' tone; the face on top in the ink
     const cs=MB[8]>=0?1:-1,dx=-MB[2]*2*cs*DEPTH*rh,dy=-MB[5]*2*cs*DEPTH*rh,len=Math.hypot(dx,dy),nL=Math.min(40,Math.ceil(len/.5)),tones=FINE[mode]||FINE.light;
+    if(glr){const L=[];if(nL>0&&len>.3)for(let l=nL;l>0;l--){const t=l/nL;L.push({dx:dx*t,dy:dy*t,col:tones[1]})}
+      L.push({dx:0,dy:0,col:tones[3]});glr.logo([ta,tb,tc,td,te,tf],L,alpha,W,aH);return}
     ctx.globalAlpha=alpha;
     if(nL>0&&len>.3){ctx.fillStyle=tones[1];
       for(let l=nL;l>0;l--){const t=l/nL;ctx.setTransform(DPR,0,0,DPR,dx*t*DPR,dy*t*DPR);ctx.transform(ta,tb,tc,td,te,tf);ctx.fill(RP)}}
@@ -361,7 +390,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     if(cull){
       const r=(scope===document?document.documentElement:scope).getBoundingClientRect();
       const off=r.bottom<-200||r.top>innerHeight+200;
-      if(off){if(!culled){ctx.clearRect(0,0,W,aH);culled=true}return}
+      if(off){if(!culled){glr?glr.clear():ctx.clearRect(0,0,W,aH);culled=true}return}
       culled=false;
     }
     time=ts/1000;const tm=time*motion;
@@ -419,7 +448,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       if(inIntro&&!(p&15))drift+=Math.abs(tx-X[p])+Math.abs(ty-Y[p]);
       let b;
       if(p<NC){
-        if(flat)b=.1+.62*Math.max(0,(fm[2]*LX+fm[5]*LY+fm[8]*LZ)*fs)+(IE[jn+p]?.2:0);
+        if(flat)b=.1+.62*Math.max(0,(fm[2]*LX+fm[5]*LY+fm[8]*LZ)*fs)+(IE[jn+p]&&ICON_G<=96?.2:0); // the outline's extra light only on the 96px icons: at the fine raster it drew the letters as outlines
         else b=.2+.8*capL+(EDGE[p]?.32:0);
       }else{
         const mm=flat?fm:MB,nx=flat?INX[jn+p]:NX[p],ny=flat?INY[jn+p]:NY[p],rx=mm[0]*nx+mm[1]*ny,ry=mm[3]*nx+mm[4]*ny,rz=mm[6]*nx+mm[7]*ny;
@@ -441,14 +470,28 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     if(mode[0]==='b'&&mode!=='paper'&&!PALS[mode]){const t=BQ/8,mixA=(a,b)=>a.map((c,i)=>mixHex(c,b[i],t));
       PALS[mode]=mixA(PALS.light,PALS.dark);FINE[mode]=mixA(FINE.light,FINE.dark);
       G[mode]={gamma:3-t,colors:mixA(G.light.colors,G.dark.colors),line:.37-.05*t,pad:.21+.02*t}}
+    // the loader's R and the phones' header R are drawn as the LOGO: the real R path, solid and crisp, its side walls as
+    // stacked copies behind it, placed by an affine fit of the face particles (so it follows them through every flight
+    // and turn). Oct 2026: the halftone small R was unreadable on phones.
+    // only the loader's R (state 5: the loader, page swaps, the menu's flights) and the header's R on phones; the page's
+    // own R's stay pixelated (the hero especially, Oct 2026). Blended by that state's share, so a flight from the
+    // loader into the hero turns from the logo into the halftone on the way.
+    const sw=i=>(i0===i?1-f:0)+(i1===i?f:0),rhV=(i0===3?Sh:A[i0].S)*(1-f)+(i1===3?Sh:A[i1].S)*f;
+    const vecA=char?0:clamp(sw(5)+(hdrR&&W<640?sw(2):0),0,1);
+    if(glr){
+      // WebGL: the same cells as the 2D halftone / small look below, drawn by the GPU (gl.js)
+      glr.clear();
+      if(vecA<1){
+        const rh=rhV,baseCell=size<1.1?3:clamp(Math.round(size*1.35),4,7),minCell=3/DPR,pitchF=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f;
+        const smLo=DPR<1.5&&rh<80,small=rh<140&&!!SM.fill,smCell=SM.fill?(smLo?2:Math.max(SM.min/DPR,SM.rows?Math.round(rh/(SM.rows*1.8)*DPR)/DPR:0)):0; // 1.8× the rows: the services' letters (~100px, the small look) show their detail; the header's R is at the finest cell already
+        const CMAX=Math.round((W<640?4:5)*DPR)/DPR,CELL=small?Math.min(baseCell,smCell):Math.min(Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*(RQ.cell||2)*DPR)/DPR),Math.max(CMAX,Math.ceil(pitchF*1.3*DPR)/DPR)); // at most CMAX (but never under 1.3 particle pitches, or the face shows holes): the big R's (pitch, footer) otherwise got blocks of ~10px beside the hero's ~4; 2: cells of ~2.5 particle pitches, so the finer particles still read as halftone pixels, not a grey tint
+        const bt=mode==='light'||mode==='paper'?0:mode[0]==='b'?+mode.slice(1)/8:1,lb=themeMode==='wild'?0:.9*(1-dkB);
+                glr.cells({X,Y,BR,LV,N,NC,hc:size/2,cell:CELL,DPR,W,H,mode:small?1:0,tones:FINE[mode],lb,
+          // the face's halftone squares: light and dark a step bigger than the 2D look (a blacker R on paper, a brighter one on the dark)
+          sizes:[.5,.62,.74,.86].map((fr,i)=>fr+([.4,.52,.64,.76][i]-fr)*bt),fill:SM.fill,walls:SM.walls,lo:smLo,gaps:!small,alpha:1-vecA});
+      }
+    }else{
     ctx.clearRect(0,0,W,aH);
-    // small R's (the header's, the projects', the manifesto's, the loader's) are drawn as the LOGO: the real R path,
-    // solid and crisp, its side walls as stacked copies behind it, placed by an affine fit of the face particles (so it
-    // follows them through every flight and turn). The particles fade out under ~150px and are gone under ~110px; only
-    // the plain R (not the exploded pitch, the services' letters or the arrow). Oct 2026: the halftone small R was
-    // unreadable on phones.
-    const isR=i=>i===0||i===2||i===4||i===5,rhV=(i0===3?Sh:A[i0].S)*(1-f)+(i1===3?Sh:A[i1].S)*f;
-    const vecA=!char&&(isR(i0)||f>=1)&&(isR(i1)||f<=0)&&!(flat)?clamp((150-rhV)/40,0,1):0;
     if(vecA<1){ctx.globalAlpha=1-vecA;
     if(render===0||render===3){
       const fine=render===3;
@@ -552,6 +595,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
 
     }
     ctx.globalAlpha=1}
+    }
     if(vecA>0)drawLogo(vecA,mode,rhV,size/2);
     if(audioPP?.length!==N&&N)audioPP=new Float32Array(N);
     if(!pa.init){ // a fresh instance (a page swap hands the R over mid-flight): calibrate only, no phantom burst
@@ -568,12 +612,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const idx=Math.round(s);if(idx!==lastIdx){if(hudName)hudName.textContent=NAMES[idx];lastIdx=idx}
     if(hudBar)hudBar.style.width=(s/4*100)+'%';
     if(inIntro&&rIntro.onDraw){const cb=rIntro.onDraw;rIntro.onDraw=null;cb()}
-    cost+=(performance.now()-fStart-cost)*.05;if(!(inIntro&&rIntro.t<1)){if(cost>10&&coarse&&dprCap>1.5&&DPR>1.5){dprCap=DPR>2?2:1.5;resize();cost=7}else slow=cost>10?true:cost<6?false:slow} // never switches while the R flies in or out of the loader
+    cost+=(performance.now()-fStart-cost)*.05;if(import.meta.env.DEV)window.__rCost=cost;if(!(inIntro&&rIntro.t<1)){if(cost>10&&coarse&&dprCap>1.5&&DPR>1.5){dprCap=DPR>2?2:1.5;resize();cost=7}else slow=cost>10?true:cost<6?false:slow} // never switches while the R flies in or out of the loader
   }
 
   build().then(() => { if (alive) raf = requestAnimationFrame(frame); });
   return () => {
     alive = false; cancelAnimationFrame(raf); ac.abort();
+    if (glr) setTimeout(() => glr.destroy(), 3000); // a little later: the page swap may still take a still of the canvas
     if (intro && inited && rIntro.t > 0) carry = { N, X, Y }; // page swap: the next page's R goes on from here
   };
 }
