@@ -322,6 +322,28 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const mixHex=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);
     const ch=(sh)=>Math.round(((A>>sh&255)*(1-t)+(B>>sh&255)*t));
     return '#'+((1<<24)+(ch(16)<<16)+(ch(8)<<8)+ch(0)).toString(16).slice(1)};
+  const RP=new Path2D(R_PATH);
+  function drawLogo(alpha,mode,rh,hc){
+    // least squares: screen = (ax·u + bx·v + cx, ay·u + by·v + cy) over the face particles
+    let n=0,mu=0,mv=0,mx_=0,my_=0;
+    for(let p=0;p<NC;p+=3){mu+=U[p];mv+=V[p];mx_+=X[p];my_+=Y[p];n++}
+    if(!n)return;mu/=n;mv/=n;mx_/=n;my_/=n;
+    let uu=0,uv=0,vv=0,ux=0,vx=0,uy=0,vy=0;
+    for(let p=0;p<NC;p+=3){const u=U[p]-mu,v=V[p]-mv,x=X[p]-mx_,y=Y[p]-my_;uu+=u*u;uv+=u*v;vv+=v*v;ux+=u*x;vx+=v*x;uy+=u*y;vy+=v*y}
+    const det=uu*vv-uv*uv;if(Math.abs(det)<1e-9)return;
+    const ax=(ux*vv-vx*uv)/det,bx=(vx*uu-ux*uv)/det,ay=(uy*vv-vy*uv)/det,by=(vy*uu-uy*uv)/det;
+    const cx=mx_-ax*mu-bx*mv+hc,cy=my_-ay*mu-by*mv+hc;
+    // the path's units (R.svg, 103 × 99) into the particles' u / v (see build)
+    const GW=Math.round(GH*103/99),k=Math.min(GW*.96/103,GH*.96/99)/GH;
+    const ta=ax*k,tb=ay*k,tc=bx*k,td=by*k,te=cx-ta*51.5-tc*49.5,tf=cy-tb*51.5-td*49.5;
+    // the side walls: copies stepping back along the depth axis, in the walls' tone; the face on top in the ink
+    const cs=MB[8]>=0?1:-1,dx=-MB[2]*2*cs*DEPTH*rh,dy=-MB[5]*2*cs*DEPTH*rh,len=Math.hypot(dx,dy),nL=Math.min(40,Math.ceil(len/.5)),tones=FINE[mode]||FINE.light;
+    ctx.globalAlpha=alpha;
+    if(nL>0&&len>.3){ctx.fillStyle=tones[1];
+      for(let l=nL;l>0;l--){const t=l/nL;ctx.setTransform(DPR,0,0,DPR,dx*t*DPR,dy*t*DPR);ctx.transform(ta,tb,tc,td,te,tf);ctx.fill(RP)}}
+    ctx.fillStyle=tones[3];ctx.setTransform(DPR,0,0,DPR,0,0);ctx.transform(ta,tb,tc,td,te,tf);ctx.fill(RP);
+    ctx.setTransform(DPR,0,0,DPR,0,0);ctx.globalAlpha=1;
+  }
   function frame(ts){
     if(!alive)return;
     raf=requestAnimationFrame(frame);
@@ -412,6 +434,14 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       PALS[mode]=mixA(PALS.light,PALS.dark);FINE[mode]=mixA(FINE.light,FINE.dark);
       G[mode]={gamma:3-t,colors:mixA(G.light.colors,G.dark.colors),line:.37-.05*t,pad:.21+.02*t}}
     ctx.clearRect(0,0,W,H);
+    // small R's (the header's, the projects', the manifesto's, the loader's) are drawn as the LOGO: the real R path,
+    // solid and crisp, its side walls as stacked copies behind it, placed by an affine fit of the face particles (so it
+    // follows them through every flight and turn). The particles fade out under ~150px and are gone under ~110px; only
+    // the plain R (not the exploded pitch, the services' letters or the arrow). Oct 2026: the halftone small R was
+    // unreadable on phones.
+    const isR=i=>i===0||i===2||i===4||i===5,rhV=(i0===3?Sh:A[i0].S)*(1-f)+(i1===3?Sh:A[i1].S)*f;
+    const vecA=!char&&(isR(i0)||f>=1)&&(isR(i1)||f<=0)&&!(flat)?clamp((150-rhV)/40,0,1):0;
+    if(vecA<1){ctx.globalAlpha=1-vecA;
     if(render===0||render===3){
       const fine=render===3;
       // small shapes (the small R in the header / projects): finer cells so there is enough detail (~36 glyphs tall);
@@ -513,6 +543,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     }
 
     }
+    ctx.globalAlpha=1}
+    if(vecA>0)drawLogo(vecA,mode,rhV,size/2);
     if(audioPP?.length!==N&&N)audioPP=new Float32Array(N);
     if(!pa.init){ // a fresh instance (a page swap hands the R over mid-flight): calibrate only, no phantom burst
       pa.init=true;pa.s=s;pa.sg=sg;pa.t=rIntro.t;pa.jf=jump?jump.f:0;pa.jon=!!jump;pushAcc=0;
