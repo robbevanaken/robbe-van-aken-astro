@@ -9,9 +9,6 @@
 .c-pricing__pin{overflow:clip}
 .c-pricing__end{display:block;height:0} /* the flying cards wait below the screen: never over the footer */
 .c-pricing__stage{align-content:center;row-gap:0;padding-block:var(--space-l)}
-.c-pricing__r{grid-column:1 / -1;justify-self:center;width:56px;height:56px;margin-bottom:var(--space-l);pointer-events:none}
-/* while pinned: the R on the header's line, centred, as above the projects (.c-featured-projects__head) */
-@media (min-width:1024px){ .c-pricing__r{position:absolute;grid-area:auto;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);left:50%;translate:-50% 0;margin:0} }
 
 /* the chapter voice, as the other heads */
 .c-pricing__title{grid-column:1 / span 6;margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em;font-weight:400} /* as the services' title */
@@ -63,9 +60,6 @@
 }
 @media (max-width:1023px){
   .c-pricing{padding-top:var(--space-xl)} /* a touch closer to the manifesto (was --space-section) */
-  /* the R between the manifesto and the cards: bigger and against the right margin, the pitch's R mirrored (there
-     it stands on the left, here on the right; was: small and centred, 40px on phones) */
-  .c-pricing__r{justify-self:end;width:clamp(96px,26vw,128px);height:clamp(96px,26vw,128px);margin-bottom:var(--space-l)}
   .c-pricing__stage{padding-block:0}
   .c-pricing__title,.c-pricing__intro{grid-column:1 / -1}
   .c-pricing__title{font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}

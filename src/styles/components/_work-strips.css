@@ -4,7 +4,6 @@
    thumbnail trails the cursor in the follower. */
 .c-work-strips{position:relative;padding-block:var(--space-section) var(--space-xl)} /* the bottom: the "View all projects" foot counts on it (_featured-projects.css) */
 .c-work-strips__head{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);z-index:2;display:flex;justify-content:center;height:56px;margin-bottom:-56px;pointer-events:none}
-.c-work-strips__r{width:56px;height:56px}
 .c-work-strips__end{height:1px}
 .c-work-strips__top{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-s)}
 .c-work-strips__title{margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em;font-weight:400}
@@ -63,7 +62,6 @@ html.no-js .c-work-strips__item:hover{--open:1;flex-grow:4.2}
    description and service · year; no tones, no accordion (tried: the accordion turned 90°, one band always open) */
 @media (max-width:1023px){
   .c-work-strips__head{top:calc(env(safe-area-inset-top,0px) + var(--nav-top));height:40px;margin-bottom:-40px}
-  .c-work-strips__r{width:40px;height:40px}
   .c-work-strips__title{font-size:clamp(28px,7vw,40px)}
   .c-work-strips__list{display:block;height:auto;margin-top:var(--space-m)}
   .c-work-strips__item,.c-work-strips__item.is-open{--open:1;--narrow:0;padding:0}

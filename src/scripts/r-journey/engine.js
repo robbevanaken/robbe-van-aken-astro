@@ -100,6 +100,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const main=find('a-craft')||find('a-foot')||find('a-hero')||find('a-pitch')||scope.querySelector?.('[data-r-pointer]')||scope.querySelector?.('[data-r-anchor]');if(!main)return null;
   const byId=(id)=>find(id)||main;
   const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aCraft=byId('a-craft'),aFoot=byId('a-foot');
+  const craftHdr=!!aCraft.closest?.('[data-site-header]'); // home: stage 2 sits in the header (logo on phones, like the subpages' header R)
   // services: one icon in [data-service-slot], which one (and how far into the morph to the next) follows [data-services]
   const svcSlot=scope.querySelector?.('[data-service-slot]')||main,svcEl=scope.querySelector?.('[data-services]')||null;
   // how I work: the arrow (the last icon) on [data-r-pointer], moved from row to row by components/approach.js
@@ -477,7 +478,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     // own R's stay pixelated (the hero especially, Oct 2026). Blended by that state's share, so a flight from the
     // loader into the hero turns from the logo into the halftone on the way.
     const sw=i=>(i0===i?1-f:0)+(i1===i?f:0),rhV=(i0===3?Sh:A[i0].S)*(1-f)+(i1===3?Sh:A[i1].S)*f;
-    const vecA=char?0:clamp(sw(5)+(hdrR&&W<640?sw(2):0),0,1);
+    const vecA=char?0:clamp(sw(5)+((hdrR||craftHdr)&&W<640?sw(2):0),0,1);
     if(glr){
       // WebGL: the same cells as the 2D halftone / small look below, drawn by the GPU (gl.js)
       glr.clear();
