@@ -54,8 +54,16 @@ export function initServices(root = document) {
   const list = el.querySelector('.c-services__list'), wide = matchMedia('(min-width: 1024px)');
   const low = matchMedia('(min-width: 1024px) and (max-height: 740px), (max-width: 1023px) and (max-height: 600px)'); // not pinned there (_services.css)
   const fitSteps = () => {
-    el.style.removeProperty('--step'); el.style.removeProperty('--sz');
+    el.style.removeProperty('--step'); el.style.removeProperty('--sz'); el.style.removeProperty('--ch');
     if (!list || !items.length) return;
+    // below 1024px: the cards' height is what the pinned screen leaves under the head (its gap included), at most
+    // min(52svh, 440px) — on shorter screens the card ran up against the intro
+    if (!wide.matches && !low.matches) {
+      const stage = list.parentElement, cs = getComputedStyle(stage), head = [...stage.children].filter((k) => k !== list && !k.matches('[data-service-slot]'));
+      const used = head.reduce((s, k) => { const m = getComputedStyle(k); return s + k.offsetHeight + parseFloat(m.marginTop) + parseFloat(m.marginBottom); }, 0);
+      const room = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - used;
+      el.style.setProperty('--ch', `${Math.round(Math.max(240, Math.min(innerHeight * .52, 440, room)))}px`);
+    }
     if (low.matches) { el.style.setProperty('--step', '0px'); el.style.setProperty('--sz', wide.matches ? '104px' : '96px'); return; }
     const pad = parseFloat(getComputedStyle(items[0]).paddingBottom) || 16, w = items[0].clientWidth;
     const content = Math.max(...items.map((it) => {

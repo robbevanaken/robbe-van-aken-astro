@@ -50,10 +50,11 @@
   .c-site-footer__r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(220px,38vh,480px)}
 }
 @media (max-width:639px){
-  /* centred and calm: two balanced rows (company · location, privacy · cookie settings), centred */
-  .c-site-footer__bottom{display:grid;grid-template-columns:auto auto;justify-content:center;justify-items:center;column-gap:var(--space-m);row-gap:var(--space-2xs);text-align:center;
+  /* two rows on the grid's two halves, left-aligned like the title, the email and the socials above (company ·
+     location, privacy · cookie settings; was centred: two ragged pairs that lined up with nothing) */
+  .c-site-footer__bottom{display:grid;grid-template-columns:max-content max-content;column-gap:var(--space-l);justify-items:start;align-items:start;row-gap:var(--space-xs);text-align:left;
     padding-block:var(--space-m) calc(var(--float-bottom) + var(--tile) + var(--space-s))} /* room under the rows for the fixed sound tile (the album tile lives in the menu) */
-  .c-site-footer__bottom > *{grid-column:auto} /* not the full width .o-grid > * gives them */
+  .c-site-footer__bottom > *{grid-column:auto} /* two columns as wide as their longest line (halves of the grid broke "… BV" onto a second line) */
   .c-site-footer__legal:not(.c-site-footer__legal--cookies){margin-left:0}
   .c-site-footer__egg{grid-column:1 / -1;order:1;margin-top:var(--space-2xs)} /* phones: the hint on its own row, under the others */
 }

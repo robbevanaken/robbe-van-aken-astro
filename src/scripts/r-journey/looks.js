@@ -14,8 +14,11 @@ export const LOOKS = {
   halftone: { label: 'E · Halftone', cell: [1.25, 1.4], face: 'half', wall: 'dot', dither: 0 },
   quiet:    { label: 'F · Checker, cross edge', cell: [1.2, 1.35], face: 'alt', wall: 'sq', dither: 0, two: true, edge: true },
   glyph:    { label: 'G · Glyph (old)', render: 0 },
+  // the engraving (Oct 2026): horizontal bars across the cells, heavier where it's lit, so the rows join into a line
+  // screen. The WebGL renderer (gl.js) draws it with its own, finer screen; this is the 2D fallback's
+  engrave:  { label: 'H · Engraving', cell: [1.25, 1.4], face: 'bar', wall: 'barw', dither: 0 },
 };
-export const LOOK = 'halftone';
+export const LOOK = 'engrave';
 
 // Looks for the small R's (under 140px: the header's, the projects', the loader's), compared on a lab page (since
 // removed; `data-r-small` on a canvas picks one per engine). `now`: the

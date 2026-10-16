@@ -51,15 +51,15 @@
    (--sv from the script, the hold between services makes it settle on each), the active one in the accent, the icon
    on its top left corner, pills at the bottom (tried: one centred column switching per service) */
 @media (max-width:1023px){
-  .c-services{--cwm:min(78vw,420px);--sz:clamp(84px,40vw,200px);padding-bottom:var(--space-xl)}
+  .c-services{--cwm:min(78vw,420px);--sz:clamp(84px,40vw,200px);--ch:min(52svh,440px);padding-bottom:var(--space-xl)} /* --ch: the cards' height, lowered by services.js when the head leaves less room (they touched the intro) */
   .c-services__title.c-services__title{grid-column:1 / -1;grid-row:1;text-align:left;font-size:clamp(28px,7vw,40px);line-height:var(--lh-tight)}
-  .c-services__intro.c-services__intro{grid-column:1 / -1;grid-row:2;justify-self:start;text-align:left;max-width:32ch;margin-top:var(--space-2xs);font-size:clamp(18px,4.6vw,28px);line-height:1.2}
+  .c-services__intro.c-services__intro{grid-column:1 / -1;grid-row:2;justify-self:start;text-align:left;max-width:32ch;margin-top:var(--space-2xs);margin-bottom:var(--space-l);font-size:clamp(18px,4.6vw,28px);line-height:1.2}
   .c-services__stage{grid-template-rows:auto auto 1fr;row-gap:0;align-items:center;overflow:hidden;
     padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 96px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--float-bottom) + var(--space-s))}
   .c-services__list{grid-column:1 / -1;grid-row:3;display:flex;gap:var(--gutter);width:max-content;
     margin-inline:calc(-1 * var(--margin));padding-inline:var(--margin) calc(100vw - var(--cwm) - var(--margin)); /* the active card against the container's left edge */
     transform:translateX(calc(-1 * var(--sv,0) * (var(--cwm) + var(--gutter))));will-change:transform}
-  .c-services__item{flex:none;width:var(--cwm);height:min(52svh,440px);display:flex;flex-direction:column;justify-content:flex-end;gap:var(--space-2xs);
+  .c-services__item{flex:none;width:var(--cwm);height:var(--ch);display:flex;flex-direction:column;justify-content:flex-end;gap:var(--space-2xs);
     padding:calc(var(--sz) + var(--space-s) * 2) var(--space-s) var(--space-s);background:var(--panel);transition:background-color .7s var(--ease-out),color .7s var(--ease-out)}
   .c-services__item.is-active{background:var(--accent);color:var(--on-accent)}
   .c-services__item.is-active .u-text-muted{color:color-mix(in srgb,var(--on-accent) 72%,var(--accent))}
@@ -72,7 +72,7 @@
   /* the icon on the active card's top right corner (it always settles against the container's left edge) */
   .c-services__slot{grid-column:1 / -1;grid-row:3;align-self:center;justify-self:start;width:var(--sz);z-index:1;
     margin-left:calc(var(--cwm) - var(--sz) - var(--space-s)); /* the card's top right corner */
-    translate:0 calc(-1 * min(52svh,440px) / 2 + var(--sz) / 2 + var(--space-s));--corner-offset:6px}
+    translate:0 calc(-1 * var(--ch) / 2 + var(--sz) / 2 + var(--space-s));--corner-offset:6px}
 }
 
 /* very low screens (a laptop with the browser's bars, a phone turned): head + panels don't fit one screen, so no pin

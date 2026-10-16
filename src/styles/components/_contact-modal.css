@@ -88,6 +88,7 @@ html.is-contact-open .c-music:not(.c-music--menu),html.is-contact-open .c-sound-
   /* phones: the panel is the screen below the header, as a sheet */
   .c-contact-modal__panel{width:calc(100vw - 32px);height:min(720px,calc(100svh - 112px))} /* phones: a card, the page's edges still showing around it (tried: nearly the whole screen) */
   .c-contact-modal__inner{grid-template-columns:repeat(4,minmax(0,1fr));padding:104px var(--space-m) var(--space-xl)} /* room on top for the R and the close button, with air (68px felt cramped) */
+  .c-contact-modal .c-contact__details{grid-template-columns:minmax(0,1fr)} /* the details above the socials: side by side they ran ~45px past the panel (a sideways scroll) */
   .c-contact-modal__head{grid-column:1 / -1}
   .c-contact-modal__close{top:34px;right:var(--pad)} /* level with the R's spot, on the panel's side padding */
   .c-contact-modal .c-contact__portrait{width:50%}

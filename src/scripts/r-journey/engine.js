@@ -18,9 +18,12 @@ import { createGL } from './gl.js';
 // GPU, so the R carries ~4–5× the particles (its shape sharp: the hairlines, points and counters of the logo) for about
 // the same frame cost. Without WebGL 2 the 2D canvas takes over at its old detail. To compare (dev): ?r=2d / ?r=gl, ?gh=
 // the particle grid's height, ?cell= a factor on the cell size; kept in sessionStorage.
-const RQ=(()=>{const o={gl:true,gh:0,cell:0};try{const q=new URLSearchParams(location.search),ss=sessionStorage;
-  for(const k of ['r','gh','cell'])if(q.has(k))ss.setItem('rq-'+k,q.get(k));
-  o.gl=ss.getItem('rq-r')!=='2d';o.gh=+ss.getItem('rq-gh')||0;o.cell=+ss.getItem('rq-cell')||0}catch{}return o})();
+const RQ=(()=>{const o={gl:true,gh:0,cell:0,engrave:true};try{const q=new URLSearchParams(location.search),ss=sessionStorage;
+  for(const k of ['r','gh','cell','look'])if(q.has(k))ss.setItem('rq-'+k,q.get(k));
+  o.gl=ss.getItem('rq-r')!=='2d';o.gh=+ss.getItem('rq-gh')||0;o.cell=+ss.getItem('rq-cell')||0;o.engrave=ss.getItem('rq-look')!=='halftone'}catch{}return o})();
+// the look: the ENGRAVING (a line screen, gl.js) since Oct 2026; ?look=halftone shows the squares it replaced. Its cells
+// only shape the silhouette (the lines run across them), so they're finer than the halftone's
+const LOOKCELL=RQ.engrave?1.4:2;
 
 // The page loader and page swaps (global/pageTransitions.js) borrow the page's R: while `rIntro.t` is 1 the engine with
 // `intro` draws it as the small R on `rIntro.el` (state 5, a copy of stage 2 on its own anchor); as t goes to 0 it
@@ -339,6 +342,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     const sq=(col,fr)=>{const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');const q=Math.max(1,Math.round(px*fr)),o=Math.round((px-q)/2);g.fillStyle=col;g.fillRect(o,o,q,q);return c};
     const x=(col)=>{const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');const pad=px*(gs.pad-.06);g.strokeStyle=col;g.lineWidth=Math.max(1,px*gs.line);g.lineCap=px<6?'butt':'round';
       g.beginPath();g.moveTo(pad,pad);g.lineTo(px-pad,px-pad);g.moveTo(px-pad,pad);g.lineTo(pad,px-pad);g.stroke();return c};
+    const bar=(col,fr)=>{const c=document.createElement('canvas');c.width=c.height=px;const g=c.getContext('2d');const q=Math.max(1,Math.round(px*fr));g.fillStyle=col;g.fillRect(0,Math.round((px-q)/2),px,q);return c};
+    if(shape==='bar'||shape==='barw'){const out=shape==='bar'?[.3,.44,.58,.72].map(fr=>bar(FINE[mode][3],fr)):FINE[mode].map(c=>bar(c,.3));spriteCache.set(key,out);return out} // the engraving's bars
     const out=shape==='x'?FINE[mode].map(x):shape==='sq'?FINE[mode].map(c=>sq(c,.58)):shape==='dot'?FINE[mode].map(c=>sq(c,.42)):
       [.44,.56,.68,.8].map((fr,i)=>{const bt=mode==='light'||mode==='paper'?0:mode[0]==='b'?+mode.slice(1)/8:1;return sq(FINE[mode][3],fr+([.3,.42,.54,.66][i]-fr)*bt)}); // half: the darkest tone, four sizes, eased from the light sizes (more ink on paper) to the dark ones with the blend
     spriteCache.set(key,out);return out;
@@ -485,11 +490,13 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       if(vecA<1){
         const rh=rhV,baseCell=size<1.1?3:clamp(Math.round(size*1.35),4,7),minCell=3/DPR,pitchF=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f;
         const smLo=DPR<1.5&&rh<80,small=rh<140&&!!SM.fill,smCell=SM.fill?(smLo?2:Math.max(SM.min/DPR,SM.rows?Math.round(rh/(SM.rows*1.8)*DPR)/DPR:0)):0; // 1.8× the rows: the services' letters (~100px, the small look) show their detail; the header's R is at the finest cell already
-        const CMAX=Math.round((W<640?4:5)*DPR)/DPR,CELL=small?Math.min(baseCell,smCell):Math.min(Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*(RQ.cell||2)*DPR)/DPR),Math.max(CMAX,Math.ceil(pitchF*1.3*DPR)/DPR)); // at most CMAX (but never under 1.3 particle pitches, or the face shows holes): the big R's (pitch, footer) otherwise got blocks of ~10px beside the hero's ~4; 2: cells of ~2.5 particle pitches, so the finer particles still read as halftone pixels, not a grey tint
+        const CMAX=Math.round((W<640?4:5)*1*DPR)/DPR,CELL=small?Math.min(baseCell,smCell):Math.min(Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*(RQ.cell||LOOKCELL)*DPR)/DPR),Math.max(CMAX,Math.ceil(pitchF*1.3*DPR)/DPR)); // at most CMAX (but never under 1.3 particle pitches, or the face shows holes): the big R's (pitch, footer) otherwise got blocks of ~10px beside the hero's ~4; 2: cells of ~2.5 particle pitches, so the finer particles still read as halftone pixels, not a grey tint
         const bt=mode==='light'||mode==='paper'?0:mode[0]==='b'?+mode.slice(1)/8:1,lb=themeMode==='wild'?0:.9*(1-dkB);
                 glr.cells({X,Y,BR,LV,N,NC,hc:size/2,cell:CELL,DPR,W,H,mode:small?1:0,tones:FINE[mode],lb,
           // the face's halftone squares: light and dark a step bigger than the 2D look (a blacker R on paper, a brighter one on the dark)
-          sizes:[.5,.62,.74,.86].map((fr,i)=>fr+([.4,.52,.64,.76][i]-fr)*bt),fill:SM.fill,walls:SM.walls,lo:smLo,gaps:!small,alpha:1-vecA});
+          sizes:[.5,.62,.74,.86].map((fr,i)=>fr+([.4,.52,.64,.76][i]-fr)*bt),fill:SM.fill,walls:SM.walls,lo:smLo,gaps:!small,alpha:1-vecA,engrave:RQ.engrave,
+          // the line screen's period: ~3px (phones 2.5), the small R's finer (~28 lines tall); never under 3 device px
+          period:Math.max(3,Math.round((small?clamp(rh/28,1.5,3):W<640?2.5:3)*DPR))});
       }
     }else{
     ctx.clearRect(0,0,W,aH);

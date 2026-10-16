@@ -26,9 +26,18 @@ in vec2 a;out vec2 uv;void main(){uv=a*.5+.5;gl_Position=vec4(a,0.,1.);}`;
 const FS_CELLS = `#version 300 es
 precision highp float;
 uniform sampler2D T;uniform ivec2 dims;uniform float cellD,canvasH,lb,fill,alpha;uniform int mode,walls,lo,fillGaps;
-uniform vec3 tone[4];uniform float sizes[4];
+uniform vec3 tone[4];uniform float sizes[4];uniform int engrave;uniform float period;
 out vec4 o;
 bool cap(vec4 t){return t.a>0.;}
+// one line of a horizontal line screen: P the period, w the stroke (device px), its edges antialiased
+float line(float s,float P,float w){float d=abs(fract(s/P)-.5)*P;return clamp(w*.5-d+.5,0.,1.);}
+// the engraving (Oct 2026, the site's look; chosen over halftone squares, round dots, characters, cross-hatching,
+// riso and a 1-bit dither): a line screen fixed to the screen, the strokes heavier where the R takes more ink; the
+// face in the ink, the walls in their own tone with thinner strokes
+void engraved(vec2 p,float d,vec3 cl){
+  float w=period*mix(.16,.74,d),ink=line(p.y,period,w)*alpha;
+  if(ink<=0.)discard;o=vec4(cl*ink,ink);
+}
 void main(){
   vec2 p=vec2(gl_FragCoord.x,canvasH-gl_FragCoord.y);
   ivec2 c=ivec2(floor(p/cellD));
@@ -45,6 +54,14 @@ void main(){
       else if(cap(l)&&cap(r2)){cp=true;v=l.r;}else if(cap(l2)&&cap(r)){cp=true;v=r.r;}
       else if(cap(u)&&cap(d2)){cp=true;v=u.r;}else if(cap(u2)&&cap(d)){cp=true;v=d.r;}
     }
+    if(engrave==1){
+      if(cp){engraved(p,clamp((v*4.+.22+lb)/4.4,.35,1.),tone[3]);return;}
+      float g=t.g;bool wl=t.b>0.;
+      if(!wl){ // a wall cell the particles skipped between two wall cells: filled, or the walls' lines came out speckled
+        vec4 l=texelFetch(T,c-ivec2(1,0),0),r=texelFetch(T,c+ivec2(1,0),0);if(l.b>0.&&r.b>0.){wl=true;g=max(l.g,r.g);}}
+      if(wl){int lv=clamp(int(floor(g*4.2+.9+lb+.5)),1,4);engraved(p,.22+.1*float(lv),tone[lv-1]);return;}
+      discard;
+    }
     if(cp){int lv=clamp(int(floor(v*4.+.22+lb+.5)),1,4);fr=sizes[lv-1];col=tone[3];}
     else if(t.b>0.){int lv=clamp(int(floor(t.g*4.2+.9+lb+.5)),1,4);fr=.42;col=tone[lv-1];}
     else discard;
@@ -52,6 +69,7 @@ void main(){
     int lv;
     // the strongest tone from .3 (2D: .42): a blacker small R, solid letters on the services' red
     if(cap(t))lv=(t.r>.3?3:2)-lo;else if(t.b>0.&&walls==1)lv=t.g>.5?1:0;else discard;
+    if(engrave==1){engraved(p,lv>=2?(lv==3?.9:.7):.45,tone[lv]);return;} // the small R's (header, services' letters) engraved too
     fr=lo==1?1.:fill;col=tone[lv];
   }
   vec2 l=floor(p-vec2(c)*cellD);
@@ -130,6 +148,7 @@ export function createGL(canvas) {
       gl.uniform1f(u.lb, o.lb || 0); gl.uniform1f(u.fill, o.fill ?? 1); gl.uniform1f(u.alpha, o.alpha ?? 1);
       gl.uniform1i(u.mode, o.mode); gl.uniform1i(u.walls, o.walls === false ? 0 : 1); gl.uniform1i(u.lo, o.lo ? 1 : 0); gl.uniform1i(u.fillGaps, o.gaps ? 1 : 0);
       gl.uniform3fv(u.tone, toneOf(o.tones)); gl.uniform1fv(u.sizes, o.sizes || [1, 1, 1, 1]);
+      gl.uniform1i(u.engrave, o.engrave ? 1 : 0); gl.uniform1f(u.period, o.period || 6);
       gl.bindVertexArray(qVao); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
     // the logo: m = [a, b, c, d, e, f] (canvas-style affine, path units → css px), layers: [{dx, dy, col}] drawn in order
