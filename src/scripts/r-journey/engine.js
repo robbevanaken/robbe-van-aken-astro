@@ -19,9 +19,9 @@ const GLR = new WeakMap(); // canvas → its WebGL renderer
 // GPU, so the R carries ~4–5× the particles (its shape sharp: the hairlines, points and counters of the logo) for about
 // the same frame cost. Without WebGL 2 the 2D canvas takes over at its old detail. To compare (dev): ?r=2d / ?r=gl, ?gh=
 // the particle grid's height, ?cell= a factor on the cell size; kept in sessionStorage.
-const RQ=(()=>{const o={gl:true,gh:0,cell:0,engrave:true};try{const q=new URLSearchParams(location.search),ss=sessionStorage;
+const RQ=(()=>{const o={gl:true,gh:0,cell:0,engrave:false};try{const q=new URLSearchParams(location.search),ss=sessionStorage;
   for(const k of ['r','gh','cell','look'])if(q.has(k))ss.setItem('rq-'+k,q.get(k));
-  o.gl=ss.getItem('rq-r')!=='2d';o.gh=+ss.getItem('rq-gh')||0;o.cell=+ss.getItem('rq-cell')||0;o.engrave=ss.getItem('rq-look')!=='halftone'}catch{}return o})();
+  o.gl=ss.getItem('rq-r')!=='2d';o.gh=+ss.getItem('rq-gh')||0;o.cell=+ss.getItem('rq-cell')||0;o.engrave=ss.getItem('rq-look')==='engrave'}catch{}return o})();
 // the look: the ENGRAVING (a line screen, gl.js) since Oct 2026; ?look=halftone shows the squares it replaced. Its cells
 // only shape the silhouette (the lines run across them), so they're finer than the halftone's
 const LOOKCELL=RQ.engrave?1.4:2;
@@ -218,7 +218,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       const h=t.getContext('2d');h.filter=`blur(${(c.width*.012).toFixed(1)}px)`;h.drawImage(c,0,0);const id=h.getImageData(0,0,t.width,t.height),dd=id.data;
       for(let i=3;i<dd.length;i+=4){const a=Math.max(0,Math.min(255,(dd[i]-128)*3+128));dd[i]=a;dd[i-1]=dd[i-2]=dd[i-3]=255}
       g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);g.putImageData(id,0,0);return c};
-    const icons=drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=IG;const g=c.getContext('2d');g.scale(IG/30,IG/30);g.fillStyle='#fff';fn(g);soften(c);
+    const icons=drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=IG;const g=c.getContext('2d');g.scale(IG/30,IG/30);g.fillStyle='#fff';fn(g);if(RQ.engrave)soften(c);
       const id=g.getImageData(0,0,IG,IG).data,ins=(x,y)=>x>=0&&y>=0&&x<IG&&y<IG&&id[(y*IG+x)*4+3]>120,cap=[],bd=[];
       for(let y=0;y<IG;y++)for(let x=0;x<IG;x++){if(!ins(x,y))continue;const u=(x+.5)/IG-.5,v=(y+.5)/IG-.5;
         let nx=0,ny=0,o=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if((dx||dy)&&!ins(x+dx,y+dy)){nx+=dx;ny+=dy;o++}
@@ -228,7 +228,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     // icon to icon. Both sides are sorted top to bottom, so the top of one shape becomes the top of the next.
     ICON_G=IG;NI=icons.length;const ILAY=6;
     // the crisp renderer's letters: the same icons at 512px, as textures (gl.js setIcons)
-    ICONS=glr?drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.scale(512/30,512/30);g.fillStyle='#fff';fn(g);return soften(c)}):null;
+    ICONS=glr?drawIcon.map(fn=>{const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.scale(512/30,512/30);g.fillStyle='#fff';fn(g);return RQ.engrave?soften(c):c}):null;
     IU=new Float32Array(NI*N);IV=new Float32Array(NI*N);IZ=new Float32Array(NI*N);INX=new Float32Array(NI*N);INY=new Float32Array(NI*N);IE=new Uint8Array(NI*N);
     const srt=(a,b)=>(V[a]-V[b])||(U[a]-U[b]),capP=[],sideP=[];for(let k=0;k<N;k++)(k<NC?capP:sideP).push(k);capP.sort(srt);sideP.sort(srt);
     for(let q=0;q<NI;q++){
@@ -506,7 +506,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     // own R's stay pixelated (the hero especially, Oct 2026). Blended by that state's share, so a flight from the
     // loader into the hero turns from the logo into the halftone on the way.
     const sw=i=>(i0===i?1-f:0)+(i1===i?f:0),rhV=(i0===3?Sh:A[i0].S)*(1-f)+(i1===3?Sh:A[i1].S)*f;
-    const vecA=char?0:clamp(sw(5)+((hdrR||craftHdr)&&W<640?sw(2):0),0,1);
+    const vecA=0; // the solid logo (drawLogo) is off: small R's are halftone too (Oct 2026: "instead of such a heavy letter"); was: char?0:clamp(sw(5)+((hdrR||craftHdr)&&W<640?sw(2):0),0,1) — the loader's R and the phones' header R as the solid logo
     if(glr){
       // WebGL: the same cells as the 2D halftone / small look below, drawn by the GPU (gl.js)
       glr.clear();

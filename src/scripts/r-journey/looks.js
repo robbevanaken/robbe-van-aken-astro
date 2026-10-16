@@ -18,7 +18,7 @@ export const LOOKS = {
   // screen. The WebGL renderer (gl.js) draws it with its own, finer screen; this is the 2D fallback's
   engrave:  { label: 'H · Engraving', cell: [1.25, 1.4], face: 'bar', wall: 'barw', dither: 0 },
 };
-export const LOOK = 'engrave';
+export const LOOK = 'halftone'; // back to the halftone squares (Oct 2026: the engraving, the materials and a fold were tried after it; 'engrave' stays as an option, ?look=engrave)
 
 // Looks for the small R's (under 140px: the header's, the projects', the loader's), compared on a lab page (since
 // removed; `data-r-small` on a canvas picks one per engine). `now`: the
