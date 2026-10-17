@@ -53,10 +53,24 @@ import ProjectVisual from '../ui/ProjectVisual.astro';
                 <span class="c-featured-projects__tag u-text-label">{p.service}</span>
                 <span class="c-featured-projects__tag c-featured-projects__tag--year u-text-label">{p.year}</span>
               </span>
+              {grid ? (
+                <>
+                  {/* /work: the name and the description on an accent band right under the image (Oct 2026: over the
+                      sticky title behind the cards the caption was unreadable); a CSS loop, so /work's copies
+                      (workLoop.js) run too; the heading stays for screen readers */}
+                  <span class="c-featured-projects__caption u-sr-only"><Title>{p.title}</Title> {p.description}</span>
+                  <span class="c-marquee c-marquee--card" aria-hidden="true">
+                    <span class="c-marquee__track">
+                      {[0, 1].map(() => <span class="c-marquee__half">{Array.from({ length: 4 }).map(() => <span class="c-marquee__item"><span class="c-marquee__name">{p.title}</span><span class="c-marquee__sep">·</span>{p.description}<span class="c-marquee__sep">·</span></span>)}</span>)}
+                    </span>
+                  </span>
+                </>
+              ) : (
               <span class="c-featured-projects__caption">
                 <span class="c-featured-projects__caption-row"><Title class="c-featured-projects__caption-title" data-text-hover="card">{p.title}</Title></span>
                 <span class="c-featured-projects__caption-text u-text-ui">{p.description}</span>
               </span>
+              )}
           </a>
         </li>
       ))}

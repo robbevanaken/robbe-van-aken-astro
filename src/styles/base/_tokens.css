@@ -30,6 +30,7 @@
   --on-fg:#170e0b;    /* text on an --fg background (buttons) */
   --surface:#1d1310;  /* panels above the page (cookie banner) */
   --paper:#ffffff;    /* the filling marquee before the accent comes in */
+  --thumb-field:#3a322e; /* the field behind the projects' thumbnails (cards, home's preview, detail visual): a warm charcoal, one in every theme — reads on the paper and a step off the dark chapters (tried Oct 2026: white, paper, grey, ink; the projects' own colours) */
   --thumb:#f3eee8;    /* the field behind a project thumbnail (its home page's screenshot): the page's opposite, for contrast */
   --grain:.07;        /* the paper grain over the site (_grain.css) */
   --page:var(--bg);   /* the page's background */

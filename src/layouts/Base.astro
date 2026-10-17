@@ -39,7 +39,7 @@ const gaSnippet = "(function(){var s=document.createElement('script');s.async=tr
     {live && <script is:inline set:html={consentDefaults} />}
     {live && <script is:inline type="text/plain" data-category="analytics" set:html={gaSnippet} />}
     <!-- theme (scripts/global/theme.js): light (dark sections are set per section), or the hidden "wild" one if it was found in this visit, set before the first paint -->
-    <script is:inline>document.documentElement.classList.remove('no-js');try{if(sessionStorage.getItem('wild'))document.documentElement.dataset.theme='wild'}catch(e){}</script>
+    <script is:inline>document.documentElement.classList.remove('no-js');try{if(sessionStorage.getItem('wild'))document.documentElement.dataset.theme='wild';const F={white:'#ffffff',paper:'#e8e1d9',grey:'#bdb5ae',charcoal:'#3a322e',ink:'#0e0907'},q=new URLSearchParams(location.search).get('field');if(q)sessionStorage.setItem('field',q);const f=F[sessionStorage.getItem('field')];if(f)document.documentElement.style.setProperty('--thumb-field',f)}catch(e){}</script>
     <!-- page loader: shown until scripts/global/pageTransitions.js has played it (safety net: gone after 8 s regardless);
          once per visit (a reload or a link opened in the same tab later skips it) -->
     <script is:inline>let seen;try{seen=sessionStorage.getItem('loaded')}catch(e){}if(!seen&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');setTimeout(()=>document.documentElement.classList.remove('is-loading'),8000)}</script>

@@ -9,3 +9,12 @@
 .c-marquee--fill{background:var(--paper);color:var(--ink)}
 .c-marquee__fill{position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left}
 .c-marquee--fill .c-marquee__track{position:relative}
+/* on the /work cards (ProjectGlobe layout grid): the project's name and description under its image, a CSS loop
+   (two equal halves, the track moves by one half); no scroll boost (JS-free, so the list's copies run) */
+.c-marquee--card{width:100%;font-size:var(--fs-body);z-index:auto}
+.c-marquee--card .c-marquee__track{animation:c-marquee-card 28s linear infinite}
+.c-marquee--card .c-marquee__half{display:inline-flex}
+.c-marquee--card .c-marquee__item{gap:var(--space-s);padding-right:var(--space-s)}
+.c-marquee__name{font-weight:500}
+@keyframes c-marquee-card{to{transform:translate3d(-50%,0,0)}}
+@media (prefers-reduced-motion:reduce){ .c-marquee--card .c-marquee__track{animation:none} }

@@ -18,5 +18,5 @@
 /* thumb (the /work cards, the detail page, scroll-next): the home page's screenshot on a field in the project's own
    light colour (--tb, colors.b), as the home showreel (tried: the page's opposite colour, --thumb; the mood photo
    behind it, too busy) */
-.c-visual--thumb{background:var(--tb,var(--thumb))}
+.c-visual--thumb{background:var(--thumb-field)} /* a neutral field behind every thumbnail (Oct 2026: was the project's own colour, --tb, which clashed with the site's palette); --thumb-field in _tokens.css */
 .c-visual--thumb .c-visual__shot{box-shadow:0 14px 34px rgb(23 14 11 / .28)}
