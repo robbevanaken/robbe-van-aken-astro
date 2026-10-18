@@ -8,7 +8,7 @@ export function initLocalTime(root = document) {
   const tick = () => {
     const now = new Date();
     for (const el of els) {
-      const f = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: el.dataset.localTime });
+      const f = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', ...(el.hasAttribute('data-seconds') ? { second: '2-digit' } : {}), timeZone: el.dataset.localTime }); // data-seconds: the footer's clock
       const t = f.format(now);
       // inside the title frame's note the characters come in one by one (data-ch-offset: where the time joins the
       // sequence, _title-frame.css); elsewhere plain text
@@ -16,7 +16,7 @@ export function initLocalTime(root = document) {
       if (Number.isNaN(off)) el.textContent = t;
       else el.innerHTML = [...t].map((c, k) => `<span class="c-title-frame__ch" style="--i:${off + k}"><span>${c}</span></span>`).join('');
     }
-    timer = setTimeout(tick, 60000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 50);
+    timer = setTimeout(tick, els.some((e) => e.hasAttribute('data-seconds')) ? 1000 - now.getMilliseconds() + 20 : 60000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 50);
   };
   tick();
   return () => clearTimeout(timer);

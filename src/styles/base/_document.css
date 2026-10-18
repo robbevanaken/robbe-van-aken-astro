@@ -5,7 +5,7 @@ html{background:var(--page);scroll-padding-top:env(safe-area-inset-top,0px);-web
    small R would jump); scrolling is stopped by Lenis, and the menu and header take no pan gestures
    (styles/components/_site-header.css) */
 body{
-  margin:0;background:var(--page);color:var(--fg);
+  margin:0;background:transparent;color:var(--fg); /* the page's colour is html's: a body background would paint over the pointer's pixel trail, which lies behind the page (z -1) */
   font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-text);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
@@ -42,6 +42,10 @@ html.is-opening .c-r-canvas[data-r-intro]{z-index:95}
 /* only the tokens you can see mid-fade ease (every animating custom property restyles the whole tree each frame, so
    the list is kept short); --subtle, --line-strong, --card and --surface switch instantly: hairlines and panels you
    don't notice mid-scroll */
-html.is-theming{transition:--bg .6s var(--ease-out),--fg .6s var(--ease-out),--muted .6s var(--ease-out),
-  --line .6s var(--ease-out),--on-fg .6s var(--ease-out),--page .6s var(--ease-out)}
+html.is-theming{--theme-dur:.6s;--theme-ease:var(--ease-out);transition:--bg var(--theme-dur) var(--theme-ease),--fg var(--theme-dur) var(--theme-ease),--muted var(--theme-dur) var(--theme-ease),
+  --line var(--theme-dur) var(--theme-ease),--on-fg var(--theme-dur) var(--theme-ease),--page var(--theme-dur) var(--theme-ease)}
+/* the scroll theme's switch (scrollTheme.js): a slow, soft fade that hurries through its middle — halfway through any
+   fade the text and the page are the same grey, so the curve spends as little time there as it can (tried .22s:
+   readable, but too abrupt; the header's own .55s background lag was what made it unreadable, Oct 2026) */
+html.is-theming.is-scroll-theming{--theme-dur:.8s;--theme-ease:cubic-bezier(.7,0,.3,1)}
 

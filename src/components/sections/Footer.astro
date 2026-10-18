@@ -24,7 +24,9 @@ import { footer, meta, nav } from '../../data/site';
       <span class="c-site-footer__egg-keys">{nav.wild.hintKeys} <kbd class="c-site-footer__key">R</kbd></span>
       <span class="c-site-footer__egg-found">{nav.wild.found}</span>
     </p>
-    {footer.legal.map((l) => <a class="c-site-footer__legal" href={l.href}>{l.label}</a>)}
-    <button class="c-site-footer__legal c-site-footer__legal--cookies" type="button" data-cookie-settings>{footer.cookieSettings}</button>
+    <span class="c-site-footer__legals">
+      {footer.legal.map((l) => <a class="c-site-footer__legal" href={l.href}>{l.label}</a>)}
+      <button class="c-site-footer__legal c-site-footer__legal--cookies" type="button" data-cookie-settings>{footer.cookieSettings}</button>
+    </span>
   </div>
 </footer>

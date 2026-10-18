@@ -7,8 +7,14 @@
 // no layout work at all: it compares cached ranges against scrollY, coalesced to one check per frame.
 import { setScrollTheme, BASE, CHAPTER } from './theme.js';
 
+// the line a chapter must reach to set the theme: a third down (was 55%: with the header's panels at the top the switch
+// came too late, Oct 2026)
+const LINE = .33;
+
 export function initScrollTheme(root = document) {
-  const els = [...root.querySelectorAll('.t-dark, [data-site-footer]')];
+  // the chapters (.t-dark); the footer is one only while the base is light — on the reversed site (a dark base, Oct 2026)
+  // it stays dark with the base
+  const els = [...root.querySelectorAll(BASE === 'light' ? '.t-dark, [data-site-footer]' : '.t-dark')];
   if (!els.length) { setScrollTheme(BASE, true); return; }
   const ac = new AbortController();
   let ranges = [], raf = 0, settle = 0;
@@ -18,7 +24,7 @@ export function initScrollTheme(root = document) {
   };
   const check = () => {
     raf = 0;
-    const y = scrollY + innerHeight * .55;
+    const y = scrollY + innerHeight * LINE;
     setScrollTheme(ranges.some(([a, b]) => a <= y && b > y) ? CHAPTER : BASE);
   };
   const queue = () => { if (!raf) raf = requestAnimationFrame(check); };
@@ -29,7 +35,7 @@ export function initScrollTheme(root = document) {
   addEventListener('load', remeasure, { once: true, signal: ac.signal });
   settle = setTimeout(remeasure, 1500); // fonts and images in: heights are final
   measure();
-  const y = scrollY + innerHeight * .55;
+  const y = scrollY + innerHeight * LINE;
   setScrollTheme(ranges.some(([a, b]) => a <= y && b > y) ? CHAPTER : BASE, true);
   return () => { ac.abort(); cancelAnimationFrame(raf); clearTimeout(settle); };
 }

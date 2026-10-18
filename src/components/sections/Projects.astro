@@ -15,29 +15,40 @@
 // visual — the same ProjectVisual, so the same image file hands over. Dark chapter (t-dark). components/workStrips.js, _work-strips.css.
 // (Tried: a pinned showreel, and this accordion driven by a scroll pin on the projects' own colours — the pin felt
 // forced, the colours odd next to the rest of the site.)
-import Button from '../ui/Button.astro';
 import ProjectVisual from '../ui/ProjectVisual.astro';
 import { work } from '../../data/site';
-import { projects } from '../../data/projects';
-const featured = projects.slice(0, work.featured);
+import { projects, projectTags } from '../../data/projects';
+const featured = projects; // every project (a one-pager since Oct 2026; was the first work.featured, the rest on /work)
 const pad = (n: number) => String(n).padStart(2, '0');
+// the filter (Oct 2026, from the old /work page): All + one per category (the parts of the services, projectTags),
+// most projects first, as a segmented control in the head
+const counts = new Map<string, number>();
+featured.forEach((pr) => projectTags(pr).forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
+const filters = [{ key: 'all', label: work.filterAll, n: featured.length }, ...[...counts].sort((a, b) => b[1] - a[1]).map(([t, n]) => ({ key: t, label: t, n }))];
 const TONES = ['paper', 'panel', 'accent']; // the red last: right after the services' red card it fought for attention
 ---
 <div class="t-dark">
 <section class="c-work-strips" aria-labelledby="work-title" data-strips data-follower-wrap data-follower-axis="x">
   <div class="c-work-strips__head" data-stage="2" aria-hidden="true"></div>
-  <div class="c-work-strips__body o-container o-grid" id="work">
+  <div class="c-work-strips__body o-container o-grid">
     <div class="c-work-strips__top">
+      <span class="c-work-strips__anchor" id="work" aria-hidden="true"></span>
       <h2 class="c-work-strips__title" id="work-title">{work.title}</h2>
-      <p class="c-work-strips__count u-text-label" aria-hidden="true">{pad(featured.length)} projects</p>
+      <div class="c-work-strips__tools">
+        <div class="c-segmented u-text-ui" role="group" aria-label={work.filterLabel} data-strips-filter>
+          <span class="c-segmented__thumb" aria-hidden="true" data-segmented-thumb></span>
+          {filters.map((f, i) => <button class="c-segmented__option" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-filter-key={f.key}>{f.label}<sup class="c-segmented__count">{f.n}</sup></button>)}
+        </div>
+        <p class="c-work-strips__count u-text-label" aria-live="polite"><span data-strips-count>{pad(featured.length)}</span> projects</p>
+      </div>
     </div>
     <ol class="c-work-strips__list" role="list" data-strips-list data-follower-collection>
       {featured.map((p, i) => {
         return (
-          <li class={`c-work-strips__item c-work-strips__item--${TONES[i % TONES.length]}`} data-strip={i} data-follower-item>
+          <li class={`c-work-strips__item c-work-strips__item--${TONES[i % TONES.length]}`} data-strip={i} data-follower-item data-tags={projectTags(p).join('|')}>
             <a class="c-work-strips__link" href={`/work/${p.slug}`} data-fp-card aria-label={`${p.title}: ${p.description}`} data-strip-link>
               <span class="c-work-strips__bar" aria-hidden="true">
-                <span class="c-work-strips__num u-text-label">{pad(i + 1)}<span class="c-work-strips__total"> / {pad(featured.length)}</span></span>
+                <span class="c-work-strips__num u-text-label"><span data-strip-n>{pad(i + 1)}</span><span class="c-work-strips__total"> / <span data-strip-total>{pad(featured.length)}</span></span></span>
                 <span class="c-work-strips__meta u-text-label">{p.service} · {p.year}</span>
               </span>
               <ProjectVisual project={p} class="c-work-strips__media" aria-hidden="true" data-follower-visual data-fp-media />
@@ -56,5 +67,4 @@ const TONES = ['paper', 'panel', 'accent']; // the red last: right after the ser
     </div>
   </div>
 </section>
-<div class="c-featured-projects__foot o-container o-grid"><Button href={work.cta.href} class="c-featured-projects__all">{work.cta.label}</Button></div>
 </div>

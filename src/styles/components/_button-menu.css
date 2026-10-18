@@ -40,8 +40,7 @@
    any content scrolling beneath the header (Oct 2026: bare, it got lost over images and text; tried before: a tile
    behind every header item, only over images — ugly). Centred on the name block; open: a step off the menu's panel. */
 @media (max-width:639px){
-  .c-button-menu{display:inline-flex;height:var(--tile);margin:-6px 0;padding:0 14px;background:var(--panel);
-    transition:background-color .55s cubic-bezier(.65,0,.35,1)}
+  .c-button-menu{display:inline-flex;height:var(--tile);margin:0;padding:0 14px;background:var(--panel)}
   .c-button-menu::after{inset:-4px}
   .is-open .c-button-menu{background:color-mix(in srgb,var(--fg) 8%,var(--panel))}
 }

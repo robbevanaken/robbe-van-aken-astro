@@ -17,11 +17,14 @@ const splitConfig = {
 };
 
 // resolves once the first-visit loader has gone (the overlay hides the page while html.is-loading is on)
+// (and the page swap's overlay: html.is-covered — the reveal played under it and the text was simply
+// there when it lifted)
+const covered = (h) => h.classList.contains('is-loading') || h.classList.contains('is-covered'); // (is-covered lifts as the overlay starts to fade: the lines rise as it goes)
 const whenLoaded = () => {
   const html = document.documentElement;
-  if (!html.classList.contains('is-loading')) return Promise.resolve();
+  if (!covered(html)) return Promise.resolve();
   return new Promise((resolve) => {
-    const mo = new MutationObserver(() => { if (!html.classList.contains('is-loading')) { mo.disconnect(); resolve(); } });
+    const mo = new MutationObserver(() => { if (!covered(html)) { mo.disconnect(); resolve(); } });
     mo.observe(html, { attributes: true, attributeFilter: ['class'] });
   });
 };
@@ -44,7 +47,9 @@ export function initMaskReveal(root = document) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { headings.forEach((h) => h.classList.add('is-split')); return; }
   let alive = true;
   const splits = [];
-  whenLoaded().then(whenReleased).then(() => {
+  // the fonts first: a split before they're in is re-split when they land, mid-reveal (the lines then just appeared)
+  const fonts = document.fonts?.ready ?? Promise.resolve();
+  whenLoaded().then(whenReleased).then(() => fonts).then(() => {
     if (!alive) return;
     // one cascade across the headings in document order: each starts where the previous one's lines left off
     let at = 0.1;
@@ -52,7 +57,7 @@ export function initMaskReveal(root = document) {
       const type = heading.dataset.splitReveal || 'lines';
       const typesToSplit = type === 'lines' ? ['lines'] : type === 'words' ? ['lines', 'words'] : ['lines', 'words', 'chars'];
       const delay = at;
-      let first = true;
+      let first = true, t0 = 0, total = 0;
       splits.push(SplitText.create(heading, {
         type: typesToSplit.join(', '),
         mask: 'lines',
@@ -63,11 +68,13 @@ export function initMaskReveal(root = document) {
         onSplit(instance) {
           const targets = instance[type], config = splitConfig[type];
           heading.classList.add('is-split');
-          // a re-split (resize) after the reveal: just show it
-          if (!first) return gsap.set(targets, { yPercent: 0 });
-          first = false;
+          // a re-split (a resize, a late font) after the reveal: just show it; DURING the reveal: play it on from where it
+          // is, so the lines never pop in (Oct 2026: they sometimes appeared at once)
+          const tween = (d) => gsap.fromTo(targets, { yPercent: 110 }, { yPercent: 0, duration: config.duration, stagger: config.stagger, ease: 'expo.out', delay: d });
+          if (!first) { const left = total - (performance.now() - t0) / 1000; return left > 0 ? tween(Math.max(0, delay - (performance.now() - t0) / 1000)) : gsap.set(targets, { yPercent: 0 }); }
+          first = false; t0 = performance.now(); total = delay + config.duration + (targets.length - 1) * config.stagger;
           at = Math.max(at, delay + (targets.length - 1) * config.stagger + 0.1);
-          return gsap.from(targets, { yPercent: 110, duration: config.duration, stagger: config.stagger, ease: 'expo.out', delay });
+          return tween(delay);
         },
       }));
       // the next heading follows this one's lines (counted on the first split)

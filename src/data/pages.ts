@@ -2,12 +2,6 @@
 // Project detail pages (/work/<slug>) take their copy from projects.ts.
 import { cookies } from './cookies';
 
-export const workPage = {
-  title: 'The project archive',
-  description: 'Websites and software by Robbe Van Aken, developer and digital craftsman in Ghent: Craft CMS, Laravel and more.',
-  filters: { label: 'Filter projects', toggle: 'Filter', all: 'All' }, // the other filters come from the projects' services (projectTags)
-};
-
 export const contactPage = {
   // each part in order; `muted` parts in the grey (like the footer title)
   title: [

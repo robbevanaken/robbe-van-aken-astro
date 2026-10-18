@@ -9,7 +9,7 @@ import { pageTheme } from '../../data/site';
 export const BASE = pageTheme.base, CHAPTER = pageTheme.chapter; // the scroll theme's two sides (data/site.ts)
 const WILD = 'wild'; // sessionStorage: '1' while the hidden theme is on
 const FADE = .6; // s, same as the ::view-transition rule and html.is-theming in styles/base/_document.css
-const META = { dark: '#170e0b', light: '#f3eee8', wild: '#2323c8' }; // --bg of each theme, for the browser UI
+const META = { dark: '#211814', light: '#f3eee8', wild: '#2323c8' }; // --bg of each theme, for the browser UI
 let fading = null; // the running view transition (a quick next switch skips it)
 
 // read by the R engine every frame (glyph colours)
@@ -54,10 +54,10 @@ export function setScrollTheme(mode, instant = false) {
   if (theme.mode === WILD || mode === theme.mode) return;
   const html = document.documentElement;
   if (instant || matchMedia('(prefers-reduced-motion: reduce)').matches) return apply(mode);
-  html.classList.add('is-theming');
+  html.classList.add('is-theming', 'is-scroll-theming');
   apply(mode);
   clearTimeout(scrollFade);
-  scrollFade = setTimeout(() => html.classList.remove('is-theming'), FADE * 1000 + 50);
+  scrollFade = setTimeout(() => html.classList.remove('is-theming', 'is-scroll-theming'), 900); // .8s (_document.css)
 }
 
 export function initTheme() {

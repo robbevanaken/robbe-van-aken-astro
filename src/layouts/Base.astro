@@ -8,8 +8,9 @@ import ContactModal from '../components/sections/ContactModal.astro';
 import PageTransition from '../components/layout/PageTransition.astro';
 // noindex: pages search engines should skip (404)
 // contact={false}: no contact popup (the contact page itself, the no-JS fallback that holds the same form)
-interface Props { title?: string; description?: string; noindex?: boolean; contact?: boolean }
-const { title = meta.title, description = meta.description, noindex = false, contact = true } = Astro.props;
+// theme: the page's first theme (the project pages are dark: Oct 2026); the scroll theme takes over on mount
+interface Props { title?: string; description?: string; noindex?: boolean; contact?: boolean; theme?: 'light' | 'dark' }
+const { title = meta.title, description = meta.description, noindex = false, contact = true, theme = pageTheme.base } = Astro.props;
 // structured data: who this site is about (search engines)
 const person = { '@context': 'https://schema.org', '@type': 'Person', name: nav.name, jobTitle: nav.role, url: Astro.site?.href, email: `mailto:${meta.email}`,
   address: { '@type': 'PostalAddress', addressLocality: 'Ghent', addressCountry: 'BE' }, sameAs: socials.map((s) => s.href) };
@@ -30,7 +31,7 @@ const consentDefaults = "window.dataLayer=window.dataLayer||[];function gtag(){d
 const gaSnippet = "(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=" + GA + "';document.head.appendChild(s)})();window.__ga='" + GA + "';gtag('js',new Date());gtag('config','" + GA + "');";
 ---
 <!doctype html>
-<html lang="en" class="no-js" data-theme={pageTheme.base}>
+<html lang="en" class="no-js" data-theme={theme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -62,10 +63,11 @@ const gaSnippet = "(function(){var s=document.createElement('script');s.async=tr
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content={pageTheme.base === "dark" ? "#170e0b" : "#f3eee8"} />
+    <meta name="theme-color" content={theme === "dark" ? "#211814" : "#f3eee8"} />
     <!-- self-hosted Inter Tight (styles/base/_fonts.css): preload the two files every page needs -->
     <link rel="preload" href="/fonts/inter-tight-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-tight-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <a class="c-skip-link u-text-ui" href="#top" data-skip-link>Skip to content</a>

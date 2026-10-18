@@ -37,10 +37,22 @@ export function initSiteHeader(root = document) {
   const ac = new AbortController(), signal = ac.signal;
 
   // the nav's tile: on the current page's link; glides to the hovered / focused link, back when the pointer leaves
+  // home: the header's R tile ([data-header-r]) only shows while the page's R is up there — from the first stage-2
+  // marker of the page (the projects) to the last (the pricing's end), on the screen's middle line as the engine reads it
+  const rTile = header.querySelector('[data-header-r]');
+  if (rTile) {
+    const marks = [...root.querySelectorAll('#swup [data-stage="2"], main [data-stage="2"]')].filter((e) => !header.contains(e));
+    const first = marks[0], last = marks[marks.length - 1];
+    const sync = () => { if (!first) return; const mid = innerHeight / 2, a = first.getBoundingClientRect(), z = last.getBoundingClientRect();
+      header.classList.toggle('has-r', a.top + a.height / 2 - innerHeight * .2 <= mid && z.top + z.height / 2 > mid); };
+    addEventListener('scroll', sync, { passive: true, signal: ac.signal }); addEventListener('resize', sync, { signal: ac.signal }); sync();
+  }
   const list = header.querySelector('[data-nav-list]'), tile = list?.querySelector('[data-nav-tile]');
   if (tile) {
     document.documentElement.classList.add('js-nav');
-    const links = [...list.querySelectorAll('a')], current = links.find((l) => l.getAttribute('aria-current') === 'page');
+    const links = [...list.querySelectorAll('a')];
+    let current = links.find((l) => l.getAttribute('aria-current') === 'page');
+    const spyLinks = new Set(); // filled below: the links the scroll spy follows
     const to = (link, instant) => {
       tile.classList.toggle('is-instant', !!instant);
       tile.classList.toggle('is-on', !!link);
@@ -54,7 +66,8 @@ export function initSiteHeader(root = document) {
     links.forEach((l) => {
       l.addEventListener('pointerenter', () => { if (!picked) to(l); }, { signal });
       l.addEventListener('focus', () => { if (!picked) to(l); }, { signal });
-      l.addEventListener('click', () => { if (l === contactLink) return; picked = l; to(l); }, { signal });
+      // (a link to a section of this page, `/#work` on home, isn't leaving: the scroll spy takes over again)
+      l.addEventListener('click', () => { if (l === contactLink || spyLinks.has(l)) { l.blur(); return; } picked = l; to(l); }, { signal });
     });
     // (not while the theme switch cross-fades: its overlay takes the pointer for a moment, which isn't leaving the nav)
     list.addEventListener('pointerleave', () => { if (!picked && !document.documentElement.classList.contains('is-theme-fading')) to(contactOpen ? contactLink : current); }, { signal });
@@ -66,6 +79,26 @@ export function initSiteHeader(root = document) {
     document.addEventListener('contact:open', () => { contactOpen = true; contactLink?.setAttribute('aria-current', 'page'); to(contactLink); }, { signal });
     document.addEventListener('contact:close', () => { contactOpen = false; if (contactLink !== current) contactLink?.removeAttribute('aria-current'); if (!picked) to(current); }, { signal });
     document.fonts?.ready.then(() => { if (!signal.aborted) to(current, true); });
+    // a one-pager (Oct 2026): on home the active link follows the scroll — the section ([href="/#id"]) whose top has
+    // passed a third of the screen; the footer reached, "Contact"; above the first one (the hero, the pitch) none
+    const spy = links.map((l) => ({ l, el: l.hash && l.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') === location.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') ? root.querySelector(l.hash) : null })).filter((x) => x.el);
+    const foot = root.querySelector('[data-site-footer]');
+    spy.forEach((x) => spyLinks.add(x.l));
+    if (spy.length) {
+      let hovering = false;
+      list.addEventListener('pointerenter', () => { hovering = true; }, { signal });
+      list.addEventListener('pointerleave', () => { hovering = false; }, { signal });
+      const read = () => {
+        const line = innerHeight / 3;
+        let next = null;
+        for (const x of spy) if (x.el.getBoundingClientRect().top <= line) next = x.l;
+        if (foot && contactLink && (foot.getBoundingClientRect().top <= line || innerHeight + scrollY >= document.documentElement.scrollHeight - 2)) next = contactLink;
+        if (next === current) return;
+        current = next;
+        if (!picked && !hovering && !contactOpen && !list.querySelector(':focus-visible')) to(current);
+      };
+      addEventListener('scroll', read, { passive: true, signal }); read();
+    }
   }
 
   // the header stays put (tried: hidden on scroll down, shown on scroll up); is-scrolled marks a scrolled page

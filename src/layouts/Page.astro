@@ -2,19 +2,21 @@
 // Layout for subpages: header (with the small animated R centred in it), content, footer (with its own big R).
 // footer={false} for pages that end in their own full-screen section (project detail: scroll to next project).
 import Base from './Base.astro';
+import { pageTheme } from '../data/site';
 import Nav from '../components/layout/Nav.astro';
 import Footer from '../components/sections/Footer.astro';
 import GridOverlay from '../components/layout/GridOverlay.astro';
 // headerR={false}: no small R in the header (the page has its own, e.g. the 404's, which then also plays the loader's R)
-interface Props { title: string; description?: string; footer?: boolean; noindex?: boolean; headerR?: boolean; contact?: boolean }
-const { title, description, footer = true, noindex = false, headerR = true, contact = true } = Astro.props;
+// dark: the whole page is a dark chapter (the project pages, Oct 2026): main is .t-dark, so the scroll theme holds dark
+interface Props { title: string; description?: string; footer?: boolean; noindex?: boolean; headerR?: boolean; contact?: boolean; dark?: boolean }
+const { title, description, footer = true, noindex = false, headerR = true, contact = true, dark = false } = Astro.props;
 ---
-<Base title={`${title} · Robbe Van Aken`} description={description} noindex={noindex} contact={contact}>
+<Base title={`${title} · Robbe Van Aken`} description={description} noindex={noindex} contact={contact} theme={dark ? pageTheme.chapter : undefined}>
   <!-- two separate R's on subpages: a small one in the header (also the R in the page loader: data-r-intro) and a big one in the footer -->
   {headerR && <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-header]" data-r-intro></canvas>}
   {footer && <canvas class="c-r-canvas" aria-hidden="true" data-r-canvas data-r-scope="[data-site-footer]"></canvas>}
   <Nav withR={headerR} />
-  <main id="top" tabindex="-1" class:list={['c-page', { 'c-page--end': !footer }]}>
+  <main id="top" tabindex="-1" class:list={['c-page', { 'c-page--end': !footer, 't-dark': dark }]}>
     <slot />
   </main>
   {footer && <Footer />}

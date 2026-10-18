@@ -16,7 +16,7 @@
 import gsap from 'gsap';
 import { releaseIntro } from './maskReveal.js';
 import { rIntro } from '../r-journey/engine.js';
-import { setScrollTheme, BASE } from '../global/theme.js';
+import { setScrollTheme, CHAPTER } from '../global/theme.js';
 
 const swupEl = () => document.getElementById('swup');
 // the page's R stays: everything else fades
@@ -67,7 +67,7 @@ function followerMedia(card) {
 export const openProject = {
   async leave(card) {
     document.documentElement.classList.add('is-opening');
-    setScrollTheme(BASE); // opening from the projects chapter: the page eases to the base theme the project page starts in
+    setScrollTheme(CHAPTER); // the project pages are dark (Oct 2026): opening one, the page eases to (or stays) dark
     holdR();
     const fromFollower = followerMedia(card);
     let media = fromFollower || card?.querySelector('[data-fp-media]');

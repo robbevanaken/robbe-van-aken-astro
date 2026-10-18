@@ -19,7 +19,7 @@ const { project, index } = Astro.props;
 const nextIndex = (index + 1) % projects.length, next = projects[nextIndex];
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
-<Page title={project.title} description={project.description} footer={false}>
+<Page title={project.title} description={project.description} footer={false} dark>
   <!-- the opening (after naughtyduk.com's project pages): a meta line (number, service, year), then the title and the
        context as one two-tone statement (the title in the grey, like the footer's title), then the main visual -->
   <PageIntro title={project.title} intro={project.story?.intro ?? project.description} modifier="case">
@@ -31,7 +31,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       : <div class="c-project-detail__media c-project-detail__placeholder" data-project-media style={`--a:${project.colors.a};--b:${project.colors.b};--t:${project.colors.t}`}>{project.label}</div>}
   </div>
   {project.story
-    ? <ProjectCase project={project}><Button slot="end" back href="/work">{projectPage.back}</Button></ProjectCase>
-    : <div class="c-project-detail__back o-container o-grid" data-scroll-next-fade><Button back class="c-project-detail__back-link" href="/work">{projectPage.back}</Button></div>}
+    ? <ProjectCase project={project}><Button slot="end" back href="/#work">{projectPage.back}</Button></ProjectCase>
+    : <div class="c-project-detail__back o-container o-grid" data-scroll-next-fade><Button back class="c-project-detail__back-link" href="/#work">{projectPage.back}</Button></div>}
   <ScrollNext project={next} label={projectPage.next} />
 </Page>

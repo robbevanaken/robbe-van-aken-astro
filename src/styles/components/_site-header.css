@@ -9,25 +9,31 @@
 .c-site-header.is-open .c-site-header__body::before{opacity:0;transition:opacity .55s cubic-bezier(.65,0,.35,1)}
 .c-site-header.is-closing .c-site-header__body::before{transition:opacity .45s cubic-bezier(.65,0,.35,1) .2s} /* back with the menu's fade out */
 
-.c-site-header__brand{grid-column:1 / span 3;grid-row:1;justify-self:start;width:fit-content;text-decoration:none;line-height:1.3} /* hover area = the text */
+.c-site-header__brand{grid-column:1 / -1;grid-row:1;justify-self:start;width:fit-content;text-decoration:none;line-height:1.3} /* top left (tried on the right, Oct 2026); hover area = the text */
 .c-site-header__name,.c-site-header__role{display:block}
-.c-site-header__role{color:var(--muted)}
+.c-site-header__role{color:var(--muted)} /* sans (tried the mono label voice, Oct 2026) */
 
-/* subpages: slot for the small R, centred on the page (the engine draws the R on this box) */
-.c-site-header__r{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);width:56px;height:56px;transform:translateX(-50%)}
-.c-site-header__r-anchor{display:block;width:100%;height:100%}
-
-.c-site-header__end{grid-column:-5 / -1;grid-row:1;display:flex;justify-content:flex-end;align-items:center;gap:var(--space-m)}
-.c-site-header__nav-list{position:relative;display:flex;justify-content:flex-end;gap:var(--space-m)}
-.c-site-header__nav-link{position:relative;display:block;text-decoration:none;padding-block:1px 3px}
+/* the lead (Oct 2026, after lamalama.com): top left, the nav on a bar (a quiet panel, the site's --tile height) and,
+   a 2px gap to its right, the R's tile: the small R (home: the page's R once past the services; subpages: the header's
+   own) is drawn on the anchor inside it (the engine follows the box) — it used to sit centred on the page */
+.c-site-header__lead{grid-column:1 / -1;grid-row:1;display:flex;align-items:stretch;gap:4px;justify-self:end;margin-top:-6px} /* on the right: the R's tile, then the bar */
+.c-site-header__nav{display:flex;align-items:center;height:var(--tile);padding-inline:8px;background:var(--panel)} /* no transition of its own: it follows the theme's fade exactly (a .55s one lagged behind it) */
+.c-site-header__r{position:relative;display:grid;place-items:center;width:var(--tile);height:var(--tile);flex:none;background:var(--panel)}
+.c-site-header__r-anchor{display:block;width:30px;height:30px}
+/* home: the R only visits the header (from the projects to the pricing; siteHeader.js sets .has-r): out of it the
+   tile folds away (an empty square read oddly), opening again as the R flies in */
+.c-site-header__r--visiting{overflow:hidden;transition:width .6s var(--ease-punch),margin .6s var(--ease-punch),opacity .4s var(--ease-out)}
+.c-site-header:not(.has-r) .c-site-header__r--visiting{width:0;margin-right:-4px;opacity:0}
+.c-site-header__nav-list{position:relative;isolation:isolate;display:flex;gap:8px;margin:0;padding:0;list-style:none} /* isolate: the tile (z -1) under the links, not under the bar's own background */
+.c-site-header__nav-link{position:relative;display:block;text-decoration:none;padding:6px 12px;font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
 /* one quiet tile (--panel, square like the rest of the site) behind the current page's link; it glides to the hovered or
    focused link and back (positioned by global/siteHeader.js: --x, --w; .is-on when there's a link to sit on). Without
    JS: a tile behind the current link. */
-.c-site-header__nav-tile{position:absolute;top:-5px;bottom:-3px;left:0;width:calc(var(--w,0px) + 18px);z-index:-1;background:var(--panel);pointer-events:none;
-  transform:translateX(calc(var(--x,0px) - 9px));opacity:0;transition:transform .6s var(--ease-punch),width .6s var(--ease-punch),opacity .35s var(--ease-out)}
+.c-site-header__nav-tile{position:absolute;top:0;bottom:0;left:0;width:var(--w,0px);z-index:-1;background:color-mix(in srgb,var(--fg) 16%,var(--panel));pointer-events:none;
+  transform:translateX(var(--x,0px));opacity:0;transition:transform .6s var(--ease-punch),width .6s var(--ease-punch),opacity .35s var(--ease-out)}
 .c-site-header__nav-tile.is-on{opacity:1}
 .c-site-header__nav-tile.is-instant{transition:none}
-html:not(.js-nav) .c-site-header__nav-link[aria-current="page"]{background:var(--panel);box-shadow:0 0 0 5px var(--panel)}
+html:not(.js-nav) .c-site-header__nav-link[aria-current="page"]{background:color-mix(in srgb,var(--fg) 10%,var(--panel))}
 
 
 /* full-screen menu (phones): rows between thin lines (like the services and the contact wizard), the email and
@@ -73,12 +79,11 @@ html:not(.js-nav) .c-site-header__nav-link[aria-current="page"]{background:var(-
 
 @media (max-width:639px){
   /* the header R lines up with the name block (and with the pinned R in the featured projects) */
-  .c-site-header__r{width:40px;height:40px;top:calc(env(safe-area-inset-top,0px) + var(--nav-top))}
   .c-site-header__nav{display:none}
   /* smaller name + role and menu label (doubled class: .u-text-ui is imported later) */
   .c-site-header__brand.c-site-header__brand{font-size:12px}
   .c-site-header__toggle.c-site-header__toggle{font-size:14px}
 }
-@media (max-width:379px){ .c-site-header__r{width:30px;height:30px;margin-left:12px} }
+
 @media (min-width:640px){ .c-site-header__menu{display:none} }
 

@@ -3,6 +3,8 @@
 # /work, not /work/); no slash added to folders that are also pages (work/).
 DirectorySlash Off
 RewriteEngine On
+# /work (the archive) is gone since Oct 2026: the projects are on the home page
+RewriteRule ^work/?$ /#work [R=301,NE,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+?)/?$ $1.html [L]

@@ -19,7 +19,7 @@ html.is-loading .c-transition__frame{opacity:1;width:calc(100% - 2 * var(--margi
 html.is-loading .c-transition__loader,html.is-transitioning .c-transition__loader{visibility:visible}
 /* same box as the header brand (components/_site-header.css) */
 .c-transition__head{padding-top:calc(env(safe-area-inset-top,0px) + var(--nav-top))}
-.c-transition__brand.c-transition__brand{grid-column:1 / span 3;font-size:var(--brand-fs);line-height:1.3} /* doubled: .u-text-ui is imported later */
+.c-transition__brand.c-transition__brand{grid-column:1 / span 3;font-size:var(--brand-fs);line-height:1.3} /* as the header's brand */ /* doubled: .u-text-ui is imported later */
 .c-transition__line{display:block}
 .c-transition__char{display:inline-block;opacity:0}
 

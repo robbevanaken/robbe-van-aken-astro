@@ -1,0 +1,7 @@
+/* The pointer's dozen trailing pixels (global/pixelTrail.js), a LAYER OVER THE WHOLE SITE (Oct 2026: behind the page it was too
+   weak and came and went with what lay over it): fixed, above everything but the grain, never catching the pointer, in
+   white with a `difference` blend, so it inverts what it crosses — dark on the paper, light on the dark, readable text
+   stays readable. Shown only while it draws (.is-on): an idle blend layer would cost every frame. Hidden in print. */
+.c-pixel-trail{position:fixed;inset:0;z-index:150;pointer-events:none;mix-blend-mode:difference;display:none}
+.c-pixel-trail.is-on{display:block}
+@media print{ .c-pixel-trail{display:none!important} }

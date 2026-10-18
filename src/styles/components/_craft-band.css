@@ -26,7 +26,7 @@
    finds a gap between the services, the band and the projects (it flashed light there) */
 .c-craft-band-wrap{display:flow-root}
 /* the projects follow straight on: their own top spacing is the band's bottom margin */
-.c-craft-band-wrap + .t-dark .c-work-strips{padding-top:0}
+.c-craft-band-wrap + .t-dark .c-work-strips,.c-craft-band-wrap + .t-dark .c-work{padding-top:0}
 .c-craft-band-wrap + .t-dark .c-work-strips__title{margin-top:-.1365em}
 
 /* desktop: more air on both sides (1.8 × the section spacing, both gaps stay equal) */

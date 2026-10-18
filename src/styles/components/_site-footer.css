@@ -22,10 +22,18 @@
 .c-site-footer__mail::after{background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform var(--hover-dur) var(--ease-punch)}
 .c-site-footer__mail:hover::after,.c-site-footer__mail:focus-visible::after{transform:scaleX(1);transform-origin:left}
 
-.c-site-footer__bottom{display:flex;flex-wrap:wrap;align-items:center;column-gap:var(--space-l);row-gap:var(--space-2xs);font-size:var(--fs-label);line-height:1.3;
-  padding-block:var(--space-m) calc(var(--space-m) + env(safe-area-inset-bottom,0px));color:var(--muted);
+/* the bottom row (Oct 2026): desktop one row, the rest left and the legal links right; tablet / phones on the grid
+   (3 + 3, 2 + 2, the legal links on their own row); it stands above the fixed tiles (album, sound), so no column has to
+   make room for them (tried: a free flex row, its ends padded clear of the tiles) */
+.c-site-footer__bottom{align-items:center;row-gap:var(--space-xs);font-size:13px;line-height:1.3;
+  padding-block:var(--space-s) calc(var(--space-m) + env(safe-area-inset-bottom,0px));color:var(--muted); /* a tight top (was --space-m) */
   background:linear-gradient(var(--line),var(--line)) center top / calc(100% - 2 * var(--margin)) 1px no-repeat}
-.c-site-footer__legal:not(.c-site-footer__legal--cookies){margin-left:auto} /* the legal links to the right */
+/* desktop: one row — company, location and the hint together on the left, privacy + cookie settings together on the right */
+@media (min-width:1024px){
+  .c-site-footer__bottom{display:flex;align-items:center;column-gap:var(--space-m)}
+  .c-site-footer__legals{margin-left:auto}
+}
+.c-site-footer__legals{display:flex;gap:var(--space-m);white-space:nowrap}
 .c-site-footer__legal{color:inherit;text-decoration:none;-webkit-appearance:none;appearance:none;background:none;border:0;border-radius:0;padding:0;font:inherit;cursor:pointer;text-align:left}
 .c-site-footer__legal{position:relative;transition:color var(--hover-dur) var(--ease-punch)}
 .c-site-footer__legal::before{content:"";position:absolute;inset:-14px -8px} /* a 44px tap area */
@@ -49,16 +57,15 @@
   .c-site-footer__title{grid-column:1 / -1}
   .c-site-footer__r-anchor{grid-column:1 / -1;grid-row:2;height:clamp(220px,38vh,480px)}
 }
-@media (max-width:639px){
-  /* two rows on the grid's two halves, left-aligned like the title, the email and the socials above (company ·
-     location, privacy · cookie settings; was centred: two ragged pairs that lined up with nothing) */
-  .c-site-footer__bottom{display:grid;grid-template-columns:max-content max-content;column-gap:var(--space-l);justify-items:start;align-items:start;row-gap:var(--space-xs);text-align:left;
-    padding-block:var(--space-m) calc(var(--float-bottom) + var(--tile) + var(--space-s))} /* room under the rows for the fixed sound tile (the album tile lives in the menu) */
-  .c-site-footer__bottom > *{grid-column:auto} /* two columns as wide as their longest line (halves of the grid broke "… BV" onto a second line) */
-  .c-site-footer__legal:not(.c-site-footer__legal--cookies){margin-left:0}
-  .c-site-footer__egg{grid-column:1 / -1;order:1;margin-top:var(--space-2xs)} /* phones: the hint on its own row, under the others */
+@media (max-width:1023px){
+  .c-site-footer__company{grid-column:1 / span 3}
+  .c-site-footer__location{grid-column:4 / span 3}
+  .c-site-footer__legals{grid-column:1 / -1;justify-self:start}
+  .c-site-footer__egg{grid-column:1 / -1;order:1}
 }
-/* tablet: room under the row for the fixed album tile (phones: it lives in the menu) */
-@media (min-width:640px) and (max-width:1023px){ .c-site-footer__bottom{padding-bottom:calc(var(--float-bottom) + var(--tile) + var(--space-s))} }
-/* desktop: room at the start of the bottom row for the fixed album tile (ui/Music.astro) */
-@media (min-width:1024px){ .c-site-footer__bottom{padding-inline:calc(var(--margin) + var(--tile) + var(--space-m));padding-bottom:calc(var(--float-bottom) + var(--tile) / 2 - .65em)} } /* the row level with the tiles' middle (--tile tiles on --float-bottom; a 1.3 line); room at both ends for the tiles (the album of the week left, the sound tile right) */
+@media (max-width:639px){
+  .c-site-footer__company{grid-column:1 / span 2}
+  .c-site-footer__location{grid-column:3 / span 2}
+}
+/* above the fixed tiles (album, sound: --tile on --float-bottom) on every screen */
+.c-site-footer__bottom{padding-bottom:calc(var(--float-bottom) + var(--tile) + var(--space-s))}

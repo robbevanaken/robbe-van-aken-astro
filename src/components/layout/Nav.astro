@@ -15,9 +15,11 @@ const { withR = false, rAnchor = false } = Astro.props;
 <header class="c-site-header" data-site-header>
   <div class="c-site-header__body o-container o-grid">
     <a class="c-site-header__brand u-text-ui" href="/" data-text-hover><span class="c-site-header__name">{nav.name}</span><span class="c-site-header__role">{nav.role}</span></a>
-    {withR && <a class="c-site-header__r" href="/" aria-label="Home" data-stage="2"><span class="c-site-header__r-anchor" id="a-craft"></span></a>}
-    {rAnchor && <span class="c-site-header__r" aria-hidden="true"><span class="c-site-header__r-anchor" id="a-craft"></span></span>}
-    <div class="c-site-header__end">
+    <!-- Oct 2026, after lamalama.com: on the right a bar on a quiet panel — the nav (desktop) or the menu toggle
+         (phones) — with, a small gap to its left, the R on a tile of its own; the name and the role on the left -->
+    <div class="c-site-header__lead">
+      {withR && <a class="c-site-header__r" href="/" aria-label="Home" data-stage="2"><span class="c-site-header__r-anchor" id="a-craft"></span></a>}
+      {rAnchor && <span class="c-site-header__r c-site-header__r--visiting" aria-hidden="true" data-header-r><span class="c-site-header__r-anchor" id="a-craft"></span></span>}
       <nav class="c-site-header__nav u-text-ui" aria-label="Main">
         <ul class="c-site-header__nav-list" data-nav-list>
           <!-- one tile for the whole nav: on the current page's link, glides to the hovered one (global/siteHeader.js) -->

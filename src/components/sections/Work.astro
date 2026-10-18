@@ -1,0 +1,66 @@
+---
+// Home's projects (Oct 2026; a one-pager: every project is here). The head: the intro on the LEFT (cols 1–7, the pitch quote's
+// statement voice, highlighted on scroll) with "[ Selected work ]" (the h2, as a label) at its foot on the right, a bar with the filter menu (ui/Filter.astro,
+// opening on hover), then one project per row between full-width lines: its text on the left (cols
+// 1–4: the number, the name, the categories as mono chips, the description, the brand arrow on a tile), its TWO images on the right
+// — the landing page's screenshot (ui/ProjectVisual, the detail page's own: the open-project flight hands over to the
+// same image, cols 8–10) and the device mockup (cols 11–12). Each image opens from its centre as it scrolls into view
+// while it settles (the case study's media reveal: data-reveal="media", global/reveal.js; tried: flat panels in white,
+// red or black wiping off them). Hover: the row's landing screenshot stays, the other images step back, the arrow tile turns red and its arrow flies out to the top right as a new one comes in (the buttons' hover). A click opens
+// the project (openProject.js); filtering: components/workList.js. Below 1024px the text sits above the two images.
+// Dark chapter (t-dark); the page's R stays small at the top centre (the stage-2 head + end markers). Copy: `work` in
+// site.ts. Styles: _work.css. (Tried the same day: one big visual per row with a sticky side column, after
+// bymonolog.com; a strip of four images running off the edge, after lamalama.com — too literal. Earlier: the strips,
+// sections/Projects.astro, parked.)
+import ProjectVisual from '../ui/ProjectVisual.astro';
+import ProjectImage from '../ui/ProjectImage.astro';
+import Filter from '../ui/Filter.astro';
+import Icon from '../ui/Icon.astro';
+import Corners from '../ui/Corners.astro';
+import { work } from '../../data/site';
+import { projects, projectTags } from '../../data/projects';
+const pad = (n: number) => String(n).padStart(2, '0');
+const counts = new Map<string, number>();
+projects.forEach((pr) => projectTags(pr).forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
+const filters = [{ key: 'all', label: work.filterAll, n: projects.length }, ...[...counts].sort((a, b) => b[1] - a[1]).map(([t, n]) => ({ key: t, label: t, n }))];
+---
+<div class="t-dark">
+<section class="c-work" aria-labelledby="work-title" data-work data-featured-projects data-cursor-label={work.cursor}>
+  <div class="c-work__head" data-stage="2" aria-hidden="true"></div>
+  <div class="c-work__top o-container o-grid">
+    <span class="c-work__anchor" id="work" aria-hidden="true"></span>
+    <p class="c-work__intro" data-highlight-text>{work.intro}</p>
+    <h2 class="c-work__title" id="work-title">{work.title}</h2>
+  </div>
+  <div class="c-work__body o-container o-grid">
+  <!-- the filter in its own column on the left, sticky beside the list (it no longer pushes the list down) -->
+  <aside class="c-work__side">
+    <div class="c-work__sticky">
+      <Filter class="c-work__filter" filters={filters} label={work.filterLabel} toggle={work.filterToggle} />
+    </div>
+  </aside>
+  <ol class="c-work__list" role="list">
+    {projects.map((p, i) => (
+      <li class="c-work__item" data-work-item data-tags={projectTags(p).join('|')}>
+        <a class="c-work__row" href={`/work/${p.slug}`} data-fp-card aria-label={`${p.title}: ${p.description}`}>
+          <span class="c-work__info">
+            <span class="c-work__num u-text-label" aria-hidden="true"><span data-work-n>{pad(i + 1)}</span> / <span data-work-total>{pad(projects.length)}</span></span>
+            <h3 class="c-work__name">{p.title}</h3>
+            <span class="c-work__tags" aria-hidden="true">{projectTags(p).map((t) => <span class="c-work__tag u-text-label">{t}</span>)}</span>
+            <span class="c-work__desc">{p.description}</span>
+            <span class="c-work__go" aria-hidden="true"><Corners /><span class="c-work__go-clip"><Icon name="arrow" class="c-work__arrow" /><Icon name="arrow" class="c-work__arrow c-work__arrow--next" /></span></span>
+          </span>
+          <span class="c-work__tile c-work__tile--shot" data-reveal="media" aria-hidden="true">
+            <ProjectVisual project={p} class="c-work__visual" data-fp-media />
+          </span>
+          {p.mockup && <span class="c-work__tile c-work__tile--mockup" data-reveal="media" aria-hidden="true">
+            <ProjectImage class="c-work__img" src={p.mockup} sizes="(max-width: 1023px) 40vw, 24vw" widths={[480, 720, 1080]} position={p.position} />
+          </span>}
+        </a>
+      </li>
+    ))}
+  </ol>
+  </div>
+  <div class="c-work__end" data-stage="2" aria-hidden="true"></div>
+</section>
+</div>

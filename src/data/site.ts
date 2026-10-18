@@ -3,7 +3,7 @@
 
 export const meta = {
   title: "Robbe Van Aken, developer with a designer's eye",
-  description: 'Digital craftsman in Ghent: Craft CMS sites, Laravel software and AI workflows, developed with a designer\'s eye.',
+  description: 'Creative developer in Ghent: Craft CMS sites, Laravel software and AI workflows, developed with a designer\'s eye.',
   email: 'hello@robbevanaken.be',
   image: '/og.png', // social preview (1200×630), in /public
 };
@@ -14,17 +14,20 @@ export const socials = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/robbe-van-aken/?skipRedirect=true' },
 ];
 
-// the page's theme as you scroll: `base` for most of the page, `chapter` for the marked chapters (.t-dark: the
-// services + projects, and the footer); flip them to reverse the whole site (tried Oct 2026: a dark base with light
-// chapters — light stays the default)
-export const pageTheme = { base: 'light', chapter: 'dark' } as const;
+// the page's theme as you scroll: `base` for most of the page, `chapter` for the marked chapters (`.t-dark`, a historic
+// name: the services + projects, and the project pages). Since Oct 2026 the site is DARK with LIGHT chapters — the story
+// (hero, pitch, manifesto, pricing, footer) in the dark, the work (services, projects, the case studies) in the light
+// (was { base: 'light', chapter: 'dark' }; the footer is a chapter only on a light base, scrollTheme.js)
+export const pageTheme = { base: 'dark', chapter: 'light' } as const;
 
 export const nav = {
   name: 'Robbe Van Aken',
-  role: 'Freelancer', // header + loader + JSON-LD; the hero says "Digital craftsman"
+  role: 'Freelancer', // header + loader + JSON-LD; the hero says "Creative Developer"
   links: [
-    { label: 'Home', href: '/' }, // was "Pitch": as the home page's label it read oddly
-    { label: 'Work', href: '/work' },
+    // a one-pager (Oct 2026): the home page's sections, in page order (no "Home": the name top left goes home)
+    { label: 'Services', href: '/#services' },
+    { label: 'Work', href: '/#work' },
+    { label: 'Pricing', href: '/#pricing' },
     { label: 'Contact', href: '/contact' },
   ],
   // light/dark toggle (footer bottom row + mobile menu foot): worded for what a click does
@@ -47,7 +50,7 @@ export const music = {
 export const hero = {
   // Each entry is one line; `muted` lines are shown in the softer colour.
   title: [
-    { text: 'Digital craftsman', muted: true },
+    { text: 'Creative Developer', muted: true }, // was "Digital craftsman" (Oct 2026)
     { text: 'Based in Ghent', muted: false },
   ],
   intro: "Freelance product development, start to finish and well after launch. Pairing a designer's eye with a developer's craft.",
@@ -74,11 +77,12 @@ export const pitch = {
 
 export const work = {
   // like the services head: a section title (h2) and a muted intro below it
-  title: 'Recent work',
+  title: 'Selected work', // every project now (was "Recent work", the first three of an archive)
   intro: 'Each one started with a good conversation and ended as something people enjoy using, and teams find easy to keep up to date.',
-  cta: { label: 'View all projects', href: '/work' },
-  cursor: 'View project', // on the cursor over a project card (home + /work)
-  featured: 3, // how many projects home shows (the first ones in projects.ts)
+  cursor: 'View project', // on the cursor over a project card
+  filterLabel: 'Filter projects', filterAll: 'All', filterToggle: 'Filter', // the projects' filter menu (the other options come from projectTags)
+  countLabel: 'projects',
+  outcomeLabel: 'Lighthouse performance score on mobile', // beside a project's measured outcome
 };
 
 export const servicesIntro = {

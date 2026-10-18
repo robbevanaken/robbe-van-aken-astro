@@ -5,7 +5,10 @@
 .u-text-lead{font-size:var(--fs-lead);line-height:var(--lh-text);letter-spacing:-.01em}
 .u-text-body-l{font-size:var(--fs-body-l);line-height:var(--lh-text)}
 .u-text-ui{font-size:var(--fs-ui);line-height:1.3}
-.u-text-label{font-size:var(--fs-label);font-weight:500;line-height:1.3}
+/* labels (Oct 2026, after lamalama.com): the mono voice in capitals — everything that is information, not reading;
+   .u-bracket wraps one in square brackets ("[ FEATURED WORK ]"), the site's small recurring sign */
+.u-text-label{font-family:var(--font-mono);font-size:var(--fs-label);font-weight:400;line-height:1.3;letter-spacing:.04em;text-transform:uppercase;font-feature-settings:normal}
+.u-bracket::before{content:"[\00a0"}.u-bracket::after{content:"\00a0]"}
 .u-text-muted{color:var(--muted)}
 
 /* a blackletter initial (Cloister Black, the R's typeface) on a title's first letter: the /contact page's title (not the popup's: too small, in the grey), /work's title,

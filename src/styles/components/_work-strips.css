@@ -5,14 +5,21 @@
 .c-work-strips{position:relative;padding-block:var(--space-section) var(--space-xl)} /* the bottom: the "View all projects" foot counts on it (_featured-projects.css) */
 .c-work-strips__head{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) - 10px);z-index:2;display:flex;justify-content:center;height:56px;margin-bottom:-56px;pointer-events:none}
 .c-work-strips__end{height:1px}
-.c-work-strips__top{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-s)}
+.c-work-strips__top{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-s)}
+.c-work-strips__tools{display:flex;align-items:center;gap:var(--space-m)}
 .c-work-strips__title{margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em;font-weight:400}
 .c-work-strips__count{margin:0;color:var(--muted)}
 
 /* the strips: the gap is each strip's own padding, so the pointer never falls between two of them */
 .c-work-strips__list{--h:clamp(460px,72svh,780px);grid-column:1 / -1;display:flex;height:var(--h);margin:var(--space-l) 0 0;padding:0;list-style:none}
-.c-work-strips__item{--open:0;--narrow:0;flex:1 1 0;min-width:0;position:relative;transition:flex-grow .9s var(--ease-punch)}
+.c-work-strips__item{--open:0;--narrow:0;flex:1 1 0;min-width:0;position:relative;transition:flex-grow .9s var(--ease-punch),padding .9s var(--ease-punch)}
 .c-work-strips__item + .c-work-strips__item{padding-left:max(8px,calc(var(--gutter) * .5))}
+/* filtered out (workStrips.js): the strip closes to nothing, the others take its room; .is-lead: the first one left
+   standing drops its gap */
+.c-work-strips__item.is-out{flex-grow:0;padding-left:0}
+.c-work-strips__item.is-out .c-work-strips__link{opacity:0;transition:opacity .3s}
+.c-work-strips__item.is-lead{padding-left:0}
+.c-work-strips__link{transition:opacity .5s .25s,background-color .6s var(--ease-punch),color .6s var(--ease-punch)}
 .c-work-strips__item.is-open{--open:1;flex-grow:4.2}
 .c-work-strips__list.has-open .c-work-strips__item:not(.is-open){--narrow:1}
 html.no-js .c-work-strips__list:hover .c-work-strips__item:not(:hover){--narrow:1}
@@ -66,6 +73,11 @@ html.no-js .c-work-strips__item:hover{--open:1;flex-grow:4.2}
   .c-work-strips__list{display:block;height:auto;margin-top:var(--space-m)}
   .c-work-strips__item,.c-work-strips__item.is-open{--open:1;--narrow:0;padding:0}
   .c-work-strips__item + .c-work-strips__item{padding-left:0;margin-top:var(--space-m);padding-top:var(--space-m);border-top:1px solid var(--line)}
+  .c-work-strips__item.is-out{display:none}
+  .c-work-strips__item.is-lead{margin-top:0;padding-top:0;border-top:0}
+  .c-work-strips__top{flex-wrap:wrap;align-items:baseline;row-gap:var(--space-s)}
+  .c-work-strips__tools{order:3;flex:1 1 100%;justify-content:space-between}
+  .c-work-strips__tools .c-work-strips__count{display:none} /* phones: the control takes the row; the count goes (each row says "01 / 04") */
   .c-work-strips__link{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto auto auto 1fr;column-gap:var(--gutter);
     align-items:start;height:auto;background:none;color:var(--fg);box-shadow:none}
   .c-work-strips__bar{display:contents}
@@ -79,3 +91,7 @@ html.no-js .c-work-strips__item:hover{--open:1;flex-grow:4.2}
 @media (prefers-reduced-motion:reduce){
   .c-work-strips__item,.c-work-strips__follower-inner,.c-work-strips__follower-label,.c-work-strips__name,.c-work-strips__meta{transition:none}
 }
+
+/* the nav's "Work" (/#work) lands here: the title with room under the fixed header (an anchor a header's height + room above the title) */
+.c-work-strips__top{position:relative}
+.c-work-strips__anchor{position:absolute;left:0;top:calc(-1 * (env(safe-area-inset-top,0px) + var(--nav-top) + 96px));height:1px;pointer-events:none}

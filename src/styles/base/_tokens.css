@@ -1,6 +1,6 @@
 /* the colour tokens are registered, so they can be transitioned (the theme switch eases them on <html>,
    base/_document.css); initial values = the dark theme */
-@property --bg{syntax:"<color>";inherits:true;initial-value:#170e0b}
+@property --bg{syntax:"<color>";inherits:true;initial-value:#211814}
 @property --fg{syntax:"<color>";inherits:true;initial-value:#ffffff}
 @property --muted{syntax:"<color>";inherits:true;initial-value:#b2b2b2}
 @property --thumb{syntax:"<color>";inherits:true;initial-value:#f3eee8}
@@ -10,14 +10,14 @@
 @property --card{syntax:"<color>";inherits:true;initial-value:#d8d2cc}
 @property --on-fg{syntax:"<color>";inherits:true;initial-value:#170e0b}
 @property --surface{syntax:"<color>";inherits:true;initial-value:#1d1310}
-@property --page{syntax:"<color>";inherits:true;initial-value:#170e0b}
+@property --page{syntax:"<color>";inherits:true;initial-value:#211814}
 
 /* Design tokens. Figma frame is 1440 wide: fluid values hit their Figma size at 1440. */
 :root{
   /* an eased fade from the page colour (100%) to nothing, no visible edge: behind the header (over its progressive blur) */
   --scrim:color-mix(in srgb, var(--page) 100%, transparent) 0%, color-mix(in srgb, var(--page) 98.7%, transparent) 8.1%, color-mix(in srgb, var(--page) 95.1%, transparent) 15.5%, color-mix(in srgb, var(--page) 89.6%, transparent) 22.5%, color-mix(in srgb, var(--page) 82.5%, transparent) 29%, color-mix(in srgb, var(--page) 74.1%, transparent) 35.3%, color-mix(in srgb, var(--page) 64.8%, transparent) 41.2%, color-mix(in srgb, var(--page) 55.0%, transparent) 47.1%, color-mix(in srgb, var(--page) 45.0%, transparent) 52.9%, color-mix(in srgb, var(--page) 35.2%, transparent) 58.8%, color-mix(in srgb, var(--page) 25.9%, transparent) 64.7%, color-mix(in srgb, var(--page) 17.5%, transparent) 71%, color-mix(in srgb, var(--page) 10.4%, transparent) 77.5%, color-mix(in srgb, var(--page) 4.9%, transparent) 84.5%, color-mix(in srgb, var(--page) 1.3%, transparent) 91.9%, color-mix(in srgb, var(--page) 0%, transparent) 100%;
   /* colour: these are the dark theme's; light (the default: html[data-theme="light"], global/theme.js) overrides them below */
-  --bg:#170e0b;
+  --bg:#211814;       /* the dark page: a warm near-black, a step lighter (Oct 2026; was #170e0b) */
   --fg:#ffffff;       /* primary text (Figma: white) */
   --muted:#b2b2b2;    /* secondary text (Figma: #B2B2B2) */
   --subtle:#8c827c;   /* tertiary: footer meta, counters */
@@ -44,6 +44,7 @@
 
   /* type: family */
   --font:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace; /* the label voice (Oct 2026, after lamalama.com) */
 
   /* type: scale (size @1440 in comments, measured from the Figma frame) */
   --fs-hero:clamp(48px,7.5vw,116px);       /* 108 page hero titles (contact) */
@@ -55,7 +56,7 @@
   --fs-body-l:clamp(17px,1.3889vw,24px);   /* 20  intro copy, service text */
   --fs-body:16px;                          /*     default body, marquee */
   --fs-ui:15px;                            /*     nav, buttons */
-  --fs-label:13px;                         /*     labels, counters */
+  --fs-label:11px;                         /*     labels, counters: mono capitals (was 13px, sans) */
 
   --lh-tight:1.05;
   --lh-heading:1.1;

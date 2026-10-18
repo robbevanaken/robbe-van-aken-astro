@@ -1,7 +1,7 @@
 // Filter menu (ui/Filter.astro): opens on hover (fine pointers; closes as soon as the pointer leaves), on click / tap
 // of the toggle and when keyboard focus moves in; Escape closes it (focus back on the toggle). The box animates between its closed
 // size (the toggle) and its open size (toggle + options) on the punch ease, the options fade up one by one. The toggle
-// shows the chosen filter ("Filter: Design"; nothing for All). Selecting is done by components/workFilter.js.
+// shows the chosen filter ("Filter: Design"; nothing for All). Selecting is done by components/workList.js.
 // Hooks: [data-filter], [data-filter-box], [data-filter-inner], [data-filter-toggle], [data-filter-list],
 // [data-filter-current], [data-work-filter] (data-label). State: .is-open.
 import gsap from 'gsap';

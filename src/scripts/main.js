@@ -23,18 +23,17 @@ import { initTitleFrame } from './components/titleFrame.js';
 import { initLocalTime } from './components/localTime.js';
 import { initScrollTheme } from './global/scrollTheme.js';
 import { initSound } from './global/sound.js';
+import { initPixelTrail } from './global/pixelTrail.js';
 import { initContactModal } from './global/contactModal.js';
 import { initStackCards } from './components/stackCards.js';
 import { initPricing } from './components/pricing.js';
 import { initWorkStrips } from './components/workStrips.js';
+import { initWorkList } from './components/workList.js';
+import { initFilter } from './components/filter.js';
 import { initCraftBand } from './components/craftBand.js';
 import { initPreviewFollower } from './components/previewFollower.js';
 import { initContactForm } from './components/contactForm.js';
 import { initMaskReveal } from './components/maskReveal.js';
-import { initWorkFilter } from './components/workFilter.js';
-import { initFilter } from './components/filter.js';
-import { initWorkIntro } from './components/workIntro.js';
-import { initWorkLoop } from './components/workLoop.js';
 import { initCardCursor } from './components/cardCursor.js';
 import { initHighlight } from './components/highlightText.js';
 import { initTextHover } from './components/textHover.js';
@@ -78,14 +77,12 @@ function mount({ remount = false } = {}) {
     initStackCards(root),
     initPricing(root),
     initWorkStrips(root),
+    initWorkList(root),
+    initFilter(root),
     initCraftBand(root),
     initPreviewFollower(root),
     initContactForm(root),
-    initWorkFilter(root),
-    initWorkLoop(root),
     initCardCursor(root),
-    initFilter(root),
-    initWorkIntro(root),
     initMarquee(root),
     initReveal(root),
     initDebugGrid(root),
@@ -104,6 +101,7 @@ function unmount() {
 
 initTheme();
 initSound();
+initPixelTrail();
 initContactModal();
 
 initMusic();

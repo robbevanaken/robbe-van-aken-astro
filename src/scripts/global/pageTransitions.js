@@ -29,7 +29,7 @@ import { handOff, arrive } from '../components/scrollNext.js';
 import { releaseIntro } from '../components/maskReveal.js';
 import { openProject } from '../components/openProject.js';
 import { rIntro } from '../r-journey/engine.js';
-import { setScrollTheme, BASE } from './theme.js';
+import { setScrollTheme, BASE, CHAPTER } from './theme.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -183,7 +183,7 @@ let swapCounter = null;
 
 // first half: the background covers the page, the R flies to the middle, the counter runs to 50 (swup loads the next
 // page meanwhile)
-async function cover(f) {
+async function cover(f, to = '') {
   const root = document.documentElement;
   gsap.set([f.frame, f.brand], { autoAlpha: 0 });
   gsap.set(f.bg, { opacity: 0 });
@@ -191,7 +191,8 @@ async function cover(f) {
   f.count.textContent = '000';
   f.counter.style.setProperty('--p', 0);
   root.classList.add('is-transitioning');
-  setScrollTheme(BASE); // leaving from a chapter: the page (and the overlay on it) ease back to the base theme the next page starts in
+  // the page (and the overlay on it) ease to the theme the next page starts in: dark for a project page (Oct 2026), else the base
+  setScrollTheme(/^\/work\/[^/]+/.test(to) ? CHAPTER : BASE);
   // the style recalculation of showing the overlay lands in this frame, before anything moves
   await nextFrame();
   // the R already sits small in the mobile menu's corner (t is 1): it travels from there to the middle on a moving anchor
@@ -290,7 +291,7 @@ export function initPageTransitions({ mount, unmount }) {
   swup.hooks.replace('animation:out:await', async (visit) => {
     if (visit.animation.name === 'next-project') { holdTouch(true); carried = handOff(); return; }
     if (visit.animation.name === 'open-project') { carried = await openProject.leave(card); card = null; return; }
-    if (covers(visit)) await cover(f);
+    if (covers(visit)) await cover(f, visit.to?.url || '');
   });
 
   swup.hooks.before('content:replace', (visit) => {

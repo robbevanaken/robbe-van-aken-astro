@@ -1,8 +1,8 @@
 ---
-// Filter menu (/work): a button "Filter" (like the site's buttons: label + an icon cell) that grows open into a panel
+// Filter menu (home's projects, sections/Work.astro; was /work's): a button "Filter" (like the site's buttons: label + an icon cell) that grows open into a panel
 // with the options, each with its count; the corner brackets slide out as it opens. Opens on hover (fine pointers) and
 // on click / focus, Escape closes it. Behaviour: scripts/components/filter.js (open / close), the options
-// ([data-work-filter]) are handled by scripts/components/workFilter.js. Styles: styles/components/_filter.css.
+// ([data-work-filter]) are handled by scripts/components/workList.js. Styles: styles/components/_filter.css.
 import Corners from './Corners.astro';
 interface Props { filters: { key: string; label: string; n: number }[]; label: string; toggle: string; class?: string }
 const { filters, label, toggle, class: cls } = Astro.props;
