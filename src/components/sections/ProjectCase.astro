@@ -1,17 +1,21 @@
 ---
-// The case study on a project's detail page, below its visual (after naughtyduk.com's project pages, in this site's
-// language; the context itself opens the page, above the main visual: pages/work/[slug].astro): 1. a row of fact
-// cards — real facts only: client, year, what it's built with, and the measured result or the collaboration where there is one,
-// then the home's type band (CraftBand) with the project's name; 2. the story beside a panel that stays put while it's read: the challenge, the approach (and the parts of a suite),
-// then the facts as label / value rows and "Visit site"; 3. the work, only the images that say something: the
-// device mockup full width, then the long home page scrolling in its window beside another page on a phone (Toran:
-// its photos; tried: a dense mosaic with crops, stills and swatches — filler); 4. the result as the closing statement, with the back button.
+// The case study on a project's detail page, below its visual (the context itself opens the page: pages/work/[slug].astro).
+// ONE CALM RHYTHM (Oct 2026, "too chaotic": five kinds of block, grey panels everywhere, the name three times, the
+// facts twice): every text row is a small label on the left (cols 1–3) and its content in one column (cols 5–10),
+// between thin lines; every image sits on the same field, a gutter apart.
+// 1. the facts as ONE bar between lines (mono labels over the values: client, year, services, built with, the
+//    measured result or the collaboration; "Visit site" at its end) — was a row of four panel cards plus the same facts
+//    again as rows in the story; then the home's type band (CraftBand) with the project's name (kept on purpose);
+// 2. the story as text rows: the challenge, the approach, the parts of a suite, the brand — was a column beside a
+//    sticky panel with a phone;
+// 3. the work: the device mockup full width, then two equal tiles — the home page scrolling in its window and another
+//    page on a phone (Toran: its photos);
+// 4. the result: its label and the closing statement in the same columns, the back button under it.
 // The next project's visual (ScrollNext) follows straight after.
 // Scroll motion: components/caseMotion.js (the window, reduced motion: none). Media open from their centre
 // ([data-reveal="media"], global/reveal.js). Copy: src/data/projects.ts, labels in projectPage (src/data/pages.ts).
 // Styles: styles/components/_project-case.css
 import ProjectImage from '../ui/ProjectImage.astro';
-import Button from '../ui/Button.astro';
 import CraftBand from './CraftBand.astro';
 import { getImage } from 'astro:assets';
 import type { Project } from '../../data/projects';
@@ -19,8 +23,6 @@ import { projectPage } from '../../data/pages';
 interface Props { project: Project }
 const { project: p } = Astro.props;
 const s = p.story, sc = p.screens, ph = p.photos, l = projectPage;
-const svgs = import.meta.glob<string>('/src/assets/projects/**/*.svg', { query: '?raw', import: 'default', eager: true });
-const logo = p.brand ? svgs[`/src/assets${p.brand.logo}`] : null;
 const pad = (n: number) => String(n).padStart(2, '0');
 
 // the fact cards: a label, the value big, a quiet line under it — never an invented number
@@ -48,96 +50,71 @@ const LONG = { sizes: '(max-width: 1023px) 86vw, 50vw', widths: [720, 1080, 1440
 const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/projects/**/*.{jpg,jpeg,png,webp}', { eager: true });
 const lqip = sc ? (await getImage({ src: files[`/src/assets${sc.desktop}`].default, width: 24, format: 'webp', quality: 40 })).src : '';
 
-// the panel beside the story: the brand's mark, a phone screen, or a photo
-const side = logo ? 'brand' : sc ? 'phone' : ph ? 'photo' : null;
 ---
 {s && (
   <section class="c-project-case" aria-label={p.title}>
-    <!-- 1. the fact cards (the context itself opens the page: PageIntro in pages/work/[slug].astro) -->
-    <div class="c-project-case__lead o-container o-grid">
-      <ul class="c-project-case__cards" role="list" style={`--n:${cards.length}`}>
-        {cards.map((c, i) => (
-          <li class="c-project-case__card" data-reveal style={`--i:${i}`}>
-            <span class="u-text-label u-text-muted">{c.label}</span>
-            <span class="c-project-case__card-value">{c.value}</span>
-            <span class="c-project-case__card-note u-text-label u-text-muted">{c.note}</span>
-          </li>
-        ))}
-      </ul>
+    <!-- 1. the facts, one bar -->
+    <div class="c-project-case__facts-bar o-container o-grid">
+      <dl class="c-project-case__facts" style={`--n:${facts.length + (p.url ? 1 : 0)}`}>
+        {facts.map((f) => <div class="c-project-case__fact"><dt class="u-text-label u-text-muted">{f.label}</dt><dd>{f.value}</dd></div>)}
+        {p.url && <div class="c-project-case__fact c-project-case__fact--link"><dt class="u-text-label u-text-muted">{l.facts.site}</dt><dd><a class="c-project-case__site" href={p.url} target="_blank" rel="noopener">{l.facts.visit} ↗<span class="u-sr-only"> ({p.title}, opens in a new tab)</span></a></dd></div>}
+      </dl>
     </div>
 
-    <!-- the home's type band (sections/CraftBand.astro) under the cards, the project's name running through it -->
+    <!-- the home's type band (sections/CraftBand.astro), the project's name running through it -->
     <CraftBand text={`${p.title} ·`} dark={false} class="c-craft-band--case" />
 
-    <!-- 2. the story beside a panel that stays put -->
+    <!-- 2. the story, text rows -->
     <div class="c-project-case__story o-container o-grid">
-      {side && (
-        <div class="c-project-case__side">
-          {side === 'brand' && p.brand && (
-            <div class="c-project-case__side-panel c-project-case__side-panel--brand" style={`background:${p.brand.swatches[0].bg};color:${p.brand.swatches[0].fg}`} data-reveal="media" role="img" aria-label={`${p.title} logo`}>
-              <span class="c-project-case__logo" aria-hidden="true" set:html={logo} />
-            </div>
-          )}
-          {side === 'phone' && sc && (
-            <div class="c-project-case__side-panel" data-reveal="media"><ProjectImage class="c-project-case__phone" src={sc.mobile[0]} alt={`${p.title}: the website on a phone`} {...PHONE} /></div>
-          )}
-          {side === 'photo' && ph && (
-            <div class="c-project-case__side-panel c-project-case__side-panel--photo" data-reveal="media"><ProjectImage class="c-project-case__img" src={ph[0]} alt="" data-case-parallax {...NARROW} /></div>
-          )}
+      <div class="c-project-case__row" data-reveal><h2 class="c-project-case__label u-text-label u-text-muted">{l.story.challenge}</h2><p class="c-project-case__body">{s.challenge}</p></div>
+      <div class="c-project-case__row" data-reveal><h2 class="c-project-case__label u-text-label u-text-muted">{l.story.approach}</h2><p class="c-project-case__body">{s.approach}</p></div>
+      {p.parts?.length && (
+        <div class="c-project-case__row" data-reveal>
+          <h2 class="c-project-case__label u-text-label u-text-muted">{l.story.parts}</h2>
+          <ol class="c-project-case__parts" role="list">
+            {p.parts.map((part, i) => <li class="c-project-case__part"><span class="u-text-label u-text-muted">{pad(i + 1)}</span><h3 class="c-project-case__part-title">{part.title}</h3><p class="c-project-case__part-text">{part.text}</p></li>)}
+          </ol>
         </div>
       )}
-      <div class="c-project-case__text">
-        <div class="c-project-case__block" data-reveal><h2 class="c-project-case__title u-text-label u-text-muted">{l.story.challenge}</h2><p class="c-project-case__body">{s.challenge}</p></div>
-        <div class="c-project-case__block" data-reveal><h2 class="c-project-case__title u-text-label u-text-muted">{l.story.approach}</h2><p class="c-project-case__body">{s.approach}</p></div>
-        {p.parts?.length && (
-          <ol class="c-project-case__parts" role="list">
-            {p.parts.map((part, i) => (
-              <li class="c-project-case__part" data-reveal style={`--i:${i}`}><span class="u-text-label u-text-muted">{pad(i + 1)}</span><h3 class="c-project-case__part-title">{part.title}</h3><p class="c-project-case__part-text">{part.text}</p></li>
-            ))}
-          </ol>
-        )}
-        {p.brand && <div class="c-project-case__block" data-reveal><h2 class="c-project-case__title u-text-label u-text-muted">{l.story.brand}</h2><p class="c-project-case__body">{p.brand.text}</p></div>}
-        <dl class="c-project-case__facts">
-          {facts.map((f) => <div class="c-project-case__fact"><dt class="u-text-label u-text-muted">{f.label}</dt><dd class="u-text-label">{f.value}</dd></div>)}
-        </dl>
-        {p.url && <Button class="c-project-case__visit" href={p.url} target="_blank" rel="noopener">{l.facts.visit}<span class="u-sr-only"> ({p.title}, opens in a new tab)</span></Button>}
-      </div>
+      {p.brand && <div class="c-project-case__row" data-reveal><h2 class="c-project-case__label u-text-label u-text-muted">{l.story.brand}</h2><p class="c-project-case__body">{p.brand.text}</p></div>}
     </div>
 
-    <!-- 3. the work, thinned to the images that say something: the device mockup, the home page scrolling in its
-         window beside another page on a phone (Toran: its photos). Tried: a dense mosaic with crops further down the
-         home page, the second phone, Imagoo's reel stills and Woonpact's logo on its swatches — filler -->
-    <div class="c-project-case__mosaic o-container o-grid">
+    <!-- 3. the work: the mockup full width, then two equal tiles -->
+    <div class="c-project-case__work o-container o-grid">
       {p.mockup && (
-        <div class="c-project-case__tile c-project-case__tile--full c-project-case__tile--photo" data-reveal="media">
+        <div class="c-project-case__tile c-project-case__tile--full" data-reveal="media">
           <ProjectImage class="c-project-case__img" src={p.mockup} alt={`${p.title}: the website on a device`} {...WIDE} />
         </div>
       )}
       {sc && (
         <>
-          <div class="c-project-case__tile c-project-case__tile--wide c-project-case__tile--panel" data-reveal="media">
+          <div class="c-project-case__tile c-project-case__tile--half c-project-case__tile--field" data-reveal="media">
             <div class="c-project-case__window" style={`--lqip:url(${lqip})`} data-case-scroll><ProjectImage class="c-project-case__long" src={sc.desktop} alt={`${p.title}: the website's home page on a desktop screen`} {...LONG} /></div>
           </div>
-          <div class="c-project-case__tile c-project-case__tile--narrow c-project-case__tile--panel c-project-case__tile--phone" data-reveal="media" style="--i:1">
+          <div class="c-project-case__tile c-project-case__tile--half c-project-case__tile--field" data-reveal="media" style="--i:1">
             <ProjectImage class="c-project-case__phone" src={sc.mobile[1]} alt={`${p.title}: another page on a phone`} {...PHONE} />
           </div>
         </>
       )}
-      {ph && [ph[1], ph[2], ph[3]].map((src, i) => (
-        <div class:list={['c-project-case__tile', ['c-project-case__tile--wide', 'c-project-case__tile--narrow', 'c-project-case__tile--full'][i], 'c-project-case__tile--photo']} data-reveal="media" style={`--i:${i % 2}`}>
-          <ProjectImage class="c-project-case__img" src={src} alt="" {...(i === 1 ? NARROW : WIDE)} />
-        </div>
-      ))}
+      {!sc && ph && (
+        <>
+          <div class="c-project-case__tile c-project-case__tile--half" data-reveal="media"><ProjectImage class="c-project-case__img" src={ph[1]} alt="" {...NARROW} /></div>
+          <div class="c-project-case__tile c-project-case__tile--half" data-reveal="media" style="--i:1"><ProjectImage class="c-project-case__img" src={ph[2]} alt="" {...NARROW} /></div>
+          <div class="c-project-case__tile c-project-case__tile--full" data-reveal="media"><ProjectImage class="c-project-case__img" src={ph[3]} alt="" data-case-parallax {...WIDE} /></div>
+        </>
+      )}
       {!sc && !ph && [0, 1].map((i) => (
         <div class="c-project-case__tile c-project-case__tile--half c-project-case__tile--empty" style={`--a:${p.colors.a};--b:${p.colors.b};--t:${p.colors.t}`} data-reveal><span class="u-text-label">{l.screens}</span></div>
       ))}
     </div>
 
-    <!-- 4. the result, the closing statement -->
+    <!-- 4. the result -->
     <div class="c-project-case__close o-container o-grid">
-      <span class="c-project-case__title u-text-label u-text-muted">{l.story.result}</span>
-      <p class="c-project-case__statement c-project-case__statement--close" data-highlight-text>{s.result}</p>
-      <div class="c-project-case__end"><slot name="end" /></div><!-- where the story ends: the page's "All projects" button -->
+      <span class="c-project-case__label u-text-label u-text-muted">{l.story.result}</span>
+      <div class="c-project-case__close-body">
+        <p class="c-project-case__statement" data-highlight-text>{s.result}</p>
+        <div class="c-project-case__end"><slot name="end" /></div><!-- the page's "All projects" button -->
+      </div>
     </div>
   </section>
 )}

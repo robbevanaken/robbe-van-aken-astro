@@ -108,7 +108,9 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
   const main=find('a-craft')||find('a-foot')||find('a-hero')||find('a-pitch')||scope.querySelector?.('[data-r-pointer]')||scope.querySelector?.('[data-r-anchor]');if(!main)return null;
   const byId=(id)=>find(id)||main;
   const aHero=byId('a-hero'),aPitch=byId('a-pitch'),aCraft=byId('a-craft'),aFoot=byId('a-foot');
-  const craftHdr=!!aCraft.closest?.('[data-site-header]'); // home: stage 2 sits in the header (logo on phones, like the subpages' header R)
+  const SVC=4; // the services' letters (icons 0–3); the arrow stays last (NI-1)
+  const craftHdr=!!aCraft.closest?.('[data-site-header]');
+  const hdrEl=craftHdr?aCraft.closest('[data-site-header]'):null;let hdrOn=null; // home: stage 2 sits in the header (logo on phones, like the subpages' header R)
   // services: one icon in [data-service-slot], which one (and how far into the morph to the next) follows [data-services]
   const svcSlot=scope.querySelector?.('[data-service-slot]')||main,svcEl=scope.querySelector?.('[data-services]')||null;
   // how I work: the arrow (the last icon) on [data-r-pointer], moved from row to row by components/approach.js
@@ -452,7 +454,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
     for(let i=0;i<7;i++){mat(RY[i]+(i===3?0:spin),RX[i],RZ[i],M[i]);SG[i]=M[i][8]>=0?1:-1}
     mat((RY[i0]*(1-f)+RY[i1]*f)+spin*(i0===3||i1===3?(1-Math.abs(i1-3)*(1-f)-Math.abs(i0-3)*f):1),RX[i0]*(1-f)+RX[i1]*f,RZ[i0]*(1-f)+RZ[i1]*f,MB);
 
-    if(svcEl){const v=Math.min(serviceProgress(svcEl),NI-2);sq0=Math.floor(v);sq1=Math.min(sq0+1,NI-1);sg=v-sq0}
+    if(svcEl){const v=Math.min(serviceProgress(svcEl),SVC-1);sq0=Math.floor(v);sq1=Math.min(sq0+1,SVC-1);sg=v-sq0} // the services' letters only (the cube and the arrow follow them)
     // a slow sway (and a little of the mouse), plus a full turn per morph
     mat(-.4+(Math.sin(tm*.5)*.2+smx*.35+sg*TAU)*motion,.22+(Math.sin(tm*.4)*.08+smy*.15)*motion,-.05,MS);SS=MS[8]>=0?1:-1;
     const fT=aPoint.dataset?.dir==='-1'?Math.PI:0;flip=motion?flip+(fT-flip)*(slow?.17:.09):fT;
@@ -465,6 +467,10 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       fm=s6?MA:MS,fs=s6?SA:SS,jn=s6?(NI-1)*N:(sg<.5?sq0:sq1)*N;
 
     // lighting
+    // stage 2's share while the R sits in the header; the header's R tile shows while the R is up there (it used to be
+    // guessed from the markers in siteHeader.js, and folded away under a still-drawn R)
+    const cubeW=craftHdr&&!inIntro?(i0===2?1-f:0)+(i1===2?f:0):0;
+    if(hdrEl){const on=cubeW>.35||(inIntro?false:hdrEl.classList.contains('has-r')&&cubeW>.2);if(on!==hdrOn){hdrOn=on;hdrEl.classList.toggle('has-r',on)}}
     const cs=MB[8]>=0?1:-1,cnx=MB[2]*cs,cny=MB[5]*cs,cnz=MB[8]*cs;
     const capL=Math.max(0,cnx*LX+cny*LY+cnz*LZ);
     let drift=0;
@@ -512,7 +518,8 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
       glr.clear();
       if(vecA<1){
         const rh=rhV,baseCell=size<1.1?3:clamp(Math.round(size*1.35),4,7),minCell=3/DPR,pitchF=(sz(i0)/DENS[i0])*(1-f)+(sz(i1)/DENS[i1])*f;
-        const smLo=DPR<1.5&&rh<80,small=rh<140&&!!SM.fill,smCell=SM.fill?(smLo?2:Math.max(SM.min/DPR,SM.rows?Math.round(rh/(SM.rows*1.8)*DPR)/DPR:0)):0; // 1.8× the rows: the services' letters (~100px, the small look) show their detail; the header's R is at the finest cell already
+        const hdrK=(craftHdr&&cubeW>.5)||(hdrR&&(i0===2?1-f:0)+(i1===2?f:0)>.5); // the header's R: chunkier cells, nearly solid — a thicker, readable R (Oct 2026: tried a cube there)
+        const smLo=DPR<1.5&&rh<80,small=rh<140&&!!SM.fill,smCell=SM.fill?(smLo?2:Math.max(SM.min/DPR,SM.rows?Math.round(rh/(hdrK?20:SM.rows*1.8)*DPR)/DPR:0)):0; // 1.8× the rows: the services' letters (~100px, the small look) show their detail; the header's R is at the finest cell already
         const CMAX=Math.round((W<640?4:5)*DPR)/DPR,CELL=small?Math.min(baseCell,smCell):Math.min(Math.max(minCell,Math.round(pitchF*(FCELL[i0]*(1-f)+FCELL[i1]*f)*(RQ.cell||LOOKCELL)*DPR)/DPR),Math.max(CMAX,Math.ceil(pitchF*1.3*DPR)/DPR)); // at most CMAX (but never under 1.3 particle pitches, or the face shows holes): the big R's (pitch, footer) otherwise got blocks of ~10px beside the hero's ~4; 2: cells of ~2.5 particle pitches, so the finer particles still read as halftone pixels, not a grey tint
         const bt=mode==='light'||mode==='paper'?0:mode[0]==='b'?+mode.slice(1)/8:1,lb=themeMode==='wild'?0:.9*(1-dkB);
         const period=Math.max(3,Math.round((small?clamp(rh/28,1.5,3):W<640?2.5:3)*DPR));
@@ -531,7 +538,7 @@ export function initREngine({ canvas = document.getElementById('r-canvas'), scop
         }
         if(rig<1)glr.cells({X,Y,BR,LV,N,NC,hc:size/2,cell:CELL,DPR,W,H,mode:small?1:0,tones:FINE[mode],lb,
           // the face's halftone squares: light and dark a step bigger than the 2D look (a blacker R on paper, a brighter one on the dark)
-          sizes:[.5,.62,.74,.86].map((fr,i)=>fr+([.4,.52,.64,.76][i]-fr)*bt),fill:SM.fill,walls:SM.walls,lo:smLo,gaps:!small,alpha:(1-vecA)*(1-rig),engrave:RQ.engrave,
+          sizes:[.5,.62,.74,.86].map((fr,i)=>fr+([.4,.52,.64,.76][i]-fr)*bt),fill:hdrK?.9:SM.fill,walls:SM.walls,lo:smLo,gaps:!small,alpha:(1-vecA)*(1-rig),engrave:RQ.engrave,
           // the line screen's period: ~3px (phones 2.5), the small R's finer (~28 lines tall); never under 3 device px
           period});
         if(rig>0){const w4=sw(4),pr=A[4].S*.24;

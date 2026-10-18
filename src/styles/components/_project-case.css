@@ -1,73 +1,52 @@
-/* The case study on a project's detail page (sections/ProjectCase.astro; after naughtyduk.com's project pages):
-   1. the context as one big statement (cols 1–8) with a row of fact cards under it (quiet --panel cards: a label, the
-      value big, a line under it; as many columns as cards);
-   2. the story: a panel on the left (cols 1–6) that stays put while the text column on the right (cols 8–11) is
-      read — the blocks under small labels, then the facts as label / value rows and "Visit site";
-   3. the mosaic: the work on a tight grid (gutter gaps), wide tiles (7 cols) and narrow ones (5 cols) alternating
-      so each row fills the width, the narrow one stretching to the wide one's height; thirds for stills and the
-      brand's colours;
-   4. the result as the closing statement.
-   Media open from their centre as they come into view (global/reveal.js). Below 1024px everything stacks: the cards
-   two by two, the panel above the text (not pinned), the tiles full width (thirds two by two). */
-.c-project-case{padding-top:var(--gutter)} /* the fact cards right under the main visual, a gutter apart, as the cards among themselves (was --space-xl: they floated loose from it) */
+/* The case study on a project's detail page (sections/ProjectCase.astro). ONE RHYTHM (Oct 2026): every text row a
+   small label (cols 1–3) and its content (the right six columns, 7–12, body size) between thin lines; every image on the same field, a gutter apart;
+   one section spacing between the parts. 1. the facts bar; the type band; 2. the story rows; 3. the work (the mockup
+   full width, two equal tiles); 4. the result. Below 1024px: the label above its content, the tiles full width. */
+.c-project-case{padding-top:var(--space-l)}
 .c-project-case>*+*{margin-top:var(--space-section)}
 
-/* 1. statement + cards */
-.c-project-case__lead{row-gap:var(--space-xl)}
-.c-project-case__statement{grid-column:1 / span 8;margin:0;font-size:var(--fs-h2);line-height:1.08;letter-spacing:-.03em;font-weight:500;text-wrap:balance} /* medium: at this smaller size 400 read thin and grey (the case study's voice; the rest of the site stays 400) */
-.c-project-case__cards{grid-column:1 / -1;display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:var(--gutter);margin:0;padding:0;list-style:none}
-.c-project-case__card{display:grid;grid-template-rows:auto 1fr auto;gap:var(--space-2xs);min-height:clamp(170px,14vw,230px);padding:var(--space-s);background:var(--panel)}
-.c-project-case__card-value{align-self:end;font-size:clamp(24px,2.4vw,40px);line-height:1;letter-spacing:-.02em;overflow-wrap:anywhere}
-.c-project-case__card-note{max-width:30ch;line-height:1.4}
+/* 1. the facts: one bar between lines, as many columns as facts */
+.c-project-case__facts{grid-column:1 / -1;display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));column-gap:var(--gutter);row-gap:var(--space-m);
+  margin:0;padding-block:var(--space-s);border-block:1px solid var(--line)}
+.c-project-case__fact{display:grid;align-content:start;gap:6px;min-width:0}
+.c-project-case__fact dt{margin:0}
+.c-project-case__fact dd{margin:0;font-size:var(--fs-body);line-height:1.35;overflow-wrap:anywhere}
+.c-project-case__site{color:var(--fg);text-decoration:none;background:linear-gradient(currentColor,currentColor) left bottom / 100% 1px no-repeat;padding-bottom:2px;
+  transition:background-size var(--hover-dur) var(--ease-punch)}
+.c-project-case__site:hover{background-size:0 1px;background-position:right bottom}
 
-/* 2. the story beside its panel */
-.c-project-case__story{align-items:start}
-.c-project-case__side{grid-column:1 / span 6;position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 72px)}
-.c-project-case__side-panel{position:relative;display:grid;place-items:center;aspect-ratio:4 / 5;overflow:hidden;background:var(--panel)}
-.c-project-case__side-panel--photo{background:none}
-.c-project-case__text{grid-column:8 / span 4;display:grid;gap:var(--space-l)}
-.c-project-case__story:not(:has(.c-project-case__side)) .c-project-case__text{grid-column:1 / span 6}
-.c-project-case__title{display:block;margin:0;font-weight:400}
-.c-project-case__body{margin:var(--space-xs) 0 0;font-size:var(--fs-body);line-height:1.55;color:var(--fg);text-wrap:pretty}
-.c-project-case__parts{display:grid;gap:var(--space-m);margin:0;padding:0;list-style:none}
-.c-project-case__part{display:grid;gap:4px;padding-top:var(--space-s);border-top:1px solid var(--line)}
+/* 2. the story: rows of label + text */
+.c-project-case__story{row-gap:0}
+.c-project-case__row{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;row-gap:var(--space-xs);padding-block:var(--space-m) var(--space-l);border-top:1px solid var(--line)}
+.c-project-case__row:last-child{border-bottom:1px solid var(--line)}
+.c-project-case__label{grid-column:1 / span 3;display:block;margin:0;padding-top:.35em;font-weight:400}
+.c-project-case__body{grid-column:7 / -1;margin:0;font-size:var(--fs-body);line-height:1.55;color:var(--fg);text-wrap:pretty}
+.c-project-case__parts{grid-column:7 / -1;display:grid;gap:var(--space-s);margin:0;padding:0;list-style:none}
+.c-project-case__part{display:grid;grid-template-columns:3em 1fr;column-gap:var(--space-s);row-gap:2px}
 .c-project-case__part>*{margin:0}
+.c-project-case__part>.u-text-label{grid-row:1 / span 2;padding-top:.3em}
 .c-project-case__part-title{font-size:var(--fs-body);font-weight:500}
 .c-project-case__part-text{color:var(--muted);line-height:1.5}
-.c-project-case__facts{margin:var(--space-m) 0 0;display:grid}
-.c-project-case__fact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:var(--gutter);padding:8px 0;border-top:1px solid var(--line)}
-.c-project-case__fact:last-child{border-bottom:1px solid var(--line)}
-.c-project-case__fact dd{margin:0}
-.c-project-case__visit{justify-self:start} /* ui/Button.astro: the site's button, with its hover */
 
-/* 3. the mosaic */
-.c-project-case__mosaic{row-gap:var(--gutter);align-items:stretch}
+/* 3. the work: one field for every tile (the thumbnails' --thumb-field), a gutter apart */
+.c-project-case__work{row-gap:var(--gutter)}
 .c-project-case__tile{position:relative;overflow:hidden;min-height:0}
-.c-project-case__tile--wide{grid-column:span 7;aspect-ratio:16 / 10}
-.c-project-case__tile--narrow{grid-column:span 5} /* no ratio of its own: it stretches to the wide tile beside it */
-.c-project-case__tile--full{grid-column:1 / -1;aspect-ratio:21 / 9}
-.c-project-case__tile--third{grid-column:span 4;aspect-ratio:16 / 10}
-.c-project-case__tile--half{grid-column:span 6;aspect-ratio:4 / 5}
-.c-project-case__tile--panel{display:grid;place-items:center;background:var(--panel)}
-.c-project-case__tile--panel.c-project-case__tile--wide{aspect-ratio:auto;padding:clamp(16px,3vw,48px)}
-.c-project-case__tile--swatch{display:grid;place-items:center}
+.c-project-case__tile--full{grid-column:1 / -1;aspect-ratio:16 / 9}
+.c-project-case__tile--half{grid-column:span 6;aspect-ratio:4 / 3}
+.c-project-case__tile--field{display:grid;place-items:center;padding:clamp(20px,3.4vw,56px);background:var(--thumb-field)}
 .c-project-case__tile--empty{display:grid;place-items:center;color:var(--t);background:radial-gradient(90% 70% at 72% 18%,var(--b) 0,transparent 62%),linear-gradient(160deg,var(--a),#000 140%)}
 .c-project-case__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.c-project-case__phone{display:block;height:84%;width:auto;max-width:none;aspect-ratio:1170 / 2532;object-fit:cover;border:1px solid var(--line)} /* the hairline marks the screen's edge on the panel */
-.c-project-case__tile--phone{min-height:clamp(320px,34vw,640px)}
-.c-project-case__logo{display:block;width:min(52%,300px)}
-.c-project-case__side-panel--brand .c-project-case__logo{width:min(58%,360px)}
-.c-project-case__logo svg{display:block;width:100%;height:auto}
+.c-project-case__phone{display:block;height:100%;width:auto;max-width:none;aspect-ratio:1170 / 2532;object-fit:cover;box-shadow:0 18px 40px rgb(0 0 0 / .3)}
 
-/* 4. the result */
-.c-project-case__close{row-gap:var(--space-s)}
-.c-project-case__close>.c-project-case__title{grid-column:1 / -1}
-.c-project-case__statement--close{grid-column:1 / span 9}
-.c-project-case__end{grid-column:1 / -1;margin-top:var(--space-l)}
+/* 4. the result: its label and the statement in the story's columns, the back button under it */
+.c-project-case__close>.c-project-case__label{grid-column:1 / span 3}
+.c-project-case__close-body{grid-column:7 / -1}
+.c-project-case__statement{margin:0;font-size:clamp(24px,2.5vw,44px);line-height:1.1;letter-spacing:-.03em;font-weight:500;text-wrap:balance}
+.c-project-case__end{margin-top:var(--space-l)}
 .c-project-case__end:empty{display:none}
 
 /* the site's long page in a 16:10 window on its panel, scrolling as you scroll (components/caseMotion.js) */
-.c-project-case__window{position:relative;width:100%;aspect-ratio:16 / 10;overflow:hidden;background:var(--panel);border:1px solid var(--line)} /* the hairline: a light site's page would melt into the panel */
+.c-project-case__window{position:relative;width:100%;aspect-ratio:16 / 10;overflow:hidden;box-shadow:0 18px 40px rgb(0 0 0 / .3)}
 /* while the page loads: a tiny blurred copy of it (--lqip, a 24px webp), so the window is never empty */
 .c-project-case__window::before{content:"";position:absolute;inset:-20px;background:var(--lqip) center top / 100% auto no-repeat;filter:blur(14px);transform:translateZ(0)}
 .c-project-case__long{position:relative;display:block;width:calc(100% + 2px);max-width:none;height:auto;will-change:transform} /* 2px past the window's right edge (clipped): a rounded-down width let the blurred stand-in behind it show as a dark line */
@@ -88,18 +67,15 @@
 }
 
 @media (max-width:1023px){
-  .c-project-case__statement,.c-project-case__statement--close{grid-column:1 / -1;font-size:clamp(26px,5.6vw,40px)}
-  .c-project-case__cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .c-project-case__side{grid-column:1 / -1;position:static}
-  .c-project-case__side-panel{aspect-ratio:4 / 3}
-  .c-project-case__text,.c-project-case__story:not(:has(.c-project-case__side)) .c-project-case__text{grid-column:1 / -1;margin-top:var(--space-l)}
-  .c-project-case__tile--wide,.c-project-case__tile--narrow,.c-project-case__tile--half{grid-column:1 / -1}
-  .c-project-case__tile--narrow:not(.c-project-case__tile--phone){aspect-ratio:16 / 10}
-  .c-project-case__tile--phone{min-height:0;aspect-ratio:4 / 5}
-  .c-project-case__tile--third{grid-column:span 3}
+  .c-project-case__facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .c-project-case__label,.c-project-case__close>.c-project-case__label{grid-column:1 / -1;padding-top:0}
+  .c-project-case__body,.c-project-case__parts,.c-project-case__close-body{grid-column:1 / -1}
+  .c-project-case__tile--half{grid-column:1 / -1}
+  .c-project-case__statement{font-size:clamp(26px,5.6vw,40px)}
 }
 @media (max-width:639px){
-  .c-project-case__card{min-height:140px;padding:var(--space-xs)}
-  .c-project-case__tile--third{grid-column:span 2}
-  .c-project-case__fact{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)}
+  .c-project-case__body{font-size:var(--fs-body)}
+  .c-project-case__tile--full{aspect-ratio:4 / 3}
 }
+/* wide desktops: the text in the right five columns (8–12; tried four: too narrow), so a line stays a comfortable length */
+@media (min-width:1600px){ .c-project-case__body,.c-project-case__parts{grid-column:8 / -1} } /* (the result keeps the right six columns: a closing statement) */

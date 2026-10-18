@@ -12,7 +12,7 @@
 
 /* the chapter voice, as the other heads */
 .c-pricing__title{grid-column:1 / span 6;margin:0;font-size:var(--fs-h2);line-height:1;letter-spacing:-.03em;font-weight:400} /* as the services' title */
-.c-pricing__intro{grid-column:7 / -1;align-self:end;margin:0;max-width:24em;color:var(--muted);font-size:clamp(26px,2.7778vw,52px);line-height:1.08;letter-spacing:-.03em;font-weight:500} /* the statement size of the sections above (services' intro, projects' intro; Oct 2026: was a quieter ~24px) */ /* a step quieter than the services' statement voice: right after the manifesto's big type, two statements in a row competed */
+.c-pricing__intro{grid-column:7 / -1;align-self:end;margin:0;max-width:24em;color:var(--fg);font-size:clamp(26px,2.7778vw,52px);line-height:1.08;letter-spacing:-.03em;font-weight:500} /* the statement size of the sections above (services' intro, projects' intro; Oct 2026: was a quieter ~24px) */ /* a step quieter than the services' statement voice: right after the manifesto's big type, two statements in a row competed */
 
 /* the hand: three cards side by side, slightly overlapping; the rotation and the slight drop of the outer cards
    (the laid pose) come from pricing.js */

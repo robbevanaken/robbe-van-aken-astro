@@ -37,16 +37,7 @@ export function initSiteHeader(root = document) {
   const ac = new AbortController(), signal = ac.signal;
 
   // the nav's tile: on the current page's link; glides to the hovered / focused link, back when the pointer leaves
-  // home: the header's R tile ([data-header-r]) only shows while the page's R is up there — from the first stage-2
-  // marker of the page (the projects) to the last (the pricing's end), on the screen's middle line as the engine reads it
-  const rTile = header.querySelector('[data-header-r]');
-  if (rTile) {
-    const marks = [...root.querySelectorAll('#swup [data-stage="2"], main [data-stage="2"]')].filter((e) => !header.contains(e));
-    const first = marks[0], last = marks[marks.length - 1];
-    const sync = () => { if (!first) return; const mid = innerHeight / 2, a = first.getBoundingClientRect(), z = last.getBoundingClientRect();
-      header.classList.toggle('has-r', a.top + a.height / 2 - innerHeight * .2 <= mid && z.top + z.height / 2 > mid); };
-    addEventListener('scroll', sync, { passive: true, signal: ac.signal }); addEventListener('resize', sync, { signal: ac.signal }); sync();
-  }
+  // home: the header's R tile ([data-header-r]) shows while the page's R is up there: the R engine sets .has-r
   const list = header.querySelector('[data-nav-list]'), tile = list?.querySelector('[data-nav-tile]');
   if (tile) {
     document.documentElement.classList.add('js-nav');

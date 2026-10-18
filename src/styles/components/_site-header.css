@@ -19,7 +19,7 @@
 .c-site-header__lead{grid-column:1 / -1;grid-row:1;display:flex;align-items:stretch;gap:4px;justify-self:end;margin-top:-6px} /* on the right: the R's tile, then the bar */
 .c-site-header__nav{display:flex;align-items:center;height:var(--tile);padding-inline:8px;background:var(--panel)} /* no transition of its own: it follows the theme's fade exactly (a .55s one lagged behind it) */
 .c-site-header__r{position:relative;display:grid;place-items:center;width:var(--tile);height:var(--tile);flex:none;background:var(--panel)}
-.c-site-header__r-anchor{display:block;width:30px;height:30px}
+.c-site-header__r-anchor{display:block;width:34px;height:34px} /* a touch bigger (was 30px) */
 /* home: the R only visits the header (from the projects to the pricing; siteHeader.js sets .has-r): out of it the
    tile folds away (an empty square read oddly), opening again as the R flies in */
 .c-site-header__r--visiting{overflow:hidden;transition:width .6s var(--ease-punch),margin .6s var(--ease-punch),opacity .4s var(--ease-out)}
@@ -86,4 +86,3 @@ html:not(.js-nav) .c-site-header__nav-link[aria-current="page"]{background:color
 }
 
 @media (min-width:640px){ .c-site-header__menu{display:none} }
-

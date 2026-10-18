@@ -146,7 +146,7 @@ export const projectPage = {
   next: 'Next project',  // label above the title in the scroll-to-next section
   back: 'All projects',
   // the case study (sections/ProjectCase.astro)
-  facts: { client: 'Client', services: 'Services', stack: 'Built with', status: 'Status', site: 'Website', visit: 'Visit site' },
+  facts: { client: 'Client', year: 'Year', services: 'Services', stack: 'Built with', status: 'Status', result: 'Result', site: 'Website', visit: 'Visit site' },
   story: { brand: 'The brand', challenge: 'The challenge', approach: 'The approach', parts: 'What we built', result: 'The result' },
   screens: 'Visuals coming soon', // on the placeholder panels of a project without screenshots
 };

@@ -44,3 +44,5 @@
 /* phones: the full width less a little (wide enough for both labels on it; it still grows into the next page's box),
    about 65% above the fold here too (35% of its own height: 82% × 9/16 × 35% of the row's width) */
 @media (max-width:639px){ .c-scroll-next__slot{grid-column:1 / -1;justify-self:start;width:82%;margin-bottom:-16.14%} }
+/* wide desktops: six columns (cols 1–6), as the case study's text there; the same share below the fold (6/7 of it) */
+@media (min-width:1600px){ .c-scroll-next__slot{grid-column:1 / span 6;margin-bottom:-16.875%} }
