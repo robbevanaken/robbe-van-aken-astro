@@ -58,11 +58,11 @@ html.no-js .c-work__tile[data-reveal]{clip-path:none}
   .c-work__list:has(.c-work__row:hover) .c-work__tile{opacity:.28}
   .c-work__list .c-work__row:hover .c-work__tile{opacity:1} /* the row's both images stay, every other row's step back (as specific as the dimming rule above, and later) */
   .c-work__row:hover .c-work__tile--shot img{transform:scale(1.03)}
-  .c-work__row:hover .c-work__go{background:var(--accent);color:var(--on-accent);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px} /* the buttons' hover: the four brackets slide out of the corners */
+  .c-work__row:hover .c-work__go{background:var(--fg);color:var(--bg);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px} /* black (the text colour; tried the accent red) and the buttons' four brackets sliding out of the corners */
   .c-work__row:hover .c-work__arrow{translate:32px -32px}
   .c-work__row:hover .c-work__arrow--next{translate:0 0}
 }
-.c-work__row:focus-visible .c-work__go{background:var(--accent);color:var(--on-accent);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px}
+.c-work__row:focus-visible .c-work__go{background:var(--fg);color:var(--bg);--corner-opacity:1;--pull-x:-7px;--pull-y:-7px}
 
 @media (max-width:1023px){
   .c-work__intro{grid-column:1 / -1}
