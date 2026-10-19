@@ -17,6 +17,7 @@
 // Styles: styles/components/_project-case.css
 import ProjectImage from '../ui/ProjectImage.astro';
 import CraftBand from './CraftBand.astro';
+import Icon from '../ui/Icon.astro';
 import { getImage } from 'astro:assets';
 import type { Project } from '../../data/projects';
 import { projectPage } from '../../data/pages';
@@ -57,7 +58,7 @@ const lqip = sc ? (await getImage({ src: files[`/src/assets${sc.desktop}`].defau
     <div class="c-project-case__facts-bar o-container o-grid">
       <dl class="c-project-case__facts" style={`--n:${facts.length + (p.url ? 1 : 0)}`}>
         {facts.map((f) => <div class="c-project-case__fact"><dt class="u-text-label u-text-muted">{f.label}</dt><dd>{f.value}</dd></div>)}
-        {p.url && <div class="c-project-case__fact c-project-case__fact--link"><dt class="u-text-label u-text-muted">{l.facts.site}</dt><dd><a class="c-project-case__site" href={p.url} target="_blank" rel="noopener">{l.facts.visit} ↗<span class="u-sr-only"> ({p.title}, opens in a new tab)</span></a></dd></div>}
+        {p.url && <div class="c-project-case__fact c-project-case__fact--link"><dt class="u-text-label u-text-muted">{l.facts.site}</dt><dd><a class="c-project-case__site" href={p.url} target="_blank" rel="noopener"><span class="c-project-case__site-text">{l.facts.visit}</span><span class="c-project-case__site-icon" aria-hidden="true"><Icon name="arrow" class="c-project-case__site-arrow" /><Icon name="arrow" class="c-project-case__site-arrow c-project-case__site-arrow--next" /></span><span class="u-sr-only"> ({p.title}, opens in a new tab)</span></a></dd></div>}
       </dl>
     </div>
 

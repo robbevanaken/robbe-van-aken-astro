@@ -82,6 +82,7 @@ export const work = {
   cursor: 'View project', // on the cursor over a project card
   filterLabel: 'Filter projects', filterAll: 'All', filterToggle: 'Filter', // the projects' filter menu (the other options come from projectTags)
   countLabel: 'projects',
+  soon: { label: 'Soon', title: 'More projects coming soon', text: 'A few are in the works. Want yours to be next?' }, // the placeholder row under the projects
   outcomeLabel: 'Lighthouse performance score on mobile', // beside a project's measured outcome
 };
 

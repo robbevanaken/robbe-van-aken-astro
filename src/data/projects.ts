@@ -66,6 +66,8 @@ const screens = (slug: string): Project['screens'] => ({
 });
 
 // DUMMY: the stories, parts, stacks and years below are placeholder copy to fill the detail pages; replace them.
+// Oct 2026: only Woonpact shows for now (Imagoo, Oreya and De Wilde-Braems hidden: `hidden: true`, their data and
+// images kept — remove the flag to bring one back)
 const allProjects: Project[] = [
   {
     slug: 'woonpact-gent', title: 'Woonpact Gent', label: 'Woonpact', image: '/projects/woonpact-gent/mood.jpg', position: '50% 62%', mockup: '/projects/woonpact-gent/mockup.jpg', // mood: a quiet residential street (public domain, a stand-in: REPLACE with a photo from Ghent / the pact)
@@ -88,7 +90,7 @@ const allProjects: Project[] = [
     screens: screens('woonpact-gent'),
   },
   {
-    slug: 'imagoo', title: 'Imagoo', label: 'Imagoo', image: '/projects/imagoo/mood.jpg', position: '50% 55%', mockup: '/projects/imagoo/mockup.jpg', // mood: their camera rig, behind the scenes (imagoo.be)
+    slug: 'imagoo', hidden: true, title: 'Imagoo', label: 'Imagoo', image: '/projects/imagoo/mood.jpg', position: '50% 55%', mockup: '/projects/imagoo/mockup.jpg', // mood: their camera rig, behind the scenes (imagoo.be)
     description: 'A full renovation of a video and photography studio\u2019s website.', service: 'Design & development', year: 2026,
     colors: { a: '#1c1a19', b: '#c9744a', t: '#f4e7dd' }, url: 'https://www.imagoo.be', client: 'Imagoo', stack: ['Craft CMS', 'Vimeo', 'GSAP'],
     // a RENOVATION: the original site was built by the agency SKINN; the whole site was reworked from it (the case to
@@ -106,7 +108,7 @@ const allProjects: Project[] = [
   },
   {
     // on home's Recent work (one of the first three: work.featured), in De Wilde-Braems' place since Oct 2026
-    slug: 'oreya', title: 'Oreya', label: 'Oreya', image: '/projects/oreya/mood.jpg', position: '50% 60%', mockup: '/projects/oreya/mockup.jpg', // mood: a biofilter bed (oreya.be); mockup: the phone in a hand (the Toran PSD, unused while Toran is hidden)
+    slug: 'oreya', hidden: true, title: 'Oreya', label: 'Oreya', image: '/projects/oreya/mood.jpg', position: '50% 60%', mockup: '/projects/oreya/mockup.jpg', // mood: a biofilter bed (oreya.be); mockup: the phone in a hand (the Toran PSD, unused while Toran is hidden)
     description: 'A launch website for smart odour-control software, built against the clock.', service: 'Design & development', year: 2026, // CHECK: service + year
     colors: { a: '#0f4a6e', b: '#e7a597', t: '#f6ece9' }, url: 'https://oreya.be', client: 'Odoro', stack: ['Craft CMS', 'Swup'], // CHECK: stack (read from the live site)
     story: {
@@ -118,7 +120,7 @@ const allProjects: Project[] = [
     screens: screens('oreya'),
   },
   {
-    slug: 'dewilde-braems', title: 'De Wilde-Braems', label: 'De Wilde-Braems', image: '/projects/dewilde-braems/mood.jpg', position: '55% 60%', mockup: '/projects/dewilde-braems/mockup.jpg', // mood: one of their homes (dewilde-braems.be)
+    slug: 'dewilde-braems', hidden: true, title: 'De Wilde-Braems', label: 'De Wilde-Braems', image: '/projects/dewilde-braems/mood.jpg', position: '55% 60%', mockup: '/projects/dewilde-braems/mockup.jpg', // mood: one of their homes (dewilde-braems.be)
     description: 'A clear, calm website for a family-run construction company.', service: 'Design & development', year: 2025,
     colors: { a: '#0b2f57', b: '#9db7d6', t: '#eef3f9' }, url: 'https://dewilde-braems.be', client: 'De Wilde-Braems BV', stack: ['WordPress', 'Tailwind CSS'],
     // measured: Lighthouse on dewilde-braems.be, mobile, 100 in all three runs (main content in 1.1 s), 12 Oct 2026

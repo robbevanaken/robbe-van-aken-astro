@@ -11,9 +11,16 @@
 .c-project-case__fact{display:grid;align-content:start;gap:6px;min-width:0}
 .c-project-case__fact dt{margin:0}
 .c-project-case__fact dd{margin:0;font-size:var(--fs-body);line-height:1.35;overflow-wrap:anywhere}
-.c-project-case__site{color:var(--fg);text-decoration:none;background:linear-gradient(currentColor,currentColor) left bottom / 100% 1px no-repeat;padding-bottom:2px;
+.c-project-case__site{display:inline-flex;align-items:center;gap:.3em;color:var(--fg);text-decoration:none}
+.c-project-case__site-text{background:linear-gradient(currentColor,currentColor) left bottom / 100% 1px no-repeat;padding-bottom:2px;
   transition:background-size var(--hover-dur) var(--ease-punch)}
-.c-project-case__site:hover{background-size:0 1px;background-position:right bottom}
+.c-project-case__site:hover .c-project-case__site-text,.c-project-case__site:focus-visible .c-project-case__site-text{background-size:0 1px;background-position:right bottom}
+/* the buttons' arrow (at 45°): on hover it flies out to the top right while a new one comes in from the bottom left */
+.c-project-case__site-icon{display:grid;place-items:center;width:1.1em;height:1.1em;overflow:hidden;clip-path:inset(0)}
+.c-project-case__site-arrow{grid-area:1 / 1;width:.75em;height:.625em;transform:rotate(-45deg);transition:translate var(--hover-dur) var(--ease-punch)}
+.c-project-case__site-arrow--next{translate:-1.1em 1.1em}
+.c-project-case__site:hover .c-project-case__site-arrow,.c-project-case__site:focus-visible .c-project-case__site-arrow{translate:1.1em -1.1em}
+.c-project-case__site:hover .c-project-case__site-arrow--next,.c-project-case__site:focus-visible .c-project-case__site-arrow--next{translate:0 0}
 
 /* 2. the story: rows of label + text */
 .c-project-case__story{row-gap:0}

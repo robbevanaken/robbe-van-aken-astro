@@ -10,7 +10,7 @@
 .c-work__title{grid-column:9 / -1;grid-row:1;justify-self:end;margin:0;font-size:var(--fs-h2);font-weight:400;line-height:1;letter-spacing:-.03em;text-align:right} /* as the services' "What I build", level with the intro's top */
 .c-work__body{margin-top:var(--space-xl);align-items:start}
 .c-work__side{grid-column:1 / span 2;align-self:stretch;position:relative;z-index:3} /* the open menu lies over the list */
-.c-work__sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 96px);display:grid;justify-items:start;gap:var(--space-s);padding-top:var(--space-m)}
+.c-work__sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--nav-top) + 96px);display:grid;justify-items:start;gap:var(--space-s);padding-top:calc(var(--space-m) + 1px)} /* level with the first card's tiles: the row's padding + the item's 1px top line */
 .c-work__count{margin:0;color:var(--muted)}
 
 .c-work__list{grid-column:3 / -1;display:grid;grid-template-columns:subgrid;margin:0;padding:0;list-style:none;border-bottom:1px solid var(--line)}
@@ -96,3 +96,10 @@ html.no-js .c-work__tile[data-reveal]{clip-path:none}
   .c-work__item + .c-work__item .c-work__row{padding-top:var(--space-l)}
 }
 @media (prefers-reduced-motion:reduce){ .c-work__tile[data-reveal]{clip-path:none;transition:none} .c-work__tile img{scale:1!important;transition:none} .c-work__arrow{transition:none} }
+
+/* the placeholder row ("More projects coming soon"): quiet — the name in the grey, the tiles as empty panels with a
+   dashed edge; no hover */
+.c-work__item--soon .c-work__name{color:var(--muted)}
+.c-work__tile--soon{background:none;border:1px dashed var(--line-strong)}
+@media (hover:hover){ .c-work__list:has(.c-work__row:hover) .c-work__item--soon .c-work__tile{opacity:.28} }
+@media (max-width:639px){ .c-work__item--soon .c-work__tile--shot{aspect-ratio:16 / 10} }

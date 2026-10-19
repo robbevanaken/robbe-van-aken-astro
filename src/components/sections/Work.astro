@@ -59,6 +59,18 @@ const filters = [{ key: 'all', label: work.filterAll, n: projects.length }, ...[
         </a>
       </li>
     ))}
+    <!-- a placeholder row under the projects (Oct 2026: one project shows for now): not a link, quiet panels -->
+    <li class="c-work__item c-work__item--soon" aria-label={work.soon.title}>
+      <div class="c-work__row">
+        <span class="c-work__info">
+          <span class="c-work__num u-text-label" aria-hidden="true">{work.soon.label}</span>
+          <h3 class="c-work__name">{work.soon.title}</h3>
+          <span class="c-work__desc">{work.soon.text}</span>
+        </span>
+        <span class="c-work__tile c-work__tile--shot c-work__tile--soon" aria-hidden="true"></span>
+        <span class="c-work__tile c-work__tile--mockup c-work__tile--soon" aria-hidden="true"></span>
+      </div>
+    </li>
   </ol>
   </div>
   <div class="c-work__end" data-stage="2" aria-hidden="true"></div>
