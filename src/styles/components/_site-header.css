@@ -25,7 +25,7 @@
 .c-site-header__r--visiting{overflow:hidden;transition:width .6s var(--ease-punch),margin .6s var(--ease-punch),opacity .4s var(--ease-out)}
 .c-site-header:not(.has-r) .c-site-header__r--visiting{width:0;margin-right:-4px;opacity:0}
 .c-site-header__nav-list{position:relative;isolation:isolate;display:flex;gap:8px;margin:0;padding:0;list-style:none} /* isolate: the tile (z -1) under the links, not under the bar's own background */
-.c-site-header__nav-link{position:relative;display:block;text-decoration:none;padding:6px 12px;font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.c-site-header__nav-link{position:relative;display:block;text-decoration:none;padding:6px 12px;font-size:var(--fs-ui)} /* sans (tried the mono label voice, Oct 2026) */
 /* one quiet tile (--panel, square like the rest of the site) behind the current page's link; it glides to the hovered or
    focused link and back (positioned by global/siteHeader.js: --x, --w; .is-on when there's a link to sit on). Without
    JS: a tile behind the current link. */
